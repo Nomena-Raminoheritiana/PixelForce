@@ -8,6 +8,7 @@
 /var/
 /vendor/
 /.idea
+/.php-cs-fixer.cache
 ###< symfony/framework-bundle ###
 
 ###> symfony/webpack-encore-bundle ###
