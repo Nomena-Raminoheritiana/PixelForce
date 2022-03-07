@@ -4,7 +4,9 @@
 namespace App\Manager;
 
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ObjectManager
 {
@@ -12,10 +14,15 @@ class ObjectManager
      * @var EntityManagerInterface
      */
     private $entityManager;
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $encoder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
     {
         $this->entityManager = $entityManager;
+        $this->encoder = $encoder;
     }
 
     /**
@@ -29,6 +36,9 @@ class ObjectManager
         $object = new $className();
         foreach($arrayData as $field => $value) {
             $method = 'set'.ucfirst($field);
+            if($field === 'password' && $object instanceof User) {
+               $value =  $this->encoder->encodePassword($object, $value);
+            }
             $object->$method($value);
         }
         $this->entityManager->persist($object);
