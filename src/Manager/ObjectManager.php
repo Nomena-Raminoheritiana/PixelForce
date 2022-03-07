@@ -18,6 +18,12 @@ class ObjectManager
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * Permet d'instancier n'importe quelle entité
+     * @param String $className
+     * @param array $arrayData exemple => ['email' => xxxx@xxx.com, 'password' => xxxx]
+     * @return mixed
+     */
     public function createObject(String $className, Array $arrayData = [])
     {
         $object = new $className();
@@ -30,12 +36,18 @@ class ObjectManager
         return $object;
     }
 
+    /**
+     * Permet de créer plusieur instance d'un entité
+     * @param String $className
+     * @param array $arraysData
+     * @return array
+     */
     public function createMultipleObject(String $className, Array $arraysData =  [])
     {
-        $users = [];
+        $objects = [];
         foreach($arraysData as $arrayData) {
-          $users[] = $this->createObject($arrayData);
+            $objects[] = $this->createObject($arrayData);
         }
-        return $users;
+        return $objects;
     }
 }
