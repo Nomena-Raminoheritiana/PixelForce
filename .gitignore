@@ -1,5 +1,6 @@
 
 ###> symfony/framework-bundle ###
+VAKIO_AHO.markdown
 /.env.local
 /.env.local.php
 /.env.*.local
