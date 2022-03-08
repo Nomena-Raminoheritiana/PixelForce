@@ -5,15 +5,10 @@
 {% block body %}
 <div class="container bg-white mt-5">
     <div class="row">
-        <div class="col-md-6 bg-main-3 text-white d-flex">
-            <div class="m-auto color-main-2">
+        <div class="col-md-6 col-sm-12 ">
                 <img src="{{asset('build/images/draw2.webp')}}" class="img-fluid" />
-                <hr class="bg-main-2">
-                Edité par <b>NordSoft</b>
-                <hr class="bg-main-2">
-            </div>
         </div>
-        <div class="col-md-6 p-md-5">
+        <div class="col-md-6 col-sm-12  p-5">
             <h2 class="color-main-3 px-md-5 " > <span class="text-primary">P</span>i<span class="text-danger">x</span>e<span class="text-warning">l</span>Force</h2>
             <form method="post" class="px-md-5 py-3">
                 {% if error %}
@@ -49,4 +44,5 @@
             </form>
         </div>
     </div>
+</div>
 {% endblock %}

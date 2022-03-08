@@ -6,8 +6,10 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './styles/app.css';
+// You can specify which plugins you need
+
+import './styles/app.scss';
+import { Tooltip, Toast, Popover } from 'bootstrap';
 
 // start the Stimulus application
 import './bootstrap';
