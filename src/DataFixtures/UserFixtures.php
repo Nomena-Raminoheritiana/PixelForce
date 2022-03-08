@@ -23,7 +23,10 @@ class UserFixtures extends Fixture
         $this->objectManager->createObject(User::class, [
             'email' => 'n.raminoheritiana@gmail.com',
             'roles' => [User::ROLE_ADMINISTRATEUR],
-            'password' => 'nomena'
+            'password' => 'nomena',
+            'nom' => 'RAMINOHERITIANA',
+            'prenom' => 'Nomena',
+            'dateNaissance' => new \DateTime('03/08/1999')
         ]);
 
     }

@@ -3,58 +3,47 @@
 {% block title %}Authentification{% endblock %}
 
 {% block body %}
-<div class="container bg-white border">
+<div class="container bg-white mt-5">
     <div class="row">
         <div class="col-md-6 bg-main-3 text-white d-flex">
             <div class="m-auto color-main-2">
-                <img src="#" class="img-fluid" />
+                <img src="{{asset('build/images/draw2.webp')}}" class="img-fluid" />
                 <hr class="bg-main-2">
                 Edité par <b>NordSoft</b>
                 <hr class="bg-main-2">
             </div>
         </div>
-        <div class="col-md-6 p-9">
-            <img src="#" class="mb-3" />
-            <h2 class="color-main-3 mb-4">Bienvenue sur PixelForce</h2>
-            <form method="post">
+        <div class="col-md-6 p-md-5">
+            <h2 class="color-main-3 px-md-5 " > <span class="text-primary">P</span>i<span class="text-danger">x</span>e<span class="text-warning">l</span>Force</h2>
+            <form method="post" class="px-md-5 py-3">
                 {% if error %}
-                    <div class="alert alert-states-1">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
                 <div class="mb-4">
-                    <label for="inputMail_users" class="font-size-15">Votre adresse email</label>
                     <div class="inner-addon left-addon">
-                        <input type="text"  placeholder="Email@gmail.com" value="{{ last_username }}" name="email" id="inputMail_users" class="input-text" required autofocus>
+                        <input type="text" class="form-control"  placeholder="Nom d'utilisateur/Email" value="{{ last_username }}" name="email" id="inputMail_users"  required autofocus>
                     </div>
                 </div>
-                <div class="">
-                    <label for="inputPassword" class="font-size-15">Votre mot de passe</label>
+                <div>
                     <div class="inner-addon left-addon">
-                        <input type="password" name="password" id="inputPassword" class="input-text" placeholder="A-Z, 1-9, *,&@" required>
+                        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de p@sse" required>
                     </div>
                 </div>
-                <div class="text-right">
-{#                    <a href="{{ path('security_forgotten_password_e') }}" class="mt-3 color-shades-1 font-size-12" type="submit">#}
-{#                        Mot de passe oublié >#}
-{#                    </a>#}
+                <div class="mb-3  mt-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
+                    <label class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
                 </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                {#                <div class="form-check float-right">#}
-                {#                    <label for="remember_me" class="label-remember-me">{{'remember_me'|trans}}</label>#}
-                {#                    <div class="button r" id="button-1">#}
-                {#                        <input type="checkbox" class="checkbox" id="remember_me" name="_remember_me" checked>#}
-                {#                        <div class="knobs"></div>#}
-                {#                        <div class="layer"></div>#}
-                {#                    </div>#}
-                {#                </div>#}
-
-                <input type="hidden" name="_csrf_token"
-                       value="{{ csrf_token('authenticate') }}"
-                >
-
-                <div class=" text-center mt-5">
-                    <button class="btn btn-main-full-1 w-50 font-weight-bold" type="submit">
-                        {{'label.signin'|trans}}
+                <div class=" text-center mt-4">
+                    <button class="btn btn-primary w-100 font-weight-bold" type="submit">
+                        S'authentifier
                     </button>
+                </div>
+                <div class=" text-center mt-2">
+                    <a class="btn btn-danger w-100 font-weight-bold" type="submit">
+                        Mot de passe oublié ?
+                    </a>
                 </div>
 
             </form>
