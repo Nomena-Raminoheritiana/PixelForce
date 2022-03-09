@@ -63,7 +63,7 @@ class SecurityController extends AbstractController
            ]);
         }
         return $this->render('security/forgetPassword.html.twig', [
-            'error' => false
+            'error' => $request->query->get('error')
         ]);
     }
 
