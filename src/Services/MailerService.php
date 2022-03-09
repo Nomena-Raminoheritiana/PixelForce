@@ -5,8 +5,10 @@ namespace App\Services;
 
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 class MailerService
 {
@@ -39,33 +41,35 @@ class MailerService
     public function sendMail($parameters)
     {
         $email = (new TemplatedEmail())
-            ->from(new Address($parameters['from'], isset($parameters['from_name']) ? $parameters['from_name'] : ''));
+            ->from(new Address($parameters['from'], isset($parameters['from_name']) ? $parameters['from_name'] : ''))
+            ->subject($parameters['subject'])
+        ;
 
         // email des recepteurs
         foreach($parameters['to'] as $to) {
-            $email->addTo($to);
+           $email = $email->addTo($to);
         }
 
         // eamil en copie
         if(isset($parameters['cc'])){
             foreach($parameters['cc'] as $cc) {
-                $email->addcc($cc);
+                $email = $email->addcc($cc);
             }
         }
 
 
         // template
-        $email->htmlTemplate('emails/'.$parameters['template']);
+        $email = $email->htmlTemplate('emails/'.$parameters['template']);
 
         // passez les variables
-        $email->context(isset($parameters['template_vars']) ? $parameters['template_vars'] : []);
+        $email = $email->context(isset($parameters['template_vars']) ? $parameters['template_vars'] : []);
 
         try{
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
             // some error prevented the email sending; display an
             // error message or try to resend the message
-             dd($e->getMessage());
+             echo 'erreur : '.$e->getMessage();
         }
 
 

@@ -291,4 +291,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function validateSixDigitCode($sixDigitCode):bool
+    {
+        if($this->sixDigitCode === (int) $sixDigitCode) {
+            return true;
+        }
+        return false;
+    }
 }

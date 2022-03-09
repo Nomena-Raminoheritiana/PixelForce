@@ -10,6 +10,8 @@ use App\Services\MailerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
@@ -23,11 +25,16 @@ class SecurityController extends AbstractController
      * @var MailerService
      */
     private $mailerService;
+    /**
+     * @var UserManager
+     */
+    private $userManager;
 
-    public function __construct(UserRepository $userRepository, MailerService $mailerService)
+    public function __construct(UserRepository $userRepository, MailerService $mailerService, UserManager $userManager)
     {
         $this->userRepository = $userRepository;
         $this->mailerService = $mailerService;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -61,7 +68,7 @@ class SecurityController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function forgetPassword(Request $request)
+    public function forgetPassword(Request $request, MailerInterface $mailer)
     {
         if($email = $request->request->get('email')) {
            return $this->redirectToRoute('app_regenerCode', [
@@ -76,13 +83,14 @@ class SecurityController extends AbstractController
     /**
      * @Route("/forgetPassword/regenerCode", name="app_regenerCode")
      */
-    public function regenerCode(Request $request, UserManager $userManager)
+    public function regenerCode(Request $request)
     {
         if($email = $request->query->get('email')) {
-            $user =  $userManager->generateSixDigitKey($email);
+            $user =  $this->userManager->generateSixDigitKey($email);
             if($user) {
                 // envoie du code par mail
                 $this->mailerService->sendMail([
+                    'subject' => 'Code de vérification',
                     'from' => $_ENV['MAILER_SEND_FROM'],
                     'from_name' => $_ENV['MAILER_SEND_FROM_NAME'],
                     'to' => [
@@ -125,6 +133,37 @@ class SecurityController extends AbstractController
         return $this->render('security/forgetPassword_getCode.html.twig', [
             'user' => $user
         ]);
+    }
+
+    /**
+     * @route("/forgetPassword/validateCode/{id}", name="app_forgetPassword_validateCode")
+     */
+    public function forgetPasswordValidateCode(User $user, Request $request)
+    {
+        if($user->validateSixDigitCode($request->request->get('sixDigitCode'))) {
+            // supprime tout les codes/token
+            if($password = $request->request->get('password')) {
+               $repeatedPass = $request->request->get('repeat_password');
+               $set = $this->userManager->setUserPasword($user, $password, $repeatedPass);
+               if($set) {
+                   $this->userManager->clearAllForgottenPassCode($user);
+                   $this->addFlash('success', 'Mot de passe Changer avec success');
+                   $this->addFlash('info', 'Veuillez vous connecter');
+                   return $this->redirectToRoute('app_login');
+               }
+               $this->addFlash('danger', 'Veuillez bien repéter votre mot de passe');
+
+            }
+
+            return $this->render('security/forgetPassword_changePasswordForm.html.twig', [
+                'sixDigitCode' => $request->request->get('sixDigitCode')
+            ]);
+        }
+
+        $this->addFlash('danger', 'Le code que vous avez entré est invalide');
+       return $this->redirectToRoute('app_forgetPassword_getCode', [
+           'id' => $user->getId()
+       ]);
     }
 
 }
