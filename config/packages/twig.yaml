@@ -1,5 +1,8 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    paths:
+        # pour spécifier le namespace des image. Exemple d'utilisation : email.image('@images/logo.png')
+        '%kernel.project_dir%/assets/images': images
 
 when@test:
     twig:

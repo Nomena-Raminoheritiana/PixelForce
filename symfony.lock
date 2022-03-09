@@ -185,6 +185,9 @@
             "./bin/console"
         ]
     },
+    "symfony/css-selector": {
+        "version": "v5.4.3"
+    },
     "symfony/debug-bundle": {
         "version": "5.4",
         "recipe": {
@@ -538,6 +541,12 @@
     },
     "symfony/yaml": {
         "version": "v5.4.3"
+    },
+    "tijsverkoyen/css-to-inline-styles": {
+        "version": "2.2.4"
+    },
+    "twig/cssinliner-extra": {
+        "version": "v3.3.5"
     },
     "twig/extra-bundle": {
         "version": "v3.3.8"

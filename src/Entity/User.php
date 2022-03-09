@@ -90,6 +90,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $sixDigitCode;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $forgottenPassToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -271,6 +276,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSixDigitCode(?int $sixDigitCode): self
     {
         $this->sixDigitCode = $sixDigitCode;
+
+        return $this;
+    }
+
+    public function getForgottenPassToken(): ?string
+    {
+        return $this->forgottenPassToken;
+    }
+
+    public function setForgottenPassToken(?string $forgottenPassToken): self
+    {
+        $this->forgottenPassToken = $forgottenPassToken;
 
         return $this;
     }

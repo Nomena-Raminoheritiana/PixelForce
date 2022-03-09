@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Services\GenerateKey;
+use App\Services\MailerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +19,15 @@ class SecurityController extends AbstractController
      * @var UserRepository
      */
     private $userRepository;
+    /**
+     * @var MailerService
+     */
+    private $mailerService;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, MailerService $mailerService)
     {
         $this->userRepository = $userRepository;
+        $this->mailerService = $mailerService;
     }
 
     /**
@@ -75,9 +81,22 @@ class SecurityController extends AbstractController
         if($email = $request->query->get('email')) {
             $user =  $userManager->generateSixDigitKey($email);
             if($user) {
+                // envoie du code par mail
+                $this->mailerService->sendMail([
+                    'from' => $_ENV['MAILER_SEND_FROM'],
+                    'from_name' => $_ENV['MAILER_SEND_FROM_NAME'],
+                    'to' => [
+                        $user->getEmail()
+                    ],
+                    'template' => 'security/sixDigitKey.html.twig',
+                    'template_vars' => [
+                        'sixDigitKey' => $user->getSixDigitCode()
+                    ]
+                ]);
                 $this->addFlash('success', 'Un code vous a été envoyé');
                 return $this->redirectToRoute('app_forgetPassword_getCode', [
                     'id' => $user->getId(),
+                    'forgotenPassToken' => $user->getForgottenPassToken()
                 ]);
             }
         }
@@ -93,9 +112,16 @@ class SecurityController extends AbstractController
      * @route("/forgetPassword/getCode/{id}", name="app_forgetPassword_getCode")
      * @param User $user
      * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function forgetPasswordGetCode(User $user, Request $request)
     {
+        $passToken = $request->query->get('forgotenPassToken');
+        if($passToken != $user->getForgottenPassToken()) {
+            $this->addFlash('danger', 'la page que vous demandez n\'est plus valide ');
+            return $this->redirectToRoute('app_login');
+        }
+
         return $this->render('security/forgetPassword_getCode.html.twig', [
             'user' => $user
         ]);
