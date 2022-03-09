@@ -19,7 +19,7 @@ class ObjectManager
      */
     private $encoder;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
+    public function __construct(EntityManager $entityManager, UserPasswordEncoderInterface $encoder)
     {
         $this->entityManager = $entityManager;
         $this->encoder = $encoder;
@@ -41,8 +41,7 @@ class ObjectManager
             }
             $object->$method($value);
         }
-        $this->entityManager->persist($object);
-        $this->entityManager->flush();
+        $this->entityManager->save($object);
         return $object;
     }
 

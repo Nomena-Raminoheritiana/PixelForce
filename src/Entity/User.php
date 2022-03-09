@@ -85,6 +85,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $photo;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $sixDigitCode;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -254,6 +259,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getSixDigitCode(): ?int
+    {
+        return $this->sixDigitCode;
+    }
+
+    public function setSixDigitCode(?int $sixDigitCode): self
+    {
+        $this->sixDigitCode = $sixDigitCode;
 
         return $this;
     }

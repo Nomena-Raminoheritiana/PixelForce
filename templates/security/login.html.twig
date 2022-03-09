@@ -8,40 +8,53 @@
         <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12 d-flex ">
                 <img src="{{asset('build/images/draw2.webp')}}" class="img-fluid my-auto" />
         </div>
-        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12 mt-md-0 mt-3 ">
-            <h1 class="color-main-3 px-md-5  text-sm-center text-md-start text-center" > <span class="text-primary">P</span>i<span class="text-danger">x</span>e<span class="text-warning">l</span>Force</h1>
-            <form method="post" class="px-md-5 py-3">
-                {% if error %}
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
-                <div class="mb-4">
-                    <div class="inner-addon left-addon">
-                        <input type="text" class="form-control"  placeholder="Nom d'utilisateur/Email" value="{{ last_username }}" name="email" id="inputMail_users"  required autofocus>
-                    </div>
-                </div>
-                <div>
-                    <div class="inner-addon left-addon">
-                        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de p@sse" required>
-                    </div>
-                </div>
-                <div class="mb-3  mt-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
-                    <label class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
-                </div>
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12 mt-md-0 mt-3 {{ app.request.get('_route') in ['app_forgetPassword', 'app_forgetPassword_getCode'] ? 'd-flex' : '' }} ">
+            <div class="{{ app.request.get('_route') in ['app_forgetPassword', 'app_forgetPassword_getCode'] ? 'my-auto w-100' : '' }}">
+                <h1 class="color-main-3 px-md-5  text-sm-center text-md-start text-center" > <span class="text-primary">P</span>i<span class="text-danger">x</span>e<span class="text-warning">l</span>Force</h1>
+                {# Affichage des messages flash #}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div id="msgFlash" class="alert alert-{{ label }} msgFlash mx-0 mx-md-5 mb-2 ">
+                            {{ message | raw }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% block form %}
+                    <form method="post" class="px-md-5 py-3">
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
+                        <div class="mb-4">
+                            <div class="inner-addon left-addon">
+                                <input type="text" class="form-control"  placeholder="Nom d'utilisateur/Email" value="{{ last_username }}" name="email" id="inputMail_users"  required autofocus>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="inner-addon left-addon">
+                                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de p@sse" required>
+                            </div>
+                        </div>
+                        <div class="mb-3  mt-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
+                            <label class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
+                        </div>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                <div class=" text-center mt-4">
-                    <button class="btn btn-primary w-100 font-weight-bold" type="submit">
-                        S'authentifier
-                    </button>
-                </div>
-                <div class=" text-center mt-2">
-                    <a class="btn btn-danger w-100 font-weight-bold" type="submit">
-                        Mot de passe oublié ?
-                    </a>
-                </div>
+                        <div class=" text-center mt-4">
+                            <button class="btn btn-primary w-100 font-weight-bold" type="submit">
+                                S'authentifier
+                            </button>
+                        </div>
+                        <div class=" text-center mt-2">
+                            <a class="btn btn-danger w-100 font-weight-bold" href="{{ path('app_forgetPassword') }}">
+                                Mot de passe oublié ?
+                            </a>
+                        </div>
 
-            </form>
+                    </form>
+                {% endblock %}
+            </div>
+
         </div>
     </div>
 </div>
