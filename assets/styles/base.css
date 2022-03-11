@@ -1,0 +1,38 @@
+/** version desktop **/
+@media screen and (min-width: 768px) {
+    nav#menu-haut {
+        height: 8vh !important;
+    }
+    .body-content {
+        height: 92vh !important;
+    }
+    .vh-8 {
+        height: 7.9vh !important;
+    }
+
+
+}
+
+@media screen and (max-width:767px ) {
+    .vh-8 {
+        height: 7.4vh !important;
+    }
+    nav#menu-haut {
+        height: 7.5vh !important;
+    }
+}
+
+/** genéral **/
+#menu-left>li {
+    padding-bottom: 5%
+}
+
+.vh-10 {
+    height: 17vh !important;
+}
+
+.text-bold-grey {
+    color: #767676 !important;
+    font-weight: 500;
+    font-size: 15px;
+}

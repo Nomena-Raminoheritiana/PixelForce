@@ -5,9 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <link rel="stylesheet" href="/assets/fontawesome-free-6.0.0-web/css/all.css" />
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
+            {{ encore_entry_link_tags('base') }}
         {% endblock %}
 
         {% block javascripts %}
@@ -15,121 +17,126 @@
         {% endblock %}
     </head>
     <body style="background:#f9fafb; overflow-y:hidden">
-    <div class="container-fluid">
-        <div class="row flex-nowrap">
-            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white border">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-5 d-none d-sm-inline">Menu</span>
-                    </a>
-                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link align-middle px-0">
-                                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+        <div class="container-fluid">
+            <div class="row flex-nowrap">
+                <div class="col-auto d-block col-md-3 col-xl-2 vh-100  px-0 bg-white border" >
+                    <div class="text-dark vh-100" style="overflow-y:auto; overflow-x: hidden">
+                        <div class="d-flex w-100 vh-8 border-bottom ">
+                            <a href="/" class="m-auto text-decoration-none  text-dark">
+                                <span class="text-center fs-4" >
+                                    <span class="text-primary">P</span>
+                                    <span class="d-none d-md-inline">i</span>
+                                    <span class="text-danger d-none d-md-inline">x</span>
+                                    <span class="d-none d-md-inline">e</span>
+                                    <span class="text-warning d-none d-md-inline">l</span>
+                                    F
+                                    <span class="d-none d-md-inline">o</span>
+                                    <span class="d-none d-md-inline">r</span>
+                                    <span class="d-none d-md-inline">c</span>
+                                    <span class="d-none d-md-inline">e</span>
+                                </span>
                             </a>
-                        </li>
-                        <li>
-                            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span> </a>
-                            <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-                                <li class="w-100">
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 1 </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 2 </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Orders</span></a>
-                        </li>
-                        <li>
-                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                                <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>
-                            <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
-                                <li class="w-100">
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 1</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Item</span> 2</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Products</span> </a>
-                            <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
-                                <li class="w-100">
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 1</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 2</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 3</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 4</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link px-0 align-middle">
-                                <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Customers</span> </a>
-                        </li>
-                    </ul>
-                    <hr>
-                    <div class="dropdown pb-4">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                            <span class="d-none d-sm-inline mx-1">loser</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                            <li><a class="dropdown-item" href="#">New project...</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Sign out</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col px-0">
-                <nav class="navbar navbar-expand-lg navbar-light bg-white v border border-start-0">
-                    <div class="container-fluid">
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <a class="navbar-brand" href="#">Navbar</a>
-                        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        </div>
+                        <div class="px-3 ps-sm-4 pe-sm-5 ps-md-4 pe-md-4 pt-4">
+                            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu-left">
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                                    <a href="#" class="nav-link align-middle px-0 text-bold-grey">
+                                        <i class="fa fa-home text-danger"></i> <span class="ms-3 d-none d-sm-inline">Home</span>
+                                    </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Link</a>
+                                <li>
+                                    <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle text-bold-grey">
+                                        <i class="fa fa-dashboard text-info"></i> <span class="ms-3 d-none d-sm-inline">Dashboard</span>
+                                    </a>
+                                    <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu1" data-bs-parent="#menu">
+                                        <li class="w-100">
+                                            <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                                <li>
+                                    <a href="#" class="nav-link px-0  text-bold-grey align-middle">
+                                        <i class="fa-solid fa-folder-tree text-success"></i> <span class="ms-3 d-none d-sm-inline">Orders</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle text-bold-grey">
+                                        <i class="fa-brands fa-bootstrap indigo"></i> <span class="ms-3 d-none d-sm-inline">Bootstrap</span>
+                                    </a>
+                                    <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu2" data-bs-parent="#menu">
+                                        <li class="w-100">
+                                            <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle text-bold-grey">
+                                        <i class="fa-brands fa-product-hunt text-warning"></i>
+                                        <span class="ms-3 d-none d-sm-inline">Products</span>
+                                    </a>
+                                    <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu3" data-bs-parent="#menu">
+                                        <li class="w-100">
+                                            <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#" class="nav-link px-0 align-middle text-bold-grey">
+                                        <i class="fa-solid fa-people-arrows-left-right" ></i> <span class="ms-3 d-none d-sm-inline">Customers</span>
+                                    </a>
                                 </li>
                             </ul>
-                            <form class="d-flex">
-                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                                <button class="btn btn-outline-success" type="submit">Search</button>
-                            </form>
                         </div>
                     </div>
-                </nav>
-                <div class="pb-5 vh-100" style="overflow-y:scroll;">
-                   
                 </div>
+                <div class="col px-0">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-white v border border-start-0" id="menu-haut">
+                        <div class="container-fluid d-flex">
+                            <div>
+                                <a href="#" class="text-dark">
+                                    <i class="fa-solid fa-bars"></i>
+                                </a>
+                            </div>
+                            <form class="d-md-flex ms-3 d-none ">
+                                <input class="form-control me-2" type="search" placeholder="Recherche" aria-label="Search">
+                                <button class="btn btn-outline-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </form>
+                            <div class="d-flex d-md-none ms-3">
+                                <button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </div>
+                            <div class="dropstart ms-auto">
+                                <a href="#" class="d-flex m-auto align-items-center text-dark text-decoration-none dropdown-toggle " id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
+                                    <span class="d-none d-sm-inline mx-1 text-muted bold">{{app.user.prenom}}</span>
+                                </a>
+                                <ul class="dropdown-menu  dropdown-menu-dark text-small shadow">
+                                    <li><a class="dropdown-item" href="#">New project...</a></li>
+                                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{path('app_logout')}}">Se deconnécter</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                    <div class="pb-5 body-content" style="overflow-y:scroll; overflow-x: hidden">
+                       {% block body %}
+                        {% endblock %}
+                    </div>
 
+                </div>
             </div>
         </div>
-    </div>
-
     </body>
 </html>

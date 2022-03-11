@@ -36,7 +36,7 @@
                 {% block form %}
                     <form method="post" class="px-md-5 py-3">
                         {% if error %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            <div class="alert alert-danger">Email ou mot de passe invalide</div>
                         {% endif %}
                         <div class="mb-4">
                             <div class="inner-addon left-addon">
