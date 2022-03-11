@@ -1,23 +1,15 @@
 /** version desktop **/
 @media screen and (min-width: 768px) {
-    nav#menu-haut {
+    nav#menu-haut,.vh-8 {
         height: 8vh !important;
     }
     .body-content {
         height: 92vh !important;
     }
-    .vh-8 {
-        height: 7.9vh !important;
-    }
-
-
 }
 
 @media screen and (max-width:767px ) {
-    .vh-8 {
-        height: 7.4vh !important;
-    }
-    nav#menu-haut {
+    nav#menu-haut,.vh-8 {
         height: 7.5vh !important;
     }
 }
