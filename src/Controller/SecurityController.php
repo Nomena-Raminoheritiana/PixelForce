@@ -75,7 +75,7 @@ class SecurityController extends AbstractController
                'email' => $email,
            ]);
         }
-        return $this->render('security/forgetPassword.html.twig', [
+        return $this->render('security/forgetPassword/forgetPassword.html.twig', [
             'error' => $request->query->get('error')
         ]);
     }
@@ -130,7 +130,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('security/forgetPassword_getCode.html.twig', [
+        return $this->render('security/forgetPassword/forgetPassword_getCode.html.twig', [
             'user' => $user
         ]);
     }
@@ -155,7 +155,7 @@ class SecurityController extends AbstractController
 
             }
 
-            return $this->render('security/forgetPassword_changePasswordForm.html.twig', [
+            return $this->render('security/forgetPassword/forgetPassword_changePasswordForm.html.twig', [
                 'sixDigitCode' => $request->request->get('sixDigitCode')
             ]);
         }

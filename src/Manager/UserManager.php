@@ -69,9 +69,9 @@ class UserManager
         $this->entityManager->save($user);
     }
 
-    public function setUserPasword(User $user,  $password,  $repeatedPass)
+    public function setUserPasword(User $user,  $password,  $repeatedPass, $verifie = true)
     {
-        if($password === $repeatedPass) {
+        if($password === $repeatedPass || !$verifie) {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
             $user->setPassword($hashedPassword);
             $this->entityManager->save($user);

@@ -1,0 +1,57 @@
+<ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu-left">
+    <li>
+        <a href="{{ path('app_dashboard') }}" class="nav-link px-0 align-middle text-bold-grey">
+            <i class="fa fa-dashboard text-info"></i> <span class="ms-3 d-none d-sm-inline">Tableau de bord</span>
+        </a>
+{#        <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu1" data-bs-parent="#menu">#}
+{#            <li class="w-100">#}
+{#                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>#}
+{#            </li>#}
+{#            <li>#}
+{#                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>#}
+{#            </li>#}
+{#        </ul>#}
+    </li>
+    <li class="nav-item">
+        <a href="{{ path('user_list') }}" class="nav-link align-middle px-0 text-bold-grey">
+            <i class="fa-solid fa-users text-warning"></i> <span class="ms-3 d-none d-sm-inline">Utilisateurs</span>
+        </a>
+    </li>
+    <li>
+        <a href="#" class="nav-link px-0  text-bold-grey align-middle">
+            <i class="fa-solid fa-folder-tree text-success"></i> <span class="ms-3 d-none d-sm-inline">Orders</span>
+        </a>
+    </li>
+    <li>
+        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle text-bold-grey">
+            <i class="fa-brands fa-bootstrap indigo"></i> <span class="ms-3 d-none d-sm-inline">Bootstrap</span>
+        </a>
+        <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu2" data-bs-parent="#menu">
+            <li class="w-100">
+                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle text-bold-grey">
+            <i class="fa-brands fa-product-hunt text-warning"></i>
+            <span class="ms-3 d-none d-sm-inline">Products</span>
+        </a>
+        <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu3" data-bs-parent="#menu">
+            <li class="w-100">
+                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a href="#" class="nav-link px-0 align-middle text-bold-grey">
+            <i class="fa-solid fa-people-arrows-left-right" ></i> <span class="ms-3 d-none d-sm-inline">Customers</span>
+        </a>
+    </li>
+</ul>

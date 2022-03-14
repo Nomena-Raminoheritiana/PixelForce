@@ -30,6 +30,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('form_addAgent', './assets/js/form_addAgent.js')
 
     .addStyleEntry('base', './assets/styles/base.css')
 

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block title %} Liste des utilisateurs {% endblock %}
+{% block body %}
+    <div class="row p-2 p-lg-4">
+        <div class="col-12">
+            <div class="row mb-4">
+                <div class="col-6">
+                    <h3><i class="fa fa-book-atlas"></i> Liste des agents</h3>
+                </div>
+                <div class="col-6 text-end">
+                    <a href="{{ path('user_addAgent') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter des Agents</a>
+                </div>
+            </div>
+
+            <div class="table-responsive table-responsive-lg">
+                <table class="table">
+                    <thead class="text-bold-grey">
+                    <tr>
+                        <th>Email</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Adresse</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr class="text-dark ">
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.nom }} </td>
+                            <td>{{ user.prenom }}</td>
+                            <td>{{ user.adresse }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+
+        </div>
+    </div>
+{% endblock %}
