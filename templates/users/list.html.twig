@@ -3,17 +3,17 @@
 {% block body %}
     <div class="row p-2 p-lg-4">
         <div class="col-12">
-            <div class="row mb-4">
-                <div class="col-6">
-                    <h3><i class="fa fa-book-atlas"></i> Liste des agents</h3>
+            <div class="row mb-4 mt-3 mt-m-0">
+                <div class="col-12 col-md-6 order-2 order-md-1">
+                    <h4><i class="fa fa-book-atlas"></i> Liste des agents</h4>
                 </div>
-                <div class="col-6 text-end">
+                <div class="col-12 col-md-6 text-sm-start text-md-end order-1 order-md-1 mb-3 mb-md-0">
                     <a href="{{ path('user_addAgent') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter des Agents</a>
                 </div>
             </div>
 
-            <div class="table-responsive table-responsive-lg">
-                <table class="table">
+            <div class="bg-white border p-4">
+                <table class="table  table-borderless ">
                     <thead class="text-bold-grey">
                     <tr>
                         <th>Email</th>
@@ -24,14 +24,31 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for user in users %}
-                        <tr class="text-dark ">
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.nom }} </td>
-                            <td>{{ user.prenom }}</td>
-                            <td>{{ user.adresse }}</td>
-                            <td></td>
+                    {% for user in relationCoachAgent %}
+                        {% if user.agent.active %}
+                            <tr class="text-muted">
+                                <td>{{ user.agent.email }}</td>
+                                <td>{{ user.agent.nom }} </td>
+                                <td>{{ user.agent.prenom }}</td>
+                                <td>{{ user.agent.adresse }}</td>
+                                <td></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center pt-5 text-muted">
+                                    <h3><i class="fa-solid fa-hourglass-empty"></i></h3>
+                                    Aucun agent n'est présent
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% else  %}
+                        <tr>
+                            <td colspan="5" class="text-center pt-5 text-muted">
+                                <h3><i class="fa-solid fa-hourglass-empty"></i></h3>
+                                Aucun agent n'est présent
+                            </td>
                         </tr>
+
                     {% endfor %}
                     </tbody>
                 </table>

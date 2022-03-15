@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Entity\CoachAgent;
 use App\Entity\User;
 use App\Form\ResetPasswordType;
 use App\Form\UserType;
@@ -11,6 +12,8 @@ use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
+use App\Services\DirectoryManagement;
+use App\Services\FileUploader;
 use App\Services\MailerService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,14 +44,24 @@ class InscriptionController extends AbstractController
      * @var ObjectManager
      */
     private $objectManager;
+    /**
+     * @var FileUploader
+     */
+    private $fileUploader;
+    /**
+     * @var DirectoryManagement
+     */
+    private $directoryManagement;
 
-    public function __construct(EntityManager $entityManager, UserRepository $userRepository, UserManager $userManager, MailerService $mailerService, ObjectManager $objectManager)
+    public function __construct(FileUploader $fileUploader, DirectoryManagement $directoryManagement, EntityManager $entityManager, UserRepository $userRepository, UserManager $userManager, MailerService $mailerService, ObjectManager $objectManager)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->userManager = $userManager;
         $this->mailerService = $mailerService;
         $this->objectManager = $objectManager;
+        $this->fileUploader = $fileUploader;
+        $this->directoryManagement = $directoryManagement;
     }
 
     /**
@@ -58,34 +71,13 @@ class InscriptionController extends AbstractController
     {
         if($emails = $request->request->get('emails')) {
             $listDuplicatedMail = [];
-            $emailEmpty = true;
+
             foreach($emails as $email) {
                 /** @var ConstraintViolationList $error */
                 $error = null;
-                if(!empty($email)) {
-                    $emailEmpty = false;
-                    $error = $this->objectManager->createObject(User::class, [
-                        'email' => $email,
-                        'password' => base64_encode('_dfdkf12132_1321df')
-                    ], true);
-
-                    if(($error instanceof ConstraintViolationList && $error->count() === 0 )|| $error instanceof User) {
-                        $this->mailerService->sendMail([
-                            'subject' => 'Code de vérification',
-                            'from' => $_ENV['MAILER_SEND_FROM'],
-                            'from_name' => $_ENV['MAILER_SEND_FROM_NAME'],
-                            'to' => [
-                                $email
-                            ],
-                            'template' => 'inscription/lien_page_inscription.html.twig',
-                            'template_vars' => [
-                                'encodedMail' => base64_encode($email)
-                            ]
-                        ]);
-                    } else {
-                        array_push($listDuplicatedMail, $email);
-                    }
-
+                $error = $this->userManager->inscrire($email, $request->request->get('coach'));
+                if($error && !empty($email)) {
+                    $listDuplicatedMail[] = $email;
                 }
             }
 
@@ -93,8 +85,7 @@ class InscriptionController extends AbstractController
                 $this->addFlash('danger', implode(', ',$listDuplicatedMail).' est/sont déjà insrit à la plateforme');
                 return $this->redirectToRoute('user_addAgent');
             }
-
-            if($emailEmpty) {
+            if(count($emails) === 1 && empty($emails[0])) {
                 $this->addFlash('danger', 'Veuillez entrer au moins un adresse email');
                 return $this->redirectToRoute('user_addAgent');
             }
@@ -117,12 +108,18 @@ class InscriptionController extends AbstractController
             $form->handleRequest($request);
 
             if($form->isSubmitted() && $form->isValid()) {
+                // role
+                $user->setRoles([User::ROLE_AGENT]);
+                // upload profil
+                $fileName = $this->fileUploader->upload($request->files->get('user') ['photo'], $this->directoryManagement->getMediaFolder_User());
+                $user->setPhoto($fileName);
                 $this->entityManager->save($user);
                 $user = $this->userManager->generateSixDigitKey($user->getEmail());
                 $this->addFlash('success', 'Informations enregistrés avec succès');
+
                 return $this->redirectToRoute('inscription_init_password', [
                     'id' => $user->getId(),
-                    'sixDigitCode' => $user->getSixDigitCode()
+                    'forgottenPassToken' => $user->getForgottenPassToken()
                 ]);
 
             }
@@ -141,12 +138,13 @@ class InscriptionController extends AbstractController
      */
     public function initialisationPassword(Request $request, User $user)
     {
-        if($user->validateSixDigitCode($request->request->get('sixDigitCode'))) {
-            $user = $this->userManager->generateSixDigitKey($user->getEmail());
-            $form = $this->createForm(ResetPasswordType::class, new User());
+        if($user->validateForgottenPassToken($request->query->get('forgottenPassToken'))) {
+            $form = $this->createForm(ResetPasswordType::class);
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->userManager->setUserPasword($user, $request->request->get('reset_password')['password']['first'], '');
+                $user->setActive(true);
+                $this->userManager->setUserPasword($user, $request->request->get('reset_password')['password']['first'], '', false);
+                $this->userManager->generateSixDigitKey($user->getEmail());
                 $this->addFlash('success', 'Votre mot de passe est enregistré avec succès');
                 $this->addFlash('info', 'Veuillez vous connecter');
                 return $this->redirectToRoute('app_login');

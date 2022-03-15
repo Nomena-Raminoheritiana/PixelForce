@@ -12,6 +12,7 @@
         <div class="row mb-2 mail-container">
             <div class="col-11">
                 <input type="email" class="form-control " name="emails[]" placeholder="Entrer un adresse email" />
+                <input type="hidden" name="coach" value="{{ app.user.id }}" />
             </div>
             <div class="col-1">
                 <a href="#" class="btn btn-success mt-2 mt-sm-0 add-mail"><i class="fa fa-plus"></i></a>

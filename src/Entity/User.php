@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -54,31 +57,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Vous devez entrer votre nom")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Vous devez entrer votre prénom")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\NotNull(message="Votre date de naissance est obligatoire")
      */
     private $dateNaissance;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Vous devez avoir une adresse")
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Veuillez entrer votre Numéro de sécurité")
      */
     private $numeroSecurite;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="On a besoin de votre RIB")
      */
     private $rib;
 
@@ -96,6 +105,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $forgottenPassToken;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CoachAgent::class, mappedBy="coach")
+     */
+    private $coachAgents;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $active;
+
+    public function __construct()
+    {
+        $this->coachAgents = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -263,9 +287,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->photo;
     }
 
-    public function setPhoto(?string $photo): self
+    public function setPhoto(?string $photo = null, $setNull = false): self
     {
-        $this->photo = $photo;
+        $this->photo = $photo ? $photo : $this->photo;
+        if($setNull) {
+            $this->photo = null;
+        }
 
         return $this;
     }
@@ -300,5 +327,55 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             return true;
         }
         return false;
+    }
+
+    public function validateForgottenPassToken($forgotten_pass)
+    {
+        if($this->forgottenPassToken ===  $forgotten_pass) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return Collection<int, CoachAgent>
+     */
+    public function getCoachAgents(): Collection
+    {
+        return $this->coachAgents;
+    }
+
+    public function addCoachAgent(CoachAgent $coachAgent): self
+    {
+        if (!$this->coachAgents->contains($coachAgent)) {
+            $this->coachAgents[] = $coachAgent;
+            $coachAgent->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoachAgent(CoachAgent $coachAgent): self
+    {
+        if ($this->coachAgents->removeElement($coachAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($coachAgent->getCoach() === $this) {
+                $coachAgent->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(?bool $active): self
+    {
+        $this->active = $active;
+
+        return $this;
     }
 }

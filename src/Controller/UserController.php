@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Repository\CoachAgentRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,10 +15,15 @@ class UserController extends AbstractController
      * @var UserRepository
      */
     private $userRepository;
+    /**
+     * @var CoachAgentRepository
+     */
+    private $coachAgentRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, CoachAgentRepository $coachAgentRepository)
     {
         $this->userRepository = $userRepository;
+        $this->coachAgentRepository = $coachAgentRepository;
     }
 
     /**
@@ -29,10 +35,10 @@ class UserController extends AbstractController
      */
     public function list()
     {
-        $users = $this->userRepository->findAll();
+        $relationCoachAgent = $this->coachAgentRepository->findBy(['coach'=> $this->getUser()]);
 
         return $this->render('users/list.html.twig', [
-            'users' => $users
+            'relationCoachAgent' => $relationCoachAgent
         ]);
     }
 

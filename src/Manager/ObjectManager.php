@@ -39,9 +39,10 @@ class ObjectManager
      * @param bool $verifier
      * @return mixed
      */
-    public function createObject(String $className, Array $arrayData = [], bool $verifier = false)
+    public function createObject(String $className, Array $arrayData = [], bool $verifier = false, $champs = [])
     {
         $errors = null;
+        $capturedError = false;
         $object = new $className();
         foreach($arrayData as $field => $value) {
             $method = 'set'.ucfirst($field);
@@ -53,9 +54,17 @@ class ObjectManager
         if($verifier) {
             /** @var ConstraintViolationList $errors */
             $errors = $this->validator->validate($object);
+
+            foreach($champs as $champ) {
+                for($i = 0; $i < $errors->count(); $i++) {
+                    if($champ === $errors->get($i)->getPropertyPath()) {
+                        $capturedError = true;
+                    }
+                }
+            }
         }
 
-        if($errors->count() > 0) {
+        if($errors instanceof ConstraintViolationList && $errors->count() > 0 && $capturedError) {
             return $errors;
         }
         $this->entityManager->save($object);
