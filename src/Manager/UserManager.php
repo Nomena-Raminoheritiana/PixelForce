@@ -95,23 +95,26 @@ class UserManager
         return null;
     }
 
-    public function inscrire($email, $coach)
+    public function inscrire($email, $coach, $roles = [User::ROLE_CLIENT])
     {
         if(!empty($email)) {
             // création de l'agent
             $error = $this->objectManager->createObject(User::class, [
                 'email' => $email,
                 'password' => base64_encode('_dfdkf12132_1321df'),
-                'active' => false
-            ], true);
+                'active' => false,
+                'roles' => $roles
+            ], true, ['email']);
 
             if(($error instanceof ConstraintViolationList && $error->count() === 0 )|| $error instanceof User) {
 
                 // création du lien entre agent et coach
-                $this->objectManager->createObject(CoachAgent::class, [
-                    'coach' => $this->userRepository->findOneBy(['id' => $coach]),
-                    'agent' => $error
-                ]);
+                if($coach){
+                    $this->objectManager->createObject(CoachAgent::class, [
+                        'coach' => $this->userRepository->findOneBy(['id' => $coach]),
+                        'agent' => $error
+                    ]);
+                }
 
                 $this->mailerService->sendMail([
                     'subject' => 'Code de vérification',
@@ -122,7 +125,7 @@ class UserManager
                     ],
                     'template' => 'inscription/lien_page_inscription.html.twig',
                     'template_vars' => [
-                        'encodedMail' => base64_encode($email)
+                        'encodedMail' => base64_encode($email),
                     ]
                 ]);
                 return false;

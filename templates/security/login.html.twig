@@ -63,12 +63,22 @@
                                 S'authentifier
                             </button>
                         </div>
-                        <div class=" text-center mt-2">
-                            <a class="btn btn-danger w-100 font-weight-bold" href="{{ path('app_forgetPassword') }}">
-                                Mot de passe oublié ?
-                            </a>
+                        <div class="row mt-2">
+                            <div class="col-12 col-xl-6 pe-xl-0">
+                                <div class=" text-center">
+                                    <a class="btn btn-success w-100 font-weight-bold" href="{{ path('user_addClient') }}">
+                                        S'inscrire
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-6 pt-2 pt-xl-0">
+                                <div class=" text-center">
+                                    <a class="btn btn-danger w-100 font-weight-bold" href="{{ path('app_forgetPassword') }}">
+                                        Mot de passe oublié ?
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-
                     </form>
                 {% endblock %}
             </div>

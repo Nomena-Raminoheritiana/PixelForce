@@ -3,20 +3,12 @@
 {% block title %}
     Ajout d'utilisateur
 {% endblock %}
- {% block javascripts %}
-     {{ parent() }}
-     {{ encore_entry_script_tags('form_addAgent') }}
- {% endblock %}
 {% block form %}
     <form action="{{ path('inscription_send_mail') }}" method="post">
         <div class="row mb-2 mail-container">
-            <div class="col-11">
+            <div class="col-12">
                 <input type="email" class="form-control " name="emails[]" placeholder="Entrer un adresse email" />
-                <input type="hidden" name="coach" value="{{ app.user.id }}" />
                 <input type="hidden" class="form-control " name="roles" value="{{ role }}" />
-            </div>
-            <div class="col-1">
-                <a href="#" class="btn btn-success mt-2 mt-sm-0 add-mail"><i class="fa fa-plus"></i></a>
             </div>
         </div>
         <button class="btn btn-primary" type="submit">Envoyer le lien d'inscription</button>

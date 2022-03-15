@@ -4,9 +4,12 @@
 namespace App\Controller;
 
 
+use App\Entity\User;
 use App\Repository\CoachAgentRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -44,9 +47,14 @@ class UserController extends AbstractController
 
     /**
      * @Route("/user/addAgent", name="user_addAgent")
+     * @Route("/user/addClient", name="user_addClient")
      */
-    public function addAgent()
+    public function addAgent(Request $request)
     {
-        return $this->render('users/form_addAgent.html.twig');
+        switch($request->attributes->get('_route')){
+            case 'user_addAgent': return $this->render('users/form_addAgent.html.twig', ['role' => User::ROLE_AGENT]); break;
+            case 'user_addClient': return $this->render('users/form_addClient.html.twig', ['role' => User::ROLE_CLIENT]);break;
+        }
+        return new Response(null, 404);
     }
 }

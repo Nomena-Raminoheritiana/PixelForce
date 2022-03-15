@@ -75,7 +75,11 @@ class InscriptionController extends AbstractController
             foreach($emails as $email) {
                 /** @var ConstraintViolationList $error */
                 $error = null;
-                $error = $this->userManager->inscrire($email, $request->request->get('coach'));
+                $error = $this->userManager->inscrire(
+                    $email,
+                    $request->request->get('coach'),
+                    [$request->request->get('roles')]
+                    );
                 if($error && !empty($email)) {
                     $listDuplicatedMail[] = $email;
                 }
@@ -108,8 +112,6 @@ class InscriptionController extends AbstractController
             $form->handleRequest($request);
 
             if($form->isSubmitted() && $form->isValid()) {
-                // role
-                $user->setRoles([User::ROLE_AGENT]);
                 // upload profil
                 $fileName = $this->fileUploader->upload($request->files->get('user') ['photo'], $this->directoryManagement->getMediaFolder_User());
                 $user->setPhoto($fileName);
