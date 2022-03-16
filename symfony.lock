@@ -1,4 +1,7 @@
 {
+    "cocur/slugify": {
+        "version": "v4.1.0"
+    },
     "doctrine/annotations": {
         "version": "1.13",
         "recipe": {
@@ -94,9 +97,6 @@
     },
     "egulias/email-validator": {
         "version": "3.1.2"
-    },
-    "firebase/php-jwt": {
-        "version": "v6.0.0"
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.7"

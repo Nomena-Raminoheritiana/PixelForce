@@ -13,6 +13,7 @@
         {% endblock %}
 
         {% block javascripts %}
+            <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
@@ -36,9 +37,10 @@
                        {% block body %}
                         {% endblock %}
                     </div>
-
                 </div>
             </div>
         </div>
+        {#   appels des composants/modals  #}
+     {% include 'live/video/liveVideoRapide.html.twig' %}
     </body>
 </html>
