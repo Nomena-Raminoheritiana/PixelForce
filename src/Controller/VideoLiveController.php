@@ -20,8 +20,17 @@ class VideoLiveController extends AbstractController
      * @Route("/liveVideo/with/{encodedIdUser}", name="live_videoRapide")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function liveRapide(Request $request, $encodedIsUser)
+    public function liveRapide(Request $request)
     {
-        return $this->render('live/video/liveVideoRapide.html.twig');
+        if($this->getUser()->getId() === (int) $request->query->get('id')) {
+            return $this->json([
+                'idLive' => $request->query->get('idLive'),
+            ]);
+        }
+
+        return $this->json([
+           'error' => true
+        ]);
+
     }
 }

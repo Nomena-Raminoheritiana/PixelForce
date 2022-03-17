@@ -9,6 +9,8 @@
 // You can specify which plugins you need
 
 import './styles/app.scss';
+import jquery from 'jquery';
+global.$ = global.jQuery = $;
 import { Tooltip, Toast, Popover, Collapse, Modal } from 'bootstrap';
 
 // start the Stimulus application
