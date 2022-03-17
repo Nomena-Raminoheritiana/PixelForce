@@ -21,6 +21,25 @@ class CoachAgentRepository extends ServiceEntityRepository
         parent::__construct($registry, CoachAgent::class);
     }
 
+
+    /**
+     * @param $id
+     * @return CoachAgent[]
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findCoachOrAgent($id)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.coach = :id')
+            ->orWhere('c.agent = :id')
+            ->setParameter('id', $id)
+            ->orderBy('c.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     /**
      * @throws ORMException
      * @throws OptimisticLockException

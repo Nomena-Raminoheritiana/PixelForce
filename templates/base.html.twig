@@ -13,6 +13,8 @@
         {% endblock %}
 
         {% block javascripts %}
+            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+            <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
             <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
             {{ encore_entry_script_tags('app') }}
         {% endblock %}

@@ -116,9 +116,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $active;
 
+    /**
+     * @ORM\OneToMany(targetEntity=LiveChatVideo::class, mappedBy="userA")
+     */
+    private $liveChatVideosFromUserA;
+    /**
+     * @ORM\OneToMany(targetEntity=LiveChatVideo::class, mappedBy="userB")
+     */
+    private $liveChatVideosFromUserB;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
+        $this->liveChatVideosFromUserA = new ArrayCollection();
+        $this->liveChatVideosFromUserB = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -375,6 +386,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActive(?bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LiveChatVideo>
+     */
+    public function getLiveChatVideosFromA(): Collection
+    {
+        return $this->liveChatVideosFromUserA;
+    }
+
+    public function addLiveChatVideoFromA(LiveChatVideo $liveChatVideo): self
+    {
+        if (!$this->liveChatVideosFromUserA->contains($liveChatVideo)) {
+            $this->liveChatVideosFromUserA[] = $liveChatVideo;
+            $liveChatVideo->setUserA($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiveChatVideoFromA(LiveChatVideo $liveChatVideo): self
+    {
+        if ($this->liveChatVideosFromUserA->removeElement($liveChatVideo)) {
+            // set the owning side to null (unless already changed)
+            if ($liveChatVideo->getUserA() === $this) {
+                $liveChatVideo->setUserA(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LiveChatVideo>
+     */
+    public function getLiveChatVideosFromB(): Collection
+    {
+        return $this->liveChatVideosFromUserB;
+    }
+
+    public function addLiveChatVideoFromB(LiveChatVideo $liveChatVideo): self
+    {
+        if (!$this->liveChatVideosFromUserB->contains($liveChatVideo)) {
+            $this->liveChatVideosFromUserB[] = $liveChatVideo;
+            $liveChatVideo->setUserB($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiveChatVideoFromB(LiveChatVideo $liveChatVideo): self
+    {
+        if ($this->liveChatVideosFromUserB->removeElement($liveChatVideo)) {
+            // set the owning side to null (unless already changed)
+            if ($liveChatVideo->getUserB() === $this) {
+                $liveChatVideo->setUserB(null);
+            }
+        }
 
         return $this;
     }

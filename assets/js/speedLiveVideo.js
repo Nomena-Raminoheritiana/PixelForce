@@ -1,4 +1,5 @@
 import { Modal } from 'bootstrap';
+import axios from 'axios';
 $(document).ready(function() {
 
     // fonction pour lancer une instance liveVideo et de retourner l'id de l'appel
@@ -31,7 +32,9 @@ $(document).ready(function() {
         e.preventDefault();
         e.stopPropagation();
         // l'utilisateur appelé
-        const UserRecepteur = $(this).attr('id');
+        const userB = $(this).attr('id-recepteur');
+        // l'utilisateur demandeur
+        const userA = $(this).attr('id-envoyeur');
 
         // suppression du live antérieur
         $('#live_video').html('');
@@ -45,6 +48,19 @@ $(document).ready(function() {
             width:'100%',
             height:'100%'
         })
+
+        // appel de l'interlocuteur
+        const params = new URLSearchParams();
+        params.append('userA', userA);
+        params.append('userB', userB);
+        params.append('code', idVideo);
+        axios.post(Routing.generate('live_videoRapide'), params)
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 
 
     })
