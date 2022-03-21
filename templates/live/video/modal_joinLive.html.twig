@@ -1,0 +1,24 @@
+<!-- Modal -->
+<div class="modal fade" id="ModalJoinCall" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-video text-success"></i> Appel entrant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for live in lives %}
+                    <div class="row">
+                        <div class="col-6">
+                            {{ live.userA.nom }} {{ live.userA.prenom }}
+                        </div>
+                        <div class="col-6 text-end">
+                            <button class="btn btn-success join-live" id-live="{{ live.code }}"><i class="fa-solid fa-video"></i> répondre</button>
+                            <button class="btn btn-danger remove-live" id-live="{{ live.code }}"><i class="fa-solid fa-video"></i> refuser</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

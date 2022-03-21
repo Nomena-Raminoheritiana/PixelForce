@@ -36,6 +36,14 @@ class EntityManager
         $this->em->flush();
     }
 
+    public function removeMultiple(array $objects)
+    {
+        foreach ($objects as $object) {
+            $this->em->remove($object);
+        }
+        $this->em->flush();
+    }
+
     public function __call($name, $arguments)
     {
         return call_user_func_array([$this->em, $name], $arguments);

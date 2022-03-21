@@ -37,24 +37,22 @@ class LiveVideo
         $this->entityManager = $entityManager;
     }
 
-    public function createOrRemoveLive($userA, $userB, $code = null)
+    public function create($userA, $userB, $code = null, $is_speedLive = false, \DateTimeInterface $dateDebutLive = null, $theme = '', $description = '')
     {
-        $live = $this->liveChatVideoRepository->findOneBy(['userA' => $userA, 'userB' => $userB]);
-        if($live) {
+        $findParam = $is_speedLive ? ['isSpeedLive' => true] : [];
+        $live = $this->liveChatVideoRepository->findOneBy(array_merge(['userA' => $userA, 'userB' => $userB], $findParam));
+        // on supprime le live si un appel rapide ou direct existe déjà
+        if($live && $is_speedLive) {
             $this->entityManager->remove($live);
         }
-        $live = $this->objectManager->createObject(LiveChatVideo::class, [
-            'userA' => $userA,
-            'userB'  => $userB
-        ]);
+        $live = $this->objectManager->createObject(LiveChatVideo::class, array_merge([
+            'userA' => $this->userRepository->findOneBy(['id' => $userA]),
+            'userB'  => $this->userRepository->findOneBy(['id' => $userB]),
+            'code' => $code,
+            'dateDebutLive' => $dateDebutLive,
+            'theme' => $theme,
+            'description' => $description
+        ], $findParam));
         return $live;
     }
-
-    public function getAllLive(?\Symfony\Component\Security\Core\User\UserInterface $user)
-    {
-        $lives = $this->liveChatVideoRepository->findBy(['userB' => $user]);
-
-        return $lives;
-    }
-
 }
