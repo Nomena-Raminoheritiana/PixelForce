@@ -15,13 +15,22 @@ MAILER_DSN=smtp://localhost:1025
 MAILER_SEND_FROM=admin@pixelForce.fr
 MAILER_SEND_FROM_NAME=PixelForce
 
-#Fixtures
-Il faudra mettre la valeur de EXECUTE_COMMAND dans .env.local à true
-et le nom de la maison d'edition en cours dans COMMAND_MANAGER. Par exemple EXECUTE_COMMAND = edito
-Lancer la commande: 
-```php bin/console d:f:l```
-# zoom
-apiKey : C5nboPLUTfaxopXDGu7rFQ
-secretApiKey : vtFA9DdSudcre68Bu2XWsp8fMNlBCTTyw8IN
-Jeton : eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJvaXFvVVNMVVRacTc2OVY3WFZteXJnIn0.diKFWe1HVRm4nOE2077xvDDxWopxLNowRaWiNlTh70c
-Jeton de vérification : 94mnMT8qQa6sluP4b15rXg
+# installer les dépendances symfony
+composer install
+
+# installer les dépendances assets
+yarn install
+
+# buil yarn
+yarn run dev
+
+#lancer messenger
+php bin/console messenger:consume async -vv
+
+#lancer maildev
+maildev --hide-extensions STARTTLS
+
+#probleme du slash div dans le compilateur js
+npm install -g sass-migrator
+sass-migrator division **/*.scss
+
