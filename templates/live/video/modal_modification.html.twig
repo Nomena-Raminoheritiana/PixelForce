@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal fade" id="ModalEditLive{{ live.id }}" tabindex="-1" aria-labelledby="ModalEditLive" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-video text-success"></i> Planification Live</h5>
@@ -8,17 +8,32 @@
             </div>
             <div class="modal-body">
                 <form action="{{ path('live_planifier') }}" method="post">
-                    <div class="mb-3">
-                        <input type="datetime-local" class="form-control" min="{{ live.dateDebutLive|date('Y-m-d h:i:s') }}" name="dateDebutLive" required />
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" name="theme" value="{{ live.theme }}" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <textarea name="description" class="form-control" required="false" rows="10">{{ live.description }}</textarea>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    <div class="row">
+                        <div class="col-6">
+                                <div class="mb-3">
+                                    <input type="datetime-local" class="form-control" min="{{ live.dateDebutLive|date('Y-m-d h:i:s') }}" name="dateDebutLive" required />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" name="theme" value="{{ live.theme }}" class="form-control" required />
+                                </div>
+                                <div class="mb-3">
+                                    <textarea name="description" class="form-control" required="false" rows="10">{{ live.description }}</textarea>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Modifier</button>
+                                </div>
+
+                        </div>
+                        <div class="col-6">
+                            {% for agent in agents %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="{{ agent.id }}" id="agent-{{ agent.id }}">
+                                    <label class="form-check-label" for="agent-{{ agent.id }}">
+                                        {{ agent.nom }} {{ agent.prenom }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </form>
             </div>

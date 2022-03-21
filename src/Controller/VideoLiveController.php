@@ -31,12 +31,13 @@ class VideoLiveController extends AbstractController
      */
     private $liveChatVideoRepository;
 
-    public function __construct(LiveVideo $liveVideo, EntityManager $entityManager, LiveChatVideoRepository $liveChatVideoRepository)
+    public function __construct(LiveVideo $liveVideo, EntityManager $entityManager, LiveChatVideoRepository $liveChatVideoRepository, CoachAgentRepository $coachAgentRepository)
     {
 
         $this->entityManager = $entityManager;
         $this->liveVideo = $liveVideo;
         $this->liveChatVideoRepository = $liveChatVideoRepository;
+        $this->coachAgentRepository = $coachAgentRepository;
     }
 
 
@@ -132,8 +133,14 @@ class VideoLiveController extends AbstractController
      * @Route("/liveVideo/", name="live_video_list")
      */
     public function list(){
+        $coachAgents = $this->coachAgentRepository->findBy(['coach' => $this->getUser()]);
+        $agents = [];
+        foreach($coachAgents as $coachAgent) {
+            $agents[] = $coachAgent->getAgent();
+        }
         return $this->render('live/video/liste.html.twig', [
-           'lives' => $this->liveChatVideoRepository->findByUser($this->getUser())
+           'lives' => $this->liveChatVideoRepository->findByUser($this->getUser()),
+            'agents' => $agents
         ]);
     }
 }
