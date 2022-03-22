@@ -1,26 +1,30 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="p-4">
+    <div class="px-4">
         <div class="row">
             {% for live in lives %}
-                <div class="col-lg-4 col-md-5 col-12">
-                    <div class="live w-100 h-100 bg-white border p-3">
+                <div class="col-lg-4 col-md-5 col-12 mt-4">
+                    <div class="live w-100 h-100 bg-white border p-3 position-relative" >
                         <div class="row">
-                            <div class="col-12">
-                                <h1><i class="fa-solid fa-video {{ live.isInProcess ? 'text-success' : 'text-secondary' }}"></i></h1>
+                            <div class="col-6">
+                                <h1><i class="fa-solid fa-video {{ live.is_in_process ? 'text-success' : 'text-danger' }}"></i></h1>
                             </div>
-                            <div class="col-12">
-                                <small class="text-muted my-auto text-info">{{ live.isInProcess ? 'En ligne' : 'Hors ligne' }}</small>
+                            <div class="col-6 d-flex pe-1">
+                                <span class="my-auto ms-auto text-success fw-bold ">
+                                    {{ (live.userB|split(','))|length }} <i class="fa-solid fa-users"></i>
+                                </span>
                             </div>
                         </div>
-
+                        <div class=" mb-4">
+                            <small class="my-auto fw-bold text-danger">{{ live.is_in_process ? 'En ligne' : 'Hors ligne' }}</small>
+                        </div>
                         <h5> {{ live.theme ? live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
-                        <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.dateDebutLive|date('d-m-Y H:m:s') }}</span></small></p>
-                        <p><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
-                        <div class="text-end mt-4">
-                            {% if live.userA.id == app.user.id %}
-                                <a href="#" class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>
+                        <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.date_debut_live|date('d-m-Y H:m:s') }}</span></small></p>
+                        <p class="mb-5"><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
+                        <div class="text-end w-100 position-absolute bottom-0 pe-4 pb-2">
+                            {% if live.userA == app.user.id %}
+                                <a href="#" class="btn btn-sm btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>
                             {% endif %}
                             <a href="{{ path('live_destruct', {code: live.code}) }}" class="btn btn-danger btn-sm">Quitter</a>
                         </div>

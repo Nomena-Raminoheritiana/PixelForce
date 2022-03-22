@@ -48,8 +48,8 @@ class LiveChatVideoRepository extends ServiceEntityRepository
 
     public function groupByCode(UserInterface $user)
     {
-        return $this->_em->getConnection()->prepare('select code, count(code) as nombreParticipant from live_chat_vide o where user_a_id=?')
-            ->execute([$user->getId()])->fetchAll();
+        return $this->_em->getConnection()->prepare('SELECT id,code,is_in_process,is_speed_live, DATE_FORMAT(date_debut_live, "%Y-%m-%dT%H:%i:%s") as date_debut_live,description,theme, code,count(id) as total, GROUP_CONCAT(DISTINCT (user_a_id)) as userA, GROUP_CONCAT(DISTINCT (user_b_id)) as userB FROM `live_chat_video` where user_a_id=? or user_b_id=? group by code order by date_debut_live')
+            ->execute([$user->getId(), $user->getId()])->fetchAll();
     }
 
     /**

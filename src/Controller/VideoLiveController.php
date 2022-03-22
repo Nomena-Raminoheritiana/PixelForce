@@ -107,15 +107,18 @@ class VideoLiveController extends AbstractController
      */
     public function planifier(Request $request, TokenGeneratorInterface $tokenGenerator)
     {
+
+        $lives = $this->liveChatVideoRepository->findBy(['code' => $request->request->get('code')]);
+        $this->entityManager->removeMultiple($lives);
         $userA = $this->getUser();
         $users = $request->request->get('users');
         $lives = [];
-
+        $token = $tokenGenerator->generateToken();
         foreach($users as $userB) {
          $lives[] = $this->liveVideo->create(
              $userA,
              base64_decode($userB),
-             $tokenGenerator->generateToken(),
+             $token,
              false,
              new \DateTime($request->request->get('dateDebutLive')),
              $request->request->get('theme'),
@@ -124,9 +127,7 @@ class VideoLiveController extends AbstractController
         }
 
         $this->addFlash('success', 'Planification du live terminer');
-        return $this->render('live/video/newPlannification.html.twig', [
-            'lives' => $lives
-        ]);
+        return $this->redirectToRoute('live_video_list');
     }
 
     /**
@@ -138,9 +139,10 @@ class VideoLiveController extends AbstractController
         foreach($coachAgents as $coachAgent) {
             $agents[] = $coachAgent->getAgent();
         }
-        dd($this->liveChatVideoRepository->groupByCode($this->getUser()));
+        $lives = $this->liveChatVideoRepository->groupByCode($this->getUser());
+//        dd($lives);
         return $this->render('live/video/liste.html.twig', [
-           'lives' => $this->liveChatVideoRepository->findByUser($this->getUser()),
+           'lives' => $lives,
             'agents' => $agents
         ]);
     }

@@ -37,6 +37,18 @@ class LiveVideo
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @param $userA
+     * @param $userB
+     * @param null $code
+     * @param bool $is_speedLive
+     * @param \DateTimeInterface|null $dateDebutLive
+     * @param string $theme
+     * @param string $description
+     * @param bool $modification
+     * @param string $byChamps ex: code, id
+     * @return LiveChatVideo|mixed|null
+     */
     public function create($userA, $userB, $code = null, $is_speedLive = false, \DateTimeInterface $dateDebutLive = null, $theme = '', $description = '')
     {
         $findParam = $is_speedLive ? ['isSpeedLive' => true] : [];
