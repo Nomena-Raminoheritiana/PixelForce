@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="px-4">
+    <div class="px-2 px-md-4">
         <div class="row">
             {% for live in lives %}
-                <div class="col-lg-4 col-md-5 col-12 mt-4">
+                <div class="col-lg-4 col-md-5 col-12 mt-2 mt-md-4">
                     <div class="live w-100 h-100 bg-white border p-3 position-relative" >
                         <div class="row">
                             <div class="col-6">
@@ -33,6 +33,14 @@
                 <!-- import modal -->
                 {% include 'live/video/modal_modification.html.twig' with {live:live, agents: agents} %}
 
+            {% else %}
+                <div class="col-12 w-100 h-100 d-flex mt-2 mt-md-4">
+                    <div class="m-auto">
+                        <img src="{{ asset('build/images/live-illustration.webp') }}" alt="" class="border border-danger border-5 img-fluid" />
+                        <h1 class="text-center text-muted mt-3">Aucun live n'est programmé </h1>
+                    </div>
+
+                </div>
             {% endfor %}
         </div>
     </div>
