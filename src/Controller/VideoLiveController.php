@@ -138,6 +138,7 @@ class VideoLiveController extends AbstractController
         foreach($coachAgents as $coachAgent) {
             $agents[] = $coachAgent->getAgent();
         }
+        dd($this->liveChatVideoRepository->groupByCode($this->getUser()));
         return $this->render('live/video/liste.html.twig', [
            'lives' => $this->liveChatVideoRepository->findByUser($this->getUser()),
             'agents' => $agents

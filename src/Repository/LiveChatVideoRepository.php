@@ -46,6 +46,12 @@ class LiveChatVideoRepository extends ServiceEntityRepository
                 ->getResult();
     }
 
+    public function groupByCode(UserInterface $user)
+    {
+        return $this->_em->getConnection()->prepare('select code, count(code) as nombreParticipant from live_chat_vide o where user_a_id=?')
+            ->execute([$user->getId()])->fetchAll();
+    }
+
     /**
      * @throws ORMException
      * @throws OptimisticLockException

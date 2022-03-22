@@ -16,8 +16,8 @@
                         </div>
 
                         <h5> {{ live.theme ? live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
-                        <p class="text-start"><small><u>Date début du live</u> : {{ live.dateDebutLive|date('d-m-Y H:m:s') }}</small></p>
-                        <p><u>Description</u> : {{ live.description ? live.description : 'pas de description sur ce live' }}</p>
+                        <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.dateDebutLive|date('d-m-Y H:m:s') }}</span></small></p>
+                        <p><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
                         <div class="text-end mt-4">
                             {% if live.userA.id == app.user.id %}
                                 <a href="#" class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>

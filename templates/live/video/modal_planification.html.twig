@@ -10,13 +10,13 @@
                 <form action="{{ path('live_planifier') }}" method="post">
                     <input type="hidden" name="users[]" value="{{ user.id|base64_encode }}" />
                     <div class="mb-3">
-                        <input type="datetime-local" class="form-control" name="dateDebutLive" required />
+                        <input type="datetime-local" placeholder="Date de debut live" class="form-control" name="dateDebutLive" required />
                     </div>
                     <div class="mb-3">
-                        <input type="text" name="theme" class="form-control" required />
+                        <input type="text" name="theme" placeholder="Ajouter un theme" class="form-control" required />
                     </div>
-                    <div class="mb-3">
-                        <textarea name="description" required="false" rows="10"></textarea>
+                    <div class="mb-3 text-strat">
+                        <textarea name="description" placeholder="Une petite description concernant la réunion" class="border w-100" rows="10"></textarea>
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">Planifier</button>

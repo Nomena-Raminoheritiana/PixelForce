@@ -11,13 +11,13 @@
                     <div class="row">
                         <div class="col-6">
                                 <div class="mb-3">
-                                    <input type="datetime-local" class="form-control" min="{{ live.dateDebutLive|date('Y-m-d h:i:s') }}" name="dateDebutLive" required />
+                                    <input type="datetime-local" placeholder="Date de debut live" class="form-control" value="{{ live.dateDebutLive|date('Y-m-d h:i:s') }}" name="dateDebutLive" required />
                                 </div>
                                 <div class="mb-3">
-                                    <input type="text" name="theme" value="{{ live.theme }}" class="form-control" required />
+                                    <input type="text" name="theme" placeholder="Ajouter un theme" value="{{ live.theme }}" class="form-control" required />
                                 </div>
                                 <div class="mb-3">
-                                    <textarea name="description" class="form-control" required="false" rows="10">{{ live.description }}</textarea>
+                                    <textarea name="description" class="form-control" placeholder="Une petite description concernant la réunion ..." required="false" rows="10">{{ live.description }}</textarea>
                                 </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">Modifier</button>
@@ -27,7 +27,7 @@
                         <div class="col-6">
                             {% for agent in agents %}
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ agent.id }}" id="agent-{{ agent.id }}">
+                                    <input class="form-check-input" name="users[]" type="checkbox" value="{{ agent.id }}" id="agent-{{ agent.id }}">
                                     <label class="form-check-label" for="agent-{{ agent.id }}">
                                         {{ agent.nom }} {{ agent.prenom }}
                                     </label>

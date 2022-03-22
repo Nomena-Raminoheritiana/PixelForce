@@ -12,6 +12,9 @@
     nav#menu-haut,.vh-8 {
         height: 7.5vh !important;
     }
+    .body-content {
+        height: 92.5vh !important;
+    }
 }
 
 /** genéral **/
