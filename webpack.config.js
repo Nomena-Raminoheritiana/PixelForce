@@ -31,6 +31,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('form_addAgent', './assets/js/form_addAgent.js')
+    .addEntry('PlanificationLiveVideo', './assets/js/PlanificationLiveVideo.js')
 
     .addStyleEntry('base', './assets/styles/base.css')
 

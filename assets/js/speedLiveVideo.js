@@ -66,6 +66,11 @@ $(document).ready(function() {
         params.append('userB', userB);
         params.append('code', code);
         params.append('signal', token_annulation_requete.signal);
+        $(this).closest('.users').find('[name="users[]"]').each(function() {
+            if(this.checked) {
+               params.append('users[]', $(this).val());
+            }
+        });
         axios.post(Routing.generate('live_videoRapide'), params)
         .then(function (response) {
             live_en_cours = true;

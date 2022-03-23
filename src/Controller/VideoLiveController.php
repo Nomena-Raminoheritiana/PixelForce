@@ -48,11 +48,16 @@ class VideoLiveController extends AbstractController
      */
     public function liveRapide(Request $request)
     {
-        $userA = base64_decode($request->request->get('userA'));
-        $userB = base64_decode($request->request->get('userB'));
         $code = $request->request->get('code');
-        // créer un chat s'il n'existe pas
-        $this->liveVideo->create($userA, $userB, $code, true);
+        $userA = $this->getUser();
+        if($users = $request->request->get('users')) {
+            foreach($users as $userB) {
+                $this->liveVideo->create($userA, base64_decode($userB), $code, true);
+            }
+        } else {
+            $userB = base64_decode($request->request->get('userB'));
+            $this->liveVideo->create($userA, $userB, $code, true);
+        }
 
         return $this->json([
            'error' => false
@@ -108,25 +113,29 @@ class VideoLiveController extends AbstractController
     public function planifier(Request $request, TokenGeneratorInterface $tokenGenerator)
     {
 
-        $lives = $this->liveChatVideoRepository->findBy(['code' => $request->request->get('code')]);
-        $this->entityManager->removeMultiple($lives);
-        $userA = $this->getUser();
         $users = $request->request->get('users');
-        $lives = [];
-        $token = $tokenGenerator->generateToken();
-        foreach($users as $userB) {
-         $lives[] = $this->liveVideo->create(
-             $userA,
-             base64_decode($userB),
-             $token,
-             false,
-             new \DateTime($request->request->get('dateDebutLive')),
-             $request->request->get('theme'),
-             $request->request->get('description')
-         );
+        if($users) {
+            $lives = $this->liveChatVideoRepository->findBy(['code' => $request->request->get('code')]);
+            $this->entityManager->removeMultiple($lives);
+            $userA = $this->getUser();
+            $lives = [];
+            $token = $tokenGenerator->generateToken();
+            foreach($users as $userB) {
+                $lives[] = $this->liveVideo->create(
+                    $userA,
+                    base64_decode($userB),
+                    $token,
+                    false,
+                    new \DateTime($request->request->get('dateDebutLive')),
+                    $request->request->get('theme'),
+                    $request->request->get('description')
+                );
+            }
+            $this->addFlash('success', 'Planification du live terminer');
+        } else {
+            $this->addFlash('danger', 'Vous devez entrer au moins un acteur');
         }
 
-        $this->addFlash('success', 'Planification du live terminer');
         return $this->redirectToRoute('live_video_list');
     }
 
