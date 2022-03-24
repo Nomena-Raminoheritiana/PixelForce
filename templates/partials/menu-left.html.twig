@@ -22,6 +22,8 @@
             {% include 'partials/menu-left-coach.html.twig' %}
         {% elseif role == constant('App\\Entity\\User::ROLE_ADMINISTRATEUR') %}
             {% include 'partials/menu-left-admin.html.twig' %}
+        {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
+            {% include 'partials/menu-left-agent.html.twig' %}
         {% endif %}
     </div>
 </div>

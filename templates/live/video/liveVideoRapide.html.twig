@@ -1,10 +1,12 @@
 <!-- Modal -->
 <div class="modal fade" id="modal-live-Video-Rapide" tabindex="-1" aria-labelledby="modal-live-Video-Rapide" aria-hidden="true">
-    <div class="modal-dialog modal-xl ">
+    <div class="modal-dialog modal-xl" id="modal-dLive">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">
-                    <a href="/" class="m-auto text-decoration-none  text-muted">
+                <div class="row w-100">
+                    <div class="col-6">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            <a href="#" class="m-auto text-decoration-none  text-muted">
                                 <span class="text-center fs-4" >
                                     <span class="text-primary">P</span>
                                     <span class="d-none d-md-inline">i</span>
@@ -17,12 +19,19 @@
                                     <span class="d-none d-md-inline">c</span>
                                     <span class="d-none d-md-inline">e</span>
                                 </span>
-                    </a>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <i class="fa-solid fa-video text-danger ms-3"></i>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="col-6 text-end pe-0">
+                        <button type="button" class="btn" onclick="document.getElementById('modal-dLive').classList.toggle('modal-fullscreen')"><i class="fa-solid fa-maximize"></i></button>
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close"> <i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+
             </div>
             <div class="modal-body">
-                <div id="live_video" class="h-100 vh-100 d-flex">
+                <div id="live_video" class="h-100 d-flex" style="height:70vh !important;">
                     <h1 class="m-auto chargement-live">Veuillez attendre le chargement ...</h1>
                 </div>
             </div>
