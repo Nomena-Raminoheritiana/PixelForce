@@ -155,4 +155,23 @@ class VideoLiveController extends AbstractController
             'agents' => $agents
         ]);
     }
+
+    /**
+     * @Route("/liveVideo/launch/{codeEncoded}", name="live_video_launch")
+     */
+    public function lancerReunion($codeEncoded, Request $request)
+    {
+        $code = base64_decode($codeEncoded);
+        $lives = $this->liveChatVideoRepository->findBy(['code' => $code]);
+        foreach($lives as $live) {
+            $live->setIsInProcess(true);
+            $this->entityManager->persist($live);
+        }
+        $this->entityManager->flush();
+
+        return $this->render('live/video/launch.html.twig', [
+            'code' => $code
+        ]);
+
+    }
 }

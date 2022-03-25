@@ -25,7 +25,7 @@
                     <div class="live w-100 h-100 bg-white border p-3 position-relative" >
                         <div class="row">
                             <div class="col-6">
-                                <h1><i class="fa-solid fa-video {{ live.is_in_process ? 'text-success' : 'text-danger' }}"></i></h1>
+                                <h1><i class="fa-solid fa-video text-danger"></i></h1>
                             </div>
                             <div class="col-6 d-flex pe-1">
                                 <span class="my-auto ms-auto text-success fw-bold ">
@@ -40,8 +40,8 @@
                         <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.date_debut_live|date('d-m-Y H:m:s') }}</span></small></p>
                         <p class="mb-5 pb-3"><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
                         <div class="w-100 position-absolute bottom-0 pe-4 pb-2 text-end">
-                            {% if constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and live.date_debut_live|date >= "now"|date("d-m-Y H:m:s") %}
-                                <a href="#" class="btn btn-sm btn-info text-white"><i class="fa-solid fa-play"></i> Lancer</a>
+                            {% if (constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and live.date_debut_live|date >= "now"|date("d-m-Y H:m:s")) or live.is_in_process == '1' %}
+                                <a href="{{ path('live_video_launch', {codeEncoded: live.code|base64_encode}) }}" class="btn btn-sm btn-info text-white"><i class="fa-solid fa-play"></i> Lancer</a>
                             {% endif %}
                             {% if live.userA == app.user.id %}
                                 <a href="#" class="btn btn-sm btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>

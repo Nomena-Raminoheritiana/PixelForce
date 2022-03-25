@@ -1,5 +1,6 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
+import {launchLiveVideo,arretJitsi,generateCode} from './liveFunctions'
 $(document).ready(function() {
     // code de l'appel video
     let code = null;
@@ -7,36 +8,6 @@ $(document).ready(function() {
     let token_annulation_requete = new AbortController();
     let modalJoinCall = 'null';
     let hideModalJoinCall = false;
-
-    // fonction pour lancer une instance liveVideo et de retourner l'id de l'appel
-    function launchLiveVideo(container, id, $options = {})
-    {
-        let randomString = id;
-        let domain = "meet.jit.si";
-        let options = {
-            "roomName": randomString,
-            "parentNode": container,
-            "width": $options.width,
-            "height": $options.height,
-        };
-       new JitsiMeetExternalAPI(domain, options);
-    }
-
-
-    function generateCode() {
-        return Array.apply(null, Array(30)).map(function() {
-            let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            return possible[Math.floor(Math.random() * possible.length)];
-        }).join('');
-    }
-
-    function arretJitsi()
-    {
-        let iframe = $('#live_video').find('iframe')
-        if(iframe.length > 0) {
-            iframe.remove();
-        }
-    }
 
     // appel rapide d'un appel video
     $(this).on('click', '.speed-liveVideo-call', function(e) {
