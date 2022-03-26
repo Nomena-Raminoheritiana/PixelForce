@@ -9,6 +9,7 @@ use App\Repository\LiveChatVideoRepository;
 use App\Services\LiveVideo;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
@@ -142,17 +143,19 @@ class VideoLiveController extends AbstractController
     /**
      * @Route("/liveVideo/", name="live_video_list")
      */
-    public function list(){
-        $coachAgents = $this->coachAgentRepository->findBy(['coach' => $this->getUser()]);
-        $agents = [];
-        foreach($coachAgents as $coachAgent) {
-            $agents[] = $coachAgent->getAgent();
-        }
+    public function list()
+    {
+        $agents = $this->coachAgentRepository->getAgentByCoach($this->getUser());
+        $livesForDeletingAuto = $this->liveChatVideoRepository->findBy(['isInProcess' => true]);
+        $livesRestants = $this->liveVideo->remove($livesForDeletingAuto);
         $lives = $this->liveChatVideoRepository->groupByCode($this->getUser());
-//        dd($lives);
+
         return $this->render('live/video/liste.html.twig', [
            'lives' => $lives,
-            'agents' => $agents
+            'agents' => $agents,
+            'total' => count($lives),
+            'total_live_a_supprimer' => count($livesForDeletingAuto),
+            'total_live_en_cours' => count($livesRestants)
         ]);
     }
 
@@ -163,6 +166,9 @@ class VideoLiveController extends AbstractController
     {
         $code = base64_decode($codeEncoded);
         $lives = $this->liveChatVideoRepository->findBy(['code' => $code]);
+        if(empty($lives)) {
+            return new Response('', 404);
+        }
         foreach($lives as $live) {
             $live->setIsInProcess(true);
             $this->entityManager->persist($live);

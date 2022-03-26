@@ -55,7 +55,7 @@ class LiveVideo
         $live = $this->liveChatVideoRepository->findOneBy(array_merge(['userA' => $userA, 'userB' => $userB], $findParam));
         // on supprime le live si un appel rapide ou direct existe déjà
         if($live && $is_speedLive) {
-            $this->entityManager->remove($live);
+            $this->entityManager->delete($live);
         }
         $live = $this->objectManager->createObject(LiveChatVideo::class, array_merge([
             'userA' => $this->userRepository->findOneBy(['id' => $userA]),
@@ -66,5 +66,23 @@ class LiveVideo
             'description' => $description
         ], $findParam));
         return $live;
+    }
+
+    public function remove(Array $lives)
+    {
+        $lives_restant = [];
+        /** @var LiveChatVideo $live */
+        foreach($lives as $live) {
+            // si la différence entre la date d'aujourd'hui et la date prévu de la réunion est supérieur à 1journnée, on la suprrime
+            $dateNow = new \DateTime();
+            if(($dateNow->diff($live->getDateDebutLive()))->days >= 1 ) {
+                $this->entityManager->remove($live);
+            } else {
+                $lives_restant[] = $live;
+            }
+        }
+
+        $this->entityManager->flush();
+        return $lives_restant;
     }
 }

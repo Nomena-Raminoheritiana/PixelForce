@@ -22,7 +22,7 @@ class EntityManager
         $this->em->flush();
     }
 
-    public function remove($object)
+    public function delete($object)
     {
         $this->em->remove($object);
         $this->em->flush();

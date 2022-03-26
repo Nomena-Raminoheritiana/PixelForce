@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method CoachAgent|null find($id, $lockMode = null, $lockVersion = null)
@@ -38,6 +39,16 @@ class CoachAgentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function getAgentByCoach(UserInterface $coach) {
+        $coachAgents = $this->findBy(['coach' => $coach]);
+        $agents = [];
+        foreach($coachAgents as $coachAgent) {
+            $agents[] = $coachAgent->getAgent();
+        }
+
+        return $agents;
     }
 
     /**

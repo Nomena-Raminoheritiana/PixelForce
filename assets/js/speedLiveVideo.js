@@ -48,10 +48,13 @@ $(document).ready(function() {
             // lancé l'appel local
             launchLiveVideo($('#live_video')[0], code,{
                 width:'100%',
-                height:'100%'
+                height:'100%',
+                onload: function() {
+                    // on cache le loading dès que la video est chargé
+                    $('.chargement-live').addClass('d-none');
+                }
             });
-            // on cache le loading dès que la video est chargé
-            $('.chargement-live').addClass('d-none');
+
 
         })
         .catch(function (error) {
