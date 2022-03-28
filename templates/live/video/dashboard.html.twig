@@ -23,7 +23,13 @@
     <div class="col-12 col-lg-3 mt-2 mt-lg-0 pe-2">
         <div class="border bg-white p-3 vh-10">
             <div class="text-bold-grey">
-                Live à supprimer
+                <div class="row">
+                    <div class="col-6">À supprimer</div>
+                    {% if total_live_a_supprimer > 0 %}
+                        <div class="col-6 text-end "><a href="{{ path('live_video_list', {a_supprimer: 1}) }}" class="text-info"> <i class="fa-solid fa-arrow-right"></i></a></div>
+                    {% endif %}
+                </div>
+
             </div>
             <div class="h-100 d-flex">
                 <h1 class="my-auto text-info w-100">
@@ -42,7 +48,7 @@
     <div class="col-12 col-lg-3 mt-2 mt-lg-0 pe-2">
         <div class="border bg-white p-3 vh-10">
             <div class="text-bold-grey">
-                Live en cours
+                En cours
             </div>
             <div class="h-100 d-flex">
                 <h1 class="my-auto text-success w-100">
@@ -61,11 +67,23 @@
     <div class="col-12 col-lg-3 mt-2 mt-lg-0 pe-2">
         <div class="border bg-white p-3 vh-10">
             <div class="text-bold-grey">
-                Mon site
+                <div class="row">
+                    <div class="col-6">Périmés</div>
+                    {% if total_live_perimee > 0 %}
+                        <div class="col-6 text-end "><a href="{{ path('live_video_list', {perimee: 1}) }}" class="text-danger"> <i class="fa-solid fa-arrow-right"></i></a></div>
+                    {% endif %}
+                </div>
             </div>
             <div class="h-100 d-flex">
-                <h1 class="my-auto text-danger">
-                    <i class="fa-solid fa-blog"></i>
+                <h1 class="my-auto text-danger w-100">
+                    <div class="row">
+                        <div class="col-6">
+                            <i class="fa-solid fa-calendar-minus"></i>
+                        </div>
+                        <div class="col-6 fs-4 d-flex">
+                            <span class="my-auto">{{total_live_perimee}}</span>
+                        </div>
+                    </div>
                 </h1>
             </div>
         </div>

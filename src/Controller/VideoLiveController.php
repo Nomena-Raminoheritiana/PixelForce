@@ -143,19 +143,20 @@ class VideoLiveController extends AbstractController
     /**
      * @Route("/liveVideo/", name="live_video_list")
      */
-    public function list()
+    public function list(Request $request)
     {
         $agents = $this->coachAgentRepository->getAgentByCoach($this->getUser());
         $livesForDeletingAuto = $this->liveChatVideoRepository->findBy(['isInProcess' => true]);
-        $livesRestants = $this->liveVideo->remove($livesForDeletingAuto);
-        $lives = $this->liveChatVideoRepository->groupByCode($this->getUser());
+        $this->liveVideo->remove($livesForDeletingAuto);
+        $lives = $this->liveChatVideoRepository->groupByCode($this->getUser(), ['perimee' => $request->query->get('perimee'), 'a_supprimer' => $request->query->get('a_supprimer')]);
 
         return $this->render('live/video/liste.html.twig', [
            'lives' => $lives,
             'agents' => $agents,
             'total' => count($lives),
-            'total_live_a_supprimer' => count($livesForDeletingAuto),
-            'total_live_en_cours' => count($livesRestants)
+            'total_live_a_supprimer' => $this->liveChatVideoRepository->countLiveToDelete($this->getUser()),
+            'total_live_en_cours' =>$this->liveChatVideoRepository->countLiveEnCours($this->getUser()),
+            'total_live_perimee' => $this->liveChatVideoRepository->countLivePerimee($this->getUser())
         ]);
     }
 

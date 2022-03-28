@@ -22,7 +22,6 @@ $(document).ready(function() {
             height:'100%',
             onload: function() {
                 $('.loading-live').remove();
-                clearInterval(interval);
             }
         })
     }

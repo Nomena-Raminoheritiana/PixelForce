@@ -5,11 +5,13 @@ exports.launchLiveVideo = function(container, id, $options = {})
     let domain = "meet.jit.si";
     let options = {
         "roomName": randomString,
-        "parentNode": container,
-        "width": $options.width,
-        "height": $options.height,
+        "parentNode": container
     };
-    new JitsiMeetExternalAPI(domain, options);
+    let finalOption = {
+        ...options,
+        ...$options
+    }
+    new JitsiMeetExternalAPI(domain, finalOption);
 }
 
 

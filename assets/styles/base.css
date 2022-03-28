@@ -31,3 +31,8 @@
     font-weight: 500;
     font-size: 15px;
 }
+
+/** suppression du logo jitsi **/
+#jitsiConferenceFrame0 html .watermark.leftwatermark {
+    display: none !important;
+}

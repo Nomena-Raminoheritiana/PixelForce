@@ -42,10 +42,10 @@
                             <small class="my-auto fw-bold text-danger">{{ live.is_in_process ? 'En ligne' : 'Hors ligne' }}</small>
                         </div>
                         <h5> {{ live.theme ? live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
-                        <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.date_debut_live|date('d-m-Y H:m:s') }}</span></small></p>
+                        <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.date_debut_live|date('d-m-Y H:i:s') }}</span></small></p>
                         <p class="mb-5 pb-3"><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
                         <div class="w-100 position-absolute bottom-0 pe-4 pb-2 text-end">
-                            {% if (constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and live.date_debut_live|date >= "now"|date("d-m-Y H:m:s")) or live.is_in_process == '1' %}
+                            {% if (constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and date(live.date_debut_live|date("d-m-Y H:i:s")) <= date("now"|date("d-m-Y H:i:s"))) or live.is_in_process == '1' %}
                                 <a href="{{ path('live_video_launch', {codeEncoded: live.code|base64_encode}) }}" class="btn btn-sm btn-info text-white"><i class="fa-solid fa-play"></i>
                                 {{ constant('App\\Entity\\User::ROLE_AGENT') in app.user.roles ? 'Rejoindre' : 'Lancer' }}
                                 </a>
@@ -53,7 +53,7 @@
                             {% if live.userA == app.user.id %}
                                 <a href="#" class="btn btn-sm btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>
                             {% endif %}
-                            <a href="{{ path('live_destruct', {code: live.code}) }}" class="btn btn-danger btn-sm">{{  constant('App\\Entity\\User::ROLE_COACH') in app.user.roles ? 'Abandonner' : 'Se retirer' }}</a>
+                            <a href="{{ path('live_destruct', {code: live.code, }) }}" class="btn btn-danger btn-sm">{{  constant('App\\Entity\\User::ROLE_COACH') in app.user.roles ? 'Abandonner' : 'Se retirer' }}</a>
                         </div>
                     </div>
                 </div>
