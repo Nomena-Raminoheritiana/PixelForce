@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Services\DirectoryManagement;
+use App\Services\VimeoService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
