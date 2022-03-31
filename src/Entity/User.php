@@ -125,11 +125,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $liveChatVideosFromUserB;
 
+    /**
+     * @ORM\OneToMany(targetEntity=VideoFormation::class, mappedBy="user")
+     */
+    private $videoFormations;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
         $this->liveChatVideosFromUserA = new ArrayCollection();
         $this->liveChatVideosFromUserB = new ArrayCollection();
+        $this->videoFormations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -444,6 +450,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($liveChatVideo->getUserB() === $this) {
                 $liveChatVideo->setUserB(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VideoFormation>
+     */
+    public function getVideoFormations(): Collection
+    {
+        return $this->videoFormations;
+    }
+
+    public function addVideoFormation(VideoFormation $videoFormation): self
+    {
+        if (!$this->videoFormations->contains($videoFormation)) {
+            $this->videoFormations[] = $videoFormation;
+            $videoFormation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideoFormation(VideoFormation $videoFormation): self
+    {
+        if ($this->videoFormations->removeElement($videoFormation)) {
+            // set the owning side to null (unless already changed)
+            if ($videoFormation->getUser() === $this) {
+                $videoFormation->setUser(null);
             }
         }
 

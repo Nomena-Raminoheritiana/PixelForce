@@ -15,7 +15,10 @@ class VimeoService
     public function importVideo(UploadedFile $uploadedFile)
     {
         $this->connect();
-        $uri = $this->client->upload($uploadedFile->getRealPath());
+        $uri = $this->client->upload($uploadedFile,array(
+            'name' => 'test1 name',
+            'description' => 'description test1',
+        ));
         return $uri;
     }
 

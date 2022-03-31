@@ -32,7 +32,8 @@
     font-size: 15px;
 }
 
-/** suppression du logo jitsi **/
-#jitsiConferenceFrame0 html .watermark.leftwatermark {
-    display: none !important;
+/** calc **/
+.dash-image{
+    background: rgba(255,255,255, 0.5);
+    z-index: 100;
 }

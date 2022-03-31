@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block title %} Video Formation {% endblock %}
+{% block body %}
+    <div class="px-2 px-md-3 pt-3">
+        <div class="bg-white border p-2 ">
+            <div class="position-relative">
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index:0;background-image:url('{{ asset('build/images/bg-arc.jpg') }}'); background-repeat: no-repeat; background-size: cover;"></div>
+                <div class="dash-image p-5 position-relative">
+                    <h3>Les Formations disponibles</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing eli</p>
+                    <div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importVideoFormation"><i class="fa-solid fa-upload"></i> Importer une video</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- importer les modals -->
+    {% include 'formation/video/modal_importVideo.html.twig' %}
+{% endblock %}
