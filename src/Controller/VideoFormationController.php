@@ -48,9 +48,14 @@ class VideoFormationController extends AbstractController
      */
     public function importVideo(Request $request, VimeoService $vimeoService)
     {
-        $form = $this->formManager->getForm(VideoFormationType::class, null, [], $request, function($data, Request $request) use ($vimeoService) {
-           $uri = $vimeoService->importVideo($request->files->get('video_formation')['fichier']);
-//           dump($vimeoService->verifierEtat($uri));
+        $form = $this->formManager->getForm(VideoFormationType::class, null, [], $request, function(VideoFormation $videoFormation, Request $request) use ($vimeoService) {
+           $uri = $vimeoService->importVideo(
+               ($request->files->get('video_formation')['fichier'])->getRealPath(),
+               $request->request->get('video_formation')['titre'],
+               $request->request->get('video_formation')['description']
+               );
+           $videoFormation->setUri($uri);
+           $this->entityManager->save($videoFormation);
            dd($uri);
         });
 

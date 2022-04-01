@@ -2,9 +2,8 @@
 
 
 namespace App\Services;
-
-
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Vimeo\Vimeo;
 
 class VimeoService
@@ -12,12 +11,25 @@ class VimeoService
     /** @var Vimeo */
     private $client;
 
-    public function importVideo(UploadedFile $uploadedFile)
+    private $project_dir;
+
+    public function __construct(KernelInterface $kernel)
     {
+
+        $this->project_dir = $kernel->getProjectDir();
+    }
+
+    public function importVideo($file, $titre, $description)
+    {
+
+        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/tus-php/.cache/tus_php.client.cache', 777);
+        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/tus-php/.cache/', 777);
+        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/tus-php/', 777);
+        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/', 777);
         $this->connect();
-        $uri = $this->client->upload($uploadedFile,array(
-            'name' => 'test1 name',
-            'description' => 'description test1',
+        $uri = $this->client->upload($file, array(
+            'name' => $titre,
+            'description' => $description,
         ));
         return $uri;
     }
