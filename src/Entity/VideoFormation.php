@@ -2,14 +2,18 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\Timestampable;
 use App\Repository\VideoFormationRepository;
 use Doctrine\ORM\Mapping as ORM;
+
 
 /**
  * @ORM\Entity(repositoryClass=VideoFormationRepository::class)
  */
 class VideoFormation
 {
+    use Timestampable;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -36,6 +40,11 @@ class VideoFormation
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="videoFormations")
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $videoId;
 
     public function getId(): ?int
     {
@@ -86,6 +95,18 @@ class VideoFormation
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getVideoId(): ?string
+    {
+        return $this->videoId;
+    }
+
+    public function setVideoId($videoId): self
+    {
+        $this->videoId = $videoId;
 
         return $this;
     }

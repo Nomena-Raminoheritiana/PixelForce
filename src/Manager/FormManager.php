@@ -29,7 +29,7 @@ class FormManager
            $form->handleRequest($request);
            if($form->isSubmitted() && $form->isValid()) {
                /** @var callable $callback */
-               $callback($form->getData(), $request);
+              return $callback($form->getData(), $request);
            }
        }
        return $form;

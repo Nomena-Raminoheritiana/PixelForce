@@ -2,7 +2,7 @@
 
 
 namespace App\Services;
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\HttpKernel\KernelInterface;
 use Vimeo\Vimeo;
 
@@ -13,6 +13,8 @@ class VimeoService
 
     private $project_dir;
 
+    private $uriRegister = [];
+
     public function __construct(KernelInterface $kernel)
     {
 
@@ -21,11 +23,6 @@ class VimeoService
 
     public function importVideo($file, $titre, $description)
     {
-
-        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/tus-php/.cache/tus_php.client.cache', 777);
-        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/tus-php/.cache/', 777);
-        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/tus-php/', 777);
-        chmod($this->project_dir.DIRECTORY_SEPARATOR.'/vendor/ankitpokhrel/', 777);
         $this->connect();
         $uri = $this->client->upload($file, array(
             'name' => $titre,
@@ -34,11 +31,20 @@ class VimeoService
         return $uri;
     }
 
-    public function telecharger($uri)
+    public function editInformation($uri, $data)
     {
         $this->connect();
-        $response = $this->client->request($uri . '?fields=link');
-        return $response['body']['link'];
+        $this->client->request($uri, $data, 'PATCH');
+    }
+
+    public function getVideoId($uri)
+    {
+        $this->connect();
+        $video_link = $this->getInfoUri($uri);
+        $get_vid_id = explode("/",$video_link);
+
+        $get_vid_id = $get_vid_id['3'];
+        return $get_vid_id;
     }
 
     public function verifierEtat($uri)
@@ -48,14 +54,20 @@ class VimeoService
         return $response['body']['transcode']['status'];
     }
 
+    private function getInfoUri($uri)
+    {
+        $this->connect();
+        if(!isset($this->uriRegister[$uri])) {
+            $this->uriRegister[$uri] = $this->client->request($uri . '?fields=link');
+        }
+        dd($this->uriRegister[$uri]);
+        return $this->uriRegister[$uri]['body']['link'];
+    }
+
     private function connect()
     {
         if(is_null($this->client)) {
             $client = new Vimeo($_ENV['VIMEO_CLIENT_ID'], $_ENV['VIMEO_CLIENT_SECRET'], $_ENV['VIMEO_ACCESS_TOKEN']);
-            $client->setCURLOptions([
-                CURLOPT_SSL_VERIFYPEER => 0,
-                CURLOPT_SSL_VERIFYPEER => 0
-            ]);
             $this->client = $client;
         }
         return $this->client;

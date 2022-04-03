@@ -2,11 +2,11 @@
 {% block title %} Video Formation {% endblock %}
 {% block body %}
     <div class="px-2 px-md-3 pt-3">
-        <div class="bg-white border p-2 ">
+        <div class="bg-white border p-2 shadow-sm ">
             <div class="position-relative">
                 <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index:0;background-image:url('{{ asset('build/images/bg-arc.jpg') }}'); background-repeat: no-repeat; background-size: cover;"></div>
                 <div class="dash-image p-5 position-relative">
-                    <h3>Les Formations disponibles</h3>
+                    <h3>Les Formations videos disponible</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing eli</p>
                     <div>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importVideoFormation"><i class="fa-solid fa-upload"></i> Importer une video</button>
@@ -14,7 +14,64 @@
                 </div>
             </div>
         </div>
+
+        <div class="mt-3">
+            <div class="row">
+                <div class="col-md-8">
+                      <div class="bg-dark border p-2 d-flex shadow-sm">
+                          {% if videosFormation[0] is defined %}
+                            <iframe src="https://player.vimeo.com/video/{{ videosFormation[0].videoId }}" style="width:100%; height:300px " class="bg-dark img-fluid" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                          {% else %}
+                              <div class="m-auto text-center p-5 ">
+                                  <h4 class="fw-bold text-white">Aucun video disponible</h4>
+                                  <img src="{{ asset('build/images/videoNotfound.png') }}" class="img-fluid w-50">
+                              </div>
+
+                          {% endif %}
+                      </div>
+                </div>
+                <div class="col-md-4 ps-md-0 mt-md-0 mt-3">
+                    <div class="bg-white border p-2 shadow-sm">
+                        <h5 class="fw-bold mb-4 text-muted">Toutes les formations</h5>
+                        {% for key,vimeo in videosFormation %}
+                            <div class="row {{ key>0 ? 'mt-3' : '' }}">
+                                <div class="col-md-6">
+                                    <div class="border d-flex bg-dark">
+                                        <iframe src="https://player.vimeo.com/video/{{ vimeo.videoId }}" style="width:100%; height:100px" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold">{{ vimeo.titre }}</h6>
+                                    <p>{{ vimeo.description }}</p>
+                                    <small class="text-muted"> {{ dateHelper.format(vimeo.createdAt|date("d M Y H:I:s")) }}</small>
+                                </div>
+                            </div>
+                        {% else %}
+                            {% for i in [0,1,2,3] %}
+                                <div class="row {{ i>0 ? 'mt-3' : '' }}">
+                                    <div class="col-md-6">
+                                        <div class="border d-flex bg-dark">
+                                            <img src="{{ asset('build/images/videoNotfound.png') }}" class="img-fluid w-50 m-auto">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold">Indisponible</h6>
+                                        <p>desciprion indisponible</p>
+                                        <small class="text-muted"> {{ dateHelper.format('now'|date("d M Y H:I:s")) }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- importer les modals -->
-    {% include 'formation/video/modal_importVideo.html.twig' %}
+    {% include 'formation/video/modal_importVideo.html.twig'%}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://player.vimeo.com/api/player.js"></script>
 {% endblock %}

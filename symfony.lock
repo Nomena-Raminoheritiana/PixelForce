@@ -2,6 +2,9 @@
     "ankitpokhrel/tus-php": {
         "version": "v2.2.0"
     },
+    "behat/transliterator": {
+        "version": "v1.5.0"
+    },
     "brick/math": {
         "version": "0.9.3"
     },
@@ -119,6 +122,9 @@
             "./config/routes/fos_js_routing.yaml"
         ]
     },
+    "gedmo/doctrine-extensions": {
+        "version": "v3.6.0"
+    },
     "guzzlehttp/guzzle": {
         "version": "7.4.2"
     },
@@ -127,6 +133,12 @@
     },
     "guzzlehttp/psr7": {
         "version": "2.2.1"
+    },
+    "knplabs/knp-components": {
+        "version": "v3.5.0"
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v5.8.0"
     },
     "laminas/laminas-code": {
         "version": "4.5.1"
@@ -198,6 +210,18 @@
         },
         "files": [
             "./config/packages/sensio_framework_extra.yaml"
+        ]
+    },
+    "stof/doctrine-extensions-bundle": {
+        "version": "1.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.2",
+            "ref": "e805aba9eff5372e2d149a9ff56566769e22819d"
+        },
+        "files": [
+            "./config/packages/stof_doctrine_extensions.yaml"
         ]
     },
     "symfony/amqp-messenger": {
