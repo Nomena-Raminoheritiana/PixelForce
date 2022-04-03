@@ -10,6 +10,7 @@ use App\Manager\EntityManager;
 use App\Manager\FormManager;
 use App\Repository\VideoFormationRepository;
 use App\Services\VimeoService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,21 +35,31 @@ class VideoFormationController extends AbstractController
      * @var VideoFormationRepository
      */
     private $videoFormationRepository;
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
 
-    public function __construct(EntityManager $entityManager, FormManager $formManager, VimeoService $vimeoService, VideoFormationRepository $videoFormationRepository)
+    public function __construct(PaginatorInterface $paginator, EntityManager $entityManager, FormManager $formManager, VimeoService $vimeoService, VideoFormationRepository $videoFormationRepository)
     {
         $this->entityManager = $entityManager;
         $this->formManager = $formManager;
         $this->vimeoService = $vimeoService;
         $this->videoFormationRepository = $videoFormationRepository;
+        $this->paginator = $paginator;
     }
 
     /**
      * @Route("/formation/video", name="formationVideo_liste")
      */
-    public function index()
+    public function index(Request $request)
     {
-        $videosFormation = $this->videoFormationRepository->findBy(['user' => $this->getUser()]);
+        $videosFormation = $this->videoFormationRepository->getQueryByUser($this->getUser());
+        $videosFormation = $this->paginator->paginate(
+            $videosFormation,
+            $request->query->getInt('page', 1),
+            5
+        );
         $form = $this->formManager->getForm(VideoFormationType::class);
         return $this->render('formation/video/list.html.twig', [
             'form' => $form->createView(),

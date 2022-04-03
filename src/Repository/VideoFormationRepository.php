@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method VideoFormation|null find($id, $lockMode = null, $lockVersion = null)
@@ -31,6 +32,14 @@ class VideoFormationRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function getQueryByUser(UserInterface $user)
+    {
+        return $this->createQueryBuilder('v')
+                    ->andWhere('v.user=:user')
+                    ->setParameter('user', $user)
+                    ->getQuery();
     }
 
     /**

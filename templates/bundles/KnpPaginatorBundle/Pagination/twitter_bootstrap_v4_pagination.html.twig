@@ -1,0 +1,52 @@
+{#
+  override nle original
+#}
+
+<nav aria-label="Page navigation example " class="mt-5">
+    <ul class="pagination justify-content-center">
+        {% if startPage > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(route, query|merge({(pageParameterName): 1})) }}">1</a>
+            </li>
+            <li class="page-item">
+                {% if startPage == 3 %}
+                    <a class="page-link" href="{{ path(route, query|merge({(pageParameterName): 2})) }}">2</a>
+                {% elseif startPage != 2 %}
+                    <span class="page-link">&hellip;</span>
+                {% endif %}
+            </li>
+        {% endif %}
+
+        {% for page in pagesInRange %}
+            <li class="page-item">
+            {% if page != current %}
+                <a class="page-link" href="{{ path(route, query|merge({(pageParameterName): page})) }}" >{{ page }}</a>
+
+            {% else %}
+                <span class="page-link bg-primary text-white" tabindex="-1" >{{ page }}</span>
+
+            {% endif %}
+            </li>
+
+        {% endfor %}
+        {% if pageCount > endPage %}
+            <li class="page-item">
+            {% if pageCount > (endPage + 1) %}
+                {% if pageCount > (endPage + 2) %}
+                    <span class="page-link">&hellip;</span>
+                {% else %}
+                    <a class=" page-link" href="{{ path(route, query|merge({(pageParameterName): (pageCount - 1)})) }}">{{ pageCount -1 }}</a>
+                {% endif %}
+            {% endif %}
+            </li>
+            <li class="page-item">
+                <a class=" page-link" href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}">{{ pageCount }}</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+
+
+
+
