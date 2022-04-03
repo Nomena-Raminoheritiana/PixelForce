@@ -60,7 +60,7 @@ class VimeoService
         if(!isset($this->uriRegister[$uri])) {
             $this->uriRegister[$uri] = $this->client->request($uri . '?fields=link');
         }
-        dd($this->uriRegister[$uri]);
+       
         return $this->uriRegister[$uri]['body']['link'];
     }
 
