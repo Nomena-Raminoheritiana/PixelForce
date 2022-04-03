@@ -63,7 +63,12 @@ class VideoFormationController extends AbstractController
         $form = $this->formManager->getForm(VideoFormationType::class);
         return $this->render('formation/video/list.html.twig', [
             'form' => $form->createView(),
-            'videosFormation' => $videosFormation
+            'videosFormation' => $videosFormation,
+            'videoFormationActif' => $videosFormation->count() > 0 ?
+                ($request->query->get('formation')
+                    ? $this->videoFormationRepository->findOneBy(['id' => base64_decode($request->query->get('formation'))])
+                    : $videosFormation[0]
+                ): null
         ]);
     }
 

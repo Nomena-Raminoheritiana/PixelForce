@@ -5,11 +5,11 @@
         <div class="bg-white border p-2 shadow-sm ">
             <div class="position-relative">
                 <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index:0;background-image:url('{{ asset('build/images/bg-arc.jpg') }}'); background-repeat: no-repeat; background-size: cover;"></div>
-                <div class="dash-image p-5 position-relative">
-                    <h3>Les Formations videos disponible</h3>
+                <div class="dash-image p-4 position-relative">
+                    <h4>Les Formations videos disponible</h4>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing eli</p>
                     <div>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importVideoFormation"><i class="fa-solid fa-upload"></i> Importer une video</button>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#importVideoFormation"><i class="fa-solid fa-upload"></i> Importer une video</button>
                     </div>
                 </div>
             </div>
@@ -18,8 +18,8 @@
             <div class="row">
                 <div class="col-xl-7">
                       <div class="bg-dark border p-2 d-flex  shadow-sm">
-                          {% if videosFormation[0] is defined %}
-                            <iframe src="https://player.vimeo.com/video/{{ videosFormation[0].videoId }}" style="width:100%; height:300px " class="bg-dark img-fluid" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                          {% if videoFormationActif %}
+                            <iframe src="https://player.vimeo.com/video/{{ videoFormationActif.videoId }}" style="width:100%; height:300px " class="bg-dark img-fluid" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
                           {% else %}
                               <div class="text-center p-5 ">
@@ -30,12 +30,12 @@
                           {% endif %}
                       </div>
                     <div class="bg-white border p-3 shadow-sm">
-                        {% if videosFormation[0] is defined %}
+                        {% if videoFormationActif %}
                             <p>
-                                <span class="fw-bold fs-4"><i class="fa-solid fa-video text-danger"></i> {{ videosFormation[0].titre }}</span><br>
-                                <small class="text-muted">uploadé le {{ videosFormation[0].createdAt|date('D, d M y') }} à {{ videosFormation[0].createdAt|date('h:i') }}</small>
+                                <span class="fw-bold fs-4"><i class="fa-solid fa-video text-danger"></i> {{ videoFormationActif.titre }}</span><br>
+                                <small class="text-muted">uploadé le {{ videoFormationActif.createdAt|date('D, d M y') }} à {{ videoFormationActif.createdAt|date('h:i') }}</small>
                             </p>
-                            <p><small>{{ videosFormation[0].description }}</small></p>
+                            <p><small>{{ videoFormationActif.description }}</small></p>
                         {% endif %}
                     </div>
 
@@ -65,9 +65,9 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <h6 class="fw-bold"><i class="fa-solid fa-video text-danger"></i> {{ vimeo.titre }}</h6>
+                                    <h6 class="fw-bold"><a class="link-dark text-decoration-none" href="{{ path('formationVideo_liste', {formation:vimeo.id|base64_encode, page:app.request.query.get('page')}) }}"><i class="fa-solid fa-video text-danger"></i> {{ vimeo.titre }}</a></h6>
                                     <p>
-                                        <small class="">{{ vimeo.description[0:70] }} ...</small><br>
+                                        <small>{{ vimeo.description[0:70] }} ...</small><br>
                                         <small class="text-muted"> {{ dateHelper.format(vimeo.createdAt|date("d M Y H:I:s")) }}</small>
                                     </p>
 
