@@ -84,6 +84,7 @@ class VideoFormationController extends AbstractController
                $request->request->get('video_formation')['titre'],
                $request->request->get('video_formation')['description']
                );
+           $videoFormation->setUser($this->getUser());
            $videoFormation->setVideoId($this->vimeoService->getVideoId($uri));
            $videoFormation->setUri($uri);
            $this->entityManager->save($videoFormation);

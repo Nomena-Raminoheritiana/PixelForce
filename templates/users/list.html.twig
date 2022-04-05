@@ -38,13 +38,6 @@
                                     {% include 'live/video/modal_planification.html.twig' with {user:user.agent} %}
                                 </td>
                             </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="5" class="text-center pt-5 text-muted">
-                                    <h3><i class="fa-solid fa-hourglass-empty"></i></h3>
-                                    Aucun agent n'est présent
-                                </td>
-                            </tr>
                         {% endif %}
                     {% else  %}
                         <tr>

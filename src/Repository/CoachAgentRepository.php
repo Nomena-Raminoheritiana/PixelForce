@@ -45,7 +45,10 @@ class CoachAgentRepository extends ServiceEntityRepository
         $coachAgents = $this->findBy(['coach' => $coach]);
         $agents = [];
         foreach($coachAgents as $coachAgent) {
-            $agents[] = $coachAgent->getAgent();
+            $agent = $coachAgent->getAgent();
+            if($agent->getActive()){
+                $agents[] = $agent;
+            }
         }
 
         return $agents;
