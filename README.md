@@ -34,3 +34,6 @@ maildev --hide-extensions STARTTLS
 npm install -g sass-migrator
 sass-migrator division **/*.scss
 
+#Lancer messenger
+php bin/console messenger:consume async
+
