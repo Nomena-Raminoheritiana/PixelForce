@@ -56,7 +56,7 @@ class VideoFormationController extends AbstractController
      */
     public function index(Request $request)
     {
-        $videosFormation = $this->videoFormationRepository->getQueryByUser($this->getUser());
+        $videosFormation = $this->videoFormationRepository->getQueryAll();
         $videosFormation = $this->paginator->paginate(
             $videosFormation,
             $request->query->getInt('page', 1),

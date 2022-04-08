@@ -34,6 +34,12 @@ class VideoFormationRepository extends ServiceEntityRepository
         }
     }
 
+    public function getQueryAll()
+    {
+        return $this->createQueryBuilder('v')
+            ->getQuery();
+    }
+
     public function getQueryByUser(UserInterface $user)
     {
         return $this->createQueryBuilder('v')
