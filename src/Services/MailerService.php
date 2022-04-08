@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Entity\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -12,30 +13,51 @@ use Symfony\Component\Mime\Email;
 
 class MailerService
 {
-//    private $exempleParametre = [
-//        'from' => 'xx@gmail.com',
-//        'from_name' => 'nomena',
-//        'to' => [
-//            'qdsf@dsf',
-//            'qdsk@qsdf'
-//        ],
-//        'cc' => [
-//            'qsmldkfj@qdsf'
-//        ],
-//        'template' => 'qkdjfmdsjf.html.twig',
-//        'template_vars' => [
-//            'variable1' => 'valeur'
-//        ]
-//
-//    ];
+
     /**
      * @var Mailer
      */
     private $mailer;
+    private $from;
+    private $from_name;
 
     public function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
+        $this->from =  $_ENV['MAILER_SEND_FROM'];
+        $this->from_name = $_ENV['MAILER_SEND_FROM_NAME'];
+    }
+
+    public function sendMailInscriptionUser($email)
+    {
+        $this->sendMail([
+            'subject' => 'Code de vérification',
+            'from' => $this->from,
+            'from_name' => $this->from_name,
+            'to' => [
+                $email
+            ],
+            'template' => 'inscription/lien_page_inscription.html.twig',
+            'template_vars' => [
+                'encodedMail' => base64_encode($email),
+            ]
+        ]);
+    }
+
+    public function sendMailRegenerationCode(User $user)
+    {
+        $this->sendMail([
+            'subject' => 'Code de vérification',
+            'from' => $this->from,
+            'from_name' => $this->from_name,
+            'to' => [
+                $user->getEmail()
+            ],
+            'template' => 'security/sixDigitKey.html.twig',
+            'template_vars' => [
+                'sixDigitKey' => $user->getSixDigitCode()
+            ]
+        ]);
     }
 
     public function sendMail($parameters)
@@ -74,5 +96,22 @@ class MailerService
 
 
     }
+
+    //    private $exempleParametre = [
+//        'from' => 'xx@gmail.com',
+//        'from_name' => 'nomena',
+//        'to' => [
+//            'qdsf@dsf',
+//            'qdsk@qsdf'
+//        ],
+//        'cc' => [
+//            'qsmldkfj@qdsf'
+//        ],
+//        'template' => 'qkdjfmdsjf.html.twig',
+//        'template_vars' => [
+//            'variable1' => 'valeur'
+//        ]
+//
+//    ];
 
 }

@@ -115,19 +115,8 @@ class UserManager
                         'agent' => $error
                     ]);
                 }
-
-                $this->mailerService->sendMail([
-                    'subject' => 'Code de vérification',
-                    'from' => $_ENV['MAILER_SEND_FROM'],
-                    'from_name' => $_ENV['MAILER_SEND_FROM_NAME'],
-                    'to' => [
-                        $email
-                    ],
-                    'template' => 'inscription/lien_page_inscription.html.twig',
-                    'template_vars' => [
-                        'encodedMail' => base64_encode($email),
-                    ]
-                ]);
+                // envoie mail
+                $this->mailerService->sendMailInscriptionUser($email);
                 return false;
             }
         }

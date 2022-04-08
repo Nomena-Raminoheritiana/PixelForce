@@ -89,18 +89,7 @@ class SecurityController extends AbstractController
             $user =  $this->userManager->generateSixDigitKey($email);
             if($user) {
                 // envoie du code par mail
-                $this->mailerService->sendMail([
-                    'subject' => 'Code de vérification',
-                    'from' => $_ENV['MAILER_SEND_FROM'],
-                    'from_name' => $_ENV['MAILER_SEND_FROM_NAME'],
-                    'to' => [
-                        $user->getEmail()
-                    ],
-                    'template' => 'security/sixDigitKey.html.twig',
-                    'template_vars' => [
-                        'sixDigitKey' => $user->getSixDigitCode()
-                    ]
-                ]);
+                $this->mailerService->sendMailRegenerationCode($user);
                 $this->addFlash('success', 'Un code vous a été envoyé');
                 return $this->redirectToRoute('app_forgetPassword_getCode', [
                     'id' => $user->getId(),
