@@ -8,12 +8,14 @@ use App\Entity\VideoFormation;
 use App\Form\VideoFormationType;
 use App\Manager\EntityManager;
 use App\Manager\FormManager;
+use App\Messenger\Message\ImportVideoFormation;
 use App\Repository\VideoFormationRepository;
 use App\Services\VimeoService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class VideoFormationController extends AbstractController
@@ -76,18 +78,17 @@ class VideoFormationController extends AbstractController
      * @param Request $request
      * @Route("/formation/video/upload", name="formationVideo_upload")
      */
-    public function importVideo(Request $request)
+    public function importVideo(Request $request, MessageBusInterface $messageBus)
     {
-        $form = $response = $this->formManager->getForm(VideoFormationType::class, null, [], $request, function(VideoFormation $videoFormation, Request $request) {
-           $uri = $this->vimeoService->importVideo(
+        $form = $response = $this->formManager->getForm(VideoFormationType::class, null, [], $request, function(VideoFormation $videoFormation, Request $request) use ($messageBus) {
+           // lancement en background du système d'upload
+            $messageBus->dispatch(new ImportVideoFormation(
                ($request->files->get('video_formation')['fichier'])->getRealPath(),
-               $request->request->get('video_formation')['titre'],
-               $request->request->get('video_formation')['description']
-               );
-           $videoFormation->setUser($this->getUser());
-           $videoFormation->setVideoId($this->vimeoService->getVideoId($uri));
-           $videoFormation->setUri($uri);
-           $this->entityManager->save($videoFormation);
+               $videoFormation->getTitre(),
+               $videoFormation->getDescription(),
+               $this->getUser()->getUserIdentifier()
+               )
+           );
            $this->addFlash('success', 'Téléchargement en cours ...');
            return $this->redirectToRoute('formationVideo_liste');
         });
