@@ -39,7 +39,7 @@ class ObjectManager
      * @param bool $verifier
      * @return mixed
      */
-    public function createObject(String $className, Array $arrayData = [], bool $verifier = false, $champs = [])
+    public function createObject(String $className, Array $arrayData = [], bool $verifier = false, $champs = [], $onlyPersist=false)
     {
         $errors = null;
         $capturedError = false;
@@ -67,7 +67,12 @@ class ObjectManager
         if($errors instanceof ConstraintViolationList && $errors->count() > 0 && $capturedError) {
             return $errors;
         }
-        $this->entityManager->save($object);
+
+        $this->entityManager->persist($object);
+        if(!$onlyPersist) {
+            $this->entityManager->flush();
+        }
+
         return $object;
     }
 
@@ -84,5 +89,17 @@ class ObjectManager
             $objects[] = $this->createObject($arrayData);
         }
         return $objects;
+    }
+
+    /**
+     * @param $class
+     * @param null $id
+     *
+     * @return object|null
+     */
+    public function get($classWithNameSpace, $id)
+    {
+        $repository = $this->entityManager->getRepository($classWithNameSpace);
+        return $repository->findOneBy(['id' => $id]);
     }
 }

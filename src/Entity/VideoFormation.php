@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\Timestampable;
 use App\Repository\VideoFormationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -46,6 +48,16 @@ class VideoFormation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $videoId;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Commentaire::class, mappedBy="VideoFormation")
+     */
+    private $commentaires;
+
+    public function __construct()
+    {
+        $this->commentaires = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,6 +120,36 @@ class VideoFormation
     public function setVideoId($videoId): self
     {
         $this->videoId = $videoId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commentaire>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setVideoFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getVideoFormation() === $this) {
+                $commentaire->setVideoFormation(null);
+            }
+        }
 
         return $this;
     }
