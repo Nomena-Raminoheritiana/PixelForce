@@ -9,9 +9,7 @@ use App\Form\VideoFormationType;
 use App\Manager\EntityManager;
 use App\Manager\FormManager;
 use App\Manager\ObjectManager;
-use App\Messenger\Message\ImportVideoFormation;
 use App\Repository\VideoFormationRepository;
-use App\Services\VimeoService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +29,6 @@ class VideoFormationController extends AbstractController
      */
     private $formManager;
     /**
-     * @var VimeoService
-     */
-    private $vimeoService;
-    /**
      * @var VideoFormationRepository
      */
     private $videoFormationRepository;
@@ -47,11 +41,10 @@ class VideoFormationController extends AbstractController
      */
     private $objectManager;
 
-    public function __construct(ObjectManager $objectManager, PaginatorInterface $paginator, EntityManager $entityManager, FormManager $formManager, VimeoService $vimeoService, VideoFormationRepository $videoFormationRepository)
+    public function __construct(ObjectManager $objectManager, PaginatorInterface $paginator, EntityManager $entityManager, FormManager $formManager, VideoFormationRepository $videoFormationRepository)
     {
         $this->entityManager = $entityManager;
         $this->formManager = $formManager;
-        $this->vimeoService = $vimeoService;
         $this->videoFormationRepository = $videoFormationRepository;
         $this->paginator = $paginator;
         $this->objectManager = $objectManager;
