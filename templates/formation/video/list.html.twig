@@ -106,5 +106,6 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('ImportVideoVimeo') }}
     <script src="https://player.vimeo.com/api/player.js"></script>
 {% endblock %}

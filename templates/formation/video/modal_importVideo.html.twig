@@ -7,12 +7,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ form_start(form, {'action': path('formationVideo_upload'), 'method': 'POST'}) }}
+                <div id="results">
+
+                </div>
+                <div class="progress progress-import-video mb-3 d-none">
+                    <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">25%</div>
+                </div>
+                {{ form_start(form) }}
                 {{ form_rest(form) }}
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">Importer</button>
+                    <button type="submit" id="launch_import" class="btn btn-primary">Importer</button>
                 </div>
                 {{ form_end(form) }}
+
             </div>
         </div>
     </div>

@@ -1,4 +1,6 @@
 const Encore = require('@symfony/webpack-encore');
+const dotenv = require('dotenv');
+
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -32,6 +34,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('form_addAgent', './assets/js/form_addAgent.js')
     .addEntry('PlanificationLiveVideo', './assets/js/PlanificationLiveVideo.js')
+    .addEntry('ImportVideoVimeo', './assets/js/ImportVideoVimeo.js')
 
     .addStyleEntry('base', './assets/styles/base.css')
 
@@ -84,6 +87,15 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     .autoProvidejQuery()
+    // define the environment variables
+    .configureDefinePlugin(options => {
+        const env = dotenv.config({path: './.env.local'});
+        if (env.error) {
+            throw env.error;
+        }
+
+        options['process.env'].VIMEO_ACCESS_TOKEN = JSON.stringify(env.parsed. VIMEO_ACCESS_TOKEN);
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();
