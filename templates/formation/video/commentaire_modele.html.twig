@@ -1,0 +1,5 @@
+{% for commentaire in commentaires %}
+   {% include 'formation/video/commentaire_instance.html.twig' with {commentaire:commentaire} %}
+{% else %}
+Aucun commentaire disponible
+{% endfor %}

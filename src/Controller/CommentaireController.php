@@ -30,13 +30,27 @@ class CommentaireController extends AbstractController
     }
 
     /**
+     * @Route("/commentaire/charger", name="commentaire_charger", options={"expose"=true})
+     */
+    public function charger(Request $request)
+    {
+        $template = base64_decode($request->request->get('template'));
+        $ownerId = base64_decode($request->request->get('ownerId'));
+        $classWithNamespace = base64_decode($request->request->get('classWithNamespace'));
+        $allComments =  $this->commentaireService->loadAll($template, $ownerId, $classWithNamespace);
+        return $this->json([
+            'commentaires' => $allComments
+        ]);
+    }
+
+    /**
      * @Route("/commentaire/add", name="commentaire_add", options={"expose"=true})
      */
     public function add(Request $request)
     {
         $this->commentaireService->setSubject([
-            'classWithNamespace' => $request->request->get('classWithNamespace'),
-            'id' => $request->request->get('ownerId')
+            'classWithNamespace' => base64_decode($request->request->get('classWithNamespace')),
+            'id' => base64_decode($request->request->get('ownerId'))
             ]);
         /** @var Commentaire $commentaire */
         $commentaire = $this->commentaireService->add(
@@ -48,7 +62,8 @@ class CommentaireController extends AbstractController
            'commentaire' => [
                'id' => $commentaire->getId(),
                'textes' => $commentaire->getTextes()
-           ]
+           ],
+            'template' => $this->commentaireService->getTemplate(base64_decode($request->request->get('template')), ['commentaire' => $commentaire])
         ]);
     }
 

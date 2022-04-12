@@ -35,6 +35,7 @@ Encore
     .addEntry('form_addAgent', './assets/js/form_addAgent.js')
     .addEntry('PlanificationLiveVideo', './assets/js/PlanificationLiveVideo.js')
     .addEntry('ImportVideoVimeo', './assets/js/ImportVideoVimeo.js')
+    .addEntry('commentaire', './assets/js/commentaire.js')
 
     .addStyleEntry('base', './assets/styles/base.css')
 

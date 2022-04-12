@@ -20,7 +20,6 @@
                       <div class="bg-dark border p-2 d-flex  shadow-sm">
                           {% if videoFormationActif %}
                             <iframe src="https://player.vimeo.com/video/{{ videoFormationActif.videoId }}" style="width:100%; height:300px " class="bg-dark img-fluid" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
                           {% else %}
                               <div class="text-center p-5 ">
                                   <h4 class="fw-bold text-white">Aucun video disponible</h4>
@@ -38,6 +37,7 @@
                             <p><small>{{ videoFormationActif.description }}</small></p>
                         {% endif %}
                     </div>
+                    {% include 'formation/video/commentaires.html.twig' %}
 
                 </div>
                 <div class="col-xl-5 ps-xl-0 mt-xl-0 mt-3">

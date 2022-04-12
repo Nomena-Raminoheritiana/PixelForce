@@ -110,7 +110,7 @@ class Commentaire
      * @param Commentaire $parent_id
      * @return Commentaire
      */
-    public function setParent(Commentaire $parent)
+    public function setParent(?Commentaire $parent = null)
     {
         $this->parent = $parent;
         return $this;
