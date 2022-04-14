@@ -3,13 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity("email")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -52,31 +57,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Vous devez entrer votre nom")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Vous devez entrer votre prénom")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\NotNull(message="Votre date de naissance est obligatoire")
      */
     private $dateNaissance;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Vous devez avoir une adresse")
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="Veuillez entrer votre Numéro de sécurité")
      */
     private $numeroSecurite;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull(message="On a besoin de votre RIB")
      */
     private $rib;
 
@@ -84,6 +95,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $photo;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $sixDigitCode;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $forgottenPassToken;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CoachAgent::class, mappedBy="coach")
+     */
+    private $coachAgents;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $active;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LiveChatVideo::class, mappedBy="userA")
+     */
+    private $liveChatVideosFromUserA;
+    /**
+     * @ORM\OneToMany(targetEntity=LiveChatVideo::class, mappedBy="userB")
+     */
+    private $liveChatVideosFromUserB;
+
+    /**
+     * @ORM\OneToMany(targetEntity=VideoFormation::class, mappedBy="user")
+     */
+    private $videoFormations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Commentaire::class, mappedBy="user")
+     */
+    private $commentaires;
+
+    public function __construct()
+    {
+        $this->coachAgents = new ArrayCollection();
+        $this->liveChatVideosFromUserA = new ArrayCollection();
+        $this->liveChatVideosFromUserB = new ArrayCollection();
+        $this->videoFormations = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -127,7 +186,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = self::ROLE_AGENT;
+//        $roles[] = self::ROLE_AGENT;
 
         return array_unique($roles);
     }
@@ -251,9 +310,214 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->photo;
     }
 
-    public function setPhoto(?string $photo): self
+    public function setPhoto(?string $photo = null, $setNull = false): self
     {
-        $this->photo = $photo;
+        $this->photo = $photo ? $photo : $this->photo;
+        if($setNull) {
+            $this->photo = null;
+        }
+
+        return $this;
+    }
+
+    public function getSixDigitCode(): ?int
+    {
+        return $this->sixDigitCode;
+    }
+
+    public function setSixDigitCode(?int $sixDigitCode): self
+    {
+        $this->sixDigitCode = $sixDigitCode;
+
+        return $this;
+    }
+
+    public function getForgottenPassToken(): ?string
+    {
+        return $this->forgottenPassToken;
+    }
+
+    public function setForgottenPassToken(?string $forgottenPassToken): self
+    {
+        $this->forgottenPassToken = $forgottenPassToken;
+
+        return $this;
+    }
+
+    public function validateSixDigitCode($sixDigitCode):bool
+    {
+        if($this->sixDigitCode === (int) $sixDigitCode) {
+            return true;
+        }
+        return false;
+    }
+
+    public function validateForgottenPassToken($forgotten_pass)
+    {
+        if($this->forgottenPassToken ===  $forgotten_pass) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return Collection<int, CoachAgent>
+     */
+    public function getCoachAgents(): Collection
+    {
+        return $this->coachAgents;
+    }
+
+    public function addCoachAgent(CoachAgent $coachAgent): self
+    {
+        if (!$this->coachAgents->contains($coachAgent)) {
+            $this->coachAgents[] = $coachAgent;
+            $coachAgent->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoachAgent(CoachAgent $coachAgent): self
+    {
+        if ($this->coachAgents->removeElement($coachAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($coachAgent->getCoach() === $this) {
+                $coachAgent->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(?bool $active): self
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LiveChatVideo>
+     */
+    public function getLiveChatVideosFromA(): Collection
+    {
+        return $this->liveChatVideosFromUserA;
+    }
+
+    public function addLiveChatVideoFromA(LiveChatVideo $liveChatVideo): self
+    {
+        if (!$this->liveChatVideosFromUserA->contains($liveChatVideo)) {
+            $this->liveChatVideosFromUserA[] = $liveChatVideo;
+            $liveChatVideo->setUserA($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiveChatVideoFromA(LiveChatVideo $liveChatVideo): self
+    {
+        if ($this->liveChatVideosFromUserA->removeElement($liveChatVideo)) {
+            // set the owning side to null (unless already changed)
+            if ($liveChatVideo->getUserA() === $this) {
+                $liveChatVideo->setUserA(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LiveChatVideo>
+     */
+    public function getLiveChatVideosFromB(): Collection
+    {
+        return $this->liveChatVideosFromUserB;
+    }
+
+    public function addLiveChatVideoFromB(LiveChatVideo $liveChatVideo): self
+    {
+        if (!$this->liveChatVideosFromUserB->contains($liveChatVideo)) {
+            $this->liveChatVideosFromUserB[] = $liveChatVideo;
+            $liveChatVideo->setUserB($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiveChatVideoFromB(LiveChatVideo $liveChatVideo): self
+    {
+        if ($this->liveChatVideosFromUserB->removeElement($liveChatVideo)) {
+            // set the owning side to null (unless already changed)
+            if ($liveChatVideo->getUserB() === $this) {
+                $liveChatVideo->setUserB(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VideoFormation>
+     */
+    public function getVideoFormations(): Collection
+    {
+        return $this->videoFormations;
+    }
+
+    public function addVideoFormation(VideoFormation $videoFormation): self
+    {
+        if (!$this->videoFormations->contains($videoFormation)) {
+            $this->videoFormations[] = $videoFormation;
+            $videoFormation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideoFormation(VideoFormation $videoFormation): self
+    {
+        if ($this->videoFormations->removeElement($videoFormation)) {
+            // set the owning side to null (unless already changed)
+            if ($videoFormation->getUser() === $this) {
+                $videoFormation->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commentaire>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getUser() === $this) {
+                $commentaire->setUser(null);
+            }
+        }
 
         return $this;
     }

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Formation en live
+{% endblock %}
+
+{% block body %}
+    <div class="d-flex">
+        <div class="m-auto text-center p-5 loading-live ">
+            <h1 class=" text-muted mb-4"><i class="fa-solid fa-video text-danger"></i> Chargement de video en cours ...</h1>
+            <img src="{{ asset('build/images/live-illustration.jpg') }}" class="border  border-danger border-5 img-fluid" alt="" style="border-style: dashed!important">
+        </div>
+    </div>
+
+    <div class="video-live-contents body-content p-4 " data-code="{{ code }}">
+
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('PlanificationLiveVideo') }}
+{% endblock %}
+

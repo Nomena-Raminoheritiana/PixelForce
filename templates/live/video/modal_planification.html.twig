@@ -1,0 +1,28 @@
+<!-- Modal -->
+<div class="modal fade" id="ModalPlanification{{ user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-calendar-days"></i> Planifier un Live</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ path('live_planifier') }}" method="post">
+                    <input type="hidden" name="users[]" value="{{ user.id|base64_encode }}" />
+                    <div class="mb-3">
+                        <input type="datetime-local" placeholder="Date de debut live" class="form-control" name="dateDebutLive" required />
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" name="theme" placeholder="Ajouter un theme" class="form-control" required />
+                    </div>
+                    <div class="mb-3 text-strat">
+                        <textarea name="description" placeholder="Une petite description concernant la réunion" class="border w-100" rows="10"></textarea>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Planifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

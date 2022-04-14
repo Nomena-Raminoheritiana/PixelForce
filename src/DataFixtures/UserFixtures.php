@@ -29,5 +29,15 @@ class UserFixtures extends Fixture
             'dateNaissance' => new \DateTime('03/08/1999')
         ]);
 
+        $this->objectManager->createObject(User::class, [
+            'email' => 'coach@gmail.com',
+            'roles' => [User::ROLE_COACH],
+            'password' => 'nomena',
+            'nom' => 'RAMINOHERITIANA',
+            'prenom' => 'Nomena',
+            'dateNaissance' => new \DateTime('03/08/1999'),
+            'adresse' => 'lot IVE 192H Ambodimita'
+        ]);
+
     }
 }

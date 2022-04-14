@@ -1,0 +1,53 @@
+/**
+---- font size
+ */
+.fs-10 {
+    font-size: 10px !important;
+}
+.fs-11 {
+    font-size: 11px !important;
+}
+.fs-12 {
+    font-size: 12px !important;
+}
+
+
+/** version desktop **/
+@media screen and (min-width: 768px) {
+    nav#menu-haut,.vh-8 {
+        height: 8vh !important;
+    }
+    .body-content {
+        height: 92vh !important;
+    }
+}
+
+@media screen and (max-width:767px ) {
+    nav#menu-haut,.vh-8 {
+        height: 7.5vh !important;
+    }
+    .body-content {
+        height: 92.5vh !important;
+    }
+}
+
+/** genéral **/
+#menu-left>li {
+    padding-bottom: 5%
+}
+
+.vh-10 {
+    height: 17vh !important;
+}
+
+.text-bold-grey {
+    color: #767676 !important;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+/** calc **/
+.dash-image{
+    background: rgba(255,255,255, 0.5);
+    z-index: 100;
+}

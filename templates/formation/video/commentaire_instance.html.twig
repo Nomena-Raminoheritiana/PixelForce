@@ -1,0 +1,13 @@
+<div class="row mb-5">
+    <div class="col-1  d-flex">
+        <span class="m-auto bg-primary text-white p-3 rounded-circle">RN</span>
+    </div>
+    <div class="col-11 ps-4">
+        <p class="fw-bold mb-0">{{ commentaire.user.nom }} {{ commentaire.user.prenom }} <small class="text-muted fs-10">{{ dateHelper.format(commentaire.updatedAt|date) }}</small></p>
+        <p class="mb-0">{{ commentaire.textes }}</p>
+        <div>
+            <button class="btn btn-sm ps-0 text-muted fw-bold fs-11">Répondre</button>
+            <button class="btn btn-sm ps-0 text-muted fw-bold fs-11">Supprimer</button>
+        </div>
+    </div>
+</div>

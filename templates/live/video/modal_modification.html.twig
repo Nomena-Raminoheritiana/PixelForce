@@ -1,0 +1,43 @@
+<!-- Modal -->
+<div class="modal fade" id="ModalEditLive{{ live is defined ? live.id : 'f12d' }}" tabindex="-1" aria-labelledby="ModalEditLive" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-video text-danger"></i> Planification Live</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ path('live_planifier') }}" method="post">
+                    <input type="hidden" name="code" value="{{ live is defined ? live.code : '' }}">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <input type="datetime-local" placeholder="Date de debut live" class="form-control" value="{{ live is defined ? live.date_debut_live : '' }}" name="dateDebutLive" required />
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" name="theme" placeholder="Ajouter un theme" value="{{ live is defined ? live.theme : '' }}" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="description" class="form-control" placeholder="Une petite description concernant la réunion ..."  rows="10">{{ live is defined ? live.description : '' }}</textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-danger">{{ live is defined ? 'Modifier' : 'Planifier' }}</button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h6><u>Acteurs</u></h6>
+                            {% for agent in agents %}
+                                <div class="form-check">
+                                    <input class="form-check-input" {{ live is defined ? (agent.id in live.userB|split(',') ? 'checked':'') : '' }} name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
+                                    <label class="form-check-label" for="agent-{{ agent.id }}">
+                                        {{ agent.nom }} {{ agent.prenom }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %} Liste des utilisateurs {% endblock %}
+{% block body %}
+    <div class="row p-2 p-lg-4">
+        <div class="col-12">
+            <div class="row mb-4 mt-3 mt-m-0">
+                <div class="col-12 col-md-6 order-2 order-md-1">
+                    <h4><i class="fa fa-book-atlas"></i> Liste des agents</h4>
+                </div>
+                <div class="col-12 col-md-6 text-sm-start text-md-end order-1 order-md-1 mb-3 mb-md-0">
+                    <a href="{{ path('user_addAgent') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter des Agents</a>
+                </div>
+            </div>
+
+            <div class="bg-white border p-4">
+                <table class="table  table-borderless ">
+                    <thead class="text-bold-grey">
+                    <tr>
+                        <th>Email</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Adresse</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in relationCoachAgent %}
+                        {% if user.agent.active %}
+                            <tr class="text-muted">
+                                <td class="pt-3">{{ user.agent.email }}</td>
+                                <td class="pt-3">{{ user.agent.nom }} </td>
+                                <td class="pt-3">{{ user.agent.prenom }}</td>
+                                <td class="pt-3">{{ user.agent.adresse }}</td>
+                                <td class="pt-2 text-end">
+                                    <a href="#" class="btn btn-success btn-sm speed-liveVideo-call" id-envoyeur="{{ app.user.id|base64_encode }}"  id-recepteur="{{ user.agent.id|base64_encode }}"><i class="fa-solid fa-video"></i></a>
+                                    <a href="#" class="btn btn-warning btn-sm text-white" data-bs-toggle="modal" data-bs-target="#ModalPlanification{{ user.agent.id }}"><i class="fa-solid fa-calendar-days"></i></a>
+                                    <!-- importer les modals -->
+                                    {% include 'live/video/modal_planification.html.twig' with {user:user.agent} %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% else  %}
+                        <tr>
+                            <td colspan="5" class="text-center pt-5 text-muted">
+                                <h3><i class="fa-solid fa-hourglass-empty"></i></h3>
+                                Aucun agent n'est présent
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

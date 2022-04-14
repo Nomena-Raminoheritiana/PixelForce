@@ -1,0 +1,29 @@
+<div class="text-dark vh-100" style="overflow-y:auto; overflow-x: hidden">
+    <div class="d-flex w-100 vh-8 border-bottom ">
+        <a href="/" class="m-auto text-decoration-none  text-muted">
+                                <span class="text-center fs-4" >
+                                    <span class="text-primary">P</span>
+                                    <span class="d-none d-md-inline">i</span>
+                                    <span class="text-danger d-none d-md-inline">x</span>
+                                    <span class="d-none d-md-inline">e</span>
+                                    <span class="text-warning d-none d-md-inline">l</span>
+                                    F
+                                    <span class="d-none d-md-inline">o</span>
+                                    <span class="d-none d-md-inline">r</span>
+                                    <span class="d-none d-md-inline">c</span>
+                                    <span class="d-none d-md-inline">e</span>
+                                </span>
+        </a>
+
+    </div>
+    <div class="px-3 ps-sm-4 pe-sm-5 ps-md-4 pe-md-4 pt-4">
+        {% set role = app.user.roles[0]  %}
+        {% if role == constant('App\\Entity\\User::ROLE_COACH') %}
+            {% include 'partials/menu-left-coach.html.twig' %}
+        {% elseif role == constant('App\\Entity\\User::ROLE_ADMINISTRATEUR') %}
+            {% include 'partials/menu-left-admin.html.twig' %}
+        {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
+            {% include 'partials/menu-left-agent.html.twig' %}
+        {% endif %}
+    </div>
+</div>

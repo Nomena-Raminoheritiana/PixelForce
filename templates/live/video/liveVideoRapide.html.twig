@@ -1,0 +1,44 @@
+<!-- Modal -->
+<div class="modal fade" id="modal-live-Video-Rapide" tabindex="-1" aria-labelledby="modal-live-Video-Rapide" aria-hidden="true">
+    <div class="modal-dialog modal-xl" id="modal-dLive">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row w-100">
+                    <div class="col-6">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            <a href="#" class="m-auto text-decoration-none  text-muted">
+                                <span class="text-center fs-4" >
+                                    <span class="text-primary">P</span>
+                                    <span class="d-none d-md-inline">i</span>
+                                    <span class="text-danger d-none d-md-inline">x</span>
+                                    <span class="d-none d-md-inline">e</span>
+                                    <span class="text-warning d-none d-md-inline">l</span>
+                                    F
+                                    <span class="d-none d-md-inline">o</span>
+                                    <span class="d-none d-md-inline">r</span>
+                                    <span class="d-none d-md-inline">c</span>
+                                    <span class="d-none d-md-inline">e</span>
+                                </span>
+                                <i class="fa-solid fa-video text-danger ms-3"></i>
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="col-6 text-end pe-0">
+                        <button type="button" class="btn" onclick="document.getElementById('modal-dLive').classList.toggle('modal-fullscreen')"><i class="fa-solid fa-maximize"></i></button>
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close"> <i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <h1 class="text-center text-muted chargement-live">Veuillez attendre le chargement ...</h1>
+                <div id="live_video" class="h-100 d-flex" style="height:70vh !important;">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Terminer l'appel</button>
+            </div>
+        </div>
+    </div>
+</div>
