@@ -44,12 +44,23 @@ class CommentaireController extends AbstractController
     }
 
     /**
+     * @Route("/commentaire/charger/sous/{encodedCommentaire}", name="commentaire_chargerSousCommentaire", options={"expose"=true})
+     */
+    public function chargerSousCommentaire($encodedCommentaire, Request $request)
+    {
+       $allComments = $this->commentaireService->loadSousCommentaire(base64_decode($encodedCommentaire), base64_decode($request->request->get('template')));
+       return $this->json([
+            'commentaires' => $allComments
+        ]);
+    }
+
+    /**
      * @Route("/commentaire/add", name="commentaire_add", options={"expose"=true})
      */
     public function add(Request $request)
     {
         $this->commentaireService->setSubject([
-            'classWithNamespace' => base64_decode($request->request->get('classWithNamespace')),
+            'classWithNamespace' => !in_array($request->request->get('classWithNamespace'), ["undefined", null]) ? base64_decode($request->request->get('classWithNamespace')) : null,
             'id' => base64_decode($request->request->get('ownerId'))
             ]);
         /** @var Commentaire $commentaire */

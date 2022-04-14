@@ -1,13 +1,44 @@
-<div class="row mb-5">
-    <div class="col-1  d-flex">
-        <span class="m-auto bg-primary text-white p-3 rounded-circle">RN</span>
-    </div>
-    <div class="col-11 ps-4">
-        <p class="fw-bold mb-0">{{ commentaire.user.nom }} {{ commentaire.user.prenom }} <small class="text-muted fs-10">{{ dateHelper.format(commentaire.updatedAt|date) }}</small></p>
-        <p class="mb-0">{{ commentaire.textes }}</p>
-        <div>
-            <button class="btn btn-sm ps-0 text-muted fw-bold fs-11">Répondre</button>
-            <button class="btn btn-sm ps-0 text-muted fw-bold fs-11">Supprimer</button>
+<div class="py-3 my-2 commentaire-instance">
+    <div class="row">
+        <div class="col-12 col-md-2 pe-0 ps-4">
+            <div class="d-md-flex d-block w-100 h-100 text-start mt-2 mt-md-0 mb-4">
+                <span class="mb-auto bg-primary text-white p-3 rounded-circle text-uppercase">{{ app.user.nom|first }} {{ app.user.prenom|first }}</span>
+            </div>
+        </div>
+        <div class="col-12 col-md-10 ps-4 d-flex">
+            <div class="my-auto w-100">
+                <p class="fw-bold mb-0">{{ commentaire.user.nom }} {{ commentaire.user.prenom }} <small class="text-muted fs-10">{{ dateHelper.format(commentaire.updatedAt|date) }}</small></p>
+                <p class="mb-0" id="commentaire-{{ commentaire.id }}">{{ commentaire.textes }}</p>
+                <div>
+                    {% if app.user.id == commentaire.user.id %}
+                        <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 update-commentaire" data-id="{{ commentaire.id }}" data-id-commentaire-html="#commentaire-{{ commentaire.id }}">Modifier</button>
+                    {% endif %}
+                    <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 repondre-commentaire">Répondre</button>
+                    {% if app.user.id == commentaire.user.id %}
+                        <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 supprimer-commentaire">Supprimer</button>
+                    {% endif %}
+
+                </div>
+                <div class="displayResponse">
+                    {% set nombreCommentaires = ((commentaire.rgt - commentaire.lft)/2)|round(0,'floor')|number_format %}
+                    {% if nombreCommentaires > 0  %}
+                        <div>
+                            <a href=""
+                               class="fs-12 afficher-commentaire"
+                               data-parent-id="{{ commentaire.id|base64_encode }}"
+                               data-template="{{ 'formation/video/commentaire_modele.html.twig'|base64_encode }}"
+                            ><i class="fa-solid fa-angle-down"></i> Afficher {{ nombreCommentaires == 1 ? 'la' : 'les ' ~ nombreCommentaires }} réponse{{ nombreCommentaires>1?'s':'' }}</a>
+                        </div>
+                    {% endif %}
+                    <div class="load-sous-commentaires">
+
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
+</div>
+<div class="commentaire-input d-none">
+    {% include "formation/video/commentaire_input.html.twig" with {parentId:commentaire.id} %}
 </div>

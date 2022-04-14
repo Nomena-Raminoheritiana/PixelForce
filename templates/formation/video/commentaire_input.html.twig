@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col-12 col-md-2 pe-0 ps-4">
+        <div class="d-md-flex d-block w-100 h-100 text-start mt-2 mt-md-0 mb-4">
+            <span class="m-md-auto bg-success text-white p-3 rounded-circle text-uppercase">{{ app.user.nom|first }} {{ app.user.prenom|first }}</span>
+        </div>
+
+    </div>
+    <div class="col-12 col-md-10 ps-4">
+        <div>
+            <textarea class="w-100 p-3" id="comment-video-{{ parentId }}" rows="5" placeholder="Ajouter une réponse"></textarea>
+        </div>
+        <div class="text-end">
+            <button class="btn btn-secondary btn-sm annuler-reponse">Annuler</button>
+            <button class="btn btn-primary btn-sm add-comment"
+                    data-template-instance="{{ 'formation/video/commentaire_instance.html.twig'|base64_encode }}"
+                    data-parent-id="{{ parentId }}"
+                    data-selector="#comment-video-{{ parentId }}"
+            >Répondre</button>
+        </div>
+    </div>
+</div>

@@ -1,15 +1,14 @@
 <div class="row mb-3 mt-2">
     <div class="col-2 pe-0">
-        <div class="d-flex w-100 h-100 bg-white border border-primary border-2 border-end-0 ">
-            <span class="m-auto bg-primary text-white p-3 rounded-circle">RN</span>
+        <div class="d-flex w-100 h-100 bg-white border  border-end-0 ">
+            <span class="m-auto bg-primary text-white p-3 rounded-circle text-uppercase">{{ app.user.nom|first }} {{ app.user.prenom|first }}</span>
         </div>
     </div>
     <div class="col-10 text-end ps-0">
-        <div class="bg-white w-100 h-100 border border-primary border-2 border-start-0 py-4 pe-4">
+        <div class="bg-white w-100 h-100 border border-2 border-start-0 py-4 pe-4">
             <textarea class="w-100 border-0 border-bottom p-3 pb-0 on-focus-out" id="comment-video" spellcheck="true" placeholder="+ Ajouter un commentaire en tant que {{ app.user.nom|capitalize }} {{ app.user.prenom|capitalize }}"></textarea>
             <button class="btn btn-secondary btn-sm mt-4">Annuler</button>
-            <button class="btn btn-primary btn-sm mt-4"
-                    id="add-comment"
+            <button class="btn btn-primary btn-sm mt-4 add-comment"
                     data-template-instance="{{ 'formation/video/commentaire_instance.html.twig'|base64_encode }}"
                     data-owner-class="{{ 'App\\Entity\\VideoFormation'|base64_encode }}"
                     data-owner-id="{{  videoFormationActif.id|base64_encode }}"
@@ -21,7 +20,7 @@
 </div>
 
 <div class="row mb-5">
-    <div class="col-12 pt-5 load-comment"
+    <div class="col-12 load-comment"
          data-template="{{ 'formation/video/commentaire_modele.html.twig'|base64_encode }}"
          data-owner-id="{{ videoFormationActif.id|base64_encode }}"
          data-owner-class="{{ 'App\\Entity\\VideoFormation'|base64_encode }}"
