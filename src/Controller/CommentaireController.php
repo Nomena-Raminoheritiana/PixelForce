@@ -93,4 +93,17 @@ class CommentaireController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/commentaire/supprimer/{id}", name="commentaire_supprimer", options={"expose"=true})
+     */
+    public function supprimer(Commentaire $commentaire, Request $request)
+    {
+        $data = ['message' => 'ko'];
+        if($this->isCsrfTokenValid('commentaire'.$commentaire->getId(), $request->query->get('token'))) {
+            $this->commentaireService->remove($commentaire);
+            $data['message'] = 'ok';
+        }
+        return $this->json($data);
+    }
+
 }

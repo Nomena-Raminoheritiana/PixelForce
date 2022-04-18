@@ -1,4 +1,4 @@
-<div class="py-3 my-2 commentaire-instance">
+<div class="py-3 my-2 commentaire-instance" id="commentaire-{{ commentaire.id }}">
     <div class="row">
         <div class="col-12 col-md-2 pe-0 ps-4">
             <div class="d-md-flex d-block w-100 h-100 text-start mt-2 mt-md-0 mb-4">
@@ -8,14 +8,16 @@
         <div class="col-12 col-md-10 ps-4 d-flex">
             <div class="my-auto w-100">
                 <p class="fw-bold mb-0">{{ commentaire.user.nom }} {{ commentaire.user.prenom }} <small class="text-muted fs-10">{{ dateHelper.format(commentaire.updatedAt|date) }}</small></p>
-                <p class="mb-0" id="commentaire-{{ commentaire.id }}">{{ commentaire.textes }}</p>
+                <p class="mb-0" id="commentaire-textes-{{ commentaire.id }}">{{ commentaire.textes }}</p>
                 <div>
                     {% if app.user.id == commentaire.user.id %}
-                        <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 update-commentaire" data-id="{{ commentaire.id }}" data-id-commentaire-html="#commentaire-{{ commentaire.id }}">Modifier</button>
+                        <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 update-commentaire" data-id="{{ commentaire.id }}" data-id-commentaire-html="#commentaire-textes-{{ commentaire.id }}">Modifier</button>
                     {% endif %}
+                    {% if commentaire.lvl < 2 %}
                     <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 repondre-commentaire">Répondre</button>
+                    {% endif %}
                     {% if app.user.id == commentaire.user.id %}
-                        <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 supprimer-commentaire">Supprimer</button>
+                        <button class="btn btn-sm ps-0 text-muted fw-bold fs-11 supprimer-commentaire" data-id="{{ commentaire.id }}" data-token="{{ csrf_token('commentaire'~commentaire.id) }}">Supprimer</button>
                     {% endif %}
 
                 </div>
@@ -27,11 +29,13 @@
                                class="fs-12 afficher-commentaire"
                                data-parent-id="{{ commentaire.id|base64_encode }}"
                                data-template="{{ 'formation/video/commentaire_modele.html.twig'|base64_encode }}"
-                            ><i class="fa-solid fa-angle-down"></i> Afficher {{ nombreCommentaires == 1 ? 'la' : 'les ' ~ nombreCommentaires }} réponse{{ nombreCommentaires>1?'s':'' }}</a>
+                            ><i class="fa-solid fa-angle-down"></i> <span class="libelle">Afficher {{ nombreCommentaires == 1 ? 'la' : 'les ' ~ nombreCommentaires }} réponse{{ nombreCommentaires>1?'s':'' }}</span></a>
                         </div>
                     {% endif %}
-                    <div class="load-sous-commentaires">
-
+                    <div class="load-sous-commentaires d-none">
+                        <div class=" text-center chargement-commentaire">
+                            Chargement des commentaires ...
+                        </div>
                     </div>
                 </div>
 

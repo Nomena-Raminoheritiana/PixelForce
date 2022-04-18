@@ -116,4 +116,15 @@ class CommentaireService
         return $this->twig->render($template, $params);
     }
 
+
+    public function remove(Commentaire $commentaire)
+    {
+        if (!empty($commentaire)) {
+            foreach ($this->commentaireRepository->children($commentaire) as $child) {
+                $this->remove($child);
+            }
+            $this->commentaireRepository->removeFromTree($commentaire);
+            $this->entityManager->flush();
+        }
+    }
 }

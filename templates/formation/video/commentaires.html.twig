@@ -31,4 +31,41 @@
 
     </div>
 </div>
+<!-- Modals -->
+<!-- Modals de suppression commentaire -->
+<div class="modal fade" id="suppression-commentaire" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Supprimer le commentaire</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Confirmer la suppression
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmer-suppression">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modals modification d'un commentaire -->
+<div class="modal fade" id="modification-commentaire" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modifier le commentaire</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea class="w-100 p-3" id="updated-commentaire-contents"  rows="10"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmer-maj">Modifier</button>
+            </div>
+        </div>
+    </div>
+</div>
 {{ encore_entry_script_tags('commentaire') }}
