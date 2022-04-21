@@ -102,7 +102,11 @@ $(document).ready(function() {
         // lancé l'appel local
         launchLiveVideo($('#live_video')[0], $(this).attr('id-live'),{
             width:'100%',
-            height:'100%'
+            height:'100%',
+            onload: function() {
+                // on cache le loading dès que la video est chargé
+                $('.chargement-live').addClass('d-none');
+            }
         });
     });
 
@@ -117,8 +121,11 @@ $(document).ready(function() {
     });
 
     // detecter s'il y a un appel entrant
-    setInterval(async function() {
-       const response = await axios.get(Routing.generate('live_joinLiveVideo'))
+    const url = JSON.parse(document.getElementById("live-call-topic").textContent);
+    const eventSource = new EventSource(url);
+    eventSource.onmessage = async event => {
+        // puis on récupère toute les appels entrants
+        const response = await axios.get(Routing.generate('live_joinLiveVideo'))
         if(typeof response.data != 'object'  && live_en_cours === false) {
             // afficher le modal
             if($('#ModalJoinCall').length>0) {
@@ -138,8 +145,7 @@ $(document).ready(function() {
             modalJoinCall.hide();
             modalJoinCall = '';
         }
-
-    }, 5000);
+    }
 
     $(this).on('hide.bs.modal','#ModalJoinCall', function(e) {
         if(!hideModalJoinCall) {

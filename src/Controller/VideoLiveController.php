@@ -54,10 +54,12 @@ class VideoLiveController extends AbstractController
         if($users = $request->request->get('users')) {
             foreach($users as $userB) {
                 $this->liveVideo->create($userA, base64_decode($userB), $code, true);
+                $this->liveVideo->call($userB, $code);
             }
         } else {
-            $userB = base64_decode($request->request->get('userB'));
-            $this->liveVideo->create($userA, $userB, $code, true);
+            $userB = $request->request->get('userB');
+            $this->liveVideo->create($userA, base64_decode($userB), $code, true);
+            $this->liveVideo->call($userB, $code);
         }
 
         return $this->json([
