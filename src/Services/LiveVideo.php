@@ -110,13 +110,20 @@ class LiveVideo
         $this->mercureHub->publish($update);
     }
 
-    public function refuserCall($encodedIdUser, $code = null)
+    // notifier le créateur du live de la refus
+    public function refuserCall($code, $user = [])
     {
-        $update = new Update(
-            self::REFUS_CALL_TOPIC.$encodedIdUser,
-            json_encode(['code' => $code])
-        );
+        // on va prendre l'user sui a créé le live
+        $liveChat = $this->liveChatVideoRepository->findOneBy(['code' => $code]);
+        if($liveChat) {
+            $userCreateur = $liveChat->getUserA();
+            $update = new Update(
+                self::REFUS_CALL_TOPIC.base64_encode($userCreateur->getId()),
+                json_encode(['code' => $code, 'user' => $user])
+            );
 
-        $this->mercureHub->publish($update);
+            $this->mercureHub->publish($update);
+        }
+
     }
 }

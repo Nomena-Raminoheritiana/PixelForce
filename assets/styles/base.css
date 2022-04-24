@@ -51,3 +51,12 @@
     background: rgba(255,255,255, 0.5);
     z-index: 100;
 }
+
+/** alert **/
+.alert-absolute {
+    position: absolute;
+    top: 20px;
+    left:20px;
+    overflow-y: auto;
+    z-index: 5000
+}

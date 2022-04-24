@@ -94,10 +94,11 @@ class VideoLiveController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/liveVideo/join", name="live_joinLiveVideo", options={"expose"=true})
      */
-    public function join()
+    public function join(Request $request)
     {
        $lives = $this->liveChatVideoRepository->findBy(['userB' => $this->getUser(), 'isSpeedLive' => true]);
-
+       $lives_planifier = $this->liveChatVideoRepository->findBy(['userB' => $this->getUser(), 'code' => $request->query->get('code')]);
+       $lives = array_merge($lives, $lives_planifier);
        if(!empty($lives)) {
            return $this->render('live/video/modal_joinLive.html.twig', [
                'lives' => $lives
@@ -108,6 +109,39 @@ class VideoLiveController extends AbstractController
            'message' => "Pas de live pour le moment"
        ]);
 
+    }
+
+    /**
+     * @Route("/liveVideo/refuserCall/{code}", name="live_refuserCall", options={"expose"=true})
+     * @param Request $reques
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function refuserCall($code)
+    {
+        $this->liveVideo->refuserCall($code, [
+           'id' => base64_encode($this->getUser()->getId()),
+           'nom' => $this->getUser()->getNom(),
+           'prenom' => $this->getUser()->getPrenom(),
+        ]);
+        return $this->json(['erreur'=>false, 'message'=>'ok']);
+    }
+
+    /**
+     *  @Route("/liveVideo/reCall/{encodedUser}", name="live_reCall", options={"expose"=true})
+     * @param Request $reques
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function reCall($encodedUser, Request $request)
+    {
+        if($request->isMethod('POST')) {
+            $this->liveVideo->call($encodedUser);
+            return $this->json([
+                'message' => 'ok'
+            ]);
+        }
+       return $this->json([
+           'message' => 'KO : erreur sur la méthode'
+       ]);
     }
 
     /**
@@ -175,6 +209,7 @@ class VideoLiveController extends AbstractController
         foreach($lives as $live) {
             $live->setIsInProcess(true);
             $this->entityManager->persist($live);
+            $this->liveVideo->call(base64_encode($live->getUserB()->getId()), $live->getCode());
         }
         $this->entityManager->flush();
 

@@ -30,8 +30,9 @@
                 </div>
 
             </div>
-            <div class="modal-body">
+            <div class="modal-body position-relative">
                 <h1 class="text-center text-muted chargement-live">Veuillez attendre le chargement ...</h1>
+                <div class=" alert-absolute"></div>
                 <div id="live_video" class="h-100 d-flex" style="height:70vh !important;">
 
                 </div>
@@ -41,4 +42,11 @@
             </div>
         </div>
     </div>
+</div>
+<!-- un modèle pour une alerte d'un refus live video -->
+<div class="alert alert-danger alert-model d-none alert-dismissible fade" id="model-alert" role="alert">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <strong class="nom-participant">Nomena</strong> vient de refuser votre appel.
+    <button class="btn btn-success call-rapel btn-sm">Rappeler</button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
