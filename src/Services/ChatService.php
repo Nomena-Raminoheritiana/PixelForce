@@ -82,6 +82,7 @@ class ChatService
         $canal->addUser($userA);
         $canal->addUser($userB);
         $this->entityManager->save($canal);
+        return $canal;
     }
 
     public function createGroupCanal($nom, $users = [])
@@ -99,11 +100,12 @@ class ChatService
         }
 
         $this->entityManager->save($canal);
+        return $canal;
     }
 
 
     public function getMessagesByCanal(CanalMessage $canal) {
-        return $canal->getMessages();
+        return $canal->getMessages()->toArray();
     }
 
 
