@@ -149,6 +149,11 @@ class ChatService
        return $canalsNormalized;
     }
 
+    public function vu(Message $message, User $user)
+    {
+        
+    }
+
     public function generateCode(?int $userA = null, ?int $userB = null)
     {
        return $this->generateKey->generateCode($userA, $userB);

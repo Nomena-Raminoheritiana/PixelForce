@@ -145,6 +145,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $canalMessages;
 
+    /**
+     * @ORM\OneToMany(targetEntity=MessageVu::class, mappedBy="user")
+     */
+    private $messageVus;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -154,6 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->commentaires = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->canalMessages = new ArrayCollection();
+        $this->messageVus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -586,6 +592,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->canalMessages->removeElement($canalMessage)) {
             $canalMessage->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MessageVu>
+     */
+    public function getMessageVus(): Collection
+    {
+        return $this->messageVus;
+    }
+
+    public function addMessageVu(MessageVu $messageVu): self
+    {
+        if (!$this->messageVus->contains($messageVu)) {
+            $this->messageVus[] = $messageVu;
+            $messageVu->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessageVu(MessageVu $messageVu): self
+    {
+        if ($this->messageVus->removeElement($messageVu)) {
+            // set the owning side to null (unless already changed)
+            if ($messageVu->getUser() === $this) {
+                $messageVu->setUser(null);
+            }
         }
 
         return $this;
