@@ -13,6 +13,10 @@ use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\MessageRepository;
 use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ChatService
 {
@@ -43,6 +47,10 @@ class ChatService
      * @var DateHelper
      */
     private $dateHelper;
+    /**
+     * @var Serializer
+     */
+    private $serializer;
 
     public function __construct(MessageRepository $messageRepository,
                                 CanalMessageRepository $canalMessageRepository,
@@ -57,6 +65,7 @@ class ChatService
         $this->entityManager = $entityManager;
         $this->generateKey = $generateKey;
         $this->dateHelper = $dateHelper;
+        $this->serializer = new Serializer([new ObjectNormalizer()]);
     }
 
     public function addMessage(CanalMessage $canalMessage, User $user, $textes)
@@ -68,7 +77,8 @@ class ChatService
             'textes' => $textes
         ]);
 
-        return $message;
+        return $this->getNormalizeData($message, ['id', 'textes', 'createdAt', 'canal' => [ 'id', 'isGroup', 'nom', 'code' ], 'user' => ['id', 'nom','prenom','mail','roles','adresse']]);
+
     }
 
     public function createSingleCanal(User $userA, User $userB)
@@ -79,10 +89,13 @@ class ChatService
             'code' => $code,
             'isGroup' => false
         ],false, [], true);
-        $canal->addUser($userA);
-        $canal->addUser($userB);
+
+        foreach([$userA, $userB] as $user) {
+            $canal->addUser($user);
+        }
         $this->entityManager->save($canal);
-        return $canal;
+
+       return $this->getNormalizeData($canal, ['id', 'isGroup', 'nom', 'code', 'users' => ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse']]);
     }
 
     public function createGroupCanal($nom, $users = [])
@@ -100,18 +113,40 @@ class ChatService
         }
 
         $this->entityManager->save($canal);
-        return $canal;
+        return $this->getNormalizeData($canal, ['id', 'isGroup', 'nom', 'code', 'users' => ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse']]);
     }
 
 
     public function getMessagesByCanal(CanalMessage $canal) {
-        return $canal->getMessages()->toArray();
+        $messages = $canal->getMessages()->toArray();
+        $messagesNormalized = [];
+        foreach($messages as $message) {
+            $data = $this->getNormalizeData($message, ['id', 'textes', 'createdAt', 'canal' => [ 'id', 'isGroup', 'nom', 'code' ], 'user' => ['id', 'nom','prenom','mail','roles','adresse']]);
+            if(!$data['error']) {
+                $messagesNormalized[] = $data;
+            }
+        }
+        return $messagesNormalized;
+    }
+
+    public function getMessagesByCode($code)
+    {
+       $canal = $this->canalMessageRepository->findOneBy(['code' => $code]);
+       return $this->getMessagesByCanal($canal);
     }
 
 
     public function getCanalsGroup(User $user)
     {
-       return $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => true]);
+       $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => true]);
+       $canalsNormalized = [];
+       foreach($canals as $canal) {
+           $data = $this->getNormalizeData($canal, ['id', 'isGroup', 'nom', 'code', 'users' => ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse']]);
+            if(!$data['error']) {
+                $canalsNormalized[] = $data;
+            }
+       }
+       return $canalsNormalized;
     }
 
     public function generateCode(?int $userA = null, ?int $userB = null)
@@ -119,16 +154,21 @@ class ChatService
        return $this->generateKey->generateCode($userA, $userB);
     }
 
+    private function getNormalizeData($object, $attributes)
+    {
+        try {
+            $normalizedData = $this->serializer->normalize($object, null, [
+                AbstractNormalizer::ATTRIBUTES => $attributes
+            ]);
+            return array_merge($normalizedData, ['error' => false]);
 
-    private function detectionUrlLink($content='') {
-        $content = preg_replace('#(((https?://)|(w{3}\.))+[a-zA-Z0-9&;\#\.\?=_/-]+\.([a-z]{2,4})([a-zA-Z0-9&;\#\.\?=_/-]+))#i', '<a href="$0" target="_blank">$0</a>', $content);
-        // Si on capte un lien tel que www.test.com, il faut rajouter le http://
-        if(preg_match('#<a href="www\.(.+)" target="_blank">(.+)<\/a>#i', $content)) {
-            $content = preg_replace('#<a href="www\.(.+)" target="_blank">(.+)<\/a>#i', '<a href="http://www.$1" target="_blank">www.$1</a>', $content);
-            //preg_replace('#<a href="www\.(.+)">#i', '<a href="http://$0">$0</a>', $content);
+        } catch (ExceptionInterface $e) {
+            return [
+                'error' => true,
+                'message' => $e->getMessage(),
+                'traces' => $e->getTrace(),
+                'code' => $e->getCode()
+            ];
         }
-
-        $content = stripslashes($content);
-        return $content;
     }
 }
