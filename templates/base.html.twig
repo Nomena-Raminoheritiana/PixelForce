@@ -40,6 +40,8 @@
     </body>
 </html>
 {% block javascripts %}
+    <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+    <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>

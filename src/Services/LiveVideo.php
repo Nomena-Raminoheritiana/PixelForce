@@ -9,9 +9,14 @@ use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Repository\LiveChatVideoRepository;
 use App\Repository\UserRepository;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 
 class LiveVideo
 {
+    const CALL_TOPIC="https://liveVideo/call/";
+    const REFUS_CALL_TOPIC="https://liveVideo/call/refus/";
+
     /**
      * @var ObjectManager
      */
@@ -28,13 +33,22 @@ class LiveVideo
      * @var EntityManager
      */
     private $entityManager;
+    /**
+     * @var HubInterface
+     */
+    private $mercureHub;
 
-    public function __construct(ObjectManager $objectManager, EntityManager $entityManager, LiveChatVideoRepository $liveChatVideoRepository, UserRepository $userRepository)
+    public function __construct(HubInterface $mercureHub,
+                                ObjectManager $objectManager,
+                                EntityManager $entityManager,
+                                LiveChatVideoRepository $liveChatVideoRepository,
+                                UserRepository $userRepository)
     {
         $this->objectManager = $objectManager;
         $this->liveChatVideoRepository = $liveChatVideoRepository;
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
+        $this->mercureHub = $mercureHub;
     }
 
     /**
@@ -84,5 +98,32 @@ class LiveVideo
 
         $this->entityManager->flush();
         return $lives_restant;
+    }
+
+    public function call($encodedIdUser, $code = null)
+    {
+        $update = new Update(
+            self::CALL_TOPIC.$encodedIdUser,
+            json_encode(['code' => $code])
+        );
+
+        $this->mercureHub->publish($update);
+    }
+
+    // notifier le créateur du live de la refus
+    public function refuserCall($code, $user = [])
+    {
+        // on va prendre l'user sui a créé le live
+        $liveChat = $this->liveChatVideoRepository->findOneBy(['code' => $code]);
+        if($liveChat) {
+            $userCreateur = $liveChat->getUserA();
+            $update = new Update(
+                self::REFUS_CALL_TOPIC.base64_encode($userCreateur->getId()),
+                json_encode(['code' => $code, 'user' => $user])
+            );
+
+            $this->mercureHub->publish($update);
+        }
+
     }
 }

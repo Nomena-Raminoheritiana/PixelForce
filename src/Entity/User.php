@@ -135,6 +135,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $commentaires;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="user")
+     */
+    private $messages;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=CanalMessage::class, mappedBy="users")
+     */
+    private $canalMessages;
+
+    /**
+     * @ORM\OneToMany(targetEntity=MessageVu::class, mappedBy="user")
+     */
+    private $messageVus;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -142,6 +157,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->liveChatVideosFromUserB = new ArrayCollection();
         $this->videoFormations = new ArrayCollection();
         $this->commentaires = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->canalMessages = new ArrayCollection();
+        $this->messageVus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -516,6 +534,93 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($commentaire->getUser() === $this) {
                 $commentaire->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CanalMessage>
+     */
+    public function getCanalMessages(): Collection
+    {
+        return $this->canalMessages;
+    }
+
+    public function addCanalMessage(CanalMessage $canalMessage): self
+    {
+        if (!$this->canalMessages->contains($canalMessage)) {
+            $this->canalMessages[] = $canalMessage;
+            $canalMessage->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCanalMessage(CanalMessage $canalMessage): self
+    {
+        if ($this->canalMessages->removeElement($canalMessage)) {
+            $canalMessage->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MessageVu>
+     */
+    public function getMessageVus(): Collection
+    {
+        return $this->messageVus;
+    }
+
+    public function addMessageVu(MessageVu $messageVu): self
+    {
+        if (!$this->messageVus->contains($messageVu)) {
+            $this->messageVus[] = $messageVu;
+            $messageVu->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessageVu(MessageVu $messageVu): self
+    {
+        if ($this->messageVus->removeElement($messageVu)) {
+            // set the owning side to null (unless already changed)
+            if ($messageVu->getUser() === $this) {
+                $messageVu->setUser(null);
             }
         }
 

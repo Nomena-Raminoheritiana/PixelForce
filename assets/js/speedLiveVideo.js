@@ -8,6 +8,7 @@ $(document).ready(function() {
     let token_annulation_requete = new AbortController();
     let modalJoinCall = 'null';
     let hideModalJoinCall = false;
+    let refuserCall = true;
 
     // appel rapide d'un appel video
     $(this).on('click', '.speed-liveVideo-call', function(e) {
@@ -77,48 +78,63 @@ $(document).ready(function() {
             live_en_cours = false;
         }
 
+        $('.alert-absolute').html('')
+
     })
 
     // rejoindre un reunion
     $(this).on('click','.join-live', function(e) {
         e.preventDefault();
         live_en_cours = true;
+        hideModalJoinCall = true;
+        refuserCall = false;
+
         // on supprime le modal d'appel
         if(typeof modalJoinCall == 'object') {
-            hideModalJoinCall = true;
+            modalJoinCall.hide();
+        } else {
+            // reduire tout les autres modals
+            modalJoinCall = new Modal($('#ModalJoinCall')[0]);
             modalJoinCall.hide();
         }
 
-        // TODO: on met en pause le setInterval qui detecte les apples entrant
-
-        // reduire tout les autres modals
-        let modal = new Modal($('#ModalJoinCall')[0]);
-        modal.hide();
-
         // afficher le modal de live video
-        modal = new Modal($('#modal-live-Video-Rapide')[0], { keyboard: false });
+        let modal = new Modal($('#modal-live-Video-Rapide')[0], { keyboard: false });
         modal.show();
 
         // lancé l'appel local
         launchLiveVideo($('#live_video')[0], $(this).attr('id-live'),{
             width:'100%',
-            height:'100%'
+            height:'100%',
+            onload: function() {
+                // on cache le loading dès que la video est chargé
+                $('.chargement-live').addClass('d-none');
+            }
         });
     });
 
-    // supprimer un live coté répondeur
+    // refuser un call
     $(this).on('click', '.remove-live', async function(e) {
         e.preventDefault();
-        await axios.get(Routing.generate('live_destruct', {code : $(this).attr('id-live')}))
         if(typeof modalJoinCall == 'object') {
             modalJoinCall.hide();
             hideModalJoinCall = true;
         }
     });
 
+    $(this).on('click','.call-rapel', async function(e) {
+        e.preventDefault();
+        $(this).closest('.alert').remove();
+        await axios.post(Routing.generate('live_reCall', {encodedUser:$(this).attr('data-user-id')}))
+    });
+
     // detecter s'il y a un appel entrant
-    setInterval(async function() {
-       const response = await axios.get(Routing.generate('live_joinLiveVideo'))
+    const urlDetectionAppel = JSON.parse(document.getElementById("live-call-topic").textContent);
+    const eventDetectionAppelSource = new EventSource(urlDetectionAppel);
+    eventDetectionAppelSource.onmessage = async event => {
+        const data = JSON.parse(event.data);
+        // puis on récupère toute les appels entrants
+        const response = await axios.get(Routing.generate('live_joinLiveVideo', {code: data.code}))
         if(typeof response.data != 'object'  && live_en_cours === false) {
             // afficher le modal
             if($('#ModalJoinCall').length>0) {
@@ -138,13 +154,38 @@ $(document).ready(function() {
             modalJoinCall.hide();
             modalJoinCall = '';
         }
+    }
 
-    }, 5000);
+    // detecter un refus d'un live
+    const urlRefus = JSON.parse(document.getElementById("live-refus-topic").textContent);
+    const evenRefusSource = new EventSource(urlRefus);
+    evenRefusSource.onmessage = async event => {
+       const data = JSON.parse(event.data);
+       const alertRefu = $('#model-alert');
+       const alertRefuClone = alertRefu.clone();
+       const id = 'data-'+data.user.id;
+       alertRefuClone.attr('id',id);
+       alertRefuClone.removeClass('d-none').addClass(' mb-1');
+       alertRefuClone.find('.nom-participant').html(data.user.nom+' '+data.user.prenom);
+       $('#modal-live-Video-Rapide').find('.alert-absolute').append(alertRefuClone);
+       $('[id="'+id+'"]').addClass('show');
+        $('[id="'+id+'"]').find('.call-rapel').attr('data-user-id', data.user.id);
+    };
 
-    $(this).on('hide.bs.modal','#ModalJoinCall', function(e) {
+    $(this).on('hide.bs.modal','#ModalJoinCall', async function(e) {
+        if(refuserCall) {
+            $('.remove-live').each(async function () {
+                await axios.get(Routing.generate('live_refuserCall', {code : $(this).attr('id-live')}));
+            });
+        }
+
         if(!hideModalJoinCall) {
             $(this).remove();
         }
+    });
+
+    $(this).on('show.bs.modal','#ModalJoinCall', async function(e) {
+        refuserCall = true;
     })
 
 });

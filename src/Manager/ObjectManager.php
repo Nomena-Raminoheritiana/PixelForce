@@ -45,11 +45,13 @@ class ObjectManager
         $capturedError = false;
         $object = new $className();
         foreach($arrayData as $field => $value) {
-            $method = 'set'.ucfirst($field);
-            if($field === 'password' && $object instanceof User) {
-               $value =  $this->encoder->encodePassword($object, $value);
+            if(!empty($field)) {
+                $method = 'set'.ucfirst($field);
+                if($field === 'password' && $object instanceof User) {
+                    $value =  $this->encoder->encodePassword($object, $value);
+                }
+                $object->$method($value);
             }
-            $object->$method($value);
         }
         if($verifier) {
             /** @var ConstraintViolationList $errors */
@@ -99,7 +101,11 @@ class ObjectManager
      */
     public function get($classWithNameSpace, $id)
     {
-        $repository = $this->entityManager->getRepository($classWithNameSpace);
-        return $repository->findOneBy(['id' => $id]);
+        dump($classWithNameSpace);
+        if(!is_null($classWithNameSpace)) {
+            $repository = $this->entityManager->getRepository($classWithNameSpace);
+            return $repository->findOneBy(['id' => $id]);
+        }
+        return null;
     }
 }

@@ -99,9 +99,32 @@ class CommentaireService
         ]);
     }
 
+    public function loadSousCommentaire( $parent_id, $template)
+    {
+        $commentaire_parent = $this->commentaireRepository->findOneBy(['id' => $parent_id]);
+        if($commentaire_parent) {
+            $sousCommentaire = $this->commentaireRepository->getChildren($commentaire_parent, true);
+            return $this->getTemplate($template, [
+                'commentaires' => $sousCommentaire,
+            ]);
+        }
+        return false;
+    }
+
     public function getTemplate($template, $params)
     {
         return $this->twig->render($template, $params);
     }
 
+
+    public function remove(Commentaire $commentaire)
+    {
+        if (!empty($commentaire)) {
+            foreach ($this->commentaireRepository->children($commentaire) as $child) {
+                $this->remove($child);
+            }
+            $this->commentaireRepository->removeFromTree($commentaire);
+            $this->entityManager->flush();
+        }
+    }
 }
