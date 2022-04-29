@@ -8,7 +8,7 @@ use App\Entity\CanalMessage;
 use App\Entity\Message;
 use App\Manager\EntityManager;
 use App\Repository\UserRepository;
-use App\Services\ChatService;
+use App\Services\Chat\ChatService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -119,9 +119,13 @@ class ChatController extends AbstractController
         return $this->json($messages);
     }
 
-    public function getCanals()
+    /**
+     * @Route("/chat/getCanalMessage/{id}", name="chat_getCanaleMessage", options={"expose"=true})
+     */
+    public function getCanalGroups()
     {
         $canalsNormalized = $this->chatService->getCanalsGroup($this->getUser());
         return $this->json($canalsNormalized);
     }
+
 }

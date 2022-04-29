@@ -1,18 +1,19 @@
 <?php
 
 
-namespace App\Services;
+namespace App\Services\Chat;
 
 
 use App\Entity\CanalMessage;
 use App\Entity\Message;
+use App\Entity\MessageVu;
 use App\Entity\User;
 use App\Helpers\DateHelper;
 use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\MessageRepository;
-use Symfony\Component\Mercure\HubInterface;
+use App\Services\GenerateKey;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -51,13 +52,18 @@ class ChatService
      * @var Serializer
      */
     private $serializer;
+    /**
+     * @var ChatNormalizer
+     */
+    private $chatNormalizer;
 
     public function __construct(MessageRepository $messageRepository,
                                 CanalMessageRepository $canalMessageRepository,
                                 ObjectManager $objectManager,
                                 EntityManager $entityManager,
                                 GenerateKey $generateKey,
-                                DateHelper $dateHelper)
+                                DateHelper $dateHelper,
+                                ChatNormalizer $chatNormalizer)
     {
         $this->messageRepository = $messageRepository;
         $this->canalMessageRepository = $canalMessageRepository;
@@ -65,7 +71,7 @@ class ChatService
         $this->entityManager = $entityManager;
         $this->generateKey = $generateKey;
         $this->dateHelper = $dateHelper;
-        $this->serializer = new Serializer([new ObjectNormalizer()]);
+        $this->chatNormalizer = $chatNormalizer;
     }
 
     public function addMessage(CanalMessage $canalMessage, User $user, $textes)
@@ -77,25 +83,29 @@ class ChatService
             'textes' => $textes
         ]);
 
-        return $this->getNormalizeData($message, ['id', 'textes', 'createdAt', 'canal' => [ 'id', 'isGroup', 'nom', 'code' ], 'user' => ['id', 'nom','prenom','mail','roles','adresse']]);
+        return $this->chatNormalizer->getMessageNormalized($message);
 
     }
+
 
     public function createSingleCanal(User $userA, User $userB)
     {
         $code = $this->generateCode($userA->getId(), $userB->getId());
-        /** @var CanalMessage $canal */
-        $canal = $this->objectManager->createObject(CanalMessage::class, [
-            'code' => $code,
-            'isGroup' => false
-        ],false, [], true);
+        $canal = $this->canalMessageRepository->findOneBy(['code' => $code]);
+        if(!$canal) {
+            /** @var CanalMessage $canal */
+            $canal = $this->objectManager->createObject(CanalMessage::class, [
+                'code' => $code,
+                'isGroup' => false
+            ],false, [], true);
 
-        foreach([$userA, $userB] as $user) {
-            $canal->addUser($user);
+            foreach([$userA, $userB] as $user) {
+                $canal->addUser($user);
+            }
+            $this->entityManager->save($canal);
         }
-        $this->entityManager->save($canal);
 
-       return $this->getNormalizeData($canal, ['id', 'isGroup', 'nom', 'code', 'users' => ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse']]);
+        return $this->chatNormalizer->getCanalMessageNormalized($canal);
     }
 
     public function createGroupCanal($nom, $users = [])
@@ -113,7 +123,8 @@ class ChatService
         }
 
         $this->entityManager->save($canal);
-        return $this->getNormalizeData($canal, ['id', 'isGroup', 'nom', 'code', 'users' => ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse']]);
+
+        return $this->chatNormalizer->getCanalMessageNormalized($canal);
     }
 
 
@@ -121,7 +132,7 @@ class ChatService
         $messages = $canal->getMessages()->toArray();
         $messagesNormalized = [];
         foreach($messages as $message) {
-            $data = $this->getNormalizeData($message, ['id', 'textes', 'createdAt', 'canal' => [ 'id', 'isGroup', 'nom', 'code' ], 'user' => ['id', 'nom','prenom','mail','roles','adresse']]);
+            $data = $this->chatNormalizer->getMessageNormalized($message);
             if(!$data['error']) {
                 $messagesNormalized[] = $data;
             }
@@ -132,7 +143,11 @@ class ChatService
     public function getMessagesByCode($code)
     {
        $canal = $this->canalMessageRepository->findOneBy(['code' => $code]);
-       return $this->getMessagesByCanal($canal);
+       if($canal) {
+           return $this->getMessagesByCanal($canal);
+       }
+
+       return ['error' => true, 'message' => 'le code n\'existe pas'];
     }
 
 
@@ -141,7 +156,7 @@ class ChatService
        $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => true]);
        $canalsNormalized = [];
        foreach($canals as $canal) {
-           $data = $this->getNormalizeData($canal, ['id', 'isGroup', 'nom', 'code', 'users' => ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse']]);
+            $data = $this->chatNormalizer->getCanalMessageNormalized($canal);
             if(!$data['error']) {
                 $canalsNormalized[] = $data;
             }
@@ -151,7 +166,13 @@ class ChatService
 
     public function vu(Message $message, User $user)
     {
-        
+       $messageVu = $this->objectManager->createObject(MessageVu::class, [
+            'message' => $message,
+            'user' => $user
+        ]);
+
+       return $this->chatNormalizer->getMessageVuNormalized($messageVu);
+
     }
 
     public function generateCode(?int $userA = null, ?int $userB = null)
@@ -159,21 +180,5 @@ class ChatService
        return $this->generateKey->generateCode($userA, $userB);
     }
 
-    private function getNormalizeData($object, $attributes)
-    {
-        try {
-            $normalizedData = $this->serializer->normalize($object, null, [
-                AbstractNormalizer::ATTRIBUTES => $attributes
-            ]);
-            return array_merge($normalizedData, ['error' => false]);
 
-        } catch (ExceptionInterface $e) {
-            return [
-                'error' => true,
-                'message' => $e->getMessage(),
-                'traces' => $e->getTrace(),
-                'code' => $e->getCode()
-            ];
-        }
-    }
 }

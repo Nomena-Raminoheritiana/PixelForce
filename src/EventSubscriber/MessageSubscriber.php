@@ -6,12 +6,15 @@ namespace App\EventSubscriber;
 
 use App\Entity\Message;
 use App\Helpers\DateHelper;
-use App\Services\ChatService;
+use App\Services\Chat\ChatNormalizer;
+use App\Services\Chat\ChatService;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class MessageSubscriber implements EventSubscriberInterface
 {
@@ -24,12 +27,19 @@ class MessageSubscriber implements EventSubscriberInterface
      * @var MessageBusInterface
      */
     private $bus;
+    /**
+     * @var ChatNormalizer
+     */
+    private $chatNormalizer;
+
 
     public function __construct(DateHelper $dateHelper,
-                                MessageBusInterface $bus)
+                                MessageBusInterface $bus,
+                                ChatNormalizer $chatNormalizer)
     {
         $this->dateHelper = $dateHelper;
         $this->bus = $bus;
+        $this->chatNormalizer = $chatNormalizer;
     }
 
     /**
@@ -57,7 +67,7 @@ class MessageSubscriber implements EventSubscriberInterface
     {
         // return the subscribed events, their methods and priorities
         return [
-           Events::postFlush => 'postFlushMessage'
+           Events::postFlush => 'notifierUsers'
         ];
     }
 
@@ -65,7 +75,7 @@ class MessageSubscriber implements EventSubscriberInterface
      * Methode pour notifier les utilisateurs d'un nouveau message
      * @param LifecycleEventArgs $eventArgs
      */
-    public function postFlushMessage(LifecycleEventArgs  $eventArgs)
+    public function notifierUsers(LifecycleEventArgs  $eventArgs)
     {
         $message = $eventArgs->getObject();
         if($message instanceof Message) {
@@ -77,17 +87,7 @@ class MessageSubscriber implements EventSubscriberInterface
                     $encodedIdUser = base64_encode($user->getId());
                     $update = new Update(
                         ChatService::CHAT_ADD_MESSAGE_TOPIC.$encodedIdUser,
-                        json_encode([
-                            'canal' => [
-                                'id' => $canalMessage->getId(),
-                                'code' => $canalMessage->getCode(),
-                            ],
-                            'message' => [
-                                'id' => $message->getId(),
-                                'textes' => $message->getTextes(),
-                                'createdAt' => $this->dateHelper->format($message->getCreatedAt()->format("d M Y H:I:s"))
-                            ]
-                        ])
+                        json_encode($this->chatNormalizer->getMessageNormalized($message))
                     );
                     $this->bus->dispatch($update);
                 }

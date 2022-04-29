@@ -3,8 +3,8 @@
 
 namespace App\EventSubscriber;
 
-
-use App\Entity\CanalMessage;
+use App\Entity\MessageVu;
+use App\Helpers\DateHelper;
 use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
 use Doctrine\ORM\Events;
@@ -13,19 +13,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class CanalMessageSubscriber implements EventSubscriberInterface
+class MessageVuSubscriber implements EventSubscriberInterface
 {
-
-    /**
-     * @var MessageBusInterface
-     */
-    private $bus;
     /**
      * @var ChatNormalizer
      */
     private $chatNormalizer;
+    /**
+     * @var MessageBusInterface
+     */
+    private $bus;
 
-    public function __construct(MessageBusInterface $bus, ChatNormalizer $chatNormalizer)
+    public function __construct(MessageBusInterface $bus,
+                                ChatNormalizer $chatNormalizer)
     {
         $this->bus = $bus;
         $this->chatNormalizer = $chatNormalizer;
@@ -54,7 +54,6 @@ class CanalMessageSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        // return the subscribed events, their methods and priorities
         return [
             Events::postFlush => 'notifierUsers'
         ];
@@ -62,15 +61,16 @@ class CanalMessageSubscriber implements EventSubscriberInterface
 
     public function notifierUsers(LifecycleEventArgs $event)
     {
-        $canal = $event->getObject();
-        if($canal instanceof CanalMessage && $canal->getIsGroup() === true) {
+        $messageVu = $event->getObject();
+        if($messageVu instanceof MessageVu) {
             // notifier tous les membres abonné au canal
+            $canal = $messageVu->getMessage()->getCanalMessage();
             $users = $canal->getUsers()->toArray();
             foreach($users as $user) {
                 $encodedIdUser = base64_encode($user->getId());
                 $update = new Update(
                     ChatService::CHAT_ADD_CANAL_TOPIC.$encodedIdUser,
-                    json_encode( json_encode($this->chatNormalizer->getCanalMessageNormalized($canal)))
+                    json_encode($this->chatNormalizer->getMessageVuNormalized($messageVu))
                 );
                 $this->bus->dispatch($update);
             }
