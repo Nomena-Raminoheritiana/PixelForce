@@ -52,6 +52,15 @@ class ChatController extends AbstractController
     }
 
     /**
+     * @Route("/chat/vu/message/{id}", name="chat_vuMessage", options={"expose"=true})
+     */
+    public function vu(Message $message)
+    {
+        $vu = $this->chatService->vu($message, $this->getUser());
+        return $this->json($vu);
+    }
+
+    /**
      * @Route("/chat/deleteMessage/{message}", name="chat_deleteMessage", options={"expose"=true})
      */
     public function deleteMessage(Message $message)
@@ -77,7 +86,7 @@ class ChatController extends AbstractController
     }
 
     /**
-     * @Route("/chat/createSingleCanal", name="chat_createSingleCanal", options={"expose"=true})
+     * @Route("/chat/createGroupCanal", name="chat_createGroupCanal", options={"expose"=true})
      */
     public function createGroupCanal(Request $request)
     {
@@ -127,5 +136,4 @@ class ChatController extends AbstractController
         $canalsNormalized = $this->chatService->getCanalsGroup($this->getUser());
         return $this->json($canalsNormalized);
     }
-
 }

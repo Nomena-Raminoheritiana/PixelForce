@@ -23,6 +23,7 @@ class ChatService
 {
     const CHAT_ADD_MESSAGE_TOPIC = "https://chat/add/message";
     const CHAT_ADD_CANAL_TOPIC = "https://chat/add/canal";
+    const CHAT_ADD_VU_TOPIC = "https://chat/add/vu";
     /**
      * @var MessageRepository
      */

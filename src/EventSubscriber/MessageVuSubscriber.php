@@ -4,12 +4,11 @@
 namespace App\EventSubscriber;
 
 use App\Entity\MessageVu;
-use App\Helpers\DateHelper;
 use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
+use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -52,14 +51,14 @@ class MessageVuSubscriber implements EventSubscriberInterface
      *
      * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
      */
-    public static function getSubscribedEvents()
+    public function getSubscribedEvents()
     {
         return [
-            Events::postFlush => 'notifierUsers'
+            Events::postPersist
         ];
     }
 
-    public function notifierUsers(LifecycleEventArgs $event)
+    public function postPersist(LifecycleEventArgs $event)
     {
         $messageVu = $event->getObject();
         if($messageVu instanceof MessageVu) {
@@ -69,7 +68,7 @@ class MessageVuSubscriber implements EventSubscriberInterface
             foreach($users as $user) {
                 $encodedIdUser = base64_encode($user->getId());
                 $update = new Update(
-                    ChatService::CHAT_ADD_CANAL_TOPIC.$encodedIdUser,
+                    ChatService::CHAT_ADD_VU_TOPIC.$encodedIdUser,
                     json_encode($this->chatNormalizer->getMessageVuNormalized($messageVu))
                 );
                 $this->bus->dispatch($update);

@@ -8,13 +8,11 @@ use App\Entity\Message;
 use App\Helpers\DateHelper;
 use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
+use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class MessageSubscriber implements EventSubscriberInterface
 {
@@ -63,11 +61,11 @@ class MessageSubscriber implements EventSubscriberInterface
      *
      * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
      */
-    public static function getSubscribedEvents()
+    public function getSubscribedEvents()
     {
         // return the subscribed events, their methods and priorities
         return [
-           Events::postFlush => 'notifierUsers'
+           Events::postPersist
         ];
     }
 
@@ -75,7 +73,7 @@ class MessageSubscriber implements EventSubscriberInterface
      * Methode pour notifier les utilisateurs d'un nouveau message
      * @param LifecycleEventArgs $eventArgs
      */
-    public function notifierUsers(LifecycleEventArgs  $eventArgs)
+    public function postPersist(LifecycleEventArgs  $eventArgs)
     {
         $message = $eventArgs->getObject();
         if($message instanceof Message) {
@@ -83,7 +81,7 @@ class MessageSubscriber implements EventSubscriberInterface
             $canalMessage = $message->getCanalMessage();
             $users = $canalMessage->getUsers()->toArray();
             foreach($users as $user) {
-                if($user->getId != $message->getUser()->getId()) {
+                if($user->getId() != $message->getUser()->getId()) {
                     $encodedIdUser = base64_encode($user->getId());
                     $update = new Update(
                         ChatService::CHAT_ADD_MESSAGE_TOPIC.$encodedIdUser,

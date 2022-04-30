@@ -7,9 +7,9 @@ namespace App\EventSubscriber;
 use App\Entity\CanalMessage;
 use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
+use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -52,15 +52,15 @@ class CanalMessageSubscriber implements EventSubscriberInterface
      *
      * @return array<string, string|array{0: string, 1: int}|list<array{0: string, 1?: int}>>
      */
-    public static function getSubscribedEvents()
+    public function getSubscribedEvents()
     {
         // return the subscribed events, their methods and priorities
         return [
-            Events::postFlush => 'notifierUsers'
+            Events::postPersist
         ];
     }
 
-    public function notifierUsers(LifecycleEventArgs $event)
+    public function postPersist(LifecycleEventArgs $event)
     {
         $canal = $event->getObject();
         if($canal instanceof CanalMessage && $canal->getIsGroup() === true) {
