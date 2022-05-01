@@ -67,7 +67,7 @@ class APIAuthentication extends AbstractAuthenticator
         }
 
          return new SelfValidatingPassport(new UserBadge($token, function($token){
-             return $this->userRepository->findOneBy(['sixDigitCode' => $token]);
+             return $this->userRepository->findOneBy(['ApiToken' => $token]);
          }));
     }
 
