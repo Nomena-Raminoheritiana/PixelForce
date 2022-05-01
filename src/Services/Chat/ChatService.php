@@ -14,9 +14,9 @@ use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\MessageRepository;
 use App\Services\GenerateKey;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use ParagonIE\Halite\Symmetric\Crypto;
+use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\HiddenString\HiddenString;
 use Symfony\Component\Serializer\Serializer;
 
 class ChatService
@@ -81,7 +81,12 @@ class ChatService
         $message = $this->objectManager->createObject(Message::class, [
             'canalMessage' => $canalMessage,
             'user' => $user,
-            'textes' => $textes
+            'textes'  => Crypto::encrypt(
+                new HiddenString(htmlentities($textes,ENT_QUOTES,"UTF-8")),
+                new EncryptionKey(
+                    new HiddenString($_ENV['CRYPTAGE_KEY'])
+                    )
+                 )
         ]);
 
         return $this->chatNormalizer->getMessageNormalized($message);

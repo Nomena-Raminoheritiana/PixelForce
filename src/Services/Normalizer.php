@@ -4,6 +4,9 @@
 namespace App\Services;
 
 
+use ParagonIE\Halite\Symmetric\Crypto;
+use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\HiddenString\HiddenString;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
@@ -24,11 +27,22 @@ class Normalizer
             return $innerObject instanceof \DateTime ? $innerObject->format(\DateTime::ISO8601) : '';
         };
 
+        $textesDecrypt = function($textes)
+        {
+           return  (Crypto::decrypt(
+                $textes,
+                new EncryptionKey(
+                    new HiddenString($_ENV['CRYPTAGE_KEY'])
+                )
+            ))->getString();
+        };
+
         $defaultContext = [
             AbstractNormalizer::CALLBACKS => [
                 'createdAt' => $dateCallback,
                 'deletedAt' => $dateCallback,
-                'updatedAt' => $dateCallback
+                'updatedAt' => $dateCallback,
+                'textes'    => $textesDecrypt
             ],
         ];
         $normalizer = new GetSetMethodNormalizer(null, null, null, null, null, $defaultContext);

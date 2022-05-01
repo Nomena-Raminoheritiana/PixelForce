@@ -140,6 +140,21 @@
     "nikic/php-parser": {
         "version": "v4.13.2"
     },
+    "paragonie/constant_time_encoding": {
+        "version": "v2.5.0"
+    },
+    "paragonie/halite": {
+        "version": "v5.0.0"
+    },
+    "paragonie/hidden-string": {
+        "version": "v2.0.0"
+    },
+    "paragonie/random_compat": {
+        "version": "v9.99.100"
+    },
+    "paragonie/sodium_compat": {
+        "version": "v1.17.1"
+    },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
     },
