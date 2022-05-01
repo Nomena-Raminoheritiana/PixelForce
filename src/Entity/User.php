@@ -150,6 +150,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $messageVus;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ApiToken;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -623,6 +628,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $messageVu->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getApiToken(): ?string
+    {
+        return $this->ApiToken;
+    }
+
+    public function setApiToken(?string $ApiToken): self
+    {
+        $this->ApiToken = $ApiToken;
 
         return $this;
     }

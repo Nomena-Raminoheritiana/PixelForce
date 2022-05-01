@@ -52,22 +52,22 @@ class APIAuthentication extends AbstractAuthenticator
      * You may throw any AuthenticationException in this method in case of error (e.g.
      * a UserNotFoundException when the user cannot be found).
      *
-     * @return Passport
+     * @return SelfValidatingPassport|Passport
      * @throws AuthenticationException
      *
      */
     public function authenticate(Request $request)
     {
         // TODO: Implement authenticate() method.
-        $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        if (null === $apiToken) {
+        $token = $request->headers->get('X-AUTH-TOKEN');
+        if (null === $token) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
 
-         return new SelfValidatingPassport(new UserBadge($apiToken, function($apiToken){
-             return $this->userRepository->findOneBy(['sixDigitCode' => $apiToken]);
+         return new SelfValidatingPassport(new UserBadge($token, function($token){
+             return $this->userRepository->findOneBy(['sixDigitCode' => $token]);
          }));
     }
 
