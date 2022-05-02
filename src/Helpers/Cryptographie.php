@@ -4,6 +4,7 @@
 namespace App\Helpers;
 
 
+use ParagonIE\Halite\Alerts\InvalidMessage;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
@@ -22,12 +23,17 @@ class Cryptographie
 
     public function decrypt(String $string)
     {
-       return (Crypto::decrypt(
-            $string,
-            new EncryptionKey(
-                new HiddenString($_ENV['CRYPTAGE_KEY'])
-            )
-        ))->getString();
+       try {
+           return (Crypto::decrypt(
+               $string,
+               new EncryptionKey(
+                   new HiddenString($_ENV['CRYPTAGE_KEY'])
+               )
+           ))->getString();
+       } catch(InvalidMessage $e)
+       {
+           return $string;
+       }
     }
 
 }
