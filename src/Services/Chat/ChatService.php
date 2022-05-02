@@ -8,6 +8,7 @@ use App\Entity\CanalMessage;
 use App\Entity\Message;
 use App\Entity\MessageVu;
 use App\Entity\User;
+use App\Helpers\Cryptographie;
 use App\Helpers\DateHelper;
 use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
@@ -57,6 +58,10 @@ class ChatService
      * @var ChatNormalizer
      */
     private $chatNormalizer;
+    /**
+     * @var Cryptographie
+     */
+    private $cryptographie;
 
     public function __construct(MessageRepository $messageRepository,
                                 CanalMessageRepository $canalMessageRepository,
@@ -64,6 +69,7 @@ class ChatService
                                 EntityManager $entityManager,
                                 GenerateKey $generateKey,
                                 DateHelper $dateHelper,
+                                Cryptographie $cryptographie,
                                 ChatNormalizer $chatNormalizer)
     {
         $this->messageRepository = $messageRepository;
@@ -73,6 +79,7 @@ class ChatService
         $this->generateKey = $generateKey;
         $this->dateHelper = $dateHelper;
         $this->chatNormalizer = $chatNormalizer;
+        $this->cryptographie = $cryptographie;
     }
 
     public function addMessage(CanalMessage $canalMessage, User $user, $textes)
@@ -81,12 +88,7 @@ class ChatService
         $message = $this->objectManager->createObject(Message::class, [
             'canalMessage' => $canalMessage,
             'user' => $user,
-            'textes'  => Crypto::encrypt(
-                new HiddenString(htmlentities($textes,ENT_QUOTES,"UTF-8")),
-                new EncryptionKey(
-                    new HiddenString($_ENV['CRYPTAGE_KEY'])
-                    )
-                 )
+            'textes'  => $this->cryptographie->encrypt($textes)
         ]);
 
         return $this->chatNormalizer->getMessageNormalized($message);

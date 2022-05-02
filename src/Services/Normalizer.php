@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Helpers\Cryptographie;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
@@ -20,21 +21,16 @@ class Normalizer
      */
     private $serializer;
 
-    public function __construct()
+    public function __construct(Cryptographie $cryptographie)
     {
         // tous paramètres du callback sont facultatifs
         $dateCallback = function ($innerObject, $outerObject, string $attributeName, string $format = null, array $context = []) {
             return $innerObject instanceof \DateTime ? $innerObject->format(\DateTime::ISO8601) : '';
         };
 
-        $textesDecrypt = function($textes)
+        $textesDecrypt = function($textes) use ($cryptographie)
         {
-           return  (Crypto::decrypt(
-                $textes,
-                new EncryptionKey(
-                    new HiddenString($_ENV['CRYPTAGE_KEY'])
-                )
-            ))->getString();
+           return $cryptographie->decrypt($textes);
         };
 
         $defaultContext = [
