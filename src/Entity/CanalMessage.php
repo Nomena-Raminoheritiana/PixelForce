@@ -43,6 +43,7 @@ class CanalMessage
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="canalMessages")
      */
     private $users;
+    private $newUsers = [];
 
     public function __construct()
     {
@@ -134,6 +135,7 @@ class CanalMessage
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
+            $this->newUsers[] = $user;
         }
 
         return $this;
@@ -144,5 +146,10 @@ class CanalMessage
         $this->users->removeElement($user);
 
         return $this;
+    }
+
+    public function getNewUsers(): array
+    {
+        return $this->newUsers;
     }
 }
