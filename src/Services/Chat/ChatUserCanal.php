@@ -44,6 +44,7 @@ class ChatUserCanal
     {
         $canalMessage->removeUser($user);
         $this->entityManager->save($canalMessage);
+        $this->chatMercureNotification->notifyWhenRemoveUser($canalMessage, $user);
         return $this->chatNormalizer->getCanalMessageNormalized($canalMessage);
     }
 

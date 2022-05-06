@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CanalMessageRepository::class)
+ * @ORM\HasLifecycleCallbacks
  */
 class CanalMessage
 {
@@ -44,6 +45,11 @@ class CanalMessage
      */
     private $users;
     private $newUsers = [];
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $updatedAt;
 
     public function __construct()
     {
@@ -151,5 +157,23 @@ class CanalMessage
     public function getNewUsers(): array
     {
         return $this->newUsers;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     * @param \DateTimeImmutable|null $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 }

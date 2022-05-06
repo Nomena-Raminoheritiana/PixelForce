@@ -19,6 +19,7 @@ class ChatMercureNotification
     const CHAT_ADD_USER_TOPIC = "https://chat/add/user";
     const CHAT_REMOVE_USER_TOPIC = "https://chat/remove/user";
     const CHAT_REMOVE_CANAL_TOPIC = "https://chat/add/canal";
+    const CHAT_USER_TYPING_TOPIC = "https://chat/user/typing";
     /**
      * @var MessageBusInterface
      */
@@ -109,7 +110,29 @@ class ChatMercureNotification
             $encodedIdUser = base64_encode($user->getId());
             $update = new Update(
                 self::CHAT_REMOVE_CANAL_TOPIC.$encodedIdUser,
-                json_encode( json_encode($this->chatNormalizer->getCanalMessageNormalized($canalMessage)))
+                json_encode($this->chatNormalizer->getCanalMessageNormalized($canalMessage))
+            );
+            $this->bus->dispatch($update);
+        }
+    }
+
+    public function notifyWhenUserIsTyping(User $user, CanalMessage $canalMessage)
+    {
+        // notifier tous les membres abonné au canal
+        $users = $canalMessage->getUsers()->toArray();
+        foreach($users as $user) {
+            $encodedIdUser = base64_encode($user->getId());
+            $update = new Update(
+                self::CHAT_USER_TYPING_TOPIC.$encodedIdUser,
+                json_encode(array_merge($this->chatNormalizer->getCanalMessageNormalized($canalMessage),
+                    [
+                        'user' => [
+                            'id' => $encodedIdUser,
+                            'nom' => $user->getNom(),
+                            'prenom' => $user->getPrenom()
+                        ]
+                    ]
+                ))
             );
             $this->bus->dispatch($update);
         }

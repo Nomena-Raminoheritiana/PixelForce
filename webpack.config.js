@@ -38,6 +38,7 @@ Encore
     .addEntry('commentaire', './assets/js/commentaire.js')
 
     .addStyleEntry('base', './assets/styles/base.css')
+    .addStyleEntry('chat', './assets/styles/chat.css')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

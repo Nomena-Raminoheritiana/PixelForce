@@ -10,6 +10,7 @@
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
             {{ encore_entry_link_tags('base') }}
+            {{ encore_entry_link_tags('chat') }}
         {% endblock %}
     </head>
     <body style="background:#f9fafb; overflow-y:hidden">
@@ -37,6 +38,8 @@
         </div>
         {#   appels des composants/modals  #}
      {% include 'live/video/liveVideoRapide.html.twig' %}
+     {% include 'live/chat/mini_menu_chat.html.twig'  %}
+     {% include 'live/chat/mini_chat_new_instance.html.twig'  %}
     </body>
 </html>
 {% block javascripts %}

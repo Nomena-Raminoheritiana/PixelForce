@@ -14,7 +14,7 @@ class DirectoryManagement
     private $project_dir;
     private $slugify;
 
-    public function __construct(KernelInterface $kernel, EntityManager $entityManager)
+    public function __construct(KernelInterface $kernel)
     {
         $this->slugify = new Slugify();
         $this->project_dir = $kernel->getProjectDir();

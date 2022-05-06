@@ -99,7 +99,20 @@ class ChatCanalService
 
     public function getCanalsGroup(User $user)
     {
-        $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => true]);
+        $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => true], ['updatedAt' => 'DESC']);
+        $canalsNormalized = [];
+        foreach($canals as $canal) {
+            $data = $this->chatNormalizer->getCanalMessageNormalized($canal);
+            if(!$data['error']) {
+                $canalsNormalized[] = $data;
+            }
+        }
+        return $canalsNormalized;
+    }
+
+    public function getSingleCanal(User $user)
+    {
+        $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => false], ['updatedAt' => 'DESC']);
         $canalsNormalized = [];
         foreach($canals as $canal) {
             $data = $this->chatNormalizer->getCanalMessageNormalized($canal);
@@ -112,7 +125,9 @@ class ChatCanalService
 
     public function removeCanal(CanalMessage $canalMessage)
     {
+        $this->chatMercureNotification->notifyWhenRemoveCanal($canalMessage);
         $this->entityManager->delete($canalMessage);
+
         return [
             'error' => false,
             'message' => 'canal supprimé'
