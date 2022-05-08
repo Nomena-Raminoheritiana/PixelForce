@@ -84,7 +84,7 @@ export function chat_list_singleCanal_item_component(canalMessage)
 
 export function chat_list_singleCanal_emptyItem_component()
 {
-    return '<div class="text-center">\n' +
+    return '<div class="text-center text-muted">\n' +
         '   <i class="fa-solid fa-eye-dropper-empty"></i> Aucune conversation disponible '
     '</div>';
 }
@@ -130,7 +130,7 @@ export function chat_list_groupeCanal_item_component(canalMessage)
 
 export function chat_list_groupeCanal_emptyItem_component()
 {
-    return '<div class="text-center">\n' +
+    return '<div class="text-center text-muted py-4">\n' +
         '   <i class="fa-solid fa-eye-dropper-empty"></i> Aucun groupe  '
     '</div>';
 }
