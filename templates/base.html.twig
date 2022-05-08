@@ -39,7 +39,6 @@
         {#   appels des composants/modals  #}
      {% include 'live/video/liveVideoRapide.html.twig' %}
      {% include 'live/chat/mini_menu_chat.html.twig'  %}
-     {% include 'live/chat/mini_chat_new_instance.html.twig'  %}
     </body>
 </html>
 {% block javascripts %}
@@ -49,4 +48,5 @@
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
     {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('chatJS') }}
 {% endblock %}

@@ -5,11 +5,14 @@ namespace App\Services;
 
 
 use App\Helpers\Cryptographie;
+use App\Repository\CanalMessageRepository;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -21,7 +24,7 @@ class Normalizer
      */
     private $serializer;
 
-    public function __construct(Cryptographie $cryptographie)
+    public function __construct(Cryptographie $cryptographie, GenerateKey $generateKey, Security $security, CanalMessageRepository $canalMessageRepository)
     {
         // tous paramètres du callback sont facultatifs
         $dateCallback = function ($innerObject, $outerObject, string $attributeName, string $format = null, array $context = []) {
@@ -33,15 +36,26 @@ class Normalizer
            return $cryptographie->decrypt($textes);
         };
 
+        $chatCode = function ($id) use ($generateKey, $security) {
+            return $generateKey->generateCode($id, $security->getUser()->getId());
+        };
+
+
+
         $defaultContext = [
             AbstractNormalizer::CALLBACKS => [
                 'createdAt' => $dateCallback,
                 'deletedAt' => $dateCallback,
                 'updatedAt' => $dateCallback,
-                'textes'    => $textesDecrypt
+                'textes'    => $textesDecrypt,
+                'chatCode'  => $chatCode
             ],
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getId();
+            },
         ];
         $normalizer = new GetSetMethodNormalizer(null, null, null, null, null, $defaultContext);
+
         $this->serializer = new Serializer([$normalizer]);
     }
 

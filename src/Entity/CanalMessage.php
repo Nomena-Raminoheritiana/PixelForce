@@ -39,6 +39,7 @@ class CanalMessage
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="canalMessage")
      */
     private $messages;
+    private $lastMessage;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="canalMessages")
@@ -97,6 +98,20 @@ class CanalMessage
         $this->isGroup = $isGroup;
 
         return $this;
+    }
+
+    public function getLastMessage()
+    {
+
+       $lastMessage = $this->getMessages()->last();
+       if($lastMessage instanceof Message) {
+           $user = $lastMessage->getUser();
+           $user->clearCanalMessages();
+           $user->clearMessages();
+           $lastMessage->setUser($user);
+           $this->lastMessage = $lastMessage;
+       }
+       return $this->lastMessage;
     }
 
     /**
@@ -165,8 +180,6 @@ class CanalMessage
     }
 
     /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
      * @param \DateTimeImmutable|null $updatedAt
      * @return $this
      */

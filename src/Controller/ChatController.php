@@ -9,6 +9,7 @@ use App\Entity\Message;
 use App\Entity\User;
 use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
+use App\Repository\CanalMessageRepository;
 use App\Repository\UserRepository;
 use App\Services\Chat\ChatCanalService;
 use App\Services\Chat\ChatService;
@@ -43,10 +44,15 @@ class ChatController extends AbstractController
      * @var ChatUserCanal
      */
     private $chatUserCanal;
+    /**
+     * @var CanalMessageRepository
+     */
+    private $canalMessageRepository;
 
     public function __construct(ChatService $chatService,
                                 ChatCanalService $chatCanalService,
                                 ChatUserCanal $chatUserCanal,
+                                CanalMessageRepository $canalMessageRepository,
                                 UserRepository $userRepository,
                                 EntityManager $entityManager,
                                 ObjectManager $objectManager)
@@ -57,14 +63,16 @@ class ChatController extends AbstractController
         $this->objectManager = $objectManager;
         $this->chatCanalService = $chatCanalService;
         $this->chatUserCanal = $chatUserCanal;
+        $this->canalMessageRepository = $canalMessageRepository;
     }
 
     /**
-     * @Route("/chat/addMessage/{id}", name="chat_addMessage", options={"expose"=true})
+     * @Route("/chat/addMessage/{code}", name="chat_addMessage", options={"expose"=true})
      */
-    public function addMessage(CanalMessage $canalMessage, Request $request)
+    public function addMessage($code, Request $request)
     {
         if($request->isMethod('POST')) {
+            $canalMessage = $this->canalMessageRepository->findOneBy(['code' => $code]);
             $message = $this->chatService->addMessage($canalMessage, $this->getUser(), $request->request->get('textes'));
             return $this->json($message);
         }
@@ -190,11 +198,20 @@ class ChatController extends AbstractController
     }
 
     /**
-     * @Route("/chat/getCanalMessage/{id}", name="chat_getCanaleMessage", options={"expose"=true})
+     * @Route("/chat/getCanalGroupMessage", name="chat_getCanalMessage", options={"expose"=true})
      */
     public function getCanalGroups()
     {
         $canalsNormalized = $this->chatCanalService->getCanalsGroup($this->getUser());
         return $this->json($canalsNormalized);
+    }
+
+    /**
+     * @Route("/chat/getCanalSingleMessage", name="chat_getCanalSingleMessage", options={"expose"=true})
+     */
+    public function getSingleCanal()
+    {
+       $normalizedCanals = $this->chatCanalService->getSingleCanal($this->getUser());
+       return $this->json($normalizedCanals);
     }
 }

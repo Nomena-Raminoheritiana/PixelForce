@@ -12,7 +12,9 @@ use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use App\Services\GenerateKey;
+use App\Services\User\UserNormalizer;
 
 class ChatCanalService
 {
@@ -99,7 +101,7 @@ class ChatCanalService
 
     public function getCanalsGroup(User $user)
     {
-        $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => true], ['updatedAt' => 'DESC']);
+        $canals = $this->canalMessageRepository->getGroupsCanal($user);
         $canalsNormalized = [];
         foreach($canals as $canal) {
             $data = $this->chatNormalizer->getCanalMessageNormalized($canal);
@@ -112,7 +114,7 @@ class ChatCanalService
 
     public function getSingleCanal(User $user)
     {
-        $canals = $this->canalMessageRepository->findBy(['users' => $user, 'isGroup' => false], ['updatedAt' => 'DESC']);
+        $canals = $this->canalMessageRepository->getSingleCanal($user);
         $canalsNormalized = [];
         foreach($canals as $canal) {
             $data = $this->chatNormalizer->getCanalMessageNormalized($canal);

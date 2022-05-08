@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\CanalMessage;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -43,6 +44,40 @@ class CanalMessageRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function getSingleCanal(User $user)
+    {
+        $query = $this->createQueryBuilder('a')
+            ->select('a')
+            ->leftJoin('a.users', 'c')
+            ->addSelect('c');
+
+        $query = $query->add('where', $query->expr()->in('c', ':c'))
+            ->setParameter('c', $user)
+            ->andWhere('a.isGroup=0')
+            ->orderBy('a.updatedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $query;
+    }
+
+    public function getGroupsCanal(User $user)
+    {
+        $query = $this->createQueryBuilder('a')
+            ->select('a')
+            ->leftJoin('a.users', 'c')
+            ->addSelect('c');
+
+        $query = $query->add('where', $query->expr()->in('c', ':c'))
+            ->setParameter('c', $user)
+            ->andWhere('a.isGroup=1')
+            ->orderBy('a.updatedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $query;
     }
 
     // /**

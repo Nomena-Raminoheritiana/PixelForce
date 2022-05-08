@@ -9,6 +9,7 @@ use App\Entity\Message;
 use App\Entity\MessageVu;
 use App\Entity\User;
 use App\Helpers\Cryptographie;
+use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 
@@ -36,13 +37,18 @@ class ChatService
      * @var ChatMercureNotification
      */
     private $chatMercureNotification;
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
 
     public function __construct(
         CanalMessageRepository $canalMessageRepository,
         ObjectManager $objectManager,
         Cryptographie $cryptographie,
         ChatNormalizer $chatNormalizer,
-        ChatMercureNotification $chatMercureNotification
+        ChatMercureNotification $chatMercureNotification,
+        EntityManager $entityManager
     )
     {
 
@@ -51,6 +57,7 @@ class ChatService
         $this->chatNormalizer = $chatNormalizer;
         $this->canalMessageRepository = $canalMessageRepository;
         $this->chatMercureNotification = $chatMercureNotification;
+        $this->entityManager = $entityManager;
     }
 
     public function addMessage(CanalMessage $canalMessage, User $user, $textes)
@@ -62,6 +69,8 @@ class ChatService
             'textes'  => $this->cryptographie->encrypt($textes)
         ]);
 
+        $canalMessage->setUpdatedAt(new \DateTimeImmutable());
+        $this->entityManager->save($canalMessage);
         $this->chatMercureNotification->notifyWhenNewMessage($message);
 
         return $this->chatNormalizer->getMessageNormalized($message);

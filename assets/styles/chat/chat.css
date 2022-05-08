@@ -1,0 +1,35 @@
+.chat-float-menu {
+    width: 316px !important;
+    height: 90vh;
+    z-index: 99998 !important;
+
+}
+
+.chat-float-menu .list-group-item, .chat-float-newOne .list-group-item, .chat-canal-instance .list-group-item{
+    border:none;
+    cursor: pointer;
+}
+
+.chat-float-menu .list-group-item:hover, .chat-float-newOne .list-group-item:hover, .chat-canal-instance .list-group-item:hover{
+   background : #dce6f1
+}
+
+
+.chat-float-menu .card-body {
+    overflow-y: auto;
+}
+
+.chat-float-newOne, .chat-canal-instance {
+    width: 336px !important;
+    height: 500px;
+    z-index: 99998 !important;
+    right:21.5%
+}
+.chat-float-newOne .card-body, .chat-canal-instance .card-body{
+    overflow-y:auto;
+    overflow-x:hidden
+}
+
+.chat-minimised{
+    height: 8vh !important;
+}

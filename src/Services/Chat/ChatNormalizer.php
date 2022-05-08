@@ -7,23 +7,40 @@ namespace App\Services\Chat;
 use App\Entity\CanalMessage;
 use App\Entity\Message;
 use App\Entity\MessageVu;
+use App\Repository\UserRepository;
 use App\Services\Normalizer;
+use App\Services\User\UserNormalizer;
+use Symfony\Component\Security\Core\Security;
 
 class ChatNormalizer
 {
-    const USER_PROPS = ['id', 'nom', 'prenom', 'mail', 'roles', 'adresse'];
-    const CANAL_MESSAGE_PROPS = ['id', 'isGroup', 'nom', 'code', 'users' => self::USER_PROPS];
-    const MESSAGE_PROPS = ['id', 'textes', 'createdAt', 'deletedAt', 'canal' => self::CANAL_MESSAGE_PROPS, 'user' => self::USER_PROPS];
-    const MESSAGE_VU_PROPS = ['id', 'message' => self::MESSAGE_PROPS, 'user' => self::USER_PROPS];
+    const CANAL_MESSAGE_PROPS = ['id', 'isGroup', 'nom', 'code', 'lastMessage', 'membres'];
+    const MESSAGE_PROPS = ['id', 'textes', 'createdAt', 'deletedAt', 'canal' => self::CANAL_MESSAGE_PROPS, 'user' => UserNormalizer::USER_PROPS];
+    const MESSAGE_VU_PROPS = ['id', 'message' => self::MESSAGE_PROPS, 'user' => UserNormalizer::USER_PROPS];
 
     /**
      * @var Normalizer
      */
     private $normalizer;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+    /**
+     * @var UserNormalizer
+     */
+    private $userNormalizer;
+    /**
+     * @var Security
+     */
+    private $security;
 
-    public function __construct(Normalizer $normalizer)
+    public function __construct(Normalizer $normalizer, UserRepository $userRepository, UserNormalizer $userNormalizer, Security $security)
     {
         $this->normalizer = $normalizer;
+        $this->userRepository = $userRepository;
+        $this->userNormalizer = $userNormalizer;
+        $this->security = $security;
     }
 
     public function getMessageNormalized(Message $message)
@@ -33,7 +50,19 @@ class ChatNormalizer
 
     public function getCanalMessageNormalized(CanalMessage $canalMessage)
     {
-        return $this->normalizer->getNormalizeData($canalMessage, self::CANAL_MESSAGE_PROPS);
+        $users = $this->userRepository->getUserByCanal($canalMessage);
+        $userNormalized = $this->userNormalizer->normalizeArrayUsers($users);
+        $usersArray['membres'] = $userNormalized;
+        if(!$canalMessage->getNom() && count($users) === 2) {
+            foreach($users as $user) {
+                if($user->getId() != $this->security->getUser()->getId()){
+                    $canalMessage->setNom($user->getNom().' '.$user->getPrenom());
+                }
+            }
+        }
+        $data = $this->normalizer->getNormalizeData($canalMessage, self::CANAL_MESSAGE_PROPS);
+        $data = array_merge($data, $usersArray);
+        return $data;
     }
 
     public function getMessageVuNormalized(MessageVu $messageVu)

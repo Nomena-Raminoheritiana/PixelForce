@@ -17,6 +17,22 @@
     font-size: 14px !important;
 }
 
+.fs-15 {
+    font-size: 15px !important;
+}
+
+.fs-16 {
+    font-size: 16px !important;
+}
+
+.fs-17 {
+    font-size: 17px !important;
+}
+
+.fs-18 {
+    font-size: 18px !important;
+}
+
 /**
 ----- line height
  */
@@ -37,6 +53,16 @@
 }
 .line-height-15 {
     line-height: 15px !important;
+}
+.line-height-16 {
+    line-height: 15px !important;
+}
+.line-height-17 {
+    line-height: 17px !important;
+}
+
+.line-height-18 {
+    line-height: 18px !important;
 }
 
 

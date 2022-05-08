@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -154,6 +155,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ApiToken;
+
+    private $chatCode;
 
     public function __construct()
     {
@@ -575,6 +578,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function clearMessages()
+    {
+        $this->messages->clear();
+    }
+
     /**
      * @return Collection<int, CanalMessage>
      */
@@ -600,6 +608,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function clearCanalMessages()
+    {
+        $this->canalMessages->clear();
     }
 
     /**
@@ -641,6 +654,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->ApiToken = $ApiToken;
 
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChatCode()
+    {
+        return $this->chatCode ? $this->chatCode : $this->id;
+    }
+
+    /**
+     * @param mixed $chatCode
+     * @return User
+     */
+    public function setChatCode($chatCode)
+    {
+        $this->chatCode = $chatCode;
         return $this;
     }
 }
