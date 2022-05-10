@@ -1,17 +1,16 @@
-import {new_chat_component, chatHeaderUserInfos_component} from "./components/chat_new_conversation_component";
 import {loaderOff, loaderOn} from "../helpers/Loader";
 import {findDestinataire, getMessageByCode} from "./chatSenderRequest";
-import {chat_listUser_component} from "./components/chat_listUser_component";
-import {chat_messages_component} from "./components/chat_component";
+import {NewConversationComponent} from "./components/NewConversationComponent";
 
 $(document).ready(function() {
+    const newConversationComponent = new NewConversationComponent();
     // nouveau message
     $(this).on('click', '.chat-btn-newOne', function(e) {
         e.preventDefault();
         $('.chat-float-newOne').each(function() {
             $(this).remove();
         })
-        $('body').append(new_chat_component())
+        $('body').append(newConversationComponent.getConversationContainer())
     });
 
     // recherche d'un utilisateur sur la section nouveau message
@@ -20,7 +19,7 @@ $(document).ready(function() {
         const bodyMessage = $('.chat-float-newOne>.card-body')
         loaderOn(bodyMessage[0]);
         const users = await findDestinataire($(this).val());
-        const template = chat_listUser_component(users);
+        const template = newConversationComponent.getListUser(users);
         bodyMessage.html(template);
         loaderOff(bodyMessage[0]);
     });
@@ -32,11 +31,11 @@ $(document).ready(function() {
         const subHeader = $('.chat-float-newOne>.card-sub-header')
         const user = JSON.parse(decodeURIComponent($(this).attr('data-user')))
         bodyMessage.html('');
-        subHeader.html(chatHeaderUserInfos_component(user))
+        subHeader.html(newConversationComponent.getHeader(user))
         loaderOn(bodyMessage[0]);
         const messages = await getMessageByCode(user.chatCode);
         // charger les messages
-        bodyMessage.html(chat_messages_component(messages));
+        bodyMessage.html(newConversationComponent.getMessages(messages));
 
         $('.chat-btn-send').attr('data-code', user.chatCode);
         loaderOff(bodyMessage[0])

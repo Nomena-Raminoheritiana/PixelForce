@@ -35,3 +35,14 @@ export async function getGroupeCanal()
 {
     return (await axios.get(Routing.generate('chat_getCanalMessage'))).data;
 }
+
+export async function createGroupCanal(nom, users_id)
+{
+    const bodyRequest = new URLSearchParams();
+    bodyRequest.append('nom', nom);
+    users_id.forEach(function(id) {
+        bodyRequest.append('users[]', id);
+    });
+
+    return (await axios.post(Routing.generate('chat_createGroupCanal'), bodyRequest)).data
+}

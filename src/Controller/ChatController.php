@@ -124,14 +124,21 @@ class ChatController extends AbstractController
     {
         if($request->isMethod('POST')) {
             $users_id = $request->request->get('users');
-            $users = [$this->getUser()];
-            if(is_array($users_id) && count($users_id) > 0) {
-                foreach($users as $id_user) {
-                    $users[] = $this->userRepository->findOneBy(['id' => $id_user]);
+            $nom_canal = $request->request->get('nom');
+            if($nom_canal) {
+                $users = [$this->getUser()];
+                if(is_array($users_id) && count($users_id) > 0) {
+                    foreach($users as $id_user) {
+                        $users[] = $this->userRepository->findOneBy(['id' => $id_user]);
+                    }
                 }
+                $canalMessage = $this->chatCanalService->createGroupCanal($nom_canal, $users);
+                return $this->json($canalMessage);
             }
-            $canalMessage = $this->chatCanalService->createGroupCanal($request->request->get('nom'), $users);
-            return $this->json($canalMessage);
+          return $this->json([
+              'error' => true,
+              'message' => 'Un canal doit avoir un nom'
+          ]);
         }
 
         return $this->json([
