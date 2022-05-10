@@ -16,10 +16,12 @@ class EntityManager
         $this->em = $entityManagerDefault;
     }
 
-    public function save($object)
+    public function save($object, $onlyPersist=false)
     {
         $this->em->persist($object);
-        $this->em->flush();
+        if(!$onlyPersist) {
+            $this->em->flush();
+        }
     }
 
     public function delete($object)

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\CanalMessage;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -60,6 +61,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    public function findDestinaire($finder)
+    {
+        $arrayFinder = explode(' ', $finder);
+        $queryBuilder = $this->createQueryBuilder('u');
+        foreach($arrayFinder as $realFinder) {
+            $queryBuilder->orWhere('u.nom LIKE :finder')
+                    ->orWhere('u.prenom LIKE :finder')
+                    ->orWhere('u.email LIKE :finder')
+                    ->setParameter('finder', '%'.$realFinder.'%');
+        }
+       return $queryBuilder->getQuery()
+            ->getResult();
+    }
+
+    public function getUserByCanal(CanalMessage $canal)
+    {
+        $query = $this->createQueryBuilder('a')
+            ->select('a')
+            ->leftJoin('a.canalMessages', 'c')
+            ->addSelect('c');
+
+        $query = $query->add('where', $query->expr()->in('c', ':c'))
+            ->setParameter('c', $canal)
+            ->getQuery()
+            ->getResult();
+
+        return $query;
     }
 
     // /**

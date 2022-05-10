@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CanalMessageRepository::class)
+ * @ORM\HasLifecycleCallbacks
  */
 class CanalMessage
 {
@@ -38,11 +39,18 @@ class CanalMessage
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="canalMessage")
      */
     private $messages;
+    private $lastMessage;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="canalMessages")
      */
     private $users;
+    private $newUsers = [];
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $updatedAt;
 
     public function __construct()
     {
@@ -92,6 +100,20 @@ class CanalMessage
         return $this;
     }
 
+    public function getLastMessage()
+    {
+
+       $lastMessage = $this->getMessages()->last();
+       if($lastMessage instanceof Message) {
+           $user = $lastMessage->getUser();
+           $user->clearCanalMessages();
+           $user->clearMessages();
+           $lastMessage->setUser($user);
+           $this->lastMessage = $lastMessage;
+       }
+       return $this->lastMessage;
+    }
+
     /**
      * @return Collection<int, Message>
      */
@@ -134,6 +156,7 @@ class CanalMessage
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
+            $this->newUsers[] = $user;
         }
 
         return $this;
@@ -142,6 +165,27 @@ class CanalMessage
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function getNewUsers(): array
+    {
+        return $this->newUsers;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTimeImmutable|null $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

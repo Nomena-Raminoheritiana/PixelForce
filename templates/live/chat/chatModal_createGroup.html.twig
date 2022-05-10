@@ -1,0 +1,36 @@
+<!-- Modal -->
+<div class="modal fade text-start" id="chatModalCreateGroups" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Créer un groupe de discussion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger alert-empty-name d-none" role="alert">
+                    Veuillez donner un nom au groupe
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Donner un nom à la conversation</label>
+                    <input type="text" class="form-control" id="chat_inputCanalName" placeholder="Entrer un nom">
+                </div>
+                <hr>
+                <div class="chat_userBadgeList mb-2">
+
+                </div>
+                <div>
+                    <label for="exampleFormControlInput1" class="form-label">Ajouter des membres</label>
+                    <input type="text" class="form-control" id="chatSearchUser" placeholder="Rechercher un utilisateur">
+                </div>
+                <div class="chat_usersList mt-2">
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-primary" id="chat-btn-createCanal">Créer</button>
+            </div>
+        </div>
+    </div>
+</div>

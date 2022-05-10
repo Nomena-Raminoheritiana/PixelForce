@@ -10,6 +10,60 @@
 .fs-12 {
     font-size: 12px !important;
 }
+.fs-13 {
+    font-size: 13px !important;
+}
+.fs-14 {
+    font-size: 14px !important;
+}
+
+.fs-15 {
+    font-size: 15px !important;
+}
+
+.fs-16 {
+    font-size: 16px !important;
+}
+
+.fs-17 {
+    font-size: 17px !important;
+}
+
+.fs-18 {
+    font-size: 18px !important;
+}
+
+/**
+----- line height
+ */
+.line-height-10 {
+    line-height: 10px !important;
+}
+.line-height-11 {
+    line-height: 11px !important;
+}
+.line-height-12 {
+    line-height: 12px !important;
+}
+.line-height-13 {
+    line-height: 13px !important;
+}
+.line-height-14 {
+    line-height: 14px !important;
+}
+.line-height-15 {
+    line-height: 15px !important;
+}
+.line-height-16 {
+    line-height: 15px !important;
+}
+.line-height-17 {
+    line-height: 17px !important;
+}
+
+.line-height-18 {
+    line-height: 18px !important;
+}
 
 
 /** version desktop **/

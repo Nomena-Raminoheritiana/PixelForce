@@ -23,7 +23,9 @@ security:
                 lifetime: 604800 # 1 week in seconds
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\LoginAuthenticator
+            custom_authenticators:
+                - App\Security\LoginAuthenticator
+                - App\Security\APIAuthentication
             logout:
                 path: app_logout
                 # where to redirect after logout

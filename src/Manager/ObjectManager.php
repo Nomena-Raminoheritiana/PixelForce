@@ -94,6 +94,23 @@ class ObjectManager
     }
 
     /**
+     * @param $classWithNameSpace
+     * @param array $ids
+     * @return array
+     */
+    public function getMultiple($classWithNameSpace, $ids = [])
+    {
+        $objects = [];
+        foreach($ids as $id) {
+            $object =  $this->get($classWithNameSpace, $id);
+            if($object) {
+                $objects[] = $object;
+            }
+        }
+        return $objects;
+    }
+
+    /**
      * @param $class
      * @param null $id
      *
@@ -101,7 +118,6 @@ class ObjectManager
      */
     public function get($classWithNameSpace, $id)
     {
-        dump($classWithNameSpace);
         if(!is_null($classWithNameSpace)) {
             $repository = $this->entityManager->getRepository($classWithNameSpace);
             return $repository->findOneBy(['id' => $id]);

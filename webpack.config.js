@@ -36,8 +36,10 @@ Encore
     .addEntry('PlanificationLiveVideo', './assets/js/PlanificationLiveVideo.js')
     .addEntry('ImportVideoVimeo', './assets/js/ImportVideoVimeo.js')
     .addEntry('commentaire', './assets/js/commentaire.js')
+    .addEntry('chatJS', './assets/js/chat/chat.js')
 
     .addStyleEntry('base', './assets/styles/base.css')
+    .addStyleEntry('chat', './assets/styles/chat/chat.css')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

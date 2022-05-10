@@ -43,6 +43,9 @@ $(document).ready(function() {
                params.append('users[]', $(this).val());
             }
         });
+        $(this).closest('.users').find('input[type="hidden"][name="users[]"]').each(function() {
+            params.append('users[]', $(this).val());
+        });
         axios.post(Routing.generate('live_videoRapide'), params)
         .then(function (response) {
             live_en_cours = true;
