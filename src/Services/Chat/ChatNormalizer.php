@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Security;
 class ChatNormalizer
 {
     const CANAL_MESSAGE_PROPS = ['id', 'isGroup', 'nom', 'code', 'lastMessage', 'membres'];
-    const MESSAGE_PROPS = ['id', 'textes', 'createdAt', 'deletedAt', 'canal' => self::CANAL_MESSAGE_PROPS, 'user' => UserNormalizer::USER_PROPS];
+    const MESSAGE_PROPS = ['id', 'textes', 'createdAt', 'deletedAt', 'user' => UserNormalizer::USER_PROPS];
     const MESSAGE_VU_PROPS = ['id', 'message' => self::MESSAGE_PROPS, 'user' => UserNormalizer::USER_PROPS];
 
     /**
@@ -45,7 +45,10 @@ class ChatNormalizer
 
     public function getMessageNormalized(Message $message)
     {
-        return $this->normalizer->getNormalizeData($message, self::MESSAGE_PROPS);
+       $messageNormalized = $this->normalizer->getNormalizeData($message, self::MESSAGE_PROPS);
+       $canalMessageNormalized = $this->getCanalMessageNormalized($message->getCanalMessage());
+       $messageNormalized['canal'] = $canalMessageNormalized;
+       return $messageNormalized;
     }
 
     public function getCanalMessageNormalized(CanalMessage $canalMessage)
@@ -68,5 +71,10 @@ class ChatNormalizer
     public function getMessageVuNormalized(MessageVu $messageVu)
     {
         return $this->normalizer->getNormalizeData($messageVu,self::MESSAGE_VU_PROPS );
+    }
+
+    public function denormalizeCanalMessage($data)
+    {
+        return $this->normalizer->getDenormalizeData($data, CanalMessage::class);
     }
 }

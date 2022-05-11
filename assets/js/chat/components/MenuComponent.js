@@ -24,6 +24,7 @@ export class MenuComponent {
    getSingleCanalItem(canalMessage)
     {
         const canalStringify = encodeURIComponent(JSON.stringify(canalMessage));
+        const lastMessage = canalMessage.lastMessage ? canalMessage.lastMessage.textes.slice(0, 80) : 'Commencer votre première conversation...';
         let component=
             '<li class="list-group-item chat-choose-canal  pb-0 ps-3" data-canal="'+canalStringify+'" data-search="'+canalMessage.nom+'">\n' +
             '     <div class="row">\n' +
@@ -33,7 +34,7 @@ export class MenuComponent {
             '          <div class="col-9 ps-2">\n' +
             '              <span>'+canalMessage.nom+'</span><br>\n' +
             '              <p class="text-muted fs-12 line-height-13 pb-3 mb-0 border-bottom">\n' +
-            '              '+canalMessage.lastMessage.textes.slice(0, 80)+
+            '              '+lastMessage+
             '              </p>\n' +
             '          </div>\n' +
             '     </div>\n'
@@ -62,7 +63,7 @@ export class MenuComponent {
             return this.getEmptyGroupsCanalMessage();
         }
 
-        return '<ul class="list-group list-group-flush px-0">\n' +
+        return '<ul class="list-group list-group-flush chat-list-groupCanal px-0">\n' +
             template +
             '</ul>';
     }

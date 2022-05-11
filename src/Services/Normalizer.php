@@ -11,6 +11,7 @@ use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
@@ -75,5 +76,20 @@ class Normalizer
                 'code' => $e->getCode()
             ];
         }
+    }
+
+    public function getDenormalizeData($data, $class)
+    {
+        try {
+           return $this->serializer->denormalize($data, $class);
+        } catch (NotNormalizableValueException $e) {
+            return [
+                'error' => true,
+                'message' => $e->getMessage(),
+                'traces' => $e->getTrace(),
+                'code' => $e->getCode()
+            ];
+        }
+
     }
 }

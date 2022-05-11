@@ -52,4 +52,11 @@ export class CanalGroupsComponent {
            '<a href="#" onclick="$(this).parent().remove()" class="ms-2 text-white bg-danger px-1 rounded chat-delete-badgeUser"><i class="fa fa-close"></i></a>' +
            '</span>'
    }
+
+   clearUserBadge()
+   {
+       $('.chat-badgeUser').each(function() {
+          $(this).remove();
+       });
+   }
 }

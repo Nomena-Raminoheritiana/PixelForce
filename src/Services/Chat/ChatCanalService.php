@@ -58,7 +58,7 @@ class ChatCanalService
         $this->generateKey = $generateKey;
         $this->chatMercureNotification = $chatMercureNotification;
     }
-    public function createSingleCanal(User $userA, User $userB)
+    public function createSingleCanal(User $userA, User $userB, $normalize = true)
     {
         $code = $this->generateKey->generateCode($userA->getId(), $userB->getId());
         $canal = $this->canalMessageRepository->findOneBy(['code' => $code]);
@@ -75,7 +75,7 @@ class ChatCanalService
             $this->entityManager->save($canal);
         }
 
-        return $this->chatNormalizer->getCanalMessageNormalized($canal);
+        return $normalize ? $this->chatNormalizer->getCanalMessageNormalized($canal) : $canal;
     }
 
     public function createGroupCanal($nom, $users = [])

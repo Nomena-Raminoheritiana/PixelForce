@@ -12,8 +12,10 @@ use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\UserRepository;
 use App\Services\Chat\ChatCanalService;
+use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
 use App\Services\Chat\ChatUserCanal;
+use App\Services\GenerateKey;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,13 +50,23 @@ class ChatController extends AbstractController
      * @var CanalMessageRepository
      */
     private $canalMessageRepository;
+    /**
+     * @var GenerateKey
+     */
+    private $generateKey;
+    /**
+     * @var ChatNormalizer
+     */
+    private $chatNormalizer;
 
     public function __construct(ChatService $chatService,
                                 ChatCanalService $chatCanalService,
                                 ChatUserCanal $chatUserCanal,
                                 CanalMessageRepository $canalMessageRepository,
                                 UserRepository $userRepository,
+                                ChatNormalizer $chatNormalizer,
                                 EntityManager $entityManager,
+                                GenerateKey $generateKey,
                                 ObjectManager $objectManager)
     {
         $this->chatService = $chatService;
@@ -64,6 +76,8 @@ class ChatController extends AbstractController
         $this->chatCanalService = $chatCanalService;
         $this->chatUserCanal = $chatUserCanal;
         $this->canalMessageRepository = $canalMessageRepository;
+        $this->generateKey = $generateKey;
+        $this->chatNormalizer = $chatNormalizer;
     }
 
     /**
@@ -73,6 +87,13 @@ class ChatController extends AbstractController
     {
         if($request->isMethod('POST')) {
             $canalMessage = $this->canalMessageRepository->findOneBy(['code' => $code]);
+            if(!$canalMessage) {
+                $users = $this->generateKey->desistCode($code);
+                if($users) {
+                   $canalMessage = $this->chatCanalService->createSingleCanal($this->userRepository->find($users[0]), $this->userRepository->find($users[1]), false);
+                }
+
+            }
             $message = $this->chatService->addMessage($canalMessage, $this->getUser(), $request->request->get('textes'));
             return $this->json($message);
         }

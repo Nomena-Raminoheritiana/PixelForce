@@ -1,6 +1,7 @@
 import {loaderOff, loaderOn} from "../helpers/Loader";
 import {getMessageByCode} from "./chatSenderRequest";
 import {ConversationComponent} from "./components/ConversationComponent";
+import {showMessageInstance} from "./helpers/chat_helpers"
 
 $(document).ready(function() {
     const conversationComponent = new ConversationComponent();
@@ -11,14 +12,6 @@ $(document).ready(function() {
         $('.chat-canal-instance').each(function() {
             $(this).remove();
         })
-        $('body').append(conversationComponent.getConversationContainer(canal));
-        const chat_instance = $('#canal-'+canal.id);
-        const chat_instance_body = $(chat_instance).find('.card-body');
-        loaderOn(chat_instance_body[0]);
-        const messages = await getMessageByCode(canal.code);
-        // charger les messages
-        chat_instance_body.html(conversationComponent.getMessages(messages));
-        chat_instance_body[0].scrollTop = chat_instance_body[0].scrollHeight;
-        loaderOff(chat_instance_body[0]);
+        await showMessageInstance(canal);
     })
 });
