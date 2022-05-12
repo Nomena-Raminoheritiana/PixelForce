@@ -6,7 +6,6 @@ namespace App\Services\Chat;
 
 use App\Entity\CanalMessage;
 use App\Entity\Message;
-use App\Entity\MessageVu;
 use App\Entity\User;
 use App\Helpers\Cryptographie;
 use App\Manager\EntityManager;
@@ -100,16 +99,16 @@ class ChatService
     }
 
 
-    public function vu(Message $message, User $user)
-    {
-       $messageVu = $this->objectManager->createObject(MessageVu::class, [
-            'message' => $message,
-            'user' => $user
-        ]);
-
-       $this->chatMercureNotification->notifyWhenNewVu($messageVu);
-
-       return $this->chatNormalizer->getMessageVuNormalized($messageVu);
-
-    }
+//    public function vu(Message $message, User $user)
+//    {
+//       $messageVu = $this->objectManager->createObject(MessageVu::class, [
+//            'message' => $message,
+//            'user' => $user
+//        ]);
+//
+//       $this->chatMercureNotification->notifyWhenNewVu($messageVu);
+//
+//       return $this->chatNormalizer->getMessageVuNormalized($messageVu);
+//
+//    }
 }

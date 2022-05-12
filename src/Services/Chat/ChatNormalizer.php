@@ -73,11 +73,6 @@ class ChatNormalizer
         return $this->canalMessageRegister[$canalMessage->getId()];
     }
 
-    public function getMessageVuNormalized(MessageVu $messageVu)
-    {
-        return $this->normalizer->getNormalizeData($messageVu,self::MESSAGE_VU_PROPS );
-    }
-
     public function denormalizeCanalMessage($data)
     {
         return $this->normalizer->getDenormalizeData($data, CanalMessage::class);

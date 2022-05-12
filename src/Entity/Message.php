@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -44,14 +43,8 @@ class Message
      */
     private $createdAt;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MessageVu::class, mappedBy="message")
-     */
-    private $messageVus;
-
     public function __construct()
     {
-        $this->messageVus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -103,36 +96,6 @@ class Message
     public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, MessageVu>
-     */
-    public function getMessageVus(): Collection
-    {
-        return $this->messageVus;
-    }
-
-    public function addMessageVu(MessageVu $messageVu): self
-    {
-        if (!$this->messageVus->contains($messageVu)) {
-            $this->messageVus[] = $messageVu;
-            $messageVu->setMessage($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMessageVu(MessageVu $messageVu): self
-    {
-        if ($this->messageVus->removeElement($messageVu)) {
-            // set the owning side to null (unless already changed)
-            if ($messageVu->getMessage() === $this) {
-                $messageVu->setMessage(null);
-            }
-        }
 
         return $this;
     }

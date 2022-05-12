@@ -104,14 +104,14 @@ class ChatController extends AbstractController
         ], 405);
     }
 
-    /**
-     * @Route("/chat/vu/message/{id}", name="chat_vuMessage", options={"expose"=true})
-     */
-    public function vu(Message $message)
-    {
-        $vu = $this->chatService->vu($message, $this->getUser());
-        return $this->json($vu);
-    }
+//    /**
+//     * @Route("/chat/vu/message/{id}", name="chat_vuMessage", options={"expose"=true})
+//     */
+//    public function vu(Message $message)
+//    {
+//        $vu = $this->chatService->vu($message, $this->getUser());
+//        return $this->json($vu);
+//    }
 
     /**
      * @Route("/chat/deleteMessage/{message}", name="chat_deleteMessage", options={"expose"=true})
