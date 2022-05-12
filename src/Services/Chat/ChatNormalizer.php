@@ -35,6 +35,8 @@ class ChatNormalizer
      */
     private $security;
 
+    private $canalMessageRegister = [];
+
     public function __construct(Normalizer $normalizer, UserRepository $userRepository, UserNormalizer $userNormalizer, Security $security)
     {
         $this->normalizer = $normalizer;
@@ -53,19 +55,22 @@ class ChatNormalizer
 
     public function getCanalMessageNormalized(CanalMessage $canalMessage)
     {
-        $users = $this->userRepository->getUserByCanal($canalMessage);
-        $userNormalized = $this->userNormalizer->normalizeArrayUsers($users);
-        $usersArray['membres'] = $userNormalized;
-        if(!$canalMessage->getNom() && count($users) === 2) {
-            foreach($users as $user) {
-                if($user->getId() != $this->security->getUser()->getId()){
-                    $canalMessage->setNom($user->getNom().' '.$user->getPrenom());
+        if(!isset($this->canalMessageRegister[$canalMessage->getId()])) {
+            $users = $this->userRepository->getUserByCanal($canalMessage);
+            $userNormalized = $this->userNormalizer->normalizeArrayUsers($users);
+            $usersArray['membres'] = $userNormalized;
+            if(!$canalMessage->getNom() && count($users) === 2) {
+                foreach($users as $user) {
+                    if($user->getId() != $this->security->getUser()->getId()){
+                        $canalMessage->setNom($user->getNom().' '.$user->getPrenom());
+                    }
                 }
             }
+            $data = $this->normalizer->getNormalizeData($canalMessage, self::CANAL_MESSAGE_PROPS);
+            $this->canalMessageRegister[$canalMessage->getId()] = array_merge($data, $usersArray);
+
         }
-        $data = $this->normalizer->getNormalizeData($canalMessage, self::CANAL_MESSAGE_PROPS);
-        $data = array_merge($data, $usersArray);
-        return $data;
+        return $this->canalMessageRegister[$canalMessage->getId()];
     }
 
     public function getMessageVuNormalized(MessageVu $messageVu)
