@@ -101,12 +101,15 @@ class ObjectManager
     public function getMultiple($classWithNameSpace, $ids = [])
     {
         $objects = [];
-        foreach($ids as $id) {
-            $object =  $this->get($classWithNameSpace, $id);
-            if($object) {
-                $objects[] = $object;
+        if(is_array($ids)) {
+            foreach($ids as $id) {
+                $object =  $this->get($classWithNameSpace, $id);
+                if($object) {
+                    $objects[] = $object;
+                }
             }
         }
+
         return $objects;
     }
 

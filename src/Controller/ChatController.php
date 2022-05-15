@@ -12,6 +12,7 @@ use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\UserRepository;
 use App\Services\Chat\ChatCanalService;
+use App\Services\Chat\ChatMercureNotification;
 use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
 use App\Services\Chat\ChatUserCanal;
@@ -58,11 +59,16 @@ class ChatController extends AbstractController
      * @var ChatNormalizer
      */
     private $chatNormalizer;
+    /**
+     * @var ChatMercureNotification
+     */
+    private $chatMercureNotification;
 
     public function __construct(ChatService $chatService,
                                 ChatCanalService $chatCanalService,
                                 ChatUserCanal $chatUserCanal,
                                 CanalMessageRepository $canalMessageRepository,
+                                ChatMercureNotification $chatMercureNotification,
                                 UserRepository $userRepository,
                                 ChatNormalizer $chatNormalizer,
                                 EntityManager $entityManager,
@@ -78,6 +84,7 @@ class ChatController extends AbstractController
         $this->canalMessageRepository = $canalMessageRepository;
         $this->generateKey = $generateKey;
         $this->chatNormalizer = $chatNormalizer;
+        $this->chatMercureNotification = $chatMercureNotification;
     }
 
     /**
@@ -104,14 +111,18 @@ class ChatController extends AbstractController
         ], 405);
     }
 
-//    /**
-//     * @Route("/chat/vu/message/{id}", name="chat_vuMessage", options={"expose"=true})
-//     */
-//    public function vu(Message $message)
-//    {
-//        $vu = $this->chatService->vu($message, $this->getUser());
-//        return $this->json($vu);
-//    }
+    /**
+     * @Route("/chat/vu/canal/{id}", name="chat_vuMessage", options={"expose"=true})
+     */
+    public function vu(CanalMessage $canal)
+    {
+        $canal->addVus($this->getUser()->getId());
+        $this->entityManager->save($canal);
+        $this->chatMercureNotification->notifyWhenNewVu($canal, $this->getUser());
+        return $this->json([
+            'error' => false
+        ]);
+    }
 
     /**
      * @Route("/chat/deleteMessage/{message}", name="chat_deleteMessage", options={"expose"=true})
@@ -149,8 +160,9 @@ class ChatController extends AbstractController
             if($nom_canal) {
                 $users = [$this->getUser()];
                 if(is_array($users_id) && count($users_id) > 0) {
-                    foreach($users as $id_user) {
+                    foreach($users_id as $id_user) {
                         $users[] = $this->userRepository->findOneBy(['id' => $id_user]);
+
                     }
                 }
                 $canalMessage = $this->chatCanalService->createGroupCanal($nom_canal, $users);
@@ -195,6 +207,9 @@ class ChatController extends AbstractController
             $users = $request->query->get('user');
             $users = is_array($users) ? $users : [$users];
             $users = $this->objectManager->getMultiple(User::class, $users);
+            if($request->query->get('includeMe')) {
+                $users = array_merge([$this->getUser()],$users);
+            }
             $canalNormalized = $this->chatUserCanal->removeUsersFromCanal($users, $canalMessage);
             return $this->json($canalNormalized);
         }
@@ -241,5 +256,26 @@ class ChatController extends AbstractController
     {
        $normalizedCanals = $this->chatCanalService->getSingleCanal($this->getUser());
        return $this->json($normalizedCanals);
+    }
+
+    /**
+     * @Route("/chat/canal/{id}/userTyping", name="chat_notifyUserTyping", options={"expose"=true})
+     */
+    public function notifyUserTyping(CanalMessage $canalMessage)
+    {
+        $this->chatMercureNotification->notifyWhenUserIsTyping($this->getUser(), $canalMessage);
+        return $this->json([
+            'error' => false,
+        ]);
+    }
+    /**
+     * @Route("/chat/canal/{id}/userStopTyping", name="chat_notifyUserStopTyping", options={"expose"=true})
+     */
+    public function notifyUserStopTyping(CanalMessage $canalMessage)
+    {
+        $this->chatMercureNotification->notifyWhenUserIsTyping($this->getUser(), $canalMessage, true);
+        return $this->json([
+            'error' => false,
+        ]);
     }
 }

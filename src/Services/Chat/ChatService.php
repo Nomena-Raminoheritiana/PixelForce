@@ -69,6 +69,7 @@ class ChatService
         ]);
 
         $canalMessage->setUpdatedAt(new \DateTimeImmutable());
+        $canalMessage->setVus([$user->getId()]);
         $this->entityManager->save($canalMessage);
         $this->chatMercureNotification->notifyWhenNewMessage($message);
 

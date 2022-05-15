@@ -1,5 +1,40 @@
 export class CanalGroupsComponent {
     users=[];
+    getModalAddUser(canal_id)
+    {
+        return '<!-- Modal -->\n' +
+            '<div class="modal fade text-start chat-modal-addUsers chat-modal-container" id="chatModalAddUsers" data-canal-id="'+canal_id+'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">\n' +
+            '    <div class="modal-dialog">\n' +
+            '        <div class="modal-content">\n' +
+            '            <div class="modal-header">\n' +
+            '                <h5 class="modal-title" id="exampleModalLabel">Ajouter des membres dans le groupe</h5>\n' +
+            '                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+            '            </div>\n' +
+            '            <div class="modal-body">\n'+
+            '               <div class="alert alert-success alert-empty-name d-none" role="alert">\n' +
+            '                    Enregistrement effectué\n' +
+            '                </div>'+
+            '                <div class="chat_userBadgeList mb-2">\n' +
+            '\n' +
+            '                </div>\n' +
+            '                <div>\n' +
+            '                    <label for="exampleFormControlInput1" class="form-label">Ajouter des membres</label>\n' +
+            '                    <input type="text" class="form-control chatSearchUser" id="chatSearchUser" placeholder="Rechercher un utilisateur">\n' +
+            '                </div>\n' +
+            '                <div class="chat_usersList mt-2">\n' +
+            '\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '\n' +
+            '            <div class="modal-footer">\n' +
+            '                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>\n' +
+            '                <button type="button" class="btn btn-primary" id="chat-btn-addUsers">Enregistrer</button>\n' +
+            '            </div>\n' +
+            '        </div>\n' +
+            '    </div>\n' +
+            '</div>'
+    }
+
     getListUser(users = [])
     {
         let template = '';

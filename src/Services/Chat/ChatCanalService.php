@@ -6,15 +6,10 @@ namespace App\Services\Chat;
 
 use App\Entity\CanalMessage;
 use App\Entity\User;
-use App\Helpers\Cryptographie;
-use App\Helpers\DateHelper;
 use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
-use App\Repository\MessageRepository;
-use App\Repository\UserRepository;
 use App\Services\GenerateKey;
-use App\Services\User\UserNormalizer;
 
 class ChatCanalService
 {

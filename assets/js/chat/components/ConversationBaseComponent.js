@@ -26,7 +26,7 @@ export class ConversationBaseComponent {
 
     getMessage(message)
     {
-        return '<li class="list-group-item  pb-0 ps-3">\n' +
+        return '<li class="list-group-item  pb-0 ps-3" data-id-user="'+message.user.id+'">\n' +
             '                <div class="row">\n' +
             '                    <div class="col-2">\n' +
             '                        <img src="https://github.com/mdo.png" alt="hugenerd" width="40" height="40" class="rounded-circle">\n' +
@@ -40,5 +40,10 @@ export class ConversationBaseComponent {
             '                    </div>\n' +
             '                </div>\n' +
             '            </li>\n';
+    }
+
+    clearVu(conversationContainer)
+    {
+        $(conversationContainer).find('.canal-vu-container').remove();
     }
 }

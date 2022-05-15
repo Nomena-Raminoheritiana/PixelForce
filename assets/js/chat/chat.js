@@ -1,11 +1,12 @@
 import {loaderOff, loaderOn} from "../helpers/Loader";
-import {sendMessage} from "./chatSenderRequest";
+import {notifyUserStopTyping, notifyUserTyping, sendMessage} from "./chatSenderRequest";
 import {ConversationBaseComponent} from "./components/ConversationBaseComponent";
+import {updateMenu} from "./helpers/chat_helpers";
 require('./chat_new_one')
 require('./chat_menu')
 require('./chatMercureTraitement')
 require('./chat_canal_instance')
-require('./chatCreateCanal')
+require('./chatGroupCanal')
 $(document).ready(function() {
     // envoyer un message
     $(this).on('click', '.chat-btn-send', async function(e) {
@@ -20,6 +21,7 @@ $(document).ready(function() {
         const messageValue = inputText.val();
         if(messageValue.length > 0) {
             const message = await sendMessage(messageValue,code)
+            conversationBaseComponent.clearVu(bodyMessage);
             $('.chat-list-group-messages').append(conversationBaseComponent.getMessage(message))
             inputText.val('');
             bodyMessage[0].scrollTop = bodyMessage[0].scrollHeight;
@@ -27,9 +29,10 @@ $(document).ready(function() {
             if(emptyMessage.length>0) {
                 emptyMessage.remove();
             }
+            await updateMenu(message.canal)
         }
 
-    })
+    });
 
     // supprimer le conteneur du message
     $(this).on('click','.chat-btn-close', function(e) {
@@ -49,5 +52,17 @@ $(document).ready(function() {
         $(this).closest('.chat-box-container,.chat-float-menu').removeClass('chat-minimised');
         $(this).find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
         $(this).addClass('chat-btn-minimise').removeClass('chat-btn-maximise');
+    })
+
+    $(this).on('focus', '.chat-input-textes',async function(e) {
+        e.preventDefault();
+        const canal_id = $(this).closest('.chat-box-container').attr('data-id');
+        await notifyUserTyping(canal_id)
+    });
+
+    $(this).on('focusout','.chat-input-textes',async function(e) {
+        e.preventDefault();
+        const canal_id = $(this).closest('.chat-box-container').attr('data-id');
+        await notifyUserStopTyping(canal_id)
     })
 });

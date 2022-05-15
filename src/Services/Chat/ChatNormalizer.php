@@ -6,7 +6,6 @@ namespace App\Services\Chat;
 
 use App\Entity\CanalMessage;
 use App\Entity\Message;
-use App\Entity\MessageVu;
 use App\Repository\UserRepository;
 use App\Services\Normalizer;
 use App\Services\User\UserNormalizer;
@@ -14,9 +13,8 @@ use Symfony\Component\Security\Core\Security;
 
 class ChatNormalizer
 {
-    const CANAL_MESSAGE_PROPS = ['id', 'isGroup', 'nom', 'code', 'lastMessage', 'membres'];
+    const CANAL_MESSAGE_PROPS = ['id', 'isGroup', 'nom', 'code', 'lastMessage', 'membres', 'vus'];
     const MESSAGE_PROPS = ['id', 'textes', 'createdAt', 'deletedAt', 'user' => UserNormalizer::USER_PROPS];
-    const MESSAGE_VU_PROPS = ['id', 'message' => self::MESSAGE_PROPS, 'user' => UserNormalizer::USER_PROPS];
 
     /**
      * @var Normalizer
@@ -59,6 +57,7 @@ class ChatNormalizer
             $users = $this->userRepository->getUserByCanal($canalMessage);
             $userNormalized = $this->userNormalizer->normalizeArrayUsers($users);
             $usersArray['membres'] = $userNormalized;
+            $usersArray['isSeen']  = in_array($this->security->getUser()->getId(), $canalMessage->getVus());
             if(!$canalMessage->getNom() && count($users) === 2) {
                 foreach($users as $user) {
                     if($user->getId() != $this->security->getUser()->getId()){
