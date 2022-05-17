@@ -19,9 +19,13 @@ $(document).ready(function() {
         loaderOn(bodyMessage[0]);
         // soit on a le canal, soit on a le code
         const code  = $(this).attr('data-code');
+        let files = [];
+        $(this).find('input[name="files[]"]').each(function(){
+            files.push($(this).val());
+        })
         const messageValue = inputText.val();
         if(messageValue.length > 0) {
-            const message = await sendMessage(messageValue,code)
+            const message = await sendMessage(messageValue,code, files)
             conversationBaseComponent.clearVu(bodyMessage);
             $('.chat-list-group-messages').append(conversationBaseComponent.getMessage(message))
             inputText.val('');

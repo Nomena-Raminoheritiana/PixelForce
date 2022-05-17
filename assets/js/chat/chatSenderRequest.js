@@ -16,10 +16,13 @@ export async function getMessageByCode(code=null)
     return [];
 }
 
-export async function sendMessage(message, code) {
+export async function sendMessage(message, code, files = []) {
     // envoyer un message
     const bodyRequest = new URLSearchParams();
     bodyRequest.append('textes', message);
+    files.forEach(function(fileName) {
+        bodyRequest.append('files[]', fileName)
+    })
     return (await axios.post(
                 Routing.generate('chat_addMessage', {code : code}),
                 bodyRequest
