@@ -34,6 +34,7 @@ export class ConversationBaseComponent {
                        '</div>';
             })
         }
+        console.log(message)
         return '<li class="list-group-item  pb-0 ps-3" data-id-user="'+message.user.id+'">\n' +
             '                <div class="row">\n' +
             '                    <div class="col-2">\n' +
@@ -41,7 +42,7 @@ export class ConversationBaseComponent {
             '                    </div>\n' +
             '                    <div class="col-10 ps-2">\n' +
             '                        <span class="fw-bold line-height-13 fs-13">'+message.user.nom+' '+message.user.prenom+'</span><br>\n' +
-            '                        <span class="p-0 line-height-13 text-muted fs-12 ">Envoyer le 13-12-2022 à 13h 30min</span>\n' +
+            '                        <span class="p-0 line-height-13 text-muted fs-12 ">Envoyer '+message.renduDateCreationMessage+'</span>\n' +
                                      imgs+
             '                        <p class=" fs-14 line-height-17 mb-0 pt-2 pb-2 ">\n' +
             message.textes+'\n'+

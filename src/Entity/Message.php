@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helpers\DateHelper;
 use App\Repository\MessageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -47,6 +48,7 @@ class Message
      * @ORM\Column(type="array", nullable=true)
      */
     private $files = [];
+    private $renduDateCreationMessage;
 
 
     public function __construct()
@@ -96,12 +98,14 @@ class Message
 
     public function getCreatedAt(): ?\DateTime
     {
+        $this->setRenduDateCreationMessage();
         return $this->createdAt;
     }
 
     public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
+        $this->setRenduDateCreationMessage();
 
         return $this;
     }
@@ -115,6 +119,23 @@ class Message
     {
         $this->files = $files;
 
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRenduDateCreationMessage()
+    {
+        return $this->renduDateCreationMessage;
+    }
+
+    public function setRenduDateCreationMessage()
+    {
+        if(!$this->renduDateCreationMessage) {
+            $dateHelpers = new DateHelper();
+            $this->renduDateCreationMessage = $dateHelpers->format($this->createdAt->format('Y-m-d H:i:s'));
+        }
         return $this;
     }
 
