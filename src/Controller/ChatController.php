@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Entity\CanalMessage;
+use App\Entity\Generique\Structure;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Manager\EntityManager;
@@ -17,7 +18,10 @@ use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
 use App\Services\Chat\ChatUserCanal;
 use App\Services\GenerateKey;
+use App\Services\DirectoryManagement;
+use App\Services\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -64,8 +68,19 @@ class ChatController extends AbstractController
      */
     private $chatMercureNotification;
 
+    /**
+     * @var FileUploader
+     */
+    private $fileUploader;
+    /**
+     * @var DirectoryManagement
+     */
+    private $directoryManagement;
+
     public function __construct(ChatService $chatService,
                                 ChatCanalService $chatCanalService,
+                                DirectoryManagement $directoryManagement,
+                                FileUploader $fileUploader,
                                 ChatUserCanal $chatUserCanal,
                                 CanalMessageRepository $canalMessageRepository,
                                 ChatMercureNotification $chatMercureNotification,
@@ -85,6 +100,8 @@ class ChatController extends AbstractController
         $this->generateKey = $generateKey;
         $this->chatNormalizer = $chatNormalizer;
         $this->chatMercureNotification = $chatMercureNotification;
+        $this->fileUploader = $fileUploader;
+        $this->directoryManagement = $directoryManagement;
     }
 
     /**
@@ -101,7 +118,7 @@ class ChatController extends AbstractController
                 }
 
             }
-            $message = $this->chatService->addMessage($canalMessage, $this->getUser(), $request->request->get('textes'));
+            $message = $this->chatService->addMessage($canalMessage, $this->getUser(), $request->request->get('textes'), $request->request->get('files'));
             return $this->json($message);
         }
 
@@ -112,7 +129,42 @@ class ChatController extends AbstractController
     }
 
     /**
-     * @Route("/chat/vu/canal/{id}", name="chat_vuMessage", options={"expose"=true})
+     * @Route("/chat/import/file", name="chat_importFile", options={"expose"=true})
+     */
+    public function importFile(Request $request)
+    {
+        $fileName = $this->fileUploader->upload($request->files->get('file'), $this->directoryManagement->getMediaChatFolder());
+        if($fileName) {
+            return $this->json([
+                'error' => false,
+                'fileUrl' => $this->generateUrl('chat_binaryFileResponse', [
+                    'fileName' => $fileName,
+                ])
+            ]);
+        }
+        return $this->json([
+            'error' => true,
+        ]);
+    }
+
+    /**
+     * @Route("/chat/file/{fileName}", name="chat_binaryFileResponse", options={"expose"=true})
+     */
+    public function binaryFileResponse($fileName)
+    {
+        $file = $this->directoryManagement->getMediaChatFolder().DIRECTORY_SEPARATOR.$fileName;
+        if($fileName && file_exists($file)) {
+           return new BinaryFileResponse($file);
+        }
+
+        return $this->json([
+            'error' => true,
+            'message' => 'file not found'
+        ]);
+    }
+
+    /**
+     * @Route("/chat/vu/message/{id}", name="chat_vuMessage", options={"expose"=true})
      */
     public function vu(CanalMessage $canal)
     {

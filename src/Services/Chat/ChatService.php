@@ -59,13 +59,14 @@ class ChatService
         $this->entityManager = $entityManager;
     }
 
-    public function addMessage(CanalMessage $canalMessage, User $user, $textes)
+    public function addMessage(CanalMessage $canalMessage, User $user, $textes, $files)
     {
         /** @var Message $message */
         $message = $this->objectManager->createObject(Message::class, [
             'canalMessage' => $canalMessage,
             'user' => $user,
-            'textes'  => $this->cryptographie->encrypt($textes)
+            'textes'  => $this->cryptographie->encrypt($textes),
+            'files' => $files
         ]);
 
         $canalMessage->setUpdatedAt(new \DateTimeImmutable());

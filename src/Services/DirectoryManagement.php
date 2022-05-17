@@ -11,6 +11,7 @@ class DirectoryManagement
 {
     private $mediaFolder = 'media';
     private $mediaFolder_User = 'user';
+    private $chat_folder = 'chat';
     private $project_dir;
     private $slugify;
 
@@ -33,6 +34,11 @@ class DirectoryManagement
     public function getMediaFolder_User()
     {
         return $this->getMediaFolder().DIRECTORY_SEPARATOR.$this->mediaFolder_User;
+    }
+
+    public function getMediaChatFolder()
+    {
+        return $this->getMediaFolder().DIRECTORY_SEPARATOR.$this->chat_folder;
     }
 
 }

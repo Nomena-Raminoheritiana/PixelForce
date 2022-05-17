@@ -74,3 +74,14 @@ export async function chat_groupCanal_addUser(canal_id, users_id) {
     });
     return (await axios.post(Routing.generate('chat_groupCanal_addUser', {id:canal_id}), bodyRequest)).data
 }
+
+export async function uploadFile(fileUpload) {
+    let formData = new FormData();
+    formData.append("file", fileUpload.files[0]);
+    await fetch('/upload.php', {
+        method: "POST",
+        body: formData
+    });
+
+    return true;
+}

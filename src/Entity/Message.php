@@ -43,6 +43,16 @@ class Message
      */
     private $createdAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity=MessageVu::class, mappedBy="message")
+     */
+    private $messageVus;
+
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $files = [];
+
     public function __construct()
     {
     }
@@ -98,5 +108,47 @@ class Message
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+
+    /**
+     * @return Collection<int, MessageVu>
+     */
+    public function getMessageVus(): Collection
+    {
+        return $this->messageVus;
+    }
+
+    public function addMessageVu(MessageVu $messageVu): self
+    {
+        if (!$this->messageVus->contains($messageVu)) {
+            $this->messageVus[] = $messageVu;
+            $messageVu->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessageVu(MessageVu $messageVu): self
+    {
+        if ($this->messageVus->removeElement($messageVu)) {
+            // set the owning side to null (unless already changed)
+            if ($messageVu->getMessage() === $this) {
+                $messageVu->setMessage(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setFiles(array $files)
+    {
+        $this->files = $files;
+        return $this;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
     }
 }
