@@ -29,7 +29,7 @@ export class ConversationBaseComponent {
         let imgs = '';
         if(message.files !=null && message.files.length>0) {
             message.files.forEach(function(url) {
-               imgs += '<div class="pb-2">' +
+               imgs += '<div class="pb-2 pt-2">' +
                             '<img src="'+url+'" alt="le fichier ne peut être charger" class="chat-image" />'
                        '</div>';
             })
@@ -40,9 +40,9 @@ export class ConversationBaseComponent {
             '                        <img src="https://github.com/mdo.png" alt="hugenerd" width="40" height="40" class="rounded-circle">\n' +
             '                    </div>\n' +
             '                    <div class="col-10 ps-2">\n' +
-                                       imgs+
             '                        <span class="fw-bold line-height-13 fs-13">'+message.user.nom+' '+message.user.prenom+'</span><br>\n' +
             '                        <span class="p-0 line-height-13 text-muted fs-12 ">Envoyer le 13-12-2022 à 13h 30min</span>\n' +
+                                     imgs+
             '                        <p class=" fs-14 line-height-17 mb-0 pt-2 pb-2 ">\n' +
             message.textes+'\n'+
             '                     </p>\n' +
