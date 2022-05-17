@@ -51,3 +51,24 @@
 .list-group-item:hover .chat-groupe-action {
     display: block;
 }
+
+.chat-files-preview {
+    display: flex !important;
+    width: 336px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding-left:2px !important;
+    padding-top:5px !important;
+}
+
+.chat-files-preview .chat-file-item {
+    width : 75px;
+    height: 75px;
+    border: 2px solid grey;
+    padding: 3px;
+    margin-right: 2px
+}
+
+.chat-image{
+    width: 100%
+}

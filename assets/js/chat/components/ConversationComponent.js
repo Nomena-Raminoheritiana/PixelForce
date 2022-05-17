@@ -36,12 +36,13 @@ export class ConversationComponent extends ConversationBaseComponent {
             '         '+vuTemplate+'\n' +
             '    </div>\n' +
             '    <div class="card-footer p-0">\n' +
+            '        <div class="chat-files-preview"></div>'+
             '        <div class="py-3 ps-2">\n' +
             '           <span class="users">' +
             inputCacheUser+
             '                <a href="#" class="text-danger speed-liveVideo-call pe-2"><i class="fa-solid fa-video"></i></a>' +
             '           </span> ' +
-            '            <!-- <a href="#" class="text-secondary"><i class="fa-solid fa-image"></i></a> -->\n' +
+            '            <a href="#" class="text-secondary chat-uploadImage"><i class="fa-solid fa-image"></i></a>\n' +
             '        </div>\n' +
             '        <div class="input-group bg-white">\n' +
             '            <input type="text" class="form-control border-0 border-top  fs-12 rounded-0 py-3 chat-input-textes" placeholder="Entrer votre message ..." aria-label="Recipient\'s username with two button addons">\n' +

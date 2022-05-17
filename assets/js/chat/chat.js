@@ -12,7 +12,8 @@ $(document).ready(function() {
     // envoyer un message
     $(this).on('click', '.chat-btn-send', async function(e) {
         e.preventDefault();
-        const bodyMessage = $(this).closest('.chat-box-container').find('.card-body');
+        const chatContainer = $(this).closest('.chat-box-container');
+        const bodyMessage = chatContainer.find('.card-body');
         const inputText = $('.chat-input-textes');
         const emptyMessage = $('.chat-empty-message');
         const conversationBaseComponent = new ConversationBaseComponent();
@@ -20,13 +21,15 @@ $(document).ready(function() {
         // soit on a le canal, soit on a le code
         const code  = $(this).attr('data-code');
         let files = [];
-        $(this).find('input[name="files[]"]').each(function(){
+        chatContainer.find('input[name="files[]"]').each(function(){
             files.push($(this).val());
-        })
+            $(this).remove();
+        });
         const messageValue = inputText.val();
         if(messageValue.length > 0) {
             const message = await sendMessage(messageValue,code, files)
             conversationBaseComponent.clearVu(bodyMessage);
+            conversationBaseComponent.clearFile(chatContainer);
             $('.chat-list-group-messages').append(conversationBaseComponent.getMessage(message))
             inputText.val('');
             bodyMessage[0].scrollTop = bodyMessage[0].scrollHeight;
@@ -39,6 +42,12 @@ $(document).ready(function() {
 
     });
 
+    // activer le comportement par défault de l'inputFile
+    // comportement par défaut arréter et qui est causé par l'évènement click du parent
+    $(this).on('click', 'input[type="file"]', function(e){
+        e.stopPropagation()
+    });
+
     // upload file
     $(this).on('click','.chat-uploadImage', function(e) {
         e.preventDefault();
@@ -47,22 +56,27 @@ $(document).ready(function() {
             class:'d-none'
         })
         $(this).closest('.chat-box-container').find('.chat-files-preview').append(inputFile);
+
         inputFile.trigger('click');
+
     })
 
     $(this).on('change','.chat-box-container input[type="file"]',async function(e){
         e.preventDefault();
+        const containerImg = $('<div />');
         const img = $('<img />', {
-            class:'img-item'
-        })
-        $('.img-container').append(img);
+            class:'chat-file-item'
+        });
+        containerImg.html(img);
+        $('.chat-files-preview').append(containerImg);
         readURL($(this)[0], img[0]);
-        loaderOn(img, false, {
-            'loaderWidth' : '25px',
-            'loaderHeight' : '25px'
+        loaderOn(containerImg[0], false, {
+            'loaderWidth' : '40px',
+            'loaderHeight' : '40px',
+            'backdrop-color': 'rgba(255,255,255,0.5) !important'
         });
         const fileName = await uploadFile($(this)[0]);
-        loaderOff(img);
+        loaderOff(containerImg[0]);
         const container = $(this).closest('.chat-box-container');
         const fileNameInput = $('<input />', {
             type: 'hidden',

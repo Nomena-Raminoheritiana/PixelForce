@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Security;
 class ChatNormalizer
 {
     const CANAL_MESSAGE_PROPS = ['id', 'isGroup', 'nom', 'code', 'lastMessage', 'membres', 'vus'];
-    const MESSAGE_PROPS = ['id', 'textes', 'createdAt', 'deletedAt', 'user' => UserNormalizer::USER_PROPS];
+    const MESSAGE_PROPS = ['id', 'textes', 'files', 'createdAt', 'deletedAt', 'user' => UserNormalizer::USER_PROPS];
 
     /**
      * @var Normalizer
