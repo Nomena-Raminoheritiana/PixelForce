@@ -66,7 +66,7 @@ class ChatService
             'canalMessage' => $canalMessage,
             'user' => $user,
             'textes'  => $this->cryptographie->encrypt($textes),
-            'files' => $files
+            'files' => $files ?? []
         ]);
 
         $canalMessage->setUpdatedAt(new \DateTimeImmutable());
