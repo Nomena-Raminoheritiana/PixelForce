@@ -1,7 +1,8 @@
 import {loaderOff, loaderOn} from "../helpers/Loader";
-import {notifyUserStopTyping, notifyUserTyping, sendMessage} from "./chatSenderRequest";
+import {notifyUserStopTyping, notifyUserTyping, sendMessage, uploadFile} from "./chatSenderRequest";
 import {ConversationBaseComponent} from "./components/ConversationBaseComponent";
 import {updateMenu} from "./helpers/chat_helpers";
+import {readURL} from "../helpers/inputFilePreview";
 require('./chat_new_one')
 require('./chat_menu')
 require('./chatMercureTraitement')
@@ -33,6 +34,39 @@ $(document).ready(function() {
         }
 
     });
+
+    // upload file
+    $(this).on('click','.chat-uploadImage', function(e) {
+        e.preventDefault();
+        const inputFile = $('<input />', {
+            type: 'file',
+            class:'d-none'
+        })
+        $(this).closest('.chat-box-container').find('.chat-files-preview').append(inputFile);
+        inputFile.trigger('click');
+    })
+
+    $(this).on('change','.chat-box-container input[type="file"]',async function(e){
+        e.preventDefault();
+        const img = $('<img />', {
+            class:'img-item'
+        })
+        $('.img-container').append(img);
+        readURL($(this)[0], img[0]);
+        loaderOn(img, false, {
+            'loaderWidth' : '25px',
+            'loaderHeight' : '25px'
+        });
+        const fileName = await uploadFile($(this)[0]);
+        loaderOff(img);
+        const container = $(this).closest('.chat-box-container');
+        const fileNameInput = $('<input />', {
+            type: 'hidden',
+            name: 'files[]',
+        });
+        fileNameInput.val(fileName);
+        container.append(fileNameInput);
+    })
 
     // supprimer le conteneur du message
     $(this).on('click','.chat-btn-close', function(e) {

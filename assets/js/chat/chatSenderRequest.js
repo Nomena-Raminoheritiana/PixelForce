@@ -76,12 +76,15 @@ export async function chat_groupCanal_addUser(canal_id, users_id) {
 }
 
 export async function uploadFile(fileUpload) {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("file", fileUpload.files[0]);
-    await fetch('/upload.php', {
-        method: "POST",
-        body: formData
-    });
-
-    return true;
+    const response  = (await axios.post(Routing.generate('chat_importFile'), formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })).data;
+    if(!response.error) {
+        return response.fileUrl;
+    }
+    return false;
 }

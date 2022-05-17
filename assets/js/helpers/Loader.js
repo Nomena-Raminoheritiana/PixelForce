@@ -5,7 +5,9 @@ function loader(options={
     'elementCible' : undefined,
     'className' : '',
     'directive' : 'ON',
-    'relative' : 'OFF'
+    'relative' : 'OFF',
+    'loaderWidth' : null,
+    'loaderHeight' : null
 })
 {
     if(options.elementCible !== undefined )
@@ -19,9 +21,12 @@ function loader(options={
             const loaderPostContainer = $('<div />', {
                 class:'loader-post-container w-100 h-100 d-flex'
             });
+            const imageWidth = options.loaderWidth != null ? ';width:'+options.loaderWidth : '';
+            const imageHeight = options.loaderHeight != null ? ';width:'+options.loaderHeight : '';
             const image = $('<img />', {
                 src: circleImage3,
-                class: 'm-auto'
+                class: 'm-auto',
+                style: imageHeight+imageWidth
             });
             loaderPostContainer.append(image);
             loaderContainer.append(loaderPostContainer)
@@ -40,12 +45,17 @@ function loader(options={
 
 }
 
-export function loaderOn($element, $relative=false)
+export function loaderOn($element, $relative=false, $stylesOptions = {
+    'loaderWidth' : null,
+    'loaderHeight' : null
+})
 {
   loader({
       'elementCible' : $element,
       'directive' : 'ON',
-      'relative': $relative ? 'ON' : 'OFF'
+      'relative': $relative ? 'ON' : 'OFF',
+      'loaderWidth' : $stylesOptions.loaderWidth,
+      'loaderHeight' : $stylesOptions.loaderHeight
   })
 }
 
