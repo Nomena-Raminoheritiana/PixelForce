@@ -14,8 +14,8 @@ $(document).ready(function() {
         e.preventDefault();
         const chatContainer = $(this).closest('.chat-box-container');
         const bodyMessage = chatContainer.find('.card-body');
-        const inputText = $('.chat-input-textes');
-        const emptyMessage = $('.chat-empty-message');
+        const inputText = chatContainer.find('.chat-input-textes');
+        const emptyMessage = chatContainer.find('.chat-empty-message');
         const conversationBaseComponent = new ConversationBaseComponent();
         loaderOn(bodyMessage[0]);
         // soit on a le canal, soit on a le code
@@ -30,7 +30,7 @@ $(document).ready(function() {
             const message = await sendMessage(messageValue,code, files)
             conversationBaseComponent.clearVu(bodyMessage);
             conversationBaseComponent.clearFile(chatContainer);
-            $('.chat-list-group-messages').append(conversationBaseComponent.getMessage(message))
+            chatContainer.find('.chat-list-group-messages').append(conversationBaseComponent.getMessage(message))
             inputText.val('');
             bodyMessage[0].scrollTop = bodyMessage[0].scrollHeight;
             loaderOff(bodyMessage[0]);
@@ -68,7 +68,7 @@ $(document).ready(function() {
             class:'chat-file-item'
         });
         containerImg.html(img);
-        $('.chat-files-preview').append(containerImg);
+        $(this).closest('.chat-box-container').find('.chat-files-preview').append(containerImg);
         readURL($(this)[0], img[0]);
         loaderOn(containerImg[0], false, {
             'loaderWidth' : '40px',

@@ -5,21 +5,19 @@ import {seeCanal} from "./chatSenderRequest";
 $(document).ready(function() {
     const conversationComponent = new ConversationComponent();
     // lorsqu'on choisi un canal
-    $(this).on('click', '.chat-choose-canal',async function(e) {
+    $(this).on('click', '.chat-choose-canal', async function(e) {
         e.preventDefault();
         e.stopPropagation();
-        const canal = JSON.parse(decodeURIComponent($(this).attr('data-canal')))
-        $('.chat-canal-instance').each(function() {
-            $(this).remove();
-        });
-        showMessageInstance(canal).then(function(){});
-        // on envoie un vu seulement si le canal en questin n'est pas encore vu
-        if($('[data-canal-menu-id="'+canal.id+'"]').find('.chat-not-seen').length > 0) {
-            await seeCanal(canal.id);
+        const canal = JSON.parse(decodeURIComponent($(this).attr('data-canal')));
+        if($('.chat-canal-instance[data-id="'+canal.id+'"]').length === 0){
+            showMessageInstance(canal).then(function(){});
+            // on envoie un vu seulement si le canal en questin n'est pas encore vu
+            if($('[data-canal-menu-id="'+canal.id+'"]').find('.chat-not-seen').length > 0) {
+                await seeCanal(canal.id);
+            }
+
+            await updateMenu(canal);
         }
-
-        await updateMenu(canal);
-
     });
 
     $(this).on('click', '.chat-canal-instance',async function(e) {

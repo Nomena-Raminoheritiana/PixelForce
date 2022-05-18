@@ -1,16 +1,14 @@
 import {loaderOff, loaderOn} from "../helpers/Loader";
 import {findDestinataire, getMessageByCode} from "./chatSenderRequest";
 import {NewConversationComponent} from "./components/NewConversationComponent";
+import {showMessageInstance} from "./helpers/chat_helpers";
 
 $(document).ready(function() {
     const newConversationComponent = new NewConversationComponent();
     // nouveau message
     $(this).on('click', '.chat-btn-newOne', function(e) {
         e.preventDefault();
-        $('.chat-float-newOne').each(function() {
-            $(this).remove();
-        })
-        $('body').append(newConversationComponent.getConversationContainer())
+        showMessageInstance().then(r => {})
     });
 
     // recherche d'un utilisateur sur la section nouveau message

@@ -16,7 +16,7 @@ export class ConversationComponent extends ConversationBaseComponent {
         }
 
         const isGroup = canal.isGroup ? 'true': 'false';
-        return '<div class="card shadow fs-14  chat-canal-instance chat-box-container shadow-sm position-absolute bottom-0 " data-isGroup="'+isGroup+'" data-id="'+canal.id+'" id="canal-'+canal.id+'" style="width: 18rem;">\n' +
+        return '<div class="card shadow fs-14  chat-canal-instance chat-box-container shadow-sm  " data-isGroup="'+isGroup+'" data-id="'+canal.id+'" id="canal-'+canal.id+'" style="width: 18rem;">\n' +
             '    <div class="card-header py-3">\n' +
             '        <div class="row">\n' +
             '            <div class="col-8 d-flex">\n' +

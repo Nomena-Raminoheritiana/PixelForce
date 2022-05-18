@@ -14,7 +14,7 @@ export class NewConversationComponent extends ConversationBaseComponent{
             '</div>'
     }
     getConversationContainer() {
-        return '<div class="card shadow fs-14  chat-float-newOne chat-box-container shadow-sm position-absolute bottom-0 " style="width: 18rem;">\n' +
+        return '<div class="card shadow fs-14  chat-float-newOne chat-box-container shadow-sm" style="width: 18rem;">\n' +
             '    <div class="card-header py-3">\n' +
             '        <div class="row">\n' +
             '            <div class="col-8 d-flex">\n' +
