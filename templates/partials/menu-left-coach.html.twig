@@ -1,49 +1,108 @@
-<ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu-left">
-    <li>
-        <a href="{{ path('app_dashboard') }}" class="nav-link px-0 align-middle text-bold-grey">
-            <i class="fa fa-dashboard text-info"></i> <span class="ms-3 d-none d-sm-inline">Tableau de bord</span>
-        </a>
-{#        <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu1" data-bs-parent="#menu">#}
-{#            <li class="w-100">#}
-{#                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>#}
-{#            </li>#}
-{#            <li>#}
-{#                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>#}
-{#            </li>#}
-{#        </ul>#}
-    </li>
-    <li class="nav-item">
-        <a href="{{ path('user_list') }}" class="nav-link align-middle px-0 text-bold-grey">
-            <i class="fa-solid fa-users text-warning"></i> <span class="ms-3 d-none d-sm-inline">Agents</span>
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('live_video_list') }}" class="nav-link px-0  text-bold-grey align-middle">
-            <i class="fa-solid fa-handshake text-success"></i> <span class="ms-3 d-none d-sm-inline">Réunions</span>
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('formationVideo_liste') }}" class="nav-link px-0 align-middle text-bold-grey">
-            <i class="fa fa-play indigo text-danger"></i> <span class="ms-3 d-none d-sm-inline">Formations</span>
-        </a>
-    </li>
-    <li>
-        <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle text-bold-grey">
-            <i class="fa-brands fa-product-hunt text-warning"></i>
-            <span class="ms-3 d-none d-sm-inline">Products</span>
-        </a>
-        <ul class="collapse show nav flex-column ms-0 ps-0 ps-sm-5" id="submenu3" data-bs-parent="#menu">
-            <li class="w-100">
-                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link px-0 text-bold-grey"> <span class="d-none d-sm-inline">Item</span> <i class="fa fa-sticky-note"></i> </a>
-            </li>
-        </ul>
-    </li>
-    <li>
-        <a href="#" class="nav-link px-0 align-middle text-bold-grey">
-            <i class="fa-solid fa-people-arrows-left-right" ></i> <span class="ms-3 d-none d-sm-inline">Customers</span>
-        </a>
-    </li>
-</ul>
+<li class=" navigation-header"><span data-i18n="User Interface">Espace coach</span><i data-feather="more-horizontal"></i>
+</li>
+<li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="User">Agents</span></a>
+    <ul class="menu-content">
+        <li><a class="d-flex align-items-center" href="{{ path('user_list') }}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List">List</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="#"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="View">View</span></a>
+            <ul class="menu-content">
+                <li><a class="d-flex align-items-center" href="app-user-view-account.html"><span class="menu-item text-truncate" data-i18n="Account">Account</span></a>
+                </li>
+                <li><a class="d-flex align-items-center" href="app-user-view-security.html"><span class="menu-item text-truncate" data-i18n="Security">Security</span></a>
+                </li>
+                <li><a class="d-flex align-items-center" href="app-user-view-billing.html"><span class="menu-item text-truncate" data-i18n="Billing &amp; Plans">Billing &amp; Plans</span></a>
+                </li>
+                <li><a class="d-flex align-items-center" href="app-user-view-notifications.html"><span class="menu-item text-truncate" data-i18n="Notifications">Notifications</span></a>
+                </li>
+                <li><a class="d-flex align-items-center" href="app-user-view-connections.html"><span class="menu-item text-truncate" data-i18n="Connections">Connections</span></a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+<li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('live_video_list') }}"><i data-feather="calendar"></i><span class="menu-title text-truncate" data-i18n="Calendar">Réunions</span></a>
+</li>
+<li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('formationVideo_liste') }}"><i data-feather="eye"></i><span class="menu-title text-truncate" data-i18n="Feather">Formations</span></a>
+</li>
+<li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="briefcase"></i><span class="menu-title text-truncate" data-i18n="Components">Components</span></a>
+    <ul class="menu-content">
+        <li><a class="d-flex align-items-center" href="component-accordion.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Accordion">Accordion</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-alerts.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Alerts</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-avatar.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Avatar">Avatar</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-badges.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Badges">Badges</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-breadcrumbs.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Breadcrumbs">Breadcrumbs</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-buttons.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Buttons">Buttons</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-carousel.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Carousel">Carousel</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-collapse.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Collapse">Collapse</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-divider.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Divider">Divider</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-dropdowns.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Dropdowns">Dropdowns</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-list-group.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="List Group">List Group</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-modals.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Modals">Modals</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-navs-component.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Navs Component">Navs Component</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-offcanvas.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Offcanvas">Offcanvas</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-pagination.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Pagination">Pagination</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-pill-badges.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Pill Badges">Pill Badges</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-pills-component.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Pills Component">Pills Component</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-popovers.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Popovers">Popovers</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-progress.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Progress">Progress</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-spinner.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Spinner">Spinner</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-tabs-component.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Tabs Component">Tabs Component</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-timeline.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Timeline">Timeline</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-bs-toast.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Toasts">Toasts</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="component-tooltips.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Tooltips">Tooltips</span></a>
+        </li>
+    </ul>
+</li>
+<li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="box"></i><span class="menu-title text-truncate" data-i18n="Extensions">Extensions</span></a>
+    <ul class="menu-content">
+        <li><a class="d-flex align-items-center" href="ext-component-sweet-alerts.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Sweet Alert">Sweet Alert</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-blockui.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Block UI">BlockUI</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-toastr.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Toastr">Toastr</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-sliders.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Sliders">Sliders</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-drag-drop.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Drag &amp; Drop">Drag &amp; Drop</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-tour.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Tour">Tour</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-clipboard.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Clipboard">Clipboard</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-media-player.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Media player">Media Player</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-context-menu.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Context Menu">Context Menu</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-swiper.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="swiper">Swiper</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-tree.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Tree">Tree</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-ratings.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Ratings">Ratings</span></a>
+        </li>
+        <li><a class="d-flex align-items-center" href="ext-component-i18n.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="l18n">l18n</span></a>
+        </li>
+    </ul>
+</li>

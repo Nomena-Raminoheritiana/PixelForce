@@ -6,87 +6,135 @@
         <title>{% block title %}Authentification!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
         <link rel="stylesheet" href="/assets/fontawesome-free-6.0.0-web/css/all.css" />
+        <link rel="stylesheet" href="{{ asset('/assets/vuexy/css/pages/authentication.css') }}" />
 
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
+            {{ encore_entry_link_tags('vuexy_colors') }}
+            {{ encore_entry_link_tags('vuexy_components') }}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
+        <script src="{{ asset('assets/vuexy/vendors/js/vendors.min.js') }}" ></script>
         {% block javascripts %}
+            {{ encore_entry_script_tags('vuexy_app') }}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
 
     <body>
 {% block body %}
-<div class="container bg-white mt-0 vh-100 d-flex">
-    <div class="row m-auto m-auto">
-        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12 d-flex ">
-                <img src="{{asset('build/images/draw2.webp')}}" class="img-fluid my-auto" />
-        </div>
-        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12 mt-md-0 mt-3  d-flex ">
-            <div class="px-0 px-md-5 w-100 m-auto">
-                <h1 class="color-main-3   text-sm-center text-md-start text-center" >
-                    <a href="{{ path('app_dashboard') }}" class="text-muted text-decoration-none"><span class="text-primary">P</span>i<span class="text-danger">x</span>e<span class="text-warning">l</span>Force</a>
-                </h1>
-                {# Affichage des messages flash #}
-                {% for label, messages in app.flashes %}
-                    {% for message in messages %}
-                        <div id="msgFlash" class="alert alert-{{ label }} msgFlash mb-2 ">
-                            {{ message | raw }}
-                        </div>
-                    {% endfor %}
-                {% endfor %}
-                {% block form %}
-                    <form method="post" class="py-3">
-                        {% if error %}
-                            <div class="alert alert-danger">Email ou mot de passe invalide</div>
-                        {% endif %}
-                        <div class="mb-4">
-                            <div class="inner-addon left-addon">
-                                <input type="text" class="form-control"  placeholder="Nom d'utilisateur/Email" value="{{ last_username }}" name="email" id="inputMail_users"  required autofocus>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="inner-addon left-addon">
-                                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de p@sse" required>
-                            </div>
-                        </div>
-                        <div class="mb-3  mt-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
-                            <label class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
-                        </div>
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                        <div class=" text-center mt-4">
-                            <button class="btn btn-primary w-100 font-weight-bold" type="submit">
-                                S'authentifier
-                            </button>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12 col-xl-6 pe-xl-0">
-                                <div class=" text-center">
-                                    <a class="btn btn-success w-100 font-weight-bold" href="{{ path('user_addClient') }}">
-                                        S'inscrire
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-12 col-xl-6 pt-2 pt-xl-0">
-                                <div class=" text-center">
-                                    <a class="btn btn-danger w-100 font-weight-bold" href="{{ path('app_forgetPassword') }}">
-                                        Mot de passe oublié ?
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                {% endblock %}
+<body class="horizontal-layout horizontal-menu blank-page navbar-floating footer-static  " data-open="hover" data-menu="horizontal-menu" data-col="blank-page">
+    <div class="app-content content ">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
             </div>
+            <div class="content-body">
+                <div class="auth-wrapper auth-cover">
+                    <div class="auth-inner row m-0">
+                        <!-- Brand logo-->
+                        <a class="brand-logo text-decoration-none" href="/">
+                            <img src="{{asset('build/images/draw2.webp')}}" class="img-fluid my-auto" width="40" />
+                            <h2 class="brand-text text-primary ms-1">PixelForce</h2>
+                        </a>
+                        <!-- /Brand logo-->
 
+                        <!-- Left Text-->
+                        <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
+                            <div class="w-100 d-lg-flex align-items-center justify-content-center px-5"><img class="img-fluid" src="{{asset('assets/vuexy/images/pages/login-v2.svg')}}" alt="Login V2" /></div>
+                        </div>
+                        <!-- /Left Text-->
+                        <!-- Login-->
+                        <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
+                            <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+                                <!-- Affichage des messages flash -->
+                                {% for label, messages in app.flashes %}
+                                    {% for message in messages %}
+                                        <div id="msgFlash" class="alert alert-{{ label }} msgFlash mb-2 ">
+                                            {{ message | raw }}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+
+                                <h2 class="card-title fw-bold mb-1"><a href="{{ path('app_dashboard') }}" class="text-muted text-decoration-none"><span class="text-primary">P</span>i<span class="text-danger">x</span>e<span class="text-warning">l</span>Force</a></h2>
+
+                                {% block form %}
+                                    <form class="auth-login-form mt-2" method="POST">
+                                        {% if error %}
+                                            <div class="mt-3 alert alert-danger">Email ou mot de passe invalide</div>
+                                        {% endif %}
+                                        <div class="mb-1">
+                                            <label class="form-label" for="login-email">Adresse mail</label>
+                                            <input type="text" class="form-control"  placeholder="Nom d'utilisateur/Email" value="{{ last_username }}" name="email" id="inputMail_users"  required autofocus>
+                                        </div>
+                                        <div class="mb-1">
+                                            <div class="d-flex justify-content-between">
+                                                <label class="form-label" for="login-password">Mot de passe</label><a href="{{ path('app_forgetPassword') }}"><small>Mot de passe oublié ?</small></a>
+                                            </div>
+                                            <div class="input-group input-group-merge form-password-toggle">
+                                                <input class="form-control form-control-merge" id="login-password" type="password" name="password" placeholder="Mot de p@sse" aria-describedby="login-password" tabindex="2" required/><span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3  mt-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
+                                            <label class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
+                                        </div>
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                        <div class=" text-center mt-4">
+                                            <button class="btn btn-primary w-100 font-weight-bold" type="submit">
+                                                S'authentifier
+                                            </button>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-12 col-xl-6 pe-xl-0">
+                                                <div class=" text-center">
+                                                    <a class="btn btn-success w-100 font-weight-bold" href="{{ path('user_addClient') }}">
+                                                        S'inscrire
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-xl-6 pt-2 pt-xl-0">
+                                                <div class=" text-center">
+                                                    <a class="btn btn-danger w-100 font-weight-bold" href="{{ path('app_forgetPassword') }}">
+                                                        Mot de passe oublié ?
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>                                    
+                                    </form>
+                                    
+                                    <div class="divider my-2">
+                                        <div class="divider-text">or</div>
+                                    </div>
+                                    <div class="auth-footer-btn d-flex justify-content-center">
+                                        <a class="btn btn-facebook me-2" href="#"><i class="fa-brands fa-facebook"></i></a>
+                                        <a class="btn btn-twitter white me-2" href="#"><i class="fa-brands fa-twitter"></i></a>
+                                        <a class="btn btn-google me-2" href="#"><i class="fa-brands fa-google"></i></a>
+                                        <a class="btn btn-github" href="#"><i class="fa-brands fa-github"></i></a>
+                                    </div>
+                                {% endblock %}
+
+                            </div>
+                        </div>
+                        <!-- /Login-->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+     <script>
+        $(window).on('load', function() {
+            if (feather) {
+                feather.replace({
+                    width: 14,
+                    height: 14
+                });
+            }
+        })
+    </script>
+</body>
 {% endblock %}
-
-
-    </body>

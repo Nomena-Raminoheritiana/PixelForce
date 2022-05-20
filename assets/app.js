@@ -8,7 +8,7 @@
 // any CSS you import will output into a single css file (app.css in this case)
 // You can specify which plugins you need
 
-import './styles/app.scss';
+import './styles/app.scss'; // On commente cette ligne si on veut la même affichage du template (vuexy)
 import jquery from 'jquery';
 global.$ = global.jQuery = $;
 import { Tooltip, Toast, Popover, Collapse, Modal } from 'bootstrap';

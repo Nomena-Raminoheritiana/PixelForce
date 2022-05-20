@@ -32,16 +32,45 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('bootstrap_touchspin', './assets/js/vuexy/js/jquery.bootstrap-touchspin.js')
     .addEntry('form_addAgent', './assets/js/form_addAgent.js')
     .addEntry('PlanificationLiveVideo', './assets/js/PlanificationLiveVideo.js')
     .addEntry('ImportVideoVimeo', './assets/js/ImportVideoVimeo.js')
     .addEntry('commentaire', './assets/js/commentaire.js')
     .addEntry('chatJS', './assets/js/chat/chat.js')
+    
+    // Vuexy: Vendor JS
+    .addEntry('vuexy_js', './assets/js/vuexy/vuexy.js')
+    .addEntry('vuexy_vendors_js', './assets/js/vuexy/vendors/js/vendors.js')
+    // Vuexy: Page Vendor JS
+    .addEntry('vuexy_apexcharts_js', './assets/js/vuexy/vendors/js/charts/apexcharts.js')
+    .addEntry('vuexy_toastr_js', './assets/js/vuexy/vendors/js/extensions/toastr.js')
+    // Vuexy: Theme JS
+    .addEntry('vuexy_app', './assets/js/vuexy/js/core/app.js')
+    .addEntry('vuexy_app_menu', './assets/js/vuexy/js/core/app-menu.js')
+    // Vuexy: Page JS
+    .addEntry('vuexy_dashboard_ecommerce_js', './assets/js/vuexy/js/scripts/pages/dashboard-ecommerce.js')
+    
+
 
     .addStyleEntry('base', './assets/styles/base.css')
     .addStyleEntry('chat', './assets/styles/chat/chat.css')
-
+    // Vuexy: Theme CSS
+    .addStyleEntry('vuexy_bootstrap', './assets/styles/vuexy/bootstrap.css')
+    .addStyleEntry('vuexy_apexcharts', './assets/styles/vuexy/vendors/css/charts/apexcharts.css')
+    .addStyleEntry('vuexy_toastr', './assets/styles/vuexy/vendors/css/extensions/toastr.css')
+    .addStyleEntry('vuexy_bootstrap_extended', './assets/styles/vuexy/bootstrap-extended.css')
+    .addStyleEntry('vuexy_colors', './assets/styles/vuexy/colors.css')
+    .addStyleEntry('vuexy_components', './assets/styles/vuexy/components.css')
+    .addStyleEntry('vuexy_dark_layout', './assets/styles/vuexy/themes/dark-layout.css')
+    // Vuexy: Page CSS
+    .addStyleEntry('vuexy_vertical_menu', './assets/styles/vuexy/core/menu/menu-types/vertical-menu.css')
+    .addStyleEntry('vuexy_dashboard_ecommerce', './assets/styles/vuexy/pages/dashboard-ecommerce.css')
+    .addStyleEntry('vuexy_chart_apex', './assets/styles/vuexy/plugins/charts/chart-apex.css')
+    .addStyleEntry('vuexy_ext_component_toastr', './assets/styles/vuexy/plugins/extensions/ext-component-toastr.css')
+    
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+
     .enableStimulusBridge('./assets/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.

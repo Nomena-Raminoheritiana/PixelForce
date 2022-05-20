@@ -1,10 +1,12 @@
 
 ###> symfony/framework-bundle ###
+VAKIO_AHO.markdown
 /.env.local
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+/media/user/
 /var/
 /vendor/
 /.idea

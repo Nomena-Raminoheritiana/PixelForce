@@ -114,3 +114,11 @@
     overflow-y: auto;
     z-index: 5000
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+}
