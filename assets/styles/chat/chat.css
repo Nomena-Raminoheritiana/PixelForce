@@ -1,3 +1,13 @@
+:root {
+    --color-grey-1 : #dce6f1;
+}
+.text-grey-1 {
+    color: var(--color-grey-1) !important;
+}
+.bg-grey-1 {
+    background: var(--color-grey-1) !important;
+}
+
 .chat-float-menu {
     width: 316px !important;
     height: 90vh;
@@ -5,14 +15,15 @@
 
 }
 
-.chat-float-menu .list-group-item, .chat-float-newOne .list-group-item, .chat-canal-instance .list-group-item{
+.chat-float-menu .list-group-item, .chat-float-newOne .list-group-item, .chat-canal-instance .list-group-item, .chat-modal-container .list-group-item{
     border:none;
     cursor: pointer;
 }
 
 .chat-float-menu .list-group-item:hover, .chat-float-newOne .list-group-item:hover, .chat-canal-instance .list-group-item:hover{
-   background : #dce6f1
+   background : var(--color-grey-1) !important;
 }
+
 
 
 .chat-float-menu .card-body {
@@ -32,4 +43,32 @@
 
 .chat-minimised{
     height: 8vh !important;
+}
+
+.chat-groupe-action {
+    display: none;
+}
+.list-group-item:hover .chat-groupe-action {
+    display: block;
+}
+
+.chat-files-preview {
+    display: flex !important;
+    width: 336px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding-left:2px !important;
+    padding-top:5px !important;
+}
+
+.chat-files-preview .chat-file-item {
+    width : 75px;
+    height: 75px;
+    border: 2px solid grey;
+    padding: 3px;
+    margin-right: 2px
+}
+
+.chat-image{
+    width: 100%
 }

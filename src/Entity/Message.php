@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
+use App\Helpers\DateHelper;
 use App\Repository\MessageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -45,13 +45,14 @@ class Message
     private $createdAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=MessageVu::class, mappedBy="message")
+     * @ORM\Column(type="array", nullable=true)
      */
-    private $messageVus;
+    private $files = [];
+    private $renduDateCreationMessage;
+
 
     public function __construct()
     {
-        $this->messageVus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -97,43 +98,46 @@ class Message
 
     public function getCreatedAt(): ?\DateTime
     {
+        $this->setRenduDateCreationMessage();
         return $this->createdAt;
     }
 
     public function setCreatedAt(?\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
+        $this->setRenduDateCreationMessage();
+
+        return $this;
+    }
+
+    public function getFiles(): ?array
+    {
+        return $this->files;
+    }
+
+    public function setFiles(?array $files): self
+    {
+        $this->files = $files;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, MessageVu>
+     * @return mixed
      */
-    public function getMessageVus(): Collection
+    public function getRenduDateCreationMessage()
     {
-        return $this->messageVus;
+        return $this->renduDateCreationMessage;
     }
 
-    public function addMessageVu(MessageVu $messageVu): self
+    public function setRenduDateCreationMessage()
     {
-        if (!$this->messageVus->contains($messageVu)) {
-            $this->messageVus[] = $messageVu;
-            $messageVu->setMessage($this);
+        if(!$this->renduDateCreationMessage) {
+            $dateHelpers = new DateHelper();
+            $this->renduDateCreationMessage = $dateHelpers->format($this->createdAt->format('Y-m-d H:i:s'));
         }
-
         return $this;
     }
 
-    public function removeMessageVu(MessageVu $messageVu): self
-    {
-        if ($this->messageVus->removeElement($messageVu)) {
-            // set the owning side to null (unless already changed)
-            if ($messageVu->getMessage() === $this) {
-                $messageVu->setMessage(null);
-            }
-        }
 
-        return $this;
-    }
 }

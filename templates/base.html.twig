@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html >
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,9 +24,7 @@
             {{ encore_entry_link_tags('vuexy_colors') }}
             {{ encore_entry_link_tags('vuexy_components') }}
             {{ encore_entry_link_tags('vuexy_dark_layout') }}
-
             {{ encore_entry_link_tags('vuexy_vertical_menu') }}
-
             {{ encore_entry_link_tags('vuexy_ext_component_toastr') }}
 
             {{ encore_entry_link_tags('app') }}
@@ -38,7 +36,7 @@
     <body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
         <!-- Navbar -->
         {% include '/partials/header-navbar.html.twig' %}
-        
+
         <!-- Sidebar -->
         {% include '/partials/left-sidebar.html.twig' %}
 
@@ -73,36 +71,25 @@
         {% include 'live/video/liveVideoRapide.html.twig' %}
         {% include 'live/chat/mini_menu_chat.html.twig'  %}
 
+
         {% block javascripts %}
             <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
-            
-            {{ encore_entry_script_tags('vuexy_js') }}
-            <script src="{{ asset('assets/vuexy/vendors/js/vendors.min.js') }}" ></script>
-            <script src="{{ asset('assets/vuexy/vendors/js/extensions/toastr.min.js') }}"></script>
-
-            {# {{ encore_entry_script_tags('vuexy_apexcharts_js') }} #}
-            {# {{ encore_entry_script_tags('vuexy_toastr_js') }} #}
-            {{ encore_entry_script_tags('bootstrap_touchspin') }}
-            {{ encore_entry_script_tags('vuexy_app_menu') }}
-            {{ encore_entry_script_tags('vuexy_app') }}
-
-            {# {{ encore_entry_script_tags('app') }} #}
+            <script type="application/json" id="chat-newMessage-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_MESSAGE_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-vu-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_VU_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-userTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-userStopTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_STOP_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
             <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
-            {{ encore_entry_script_tags('chatJS') }}
-            <script>
-                // Icons vuexy
-                $(window).on('load', function() {
-                    if (feather) {
-                        feather.replace({
-                            width: 14,
-                            height: 14
-                        });
-                    }
-                })
-            </script>
+            <script src="{{ asset('assets/vuexy/vendors/js/vendors.min.js') }}" ></script>
+            <script src="{{ asset('assets/vuexy/vendors/js/extensions/toastr.min.js') }}"></script>
+            {# {{ encore_entry_script_tags('app') }} #}
+            {{ encore_entry_script_tags('bootstrap_touchspin') }}
+            {{ encore_entry_script_tags('vuexy_app_menu') }}
+            {{ encore_entry_script_tags('vuexy_app') }}
+            {{ encore_entry_script_tags('vuexyJS') }}
+            {{ encore_entry_script_tags('chatJS')}}
         {% endblock %}
     </body>
 </html>

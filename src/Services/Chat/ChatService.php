@@ -6,7 +6,6 @@ namespace App\Services\Chat;
 
 use App\Entity\CanalMessage;
 use App\Entity\Message;
-use App\Entity\MessageVu;
 use App\Entity\User;
 use App\Helpers\Cryptographie;
 use App\Manager\EntityManager;
@@ -60,16 +59,18 @@ class ChatService
         $this->entityManager = $entityManager;
     }
 
-    public function addMessage(CanalMessage $canalMessage, User $user, $textes)
+    public function addMessage(CanalMessage $canalMessage, User $user, $textes, $files = null)
     {
         /** @var Message $message */
         $message = $this->objectManager->createObject(Message::class, [
             'canalMessage' => $canalMessage,
             'user' => $user,
-            'textes'  => $this->cryptographie->encrypt($textes)
+            'textes'  => $this->cryptographie->encrypt($textes),
+            'files' => $files ?? []
         ]);
 
         $canalMessage->setUpdatedAt(new \DateTimeImmutable());
+        $canalMessage->setVus([$user->getId()]);
         $this->entityManager->save($canalMessage);
         $this->chatMercureNotification->notifyWhenNewMessage($message);
 
@@ -100,16 +101,16 @@ class ChatService
     }
 
 
-    public function vu(Message $message, User $user)
-    {
-       $messageVu = $this->objectManager->createObject(MessageVu::class, [
-            'message' => $message,
-            'user' => $user
-        ]);
-
-       $this->chatMercureNotification->notifyWhenNewVu($messageVu);
-
-       return $this->chatNormalizer->getMessageVuNormalized($messageVu);
-
-    }
+//    public function vu(Message $message, User $user)
+//    {
+//       $messageVu = $this->objectManager->createObject(MessageVu::class, [
+//            'message' => $message,
+//            'user' => $user
+//        ]);
+//
+//       $this->chatMercureNotification->notifyWhenNewVu($messageVu);
+//
+//       return $this->chatNormalizer->getMessageVuNormalized($messageVu);
+//
+//    }
 }

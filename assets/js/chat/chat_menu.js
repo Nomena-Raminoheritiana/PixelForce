@@ -1,6 +1,8 @@
 import {getGroupeCanal, getSingleCanal} from "./chatSenderRequest";
 import {loaderOff, loaderOn} from "../helpers/Loader";
 import {MenuComponent} from './components/MenuComponent'
+import {Modal} from 'bootstrap'
+import {CanalGroupsComponent} from "./components/CanalGroupsComponent";
 
 $(document).ready( async function() {
       const chatSingleCanal = $('.chat-single-canal');
@@ -43,6 +45,14 @@ $(document).ready( async function() {
                   })
             }
 
+      })
+      $(this).on('click','.chat-add-users', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const canalGroupComponent = new CanalGroupsComponent();
+            $('body').append(canalGroupComponent.getModalAddUser($(this).attr('data-canal-id')));
+            const modalAddUser = new Modal($('#chatModalAddUsers'));
+            modalAddUser.show()
       })
 
 });

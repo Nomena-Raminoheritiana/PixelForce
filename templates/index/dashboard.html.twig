@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard2 {% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -739,6 +739,6 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('assets/vuexy/vendors/js/charts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/vuexy/vendors/js/charts/apexcharts.min.js') }}" defer></script>
     {{ encore_entry_script_tags('vuexy_dashboard_ecommerce_js') }}
 {% endblock %}

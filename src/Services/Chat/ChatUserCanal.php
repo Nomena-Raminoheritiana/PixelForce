@@ -44,6 +44,10 @@ class ChatUserCanal
     {
         $canalMessage->removeUser($user);
         $this->entityManager->save($canalMessage);
+        if(count($canalMessage->getUsers()->toArray()) === 0) {
+            $this->entityManager->delete($canalMessage);
+            return [];
+        }
         $this->chatMercureNotification->notifyWhenRemoveUser($canalMessage, $user);
         return $this->chatNormalizer->getCanalMessageNormalized($canalMessage);
     }
@@ -62,7 +66,10 @@ class ChatUserCanal
     {
         foreach($users as $user) {
             if($user instanceof User) {
-                $this->removeUserFromCanal($user, $canalMessage);
+                $return = $this->removeUserFromCanal($user, $canalMessage);
+                if(count($return) === 0){
+                    return [];
+                }
             }
         }
         return $this->chatNormalizer->getCanalMessageNormalized($canalMessage);

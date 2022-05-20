@@ -5,23 +5,31 @@ function loader(options={
     'elementCible' : undefined,
     'className' : '',
     'directive' : 'ON',
-    'relative' : 'OFF'
+    'relative' : 'OFF',
+    'loaderWidth' : null,
+    'loaderHeight' : null,
+    'backdrop-color' : null
 })
 {
     if(options.elementCible !== undefined )
     {
         if( options.directive === 'ON' && $(options.elementCible).find('.loader-container').length === 0) {
-            const position = options.relative === 'OFF' ? 'position-absolute' : 'position-relative'
+            const position = options.relative === 'OFF' ? 'position-absolute' : 'position-relative';
+            const backdrop_color = options["backdrop-color"]!=null ? 'background:'+options['backdrop-color'] : '';
             const loaderContainer = $('<div />', {
                 id: 'loader-container',
-                class: 'loader-container '+position+' bottom-0 left-0 w-100 h-100 bg-white overflow-hidden'
+                class: 'loader-container '+position+' bottom-0 left-0 w-100 h-100 bg-white overflow-hidden',
+                style: backdrop_color
             });
             const loaderPostContainer = $('<div />', {
                 class:'loader-post-container w-100 h-100 d-flex'
             });
+            const imageWidth = options.loaderWidth != null ? ';width:'+options.loaderWidth : '';
+            const imageHeight = options.loaderHeight != null ? 'height:'+options.loaderHeight : '';
             const image = $('<img />', {
                 src: circleImage3,
-                class: 'm-auto'
+                class: 'm-auto',
+                style: imageHeight+imageWidth
             });
             loaderPostContainer.append(image);
             loaderContainer.append(loaderPostContainer)
@@ -40,12 +48,19 @@ function loader(options={
 
 }
 
-export function loaderOn($element, $relative=false)
+export function loaderOn($element, $relative=false, $stylesOptions = {
+    'loaderWidth' : null,
+    'loaderHeight' : null,
+    'backdrop-color': null
+})
 {
   loader({
       'elementCible' : $element,
       'directive' : 'ON',
-      'relative': $relative ? 'ON' : 'OFF'
+      'relative': $relative ? 'ON' : 'OFF',
+      'loaderWidth' : $stylesOptions.loaderWidth,
+      'loaderHeight' : $stylesOptions.loaderHeight,
+      'backdrop-color' : $stylesOptions["backdrop-color"]
   })
 }
 

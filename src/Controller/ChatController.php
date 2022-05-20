@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Entity\CanalMessage;
+use App\Entity\Generique\Structure;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Manager\EntityManager;
@@ -12,9 +13,15 @@ use App\Manager\ObjectManager;
 use App\Repository\CanalMessageRepository;
 use App\Repository\UserRepository;
 use App\Services\Chat\ChatCanalService;
+use App\Services\Chat\ChatMercureNotification;
+use App\Services\Chat\ChatNormalizer;
 use App\Services\Chat\ChatService;
 use App\Services\Chat\ChatUserCanal;
+use App\Services\GenerateKey;
+use App\Services\DirectoryManagement;
+use App\Services\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -48,13 +55,39 @@ class ChatController extends AbstractController
      * @var CanalMessageRepository
      */
     private $canalMessageRepository;
+    /**
+     * @var GenerateKey
+     */
+    private $generateKey;
+    /**
+     * @var ChatNormalizer
+     */
+    private $chatNormalizer;
+    /**
+     * @var ChatMercureNotification
+     */
+    private $chatMercureNotification;
+
+    /**
+     * @var FileUploader
+     */
+    private $fileUploader;
+    /**
+     * @var DirectoryManagement
+     */
+    private $directoryManagement;
 
     public function __construct(ChatService $chatService,
                                 ChatCanalService $chatCanalService,
+                                DirectoryManagement $directoryManagement,
+                                FileUploader $fileUploader,
                                 ChatUserCanal $chatUserCanal,
                                 CanalMessageRepository $canalMessageRepository,
+                                ChatMercureNotification $chatMercureNotification,
                                 UserRepository $userRepository,
+                                ChatNormalizer $chatNormalizer,
                                 EntityManager $entityManager,
+                                GenerateKey $generateKey,
                                 ObjectManager $objectManager)
     {
         $this->chatService = $chatService;
@@ -64,6 +97,11 @@ class ChatController extends AbstractController
         $this->chatCanalService = $chatCanalService;
         $this->chatUserCanal = $chatUserCanal;
         $this->canalMessageRepository = $canalMessageRepository;
+        $this->generateKey = $generateKey;
+        $this->chatNormalizer = $chatNormalizer;
+        $this->chatMercureNotification = $chatMercureNotification;
+        $this->fileUploader = $fileUploader;
+        $this->directoryManagement = $directoryManagement;
     }
 
     /**
@@ -73,7 +111,14 @@ class ChatController extends AbstractController
     {
         if($request->isMethod('POST')) {
             $canalMessage = $this->canalMessageRepository->findOneBy(['code' => $code]);
-            $message = $this->chatService->addMessage($canalMessage, $this->getUser(), $request->request->get('textes'));
+            if(!$canalMessage) {
+                $users = $this->generateKey->desistCode($code);
+                if($users) {
+                   $canalMessage = $this->chatCanalService->createSingleCanal($this->userRepository->find($users[0]), $this->userRepository->find($users[1]), false);
+                }
+
+            }
+            $message = $this->chatService->addMessage($canalMessage, $this->getUser(), $request->request->get('textes'), $request->request->get('files'));
             return $this->json($message);
         }
 
@@ -84,12 +129,51 @@ class ChatController extends AbstractController
     }
 
     /**
+     * @Route("/chat/import/file", name="chat_importFile", options={"expose"=true})
+     */
+    public function importFile(Request $request)
+    {
+        $fileName = $this->fileUploader->upload($request->files->get('file'), $this->directoryManagement->getMediaChatFolder());
+        if($fileName) {
+            return $this->json([
+                'error' => false,
+                'fileUrl' => $this->generateUrl('chat_binaryFileResponse', [
+                    'fileName' => $fileName,
+                ])
+            ]);
+        }
+        return $this->json([
+            'error' => true,
+        ]);
+    }
+
+    /**
+     * @Route("/chat/file/{fileName}", name="chat_binaryFileResponse", options={"expose"=true})
+     */
+    public function binaryFileResponse($fileName)
+    {
+        $file = $this->directoryManagement->getMediaChatFolder().DIRECTORY_SEPARATOR.$fileName;
+        if($fileName && file_exists($file)) {
+           return new BinaryFileResponse($file);
+        }
+
+        return $this->json([
+            'error' => true,
+            'message' => 'file not found'
+        ]);
+    }
+
+    /**
      * @Route("/chat/vu/message/{id}", name="chat_vuMessage", options={"expose"=true})
      */
-    public function vu(Message $message)
+    public function vu(CanalMessage $canal)
     {
-        $vu = $this->chatService->vu($message, $this->getUser());
-        return $this->json($vu);
+        $canal->addVus($this->getUser()->getId());
+        $this->entityManager->save($canal);
+        $this->chatMercureNotification->notifyWhenNewVu($canal, $this->getUser());
+        return $this->json([
+            'error' => false
+        ]);
     }
 
     /**
@@ -128,8 +212,9 @@ class ChatController extends AbstractController
             if($nom_canal) {
                 $users = [$this->getUser()];
                 if(is_array($users_id) && count($users_id) > 0) {
-                    foreach($users as $id_user) {
+                    foreach($users_id as $id_user) {
                         $users[] = $this->userRepository->findOneBy(['id' => $id_user]);
+
                     }
                 }
                 $canalMessage = $this->chatCanalService->createGroupCanal($nom_canal, $users);
@@ -174,6 +259,9 @@ class ChatController extends AbstractController
             $users = $request->query->get('user');
             $users = is_array($users) ? $users : [$users];
             $users = $this->objectManager->getMultiple(User::class, $users);
+            if($request->query->get('includeMe')) {
+                $users = array_merge([$this->getUser()],$users);
+            }
             $canalNormalized = $this->chatUserCanal->removeUsersFromCanal($users, $canalMessage);
             return $this->json($canalNormalized);
         }
@@ -220,5 +308,26 @@ class ChatController extends AbstractController
     {
        $normalizedCanals = $this->chatCanalService->getSingleCanal($this->getUser());
        return $this->json($normalizedCanals);
+    }
+
+    /**
+     * @Route("/chat/canal/{id}/userTyping", name="chat_notifyUserTyping", options={"expose"=true})
+     */
+    public function notifyUserTyping(CanalMessage $canalMessage)
+    {
+        $this->chatMercureNotification->notifyWhenUserIsTyping($this->getUser(), $canalMessage);
+        return $this->json([
+            'error' => false,
+        ]);
+    }
+    /**
+     * @Route("/chat/canal/{id}/userStopTyping", name="chat_notifyUserStopTyping", options={"expose"=true})
+     */
+    public function notifyUserStopTyping(CanalMessage $canalMessage)
+    {
+        $this->chatMercureNotification->notifyWhenUserIsTyping($this->getUser(), $canalMessage, true);
+        return $this->json([
+            'error' => false,
+        ]);
     }
 }

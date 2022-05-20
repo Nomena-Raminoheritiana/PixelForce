@@ -16,10 +16,13 @@ export async function getMessageByCode(code=null)
     return [];
 }
 
-export async function sendMessage(message, code) {
+export async function sendMessage(message, code, files = []) {
     // envoyer un message
     const bodyRequest = new URLSearchParams();
     bodyRequest.append('textes', message);
+    files.forEach(function(fileName) {
+        bodyRequest.append('files[]', fileName)
+    })
     return (await axios.post(
                 Routing.generate('chat_addMessage', {code : code}),
                 bodyRequest
@@ -45,4 +48,46 @@ export async function createGroupCanal(nom, users_id)
     });
 
     return (await axios.post(Routing.generate('chat_createGroupCanal'), bodyRequest)).data
+}
+
+export async function seeCanal(canal_id)
+{
+    return (await axios.get(Routing.generate('chat_vuMessage', {id:canal_id}))).data;
+}
+
+export async function notifyUserTyping(canal_id)
+{
+    return (await axios.get(Routing.generate('chat_notifyUserTyping', {id:canal_id}))).data;
+}
+
+export async function notifyUserStopTyping(canal_id)
+{
+    return (await axios.get(Routing.generate('chat_notifyUserStopTyping', {id:canal_id}))).data;
+}
+
+export async function chat_groupCanal_removeUser(canal_id)
+{
+    return (await axios.delete(Routing.generate('chat_groupCanal_removeUser', {id:canal_id, includeMe:true}))).data;
+}
+
+export async function chat_groupCanal_addUser(canal_id, users_id) {
+    const bodyRequest = new URLSearchParams();
+    users_id.forEach(function(id) {
+        bodyRequest.append('users[]', id);
+    });
+    return (await axios.post(Routing.generate('chat_groupCanal_addUser', {id:canal_id}), bodyRequest)).data
+}
+
+export async function uploadFile(fileUpload) {
+    const formData = new FormData();
+    formData.append("file", fileUpload.files[0]);
+    const response  = (await axios.post(Routing.generate('chat_importFile'), formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })).data;
+    if(!response.error) {
+        return response.fileUrl;
+    }
+    return false;
 }

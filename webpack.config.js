@@ -40,7 +40,7 @@ Encore
     .addEntry('chatJS', './assets/js/chat/chat.js')
     
     // Vuexy: Vendor JS
-    .addEntry('vuexy_js', './assets/js/vuexy/vuexy.js')
+    .addEntry('vuexyJS', './assets/js/vuexy/vuexy.js')
     .addEntry('vuexy_vendors_js', './assets/js/vuexy/vendors/js/vendors.js')
     // Vuexy: Page Vendor JS
     .addEntry('vuexy_apexcharts_js', './assets/js/vuexy/vendors/js/charts/apexcharts.js')

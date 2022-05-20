@@ -15,6 +15,7 @@ VAKIO_AHO.markdown
 
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
+/media/
 /public/build/
 npm-debug.log
 yarn-error.log

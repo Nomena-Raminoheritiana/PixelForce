@@ -8,7 +8,15 @@ export class ConversationComponent extends ConversationBaseComponent {
             inputCacheUser+='<input type="hidden" name="users[]" value="'+Base64.encode(user.id)+'" />\n';
         });
 
-        return '<div class="card shadow fs-14  chat-canal-instance chat-box-container shadow-sm position-absolute bottom-0 " id="canal-'+canal.id+'" style="width: 18rem;">\n' +
+        // début initialisation du vu lorsque l'instance est chargé
+        // si le canal est un singleCanal
+        let vuTemplate = '';
+        if(!canal.isGroup && canal.vus.length === 2) {
+            vuTemplate = this.getVuTemplate()[0].outerHTML;
+        }
+
+        const isGroup = canal.isGroup ? 'true': 'false';
+        return '<div class="card shadow fs-14  chat-canal-instance chat-box-container shadow-sm position-absolute bottom-0 " data-isGroup="'+isGroup+'" data-id="'+canal.id+'" id="canal-'+canal.id+'" style="width: 18rem;">\n' +
             '    <div class="card-header py-3">\n' +
             '        <div class="row">\n' +
             '            <div class="col-8 d-flex">\n' +
@@ -25,15 +33,16 @@ export class ConversationComponent extends ConversationBaseComponent {
             '    </div>\n' +
             '    <div class="card-body px-0">\n' +
             '        <!-- zone de messages --> \n' +
-            '\n' +
+            '         '+vuTemplate+'\n' +
             '    </div>\n' +
             '    <div class="card-footer p-0">\n' +
+            '        <div class="chat-files-preview"></div>'+
             '        <div class="py-3 ps-2">\n' +
             '           <span class="users">' +
             inputCacheUser+
             '                <a href="#" class="text-danger speed-liveVideo-call pe-2"><i class="fa-solid fa-video"></i></a>' +
             '           </span> ' +
-            '            <!-- <a href="#" class="text-secondary"><i class="fa-solid fa-image"></i></a> -->\n' +
+            '            <a href="#" class="text-secondary chat-uploadImage"><i class="fa-solid fa-image"></i></a>\n' +
             '        </div>\n' +
             '        <div class="input-group bg-white">\n' +
             '            <input type="text" class="form-control border-0 border-top  fs-12 rounded-0 py-3 chat-input-textes" placeholder="Entrer votre message ..." aria-label="Recipient\'s username with two button addons">\n' +
@@ -42,5 +51,57 @@ export class ConversationComponent extends ConversationBaseComponent {
             '\n' +
             '    </div>\n' +
             '</div>'
+    }
+
+    removeHighlight($currentObject)
+    {
+        $($currentObject).find('.card-header, .card-header a').removeClass('highlight-canal  bg-primary text-white')
+    }
+
+    addHighligh($currentObject)
+    {
+        $($currentObject).find('.card-header, .card-header a').addClass('highlight-canal bg-primary text-white')
+    }
+
+    getVuTemplate()
+    {
+        const template = $('<div />', {
+            class:'canal-vu-container text-end pe-3'
+        });
+        const vuTemplate = '<span class="fs-11 text-muted"><i class="fa-solid fa-eye"></i> <span>vu</span></span>'
+        template.html(vuTemplate);
+        return template;
+    }
+
+    addVu(conversationContainer)
+    {
+        // si un vu existe déjà pas la peine de le rendre à nouveau
+        let canalVuContainer = $(conversationContainer).find('.canal-vu-container');
+        if(canalVuContainer.length === 0) {
+            $(conversationContainer).find('.card-body').append(this.getVuTemplate());
+        }
+
+    }
+
+
+    addUserTyping(conversationContainer, user)
+    {
+        // si un template existe déjà pas la peine de le rendre à nouveau
+        let canalUserTyping = $(conversationContainer).find('.canal-userTyping');
+        if(canalUserTyping.length === 0) {
+            const template = $('<div />', {
+                class:'canal-userTyping py-2 px-3  text-muted fs-11 text-end'
+            });
+            const vuTemplate = '<span class="fw-bold">'+user.prenom+' '+user.nom+'</span> est en train d\'écrire...';
+            template.html(vuTemplate);
+            $(conversationContainer).find('.card-body').append(template);
+        }
+
+
+
+    }
+
+    removeUserTyping(conversationContainer) {
+        $(conversationContainer).find('.canal-userTyping').remove();
     }
 }

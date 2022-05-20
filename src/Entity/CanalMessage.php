@@ -52,6 +52,11 @@ class CanalMessage
      */
     private $updatedAt;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $vus = [];
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
@@ -186,6 +191,27 @@ class CanalMessage
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getVus(): ?array
+    {
+        return $this->vus;
+    }
+
+    public function setVus(?array $vus): self
+    {
+        $this->vus = $vus;
+
+        return $this;
+    }
+
+    public function addVus($idUser): self
+    {
+        if(!in_array($idUser, $this->vus)) {
+            $this->vus[] = $idUser;
+        }
 
         return $this;
     }
