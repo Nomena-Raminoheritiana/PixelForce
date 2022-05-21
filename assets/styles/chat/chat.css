@@ -38,18 +38,19 @@
     margin-right: 15px
 }
 .chat-conversations-container {
-    position: absolute !important;
+    position: fixed !important;
     bottom: 0% !important;
     right:20.5% !important;
     z-index: 99998 !important;
     display: flex!important;
+
     flex-direction: row-reverse !important;
 }
 
 
 .chat-float-newOne .card-body, .chat-canal-instance .card-body{
     overflow-y:auto;
-    overflow-x:hidden
+    overflow-x:hidden;
 }
 
 .chat-minimised{
@@ -87,4 +88,8 @@
 .chat-conversations-container {
     display:flex !important;
     flex-direction: row-reverse !important;
+}
+
+.card .card-header {
+    display: block !important;
 }
