@@ -17,7 +17,7 @@ export class ConversationComponent extends ConversationBaseComponent {
 
         const isGroup = canal.isGroup ? 'true': 'false';
         return '<div class="card shadow fs-14  chat-canal-instance chat-box-container mb-0 shadow-sm  " data-isGroup="'+isGroup+'" data-id="'+canal.id+'" id="canal-'+canal.id+'" style="width: 18rem;">\n' +
-            '    <div class="card-header w-100 py-3">\n' +
+            '    <div class="card-header bg-princ text-white w-100 py-3">\n' +
             '        <div class="row">\n' +
             '            <div class="col-8 d-flex">\n' +
             '                <div class="my-auto">\n' +
@@ -25,8 +25,8 @@ export class ConversationComponent extends ConversationBaseComponent {
             '                </div>\n' +
             '            </div>\n' +
             '            <div class="col-4 text-end">\n' +
-            '                <a href="#" class="text-secondary chat-btn-minimise me-2"><i class="fa-solid fa-angle-down"></i></a>\n' +
-            '                <a href="#" class="text-secondary chat-btn-close"><i class="fa-solid fa-close"></i></a>\n' +
+            '                <a href="#" class="text-white chat-btn-minimise me-2"><i class="fa-solid fa-angle-down"></i></a>\n' +
+            '                <a href="#" class="text-white chat-btn-close"><i class="fa-solid fa-close"></i></a>\n' +
             '            </div>\n' +
             '        </div>\n' +
             '\n' +
@@ -55,12 +55,12 @@ export class ConversationComponent extends ConversationBaseComponent {
 
     removeHighlight($currentObject)
     {
-        $($currentObject).find('.card-header, .card-header a').removeClass('highlight-canal  bg-primary text-white')
+        $($currentObject).find('.card-header').removeClass('highlight-canal  bg-success text-white').addClass('bg-princ')
     }
 
     addHighligh($currentObject)
     {
-        $($currentObject).find('.card-header, .card-header a').addClass('highlight-canal bg-primary text-white')
+        $($currentObject).find('.card-header').addClass('highlight-canal bg-success text-white').removeClass('bg-princ')
     }
 
     getVuTemplate()
