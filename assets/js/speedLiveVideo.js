@@ -1,7 +1,7 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import {launchLiveVideo,arretJitsi,generateCode} from './liveFunctions'
-$(document).ready(function() {
+$(function() {
     // code de l'appel video
     let code = null;
     let live_en_cours = false;

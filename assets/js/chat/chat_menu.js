@@ -4,7 +4,7 @@ import {MenuComponent} from './components/MenuComponent'
 import {Modal} from 'bootstrap'
 import {CanalGroupsComponent} from "./components/CanalGroupsComponent";
 
-$(document).ready( async function() {
+$( async function() {
       const chatSingleCanal = $('.chat-single-canal');
       const chatGroupCanal = $('.chat-groupe-canal');
       const menuComponent = new MenuComponent();

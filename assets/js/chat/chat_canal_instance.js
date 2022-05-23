@@ -2,7 +2,7 @@ import {ConversationComponent} from "./components/ConversationComponent";
 import {showMessageInstance, updateMenu} from "./helpers/chat_helpers"
 import {seeCanal} from "./chatSenderRequest";
 
-$(document).ready(function() {
+$(function() {
     const conversationComponent = new ConversationComponent();
     // lorsqu'on choisi un canal
     $(this).on('click', '.chat-choose-canal',async function(e) {

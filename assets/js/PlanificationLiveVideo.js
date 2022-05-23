@@ -1,5 +1,5 @@
 import {launchLiveVideo} from './liveFunctions'
-$(document).ready(function() {
+$(function() {
     // lorsque l'on coche tout le monde dans la liste des agents
     $(this).on('change', '[name="all-agents"]', function(e) {
         if(this.checked) {
