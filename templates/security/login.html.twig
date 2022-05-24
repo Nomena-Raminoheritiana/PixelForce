@@ -71,17 +71,17 @@
                                         </div>
                                         <div class="mb-1">
                                             <div class="d-flex justify-content-between">
-                                                <label class="form-label" for="login-password">Mot de passe</label><a href="{{ path('app_forgetPassword') }}"><small>Mot de passe oublié ?</small></a>
+                                                <label class="form-label" for="login-password">Mot de passe</label>
                                             </div>
                                             <div class="input-group input-group-merge form-password-toggle">
                                                 <input class="form-control form-control-merge" id="login-password" type="password" name="password" placeholder="Mot de p@sse" aria-describedby="login-password" tabindex="2" required/><span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span>
                                             </div>
                                         </div>
                                         
-                                        <div class="mb-3  mt-3 form-check">
+                                        {# <div class="mb-3  mt-3 form-check">
                                             <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
                                             <label class="form-check-label" for="exampleCheck1">Se souvenir de moi</label>
-                                        </div>
+                                        </div> #}
                                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
                                         <div class=" text-center mt-4">
