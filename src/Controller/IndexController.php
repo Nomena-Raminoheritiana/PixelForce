@@ -21,7 +21,7 @@ class IndexController extends AbstractController
      */
     public function dashboard()
     {
-        return $this->render('index/dashboard.html.twig', [
+        return $this->render('global/index/dashboard.html.twig', [
             'controller_name' => 'IndexController',
         ]);
     }

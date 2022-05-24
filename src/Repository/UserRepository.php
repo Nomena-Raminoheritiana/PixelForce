@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\CanalMessage;
+use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -90,6 +91,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
 
         return $query;
+    }
+
+
+    public function findAllCoachQuery(UserSearch $search)
+    {
+        $query = $this->createQueryBuilder('c');
+
+        $query = $query
+            ->where('c.roles LIKE :role')
+            ->setParameter('role', '%"'.'ROLE_COACH'.'"%');
+        ;   
+
+        if ($search->getPrenom()) {
+            $query = $query
+                ->andwhere('c.prenom LIKE :prenom')
+                ->setParameter('prenom', '%'.$search->getPrenom().'%');
+        }
+        if ($search->getEmail()) {
+            $query = $query
+                ->andwhere('c.email LIKE :email')
+                ->setParameter('email', '%'.$search->getEmail().'%');
+        }
+        if ($search->getTelephone()) {
+            $query = $query
+                ->andwhere('c.telephone LIKE :telephone')
+                ->setParameter('telephone', '%'.$search->getTelephone().'%');
+        }
+
+        return $query->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

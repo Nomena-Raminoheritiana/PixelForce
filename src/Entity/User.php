@@ -154,6 +154,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private $chatCode;
 
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $telephone;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -163,6 +173,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->commentaires = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->canalMessages = new ArrayCollection();
+        $this->created_at = new \DateTime();
     }
 
     public function getId(): ?int
@@ -637,6 +648,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setChatCode($chatCode)
     {
         $this->chatCode = $chatCode;
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function fullName()
+    {
+        return $this->nom .' '. $this->prenom;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
         return $this;
     }
 }
