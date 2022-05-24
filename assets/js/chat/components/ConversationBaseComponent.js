@@ -34,7 +34,6 @@ export class ConversationBaseComponent {
                        '</div>';
             })
         }
-        console.log(message)
         return '<li class="list-group-item  pb-0 ps-3" data-id-user="'+message.user.id+'">\n' +
             '                <div class="row">\n' +
             '                    <div class="col-2">\n' +

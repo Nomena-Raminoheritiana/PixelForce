@@ -34,11 +34,23 @@
     width: 336px !important;
     height: 500px;
     z-index: 99998 !important;
-    right:21.5%
+    margin-top:auto !important;
+    margin-right: 15px
 }
+.chat-conversations-container {
+    position: fixed !important;
+    bottom: 0% !important;
+    right:20.5% !important;
+    z-index: 99998 !important;
+    display: flex!important;
+
+    flex-direction: row-reverse !important;
+}
+
+
 .chat-float-newOne .card-body, .chat-canal-instance .card-body{
     overflow-y:auto;
-    overflow-x:hidden
+    overflow-x:hidden;
 }
 
 .chat-minimised{
@@ -71,4 +83,13 @@
 
 .chat-image{
     width: 100%
+}
+
+.chat-conversations-container {
+    display:flex !important;
+    flex-direction: row-reverse !important;
+}
+
+.card .card-header {
+    display: block !important;
 }

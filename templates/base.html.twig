@@ -65,13 +65,11 @@
 
         <!-- Overlay -->
         <div class="sidenav-overlay"></div>
-        <div class="drag-target"></div>
+        <div class="drag-target"></div> 
 
-        {#   appels des composants/modals  #}
         {% include 'live/video/liveVideoRapide.html.twig' %}
         {% include 'live/chat/mini_menu_chat.html.twig'  %}
-
-
+        
         {% block javascripts %}
             <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
