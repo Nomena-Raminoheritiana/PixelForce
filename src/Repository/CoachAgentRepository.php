@@ -3,11 +3,13 @@
 namespace App\Repository;
 
 use App\Entity\CoachAgent;
+use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
 use App\Manager\EntityManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -99,6 +101,46 @@ class CoachAgentRepository extends ServiceEntityRepository
         $entityManager->delete($user);
     }
 
+
+
+
+        /**
+     * Permet de filtrer tous les agents du coach
+     *
+     * @param UserSearch $search
+     * @param string $role
+     * @return Query
+     */
+    public function findAgentByCoach(UserSearch $search, $coach)
+    {
+        $query = $this->createQueryBuilder('c');
+
+        $query = $query
+            ->where('c.coach = :coach')
+            ->setParameter('coach', $coach)
+            ->join('c.agent', 'u')
+        ;   
+
+        if ($search->getPrenom()) {
+            $query = $query
+                ->andwhere('u.prenom LIKE :prenom')
+                ->setParameter('prenom', '%'.$search->getPrenom().'%');
+        }
+        if ($search->getEmail()) {
+            $query = $query
+                ->andwhere('u.email LIKE :email')
+                ->setParameter('email', '%'.$search->getEmail().'%');
+        }
+        if ($search->getTelephone()) {
+            $query = $query
+                ->andwhere('u.telephone LIKE :telephone')
+                ->setParameter('telephone', '%'.$search->getTelephone().'%');
+        }
+
+        return $query->getQuery()
+            ->getResult()
+        ;
+    }
 
     // /**
     //  * @return CoachAgent[] Returns an array of CoachAgent objects
