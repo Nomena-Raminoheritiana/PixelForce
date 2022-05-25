@@ -50,6 +50,7 @@ Encore
     .addEntry('vuexy_app_menu', './assets/js/vuexy/js/core/app-menu.js')
     // Vuexy: Page JS
     .addEntry('vuexy_dashboard_ecommerce_js', './assets/js/vuexy/js/scripts/pages/dashboard-ecommerce.js')
+    .addEntry('vuexy_app_user_view_js', './assets/js/vuexy/js/scripts/pages/app-user-view.js')
     
 
 

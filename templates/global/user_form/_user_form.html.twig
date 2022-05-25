@@ -1,0 +1,25 @@
+<div class="container">
+     {{ form_start(formUser) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(formUser.nom, { attr: { placeholder : "Nom de l'utilisateur" } }) }}
+            </div>
+            <div class="col-md-6">{{ form_row(formUser.prenom, { attr: { placeholder : "Prénom de l'utilisateur" }}) }}</div>
+        </div>
+        {{ form_row(formUser.email, { attr: { placeholder : "E-mail de l'utilisateur"  }, type : "email" }) }}
+        {{ form_row(formUser.dateNaissance) }}
+        {{ form_row(formUser.adresse, { attr: { placeholder : "Adresse de l'utilisateur" } }) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(formUser.numeroSecurite) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(formUser.rib) }}
+            </div>
+        </div>
+        {{ form_rest(formUser)  }}
+        <div class="row">
+            <div class="col-md-12 text-end"><button class="btn {{btn_class}}">{{ button|default('Suivant') }}</button></div>
+        </div>
+    {{ form_end(formUser) }}
+</div>

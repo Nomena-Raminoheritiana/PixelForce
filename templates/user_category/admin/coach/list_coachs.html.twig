@@ -44,13 +44,13 @@
         <!-- Liste coach -->
         <div class="row mb-3">
             <div class="col-12  mt-2 mt-md-3">
-                <div class=" w-100 h-100 ps-3 py-3  bg-white border">
+                <div class=" w-100 h-100 ps-3 py-3  bg-white border pe-3">
                     <div class="row h-100">
                         <div class="col-6">
                             <h4 class="my-auto">Liste des coachs</h4>
                         </div>
-                        <div class="col-6 d-flex float-end">
-                            <a href="#" class="btn btn-success btn-sm fw-bolder"><i class="fa-solid fa-user-plus"></i> Ajouter</a>
+                        <div class="col-6 ">
+                            <a href="{{ path('admin_coach_add') }}" class="btn btn-primary btn-sm waves-effect waves-float waves-light fw-bolder d-flex float-end d-flex align-items-center"><i class="fa-solid fa-user-plus me-2"></i> Ajouter</a>
                         </div>
                     </div>
                 </div>
@@ -78,22 +78,19 @@
                             <td>{{ coach.createdAt|date('d/m/Y') }}</td>
                             {# <td>{{ coach.secteur }}</td> #}
                             {# <td>{{ coach.active }}</td> #}
-                            <td class="d-flex flex-row">
-                                {# <form method="post" action="{{path('admin_student_delete', {id: user.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                                    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                                </form>   
-
-                                <a href="{{ path('admin_student_edit', {'id': user.id}) }}" class="btn btn-primary">
+                            <td >
+                                <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>
                                 </a>
-
-                                <a href="{{ path('admin_user_visualize', {'id': user.id}) }}" class="btn btn-secondary">
-                                    <i class="fas fa-eye"></i>
-                                </a> #}
+                                <a href="{{ path('admin_coach_view', {'id': coach.id}) }}" class="btn btn-secondary">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <form method="post" action="{{path('admin_coach_delete', {id: coach.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer ce coach ?')">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ coach.id) }}">
+                                    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                </form>  
                             </td>
-
                         </tr>
 						
 					{% endfor %}
