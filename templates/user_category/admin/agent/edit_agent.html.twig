@@ -1,0 +1,26 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+	Ajout agent
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+	<style>
+		.form-add-agent{
+			padding: 0 100px;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="content-body-form">
+			<a href="{{ path('admin_agent_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+			<h1 class="text-center fw-bold">1- Information générale</h1>
+			<div class="form-add-agent">
+				{{ include ('global/user_form/_user_form.html.twig', {btn_class : 'btn-primary', button : button}) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

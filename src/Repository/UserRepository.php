@@ -94,13 +94,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
 
-    public function findAllCoachQuery(UserSearch $search)
+    /**
+     * Permet de filtrer les utilisateurs par son role
+     *
+     * @param UserSearch $search
+     * @param string $role
+     */
+    public function findUserByRoleQuery(UserSearch $search, string $role)
     {
         $query = $this->createQueryBuilder('c');
 
         $query = $query
             ->where('c.roles LIKE :role')
-            ->setParameter('role', '%"'.'ROLE_COACH'.'"%');
+            ->setParameter('role', '%"'."ROLE_$role".'"%');
         ;   
 
         if ($search->getPrenom()) {

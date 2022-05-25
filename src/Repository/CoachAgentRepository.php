@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\CoachAgent;
+use App\Entity\User;
+use App\Manager\EntityManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -22,6 +24,8 @@ class CoachAgentRepository extends ServiceEntityRepository
         parent::__construct($registry, CoachAgent::class);
     }
 
+
+    // findRelationCoachWithAgent
 
     /**
      * @param $id
@@ -77,6 +81,24 @@ class CoachAgentRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
+
+    /**
+     * Permet de supprimer un coach ou un agent
+     *
+     * NB: On doit suivre cette procédure pour eviter l'erreur de "Violation de relation"
+     */
+    public function removeCoachOrAgent(User $user, EntityManager $entityManager)
+    {
+        // (1) => On supprime d'abord toutes les relations entre coach et agent
+        $coachAgents = $this->findCoachOrAgent($user->getId());
+        foreach ($coachAgents as $coachAgent) {
+            $this->remove($coachAgent);
+        }
+        
+        // (2) => Et ensuit on supprime l'utilisateur en question
+        $entityManager->delete($user);
+    }
+
 
     // /**
     //  * @return CoachAgent[] Returns an array of CoachAgent objects

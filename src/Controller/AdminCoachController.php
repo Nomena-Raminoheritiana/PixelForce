@@ -10,6 +10,7 @@ use App\Form\UserSearchType;
 use App\Form\UserType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
+use App\Repository\CoachAgentRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,11 +23,14 @@ class AdminCoachController extends AbstractController
     protected $entityManager;
     protected $userManager;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager)
+    protected $repoCoachAgent;
+
+    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
+        $this->repoCoachAgent = $repoCoachAgent;
     }
 
     /**
@@ -39,7 +43,7 @@ class AdminCoachController extends AbstractController
         $searchForm->handleRequest($request);
         
         $coachs = $paginator->paginate(
-            $this->repoUser->findAllCoachQuery($search),
+            $this->repoUser->findUserByRoleQuery($search, 'COACH'),
             $request->query->getInt('page', 1),
             20
         );
@@ -85,7 +89,7 @@ class AdminCoachController extends AbstractController
 
         return $this->render('user_category/admin/coach/add_coach.html.twig', [
             'formUser' => $formUser->createView(),
-            'button' => 'Enregistrer'
+            'button' => 'Suivant'
         ]);    
     }
 
@@ -139,11 +143,9 @@ class AdminCoachController extends AbstractController
     public function admin_coach_delete(User $coach, Request $request)
     {
         if ($this->isCsrfTokenValid('delete'. $coach->getId(), $request->get('_token'))) {
-            $this->entityManager->delete($coach);
-            $this->addFlash(
-                'danger',
-                'Coach supprimé'
-             );
+            $this->repoCoachAgent->removeCoachOrAgent($coach, $this->entityManager);
+
+            $this->addFlash('danger', 'Coach supprimé');
         }
         return $this->redirectToRoute('admin_coach_list');    
     }
