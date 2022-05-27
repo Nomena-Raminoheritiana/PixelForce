@@ -164,6 +164,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $created_at;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Contact::class, mappedBy="agent", orphanRemoval=true)
+     */
+    private $contact;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="client")
+     */
+    private $contact_client;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -174,6 +184,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->messages = new ArrayCollection();
         $this->canalMessages = new ArrayCollection();
         $this->created_at = new \DateTime();
+        $this->contact = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -676,6 +687,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contact>
+     */
+    public function getContact(): Collection
+    {
+        return $this->contact;
+    }
+
+    public function addContact(Contact $contact): self
+    {
+        if (!$this->contact->contains($contact)) {
+            $this->contact[] = $contact;
+            $contact->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): self
+    {
+        if ($this->contact->removeElement($contact)) {
+            // set the owning side to null (unless already changed)
+            if ($contact->getAgent() === $this) {
+                $contact->setAgent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getContactClient(): ?Contact
+    {
+        return $this->contact_client;
+    }
+
+    public function setContactClient(?Contact $contact_client): self
+    {
+        $this->contact_client = $contact_client;
 
         return $this;
     }
