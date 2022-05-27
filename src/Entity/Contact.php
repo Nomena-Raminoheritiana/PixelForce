@@ -12,6 +12,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Contact
 {
+
+    const FIRSTNAME = 'firstname';
+    const LASTNAME = 'lastname';
+    const EMAIL = 'email';
+    const PHONE = 'phone';
+    const ADDRESS = 'address';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -19,10 +26,6 @@ class Contact
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $informations = [];
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="contact")
@@ -40,6 +43,11 @@ class Contact
      */
     private $status;
 
+    /**
+     * @ORM\OneToOne(targetEntity=ContactInformation::class, inversedBy="contact", cascade={"persist", "remove"})
+     */
+    private $information;
+
     public function __construct()
     {
         $this->client = new ArrayCollection();
@@ -48,18 +56,6 @@ class Contact
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getInformations(): ?array
-    {
-        return $this->informations;
-    }
-
-    public function setInformations(?array $informations): self
-    {
-        $this->informations = $informations;
-
-        return $this;
     }
 
     public function getAgent(): ?User
@@ -112,6 +108,18 @@ class Contact
     public function setStatus(?bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getInformation(): ?ContactInformation
+    {
+        return $this->information;
+    }
+
+    public function setInformation(?ContactInformation $information): self
+    {
+        $this->information = $information;
 
         return $this;
     }
