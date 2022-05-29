@@ -3,11 +3,14 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Form\Validator\PasswordConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ResetPasswordType extends AbstractType
 {
@@ -25,10 +28,27 @@ class ResetPasswordType extends AbstractType
                         ]
                 ],
                 'required' => true,
-                'first_options'  => ['label' => 'Mot de passe'],
+                'first_options'  => [
+                    'label' => 'Nouveau mot de passe',
+
+                ],
                 'second_options' => ['label' => 'Repéter le mot de passe'],
-                'mapped' => false
-            ])
+                'mapped' => false,
+                    'constraints' => [
+                        new Length([
+                            'min' => 8,
+                            'minMessage' => 'Minimum 8 caractères - plus il y en a, mieux c\'est',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ]),
+                        new NotBlank([
+                            'message' => 'Le mot de passe ne doit pas être vide',
+                            'groups' => 'password_update'
+                        ]),
+                        new PasswordConstraint()
+                    ]
+                    ]
+            )
         ;
     }
 }

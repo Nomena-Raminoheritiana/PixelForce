@@ -45,13 +45,17 @@ Encore
     // Vuexy: Page Vendor JS
     .addEntry('vuexy_apexcharts_js', './assets/js/vuexy/vendors/js/charts/apexcharts.js')
     .addEntry('vuexy_toastr_js', './assets/js/vuexy/vendors/js/extensions/toastr.js')
+
+    // Vuexy: jquery
+    .addEntry('vuexy_jquery_validate', './assets/js/vuexy/js/jquery.validate.min.js')
     // Vuexy: Theme JS
     .addEntry('vuexy_app', './assets/js/vuexy/js/core/app.js')
     .addEntry('vuexy_app_menu', './assets/js/vuexy/js/core/app-menu.js')
     // Vuexy: Page JS
     .addEntry('vuexy_dashboard_ecommerce_js', './assets/js/vuexy/js/scripts/pages/dashboard-ecommerce.js')
     .addEntry('vuexy_app_user_view_js', './assets/js/vuexy/js/scripts/pages/app-user-view.js')
-    
+    .addEntry('vuexy_page_account_settings_account_js', './assets/js/vuexy/js/scripts/pages/page-account-settings-account.js')
+
 
 
     .addStyleEntry('base', './assets/styles/base.css')
@@ -69,7 +73,8 @@ Encore
     .addStyleEntry('vuexy_dashboard_ecommerce', './assets/styles/vuexy/pages/dashboard-ecommerce.css')
     .addStyleEntry('vuexy_chart_apex', './assets/styles/vuexy/plugins/charts/chart-apex.css')
     .addStyleEntry('vuexy_ext_component_toastr', './assets/styles/vuexy/plugins/extensions/ext-component-toastr.css')
-    
+    // Vuexy: pugins
+    .addStyleEntry('vuexy_form_validation', './assets/styles/vuexy/plugins/forms/form_validation.css')
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
 
     .enableStimulusBridge('./assets/controllers.json')

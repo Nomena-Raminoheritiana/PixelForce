@@ -51,7 +51,7 @@
                     {# Affichage des messages flash #}
                     {% for label, messages in app.flashes %}
                         {% for message in messages %}
-                            <div id="msgFlash" class="alert alert-{{ label }} msgFlash mx-3 mx-md-4 mb-2 mt-4 ">
+                            <div id="msgFlash" class="alert alert-{{ label }} msgFlash mb-2 mt-4 mb-4">
                                 {{ message | raw }}
                             </div>
                         {% endfor %}
