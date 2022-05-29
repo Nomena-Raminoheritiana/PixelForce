@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email")
+ * @UniqueEntity({"email","username"},  message="La valeur existe déjà")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -46,6 +46,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -58,37 +63,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Vous devez entrer votre nom")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Vous devez entrer votre prénom")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Assert\NotNull(message="Votre date de naissance est obligatoire")
      */
     private $dateNaissance;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Vous devez avoir une adresse")
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Veuillez entrer votre Numéro de sécurité")
      */
     private $numeroSecurite;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="On a besoin de votre RIB")
      */
     private $rib;
 
@@ -160,7 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $telephone;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $created_at;
 
@@ -173,6 +172,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="client")
      */
     private $contact_client;
+    /*
+     * @ORM\OneToMany(targetEntity=UserSecteur::class, mappedBy="user", cascade={"persist"})
+     */
+    private $userSecteurs;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $codePostal;
 
     public function __construct()
     {
@@ -185,6 +193,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->canalMessages = new ArrayCollection();
         $this->created_at = new \DateTime();
         $this->contact = new ArrayCollection();
+        $this->userSecteurs = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -219,7 +229,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
+    }
+
+    public function setUsername(?string $username): self
+    {
+        $this->username = $username;
+        return $this;
     }
 
     /**
@@ -239,6 +255,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function getStringRole()
+    {
+        switch($this->roles[0]) {
+            case self::ROLE_AGENT: return 'Agent'; break;
+            case self::ROLE_COACH: return 'Coach'; break;
+            case self::ROLE_ADMINISTRATEUR: return 'Administrateur'; break;
+        }
     }
 
     /**
@@ -729,6 +754,52 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setContactClient(?Contact $contact_client): self
     {
         $this->contact_client = $contact_client;
+
+        return $this;
+    }
+    /**
+     * @return Collection<int, UserSecteur>
+     */
+    public function getUserSecteurs(): Collection
+    {
+        return $this->userSecteurs;
+    }
+
+    public function addUserSecteur(UserSecteur $userSecteur): self
+    {
+        if (!$this->userSecteurs->contains($userSecteur)) {
+            $this->userSecteurs[] = $userSecteur;
+            $userSecteur->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSecteur(UserSecteur $userSecteur): self
+    {
+        if ($this->userSecteurs->removeElement($userSecteur)) {
+            // set the owning side to null (unless already changed)
+            if ($userSecteur->getUser() === $this) {
+                $userSecteur->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeAllUserSecteur()
+    {
+        $this->userSecteurs->clear();
+    }
+
+    public function getCodePostal(): ?string
+    {
+        return $this->codePostal;
+    }
+
+    public function setCodePostal(?string $codePostal): self
+    {
+        $this->codePostal = $codePostal;
 
         return $this;
     }
