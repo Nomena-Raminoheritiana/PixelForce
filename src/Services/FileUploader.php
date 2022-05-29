@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Cocur\Slugify\Slugify;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -17,9 +18,16 @@ class FileUploader
         $this->slugger = new Slugify();
     }
 
-    public function upload(?UploadedFile $file = null, $targetFolder = null)
+    public function upload(?UploadedFile $file = null, $targetFolder = null, $fileName=null)
     {
         if($file != null) {
+            // suppression de l'ancien fichier s'il existe
+            $Oldfile = $targetFolder.DIRECTORY_SEPARATOR.$fileName;
+            if($fileName && file_exists($Oldfile)) {
+                $filesystem = new Filesystem();
+                $filesystem->remove($Oldfile);
+            }
+            // upload fichier
             $this->targetDirectory = $targetFolder ? $targetFolder : $this->targetDirectory;
             $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slugify($originalFilename);
@@ -30,10 +38,8 @@ class FileUploader
             } catch (FileException $e) {
                 return null;
             }
-
-            return $fileName;
         }
-       return false;
+       return $fileName;
     }
 
     public function getTargetDirectory()
