@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class InscriptionController extends AbstractController
+class AgentInscriptionController extends AbstractController
 {
     /**
      * @var EntityManager
@@ -31,7 +31,7 @@ class InscriptionController extends AbstractController
 
 
     /**
-     * @Route("/inscription/agent/index", name="inscription_agent_index")
+     * @Route("/inscription/agent/index", name="agent_inscription")
      */
     public function inscriptionAgent(Request $request)
     {
