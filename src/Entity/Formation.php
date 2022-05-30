@@ -69,6 +69,11 @@ class Formation
      */
     private $formationAgents;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $brouillon;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -232,6 +237,18 @@ class Formation
                 $formationAgent->setFormation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBrouillon(): ?bool
+    {
+        return $this->brouillon;
+    }
+
+    public function setBrouillon(?bool $brouillon): self
+    {
+        $this->brouillon = $brouillon;
 
         return $this;
     }
