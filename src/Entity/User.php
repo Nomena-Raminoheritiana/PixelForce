@@ -182,6 +182,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $codePostal;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Formation::class, mappedBy="coach")
+     */
+    private $formations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=FormationAgent::class, mappedBy="agent")
+     */
+    private $formationAgents;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -194,6 +204,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->created_at = new \DateTime();
         $this->contact = new ArrayCollection();
         $this->userSecteurs = new ArrayCollection();
+        $this->formations = new ArrayCollection();
+        $this->formationAgents = new ArrayCollection();
 
     }
 
@@ -800,6 +812,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCodePostal(?string $codePostal): self
     {
         $this->codePostal = $codePostal;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations[] = $formation;
+            $formation->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): self
+    {
+        if ($this->formations->removeElement($formation)) {
+            // set the owning side to null (unless already changed)
+            if ($formation->getCoach() === $this) {
+                $formation->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FormationAgent>
+     */
+    public function getFormationAgents(): Collection
+    {
+        return $this->formationAgents;
+    }
+
+    public function addFormationAgent(FormationAgent $formationAgent): self
+    {
+        if (!$this->formationAgents->contains($formationAgent)) {
+            $this->formationAgents[] = $formationAgent;
+            $formationAgent->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormationAgent(FormationAgent $formationAgent): self
+    {
+        if ($this->formationAgents->removeElement($formationAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($formationAgent->getAgent() === $this) {
+                $formationAgent->setAgent(null);
+            }
+        }
 
         return $this;
     }
