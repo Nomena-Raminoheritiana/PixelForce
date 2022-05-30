@@ -55,6 +55,11 @@ class Formation
     private $estDebloquee;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $debloqueAgent;
+
+    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="formations")
      */
     private $coach;
@@ -250,6 +255,19 @@ class Formation
     {
         $this->brouillon = $brouillon;
 
+        return $this;
+    }
+
+
+    public function getDebloqueAgent(): bool
+    {
+        return $this->debloqueAgent;
+    }
+
+
+    public function setDebloqueAgent($debloqueAgent): self
+    {
+        $this->debloqueAgent = $debloqueAgent;
         return $this;
     }
 }
