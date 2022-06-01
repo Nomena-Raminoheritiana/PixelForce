@@ -2,11 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\CoachAgent;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
+use App\Entity\UserSecteur;
+use App\Form\InscriptionAgentType;
 use App\Form\UserSearchType;
+use App\Manager\EntityManager;
+use App\Manager\UserManager;
 use App\Repository\CoachAgentRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
+use App\Repository\UserSecteurRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,11 +24,15 @@ class CoachAgentController extends AbstractController
 {
     protected $coachAgentRepository;
     protected $repoUser;
+    protected $userManager;
+    protected $entityManager;
 
-    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser)
+    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser, UserManager $userManager, EntityManager $entityManager)
     {
         $this->coachAgentRepository = $coachAgentRepository;
         $this->repoUser = $repoUser;
+        $this->userManager = $userManager;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -48,6 +59,43 @@ class CoachAgentController extends AbstractController
         ]);
     }
 
+    
+
+    /**
+     * @Route("/coach/agent/add", name="coach_agent_add")
+     */
+    public function coach_agent_add(Request $request, SecteurRepository $secteurRepository, UserSecteurRepository $tset)
+    {
+        $user = new User();
+        $userSecteur = new UserSecteur();
+        $coachAgent = new CoachAgent();
+        $formUser = $this->createForm(InscriptionAgentType::class, $user);
+        $formUser->handleRequest($request);
+
+
+        if($formUser->isSubmitted() && $formUser->isValid()) {
+            $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
+            $userSecteur->setUser($user);
+            $secteur = $secteurRepository->find($request->request->get('inscription_agent')['secteur']['secteur']);
+            $userSecteur->setSecteur($secteur);
+            $user->setRoles([ User::ROLE_AGENT ]);
+            $coachAgent->setCoach($this->getUser());
+            $coachAgent->setAgent($user);
+            $this->entityManager->save($user);
+            $this->entityManager->save($userSecteur);
+            $this->entityManager->save($coachAgent);
+
+            $this->addFlash('success', 'Ajout de l\'utilisateur Agent efféctué avec succès');
+            return $this->redirectToRoute('coach_agent_list');
+
+        }
+
+        return $this->render('user_category/coach/agent/add_agent.html.twig', [
+            'formUser' => $formUser->createView()
+        ]);
+
+    }
+
     /**
      * @Route("/coach/agent/{id}//view", name="coach_agent_view")
      */
@@ -57,6 +105,8 @@ class CoachAgentController extends AbstractController
             'agent' => $agent
         ]);
     }
+
+
 
 
 }

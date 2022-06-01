@@ -61,8 +61,7 @@
 						<th scope="col">Nom et prénoms</th>
 						<th scope="col">Mail</th>
 						<th scope="col">Date inscription</th>
-						{# <th scope="col">Secteur</th> #}
-						{# <th scope="col">Statut</th> #}
+						<th scope="col">Secteur</th>
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -73,8 +72,11 @@
                             <td>{{ agent.fullName }}</td>
                             <td>{{ agent.email }}</td>
                             <td>{{ agent.createdAt|date('d/m/Y') }}</td>
-                            {# <td>{{ agent.secteur }}</td> #}
-                            {# <td>{{ agent.active }}</td> #}
+                            <td> 
+                                {# On récupère les secteurs reliés par l'agent  #}
+                                {% set secteurs = repoUserSecteur.findBy({'user' : agent}) %}
+                                {{ agent.allSecteursOfAgent(secteurs)|default('-') }}                                
+                            </td>
                             <td >
                                 <a href="{{ path('admin_agent_edit', {'id': agent.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>

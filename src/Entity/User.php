@@ -875,4 +875,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * Permet de renvoyer un string contenant les secteurs d'un agent en les cocaténant par une virgule
+     *
+     * @param array $secteurs
+     * @return string
+     */
+    public function allSecteursOfAgent(array $secteurs)
+    {
+        $mySecteurs = [];
+        /** @var UserSecteur $secteur */
+        foreach ($secteurs as $secteur) {
+           $mySecteurs[] = $secteur->getSecteur()->getNom();
+        }
+
+        $joinSecteur = join(', ', $mySecteurs);
+        return $joinSecteur;
+    }
 }

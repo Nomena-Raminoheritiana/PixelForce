@@ -49,7 +49,7 @@
                         <h4><i class="fa fa-book-atlas"></i> Liste des agents</h4>
                     </div>
                     <div class="col-12 col-md-6 text-sm-start text-md-end order-1 order-md-1 mb-3 mb-md-0">
-                        <a href="{{ path('user_addAgent') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter des Agents</a>
+                        <a href="{{ path('coach_agent_add') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter des Agents</a>
                     </div>
                 </div>
             </div>
@@ -62,8 +62,6 @@
 						<th scope="col">Nom et prénoms</th>
 						<th scope="col">Mail</th>
 						<th scope="col">Date inscription</th>
-						{# <th scope="col">Secteur</th> #}
-						{# <th scope="col">Statut</th> #}
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -75,7 +73,6 @@
                             <td>{{ agent.fullName }}</td>
                             <td>{{ agent.email }}</td>
                             <td>{{ agent.createdAt|date('d/m/Y') }}</td>
-                            {# <td>{{ agent.active }}</td> #}
                             <td >
                                 <a href="{{ path('coach_agent_view', {'id': agent.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>

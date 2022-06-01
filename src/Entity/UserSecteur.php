@@ -37,6 +37,11 @@ class UserSecteur
      */
     private $statut;
 
+    public function __construct()
+    {
+        $this->statut = false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
