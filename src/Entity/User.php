@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email")
+ * @UniqueEntity({"email","username"},  message="La valeur existe déjà")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -46,6 +46,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -58,37 +63,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Vous devez entrer votre nom")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Vous devez entrer votre prénom")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Assert\NotNull(message="Votre date de naissance est obligatoire")
      */
     private $dateNaissance;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Vous devez avoir une adresse")
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="Veuillez entrer votre Numéro de sécurité")
      */
     private $numeroSecurite;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotNull(message="On a besoin de votre RIB")
      */
     private $rib;
 
@@ -154,6 +153,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private $chatCode;
 
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $telephone;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created_at;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Contact::class, mappedBy="agent", orphanRemoval=true)
+     */
+    private $contact;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="client")
+     */
+    private $contact_client;
+    /*
+     * @ORM\OneToMany(targetEntity=UserSecteur::class, mappedBy="user", cascade={"persist"})
+     */
+    private $userSecteurs;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $codePostal;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Formation::class, mappedBy="coach")
+     */
+    private $formations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=FormationAgent::class, mappedBy="agent")
+     */
+    private $formationAgents;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -163,6 +201,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->commentaires = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->canalMessages = new ArrayCollection();
+        $this->created_at = new \DateTime();
+        $this->contact = new ArrayCollection();
+        $this->userSecteurs = new ArrayCollection();
+        $this->formations = new ArrayCollection();
+        $this->formationAgents = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -197,7 +241,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
+    }
+
+    public function setUsername(?string $username): self
+    {
+        $this->username = $username;
+        return $this;
     }
 
     /**
@@ -217,6 +267,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function getStringRole()
+    {
+        switch($this->roles[0]) {
+            case self::ROLE_AGENT: return 'Agent'; break;
+            case self::ROLE_COACH: return 'Coach'; break;
+            case self::ROLE_ADMINISTRATEUR: return 'Administrateur'; break;
+        }
     }
 
     /**
@@ -637,6 +696,183 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setChatCode($chatCode)
     {
         $this->chatCode = $chatCode;
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function fullName()
+    {
+        return $this->nom .' '. $this->prenom;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contact>
+     */
+    public function getContact(): Collection
+    {
+        return $this->contact;
+    }
+
+    public function addContact(Contact $contact): self
+    {
+        if (!$this->contact->contains($contact)) {
+            $this->contact[] = $contact;
+            $contact->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): self
+    {
+        if ($this->contact->removeElement($contact)) {
+            // set the owning side to null (unless already changed)
+            if ($contact->getAgent() === $this) {
+                $contact->setAgent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getContactClient(): ?Contact
+    {
+        return $this->contact_client;
+    }
+
+    public function setContactClient(?Contact $contact_client): self
+    {
+        $this->contact_client = $contact_client;
+
+        return $this;
+    }
+    /**
+     * @return Collection<int, UserSecteur>
+     */
+    public function getUserSecteurs(): Collection
+    {
+        return $this->userSecteurs;
+    }
+
+    public function addUserSecteur(UserSecteur $userSecteur): self
+    {
+        if (!$this->userSecteurs->contains($userSecteur)) {
+            $this->userSecteurs[] = $userSecteur;
+            $userSecteur->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSecteur(UserSecteur $userSecteur): self
+    {
+        if ($this->userSecteurs->removeElement($userSecteur)) {
+            // set the owning side to null (unless already changed)
+            if ($userSecteur->getUser() === $this) {
+                $userSecteur->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeAllUserSecteur()
+    {
+        $this->userSecteurs->clear();
+    }
+
+    public function getCodePostal(): ?string
+    {
+        return $this->codePostal;
+    }
+
+    public function setCodePostal(?string $codePostal): self
+    {
+        $this->codePostal = $codePostal;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations[] = $formation;
+            $formation->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): self
+    {
+        if ($this->formations->removeElement($formation)) {
+            // set the owning side to null (unless already changed)
+            if ($formation->getCoach() === $this) {
+                $formation->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FormationAgent>
+     */
+    public function getFormationAgents(): Collection
+    {
+        return $this->formationAgents;
+    }
+
+    public function addFormationAgent(FormationAgent $formationAgent): self
+    {
+        if (!$this->formationAgents->contains($formationAgent)) {
+            $this->formationAgents[] = $formationAgent;
+            $formationAgent->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormationAgent(FormationAgent $formationAgent): self
+    {
+        if ($this->formationAgents->removeElement($formationAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($formationAgent->getAgent() === $this) {
+                $formationAgent->setAgent(null);
+            }
+        }
+
         return $this;
     }
 }

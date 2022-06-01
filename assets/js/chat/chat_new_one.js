@@ -3,7 +3,7 @@ import {findDestinataire, getMessageByCode} from "./chatSenderRequest";
 import {NewConversationComponent} from "./components/NewConversationComponent";
 import {showMessageInstance} from "./helpers/chat_helpers";
 
-$(document).ready(function() {
+$(function() {
     const newConversationComponent = new NewConversationComponent();
     // nouveau message
     $(this).on('click', '.chat-btn-newOne', function(e) {

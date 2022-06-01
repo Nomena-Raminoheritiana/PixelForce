@@ -9,7 +9,7 @@ import {CanalGroupsComponent} from "./components/CanalGroupsComponent";
 import {MenuComponent} from "./components/MenuComponent";
 import {Modal} from 'bootstrap'
 
-$(document).ready(function() {
+$(function() {
     const canalsComponent = new CanalGroupsComponent()
     $(this).on('input','.chatSearchUser', async function(e) {
         e.preventDefault();

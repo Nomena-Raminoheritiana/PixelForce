@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Ajout client {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="content-body-form">
+			<a href="{{ path('agent_contact_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+			<h1 class="text-center fw-bold">Information personnelle</h1>
+			<div class="form-add-contact">
+				{{ form_start(formContact) }}
+					<div class="row">
+						<div class="col-md-6">
+							{{ form_row(formContact.firstname) }}
+						</div>
+						<div class="col-md-6">{{ form_row(formContact.lastname) }}</div>
+					</div>
+					{{ form_row(formContact.email) }}
+					{{ form_row(formContact.phone) }}
+					{{ form_row(formContact.address) }}
+					<div class="row">
+						<div class="col-md-12 text-end"><button class="btn btn-{{btn_class}}">{{ button|default('Suivant') }}</button></div>
+					</div>
+				{{ form_end(formContact) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

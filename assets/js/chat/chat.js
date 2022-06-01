@@ -8,7 +8,7 @@ require('./chat_menu')
 require('./chatMercureTraitement')
 require('./chat_canal_instance')
 require('./chatGroupCanal')
-$(document).ready(function() {
+$(function() {
     // envoyer un message
     $(this).on('click', '.chat-btn-send', async function(e) {
         e.preventDefault();

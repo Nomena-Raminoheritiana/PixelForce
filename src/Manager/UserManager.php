@@ -84,43 +84,14 @@ class UserManager
         $this->entityManager->save($user);
     }
 
-    public function setUserPasword(User $user,  $password,  $repeatedPass, $verifie = true)
+    public function setUserPasword(User &$user,  $password,  $repeatedPass, $verifie = true)
     {
         if($password === $repeatedPass || $verifie === false) {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
             $user->setPassword($hashedPassword);
             $this->entityManager->save($user);
-            return $user;
+            return true;
         }
-        return null;
+        return false;
     }
-
-    public function inscrire($email, $coach, $roles = [User::ROLE_CLIENT])
-    {
-        if(!empty($email)) {
-            // création de l'agent
-            $error = $this->objectManager->createObject(User::class, [
-                'email' => $email,
-                'password' => base64_encode('_dfdkf12132_1321df'),
-                'active' => false,
-                'roles' => $roles
-            ], true, ['email']);
-
-            if(($error instanceof ConstraintViolationList && $error->count() === 0 )|| $error instanceof User) {
-
-                // création du lien entre agent et coach
-                if($coach){
-                    $this->objectManager->createObject(CoachAgent::class, [
-                        'coach' => $this->userRepository->findOneBy(['id' => $coach]),
-                        'agent' => $error
-                    ]);
-                }
-                // envoie mail
-                $this->mailerService->sendMailInscriptionUser($email);
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

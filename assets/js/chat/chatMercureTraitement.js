@@ -1,7 +1,7 @@
 import {ConversationComponent} from "./components/ConversationComponent";
 import {showMessageInstance, updateMenu} from "./helpers/chat_helpers";
 
-$(document).ready(function() {
+$(function() {
     // detecter s'il y a un message
     const chat_newMessage_topic = JSON.parse(document.getElementById("chat-newMessage-topic").textContent);
     const chat_vu_topic = JSON.parse(document.getElementById("chat-vu-topic").textContent);
