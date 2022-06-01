@@ -25,16 +25,19 @@
         <div class="search-form">
             {{form_start(searchForm)}}
             <div class="row text-center">
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.prenom)}}
                 </div>
                 <div class="col-12 col-sm-6 col-md-3">
                     {{form_row(searchForm.email)}}
                 </div>
-				<div class="col-12 col-sm-6 col-md-3">
+				<div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.telephone)}}
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-4 col-md-2">
+                    {{form_row(searchForm.secteur)}}
+                </div>
+                <div class="col-12 col-sm-2 col-md-1">
                     <button class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
@@ -64,8 +67,7 @@
 						<th scope="col">Nom et prénoms</th>
 						<th scope="col">Mail</th>
 						<th scope="col">Date inscription</th>
-						{# <th scope="col">Secteur</th> #}
-						{# <th scope="col">Statut</th> #}
+						<th scope="col">Secteur</th>
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -76,8 +78,11 @@
                             <td>{{ coach.fullName }}</td>
                             <td>{{ coach.email }}</td>
                             <td>{{ coach.createdAt|date('d/m/Y') }}</td>
-                            {# <td>{{ coach.secteur }}</td> #}
-                            {# <td>{{ coach.active }}</td> #}
+                            <td>
+                                {% for coachSecteur in coach.coachSecteurs %}
+                                    {{ coachSecteur.secteur.nom }}
+                                {% endfor %}
+                            </td>
                             <td >
                                 <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>

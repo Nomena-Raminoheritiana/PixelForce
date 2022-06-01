@@ -192,6 +192,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $formationAgents;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CoachSecteur::class, mappedBy="coach")
+     */
+    private $coachSecteurs;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -206,6 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userSecteurs = new ArrayCollection();
         $this->formations = new ArrayCollection();
         $this->formationAgents = new ArrayCollection();
+        $this->coachSecteurs = new ArrayCollection();
 
     }
 
@@ -892,5 +898,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $joinSecteur = join(', ', $mySecteurs);
         return $joinSecteur;
+    }
+
+    /**
+     * @return Collection<int, CoachSecteur>
+     */
+    public function getCoachSecteurs(): Collection
+    {
+        return $this->coachSecteurs;
+    }
+
+    public function addCoachSecteur(CoachSecteur $coachSecteur): self
+    {
+        if (!$this->coachSecteurs->contains($coachSecteur)) {
+            $this->coachSecteurs[] = $coachSecteur;
+            $coachSecteur->setCoach($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoachSecteur(CoachSecteur $coachSecteur): self
+    {
+        if ($this->coachSecteurs->removeElement($coachSecteur)) {
+            // set the owning side to null (unless already changed)
+            if ($coachSecteur->getCoach() === $this) {
+                $coachSecteur->setCoach(null);
+            }
+        }
+
+        return $this;
     }
 }

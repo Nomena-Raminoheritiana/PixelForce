@@ -34,9 +34,15 @@ class Secteur
      */
     private $userSecteurs;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CoachSecteur::class, mappedBy="secteur")
+     */
+    private $coachSecteurs;
+
     public function __construct()
     {
         $this->userSecteurs = new ArrayCollection();
+        $this->coachSecteurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,6 +98,36 @@ class Secteur
             // set the owning side to null (unless already changed)
             if ($userSecteur->getSecteur() === $this) {
                 $userSecteur->setSecteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CoachSecteur>
+     */
+    public function getCoachSecteurs(): Collection
+    {
+        return $this->coachSecteurs;
+    }
+
+    public function addCoachSecteur(CoachSecteur $coachSecteur): self
+    {
+        if (!$this->coachSecteurs->contains($coachSecteur)) {
+            $this->coachSecteurs[] = $coachSecteur;
+            $coachSecteur->setSecteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoachSecteur(CoachSecteur $coachSecteur): self
+    {
+        if ($this->coachSecteurs->removeElement($coachSecteur)) {
+            // set the owning side to null (unless already changed)
+            if ($coachSecteur->getSecteur() === $this) {
+                $coachSecteur->setSecteur(null);
             }
         }
 

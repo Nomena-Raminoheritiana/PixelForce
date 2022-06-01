@@ -102,27 +102,34 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function findUserByRoleQuery(UserSearch $search, string $role)
     {
-        $query = $this->createQueryBuilder('c');
+        $query = $this->createQueryBuilder('u');
 
         $query = $query
-            ->where('c.roles LIKE :role')
+            ->where('u.roles LIKE :role')
             ->setParameter('role', '%"'."ROLE_$role".'"%');
         ;   
 
         if ($search->getPrenom()) {
             $query = $query
-                ->andwhere('c.prenom LIKE :prenom')
+                ->andwhere('u.prenom LIKE :prenom')
                 ->setParameter('prenom', '%'.$search->getPrenom().'%');
         }
         if ($search->getEmail()) {
             $query = $query
-                ->andwhere('c.email LIKE :email')
+                ->andwhere('u.email LIKE :email')
                 ->setParameter('email', '%'.$search->getEmail().'%');
         }
         if ($search->getTelephone()) {
             $query = $query
-                ->andwhere('c.telephone LIKE :telephone')
+                ->andwhere('u.telephone LIKE :telephone')
                 ->setParameter('telephone', '%'.$search->getTelephone().'%');
+        }
+        if ($search->getSecteur()) {
+            $query = $query
+                ->join('u.coachSecteurs', 'cs')
+                ->join('cs.secteur', 's')
+                ->andwhere('s.nom LIKE :nomSecteur')
+                ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
         }
 
         return $query->getQuery()

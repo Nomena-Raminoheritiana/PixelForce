@@ -3,7 +3,9 @@
 
 namespace App\Controller;
 
+use App\Entity\CoachSecteur;
 use App\Entity\SearchEntity\UserSearch;
+use App\Entity\Secteur;
 use App\Entity\User;
 use App\Form\ResetPasswordType;
 use App\Form\UserSearchType;
@@ -11,8 +13,10 @@ use App\Form\UserType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
 use App\Repository\CoachAgentRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,12 +29,15 @@ class AdminCoachController extends AbstractController
 
     protected $repoCoachAgent;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent)
+    protected $repoSecteur;
+
+    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, SecteurRepository $repoSecteur)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->repoCoachAgent = $repoCoachAgent;
+        $this->repoSecteur = $repoSecteur;
     }
 
     /**
@@ -83,8 +90,8 @@ class AdminCoachController extends AbstractController
             
             $this->entityManager->save($coach);
 
-            $this->addFlash('success', "Information enregistrée avec succès, procéder maintenant à la création de son mot de passe");
-            return $this->redirectToRoute('admin_coach_password_generate', ['id' =>  $coach->getId()]);    
+            $this->addFlash('primary', "Information enregistrée avec succès, choisissez son secteur");
+            return $this->redirectToRoute('admin_coach_secteur_relate', ['id' =>  $coach->getId()]);    
         }
 
         return $this->render('user_category/admin/coach/add_coach.html.twig', [
@@ -111,8 +118,40 @@ class AdminCoachController extends AbstractController
         }
 
         return $this->render('user_category/admin/coach/add_coach.html.twig', [
-            'formUser' => $formUser->createView()
+            'formUser' => $formUser->createView(),
+            'coach' => $coach
         ]);    
+    }
+
+    /**
+     * @Route("/admin/coach/{id}/secteur/relate", name="admin_coach_secteur_relate")
+     */
+    public function admin_coach_secteur_relate(Request $request, User $coach)
+    {
+        $coachSecteur = new CoachSecteur();
+        $formCoachSecteur = $this->createFormBuilder($coachSecteur)
+            ->add('secteur', EntityType::class, [
+                'label'=> false,
+                'class'=> Secteur::class,
+                'choice_label' => 'nom'
+            ])
+            ->getForm()
+        ;
+        $formCoachSecteur->handleRequest($request);
+        if ($formCoachSecteur->isSubmitted() && $formCoachSecteur->isValid()) {
+            $secteurId = $request->request->get('form')['secteur'];
+            $coach->setActive(true);
+            $coachSecteur->setCoach($coach);
+            $coachSecteur->setSecteur($this->repoSecteur->find($secteurId));
+            $this->entityManager->save($coachSecteur);
+
+            $this->addFlash('primary', "Secteur choisi avec succès, procéder maintenant à la création de son mot de passe");
+            return $this->redirectToRoute('admin_coach_password_generate', ['id' => $coach->getId()]);    
+        }
+        return $this->render('user_category/admin/coach/relate_secteur.html.twig', [
+            'formCoachSecteur' => $formCoachSecteur->createView(),
+            'coach' => $coach
+        ]);
     }
 
     /**
