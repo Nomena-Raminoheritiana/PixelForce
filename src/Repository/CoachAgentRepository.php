@@ -21,9 +21,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class CoachAgentRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    protected $repoCoachSecteur;
+    protected $repoUserSecteur;
+
+    public function __construct(ManagerRegistry $registry, CoachSecteurRepository $repoCoachSecteur, UserSecteurRepository $repoUserSecteur)
     {
         parent::__construct($registry, CoachAgent::class);
+        $this->repoCoachSecteur = $repoCoachSecteur;
+        $this->repoUserSecteur = $repoUserSecteur;
     }
 
 
@@ -96,8 +101,21 @@ class CoachAgentRepository extends ServiceEntityRepository
         foreach ($coachAgents as $coachAgent) {
             $this->remove($coachAgent);
         }
-        
-        // (2) => Et ensuit on supprime l'utilisateur en question
+
+        // (2) => On véririe le role de l'utilisateur, et supprime ensuite les relations correspondantes (coach_secteur ou user_secteur)
+        if ($user->getRoles()[0] === User::ROLE_COACH) {
+            $coachSecteurs = $this->repoCoachSecteur->findBy(['coach' => $user]);
+            foreach ($coachSecteurs as $coachSecteur) {
+                $this->repoCoachSecteur->remove($coachSecteur);
+            }
+        }else if($user->getRoles()[0] === User::ROLE_AGENT) {
+            $agentSecteurs = $this->repoUserSecteur->findBy(['user' => $user]);
+            foreach ($agentSecteurs as $agentSecteur) {
+                $this->repoUserSecteur->remove($agentSecteur);
+            }
+        }
+
+        // (3) => Et enfin on supprime l'utilisateur en question
         $entityManager->delete($user);
     }
 
@@ -109,37 +127,49 @@ class CoachAgentRepository extends ServiceEntityRepository
      *
      * @param UserSearch $search
      * @param string $role
-     * @return Query
+     * @return array
      */
     public function findAgentByCoach(UserSearch $search, $coach)
     {
-        $query = $this->createQueryBuilder('c');
+        $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach])[0]->getSecteur();
+        $agentSecteurs = $this->repoUserSecteur->findBy(['secteur' => $secteur]);
+        $results = [];
+        
+        $query = $this->createQueryBuilder('ca');
 
         $query = $query
-            ->where('c.coach = :coach')
+            ->where('ca.coach = :coach')
             ->setParameter('coach', $coach)
-            ->join('c.agent', 'u')
+            ->join('ca.agent', 'a')
         ;   
 
         if ($search->getPrenom()) {
             $query = $query
-                ->andwhere('u.prenom LIKE :prenom')
+                ->andwhere('a.prenom LIKE :prenom')
                 ->setParameter('prenom', '%'.$search->getPrenom().'%');
         }
         if ($search->getEmail()) {
             $query = $query
-                ->andwhere('u.email LIKE :email')
+                ->andwhere('a.email LIKE :email')
                 ->setParameter('email', '%'.$search->getEmail().'%');
         }
         if ($search->getTelephone()) {
             $query = $query
-                ->andwhere('u.telephone LIKE :telephone')
+                ->andwhere('a.telephone LIKE :telephone')
                 ->setParameter('telephone', '%'.$search->getTelephone().'%');
         }
 
-        return $query->getQuery()
-            ->getResult()
-        ;
+        $coachAgents = $query->getQuery()->getResult();
+        
+        // On stock push les utilisateurs (Agent), dans le tableau $results
+        foreach ($coachAgents as $coachAgent) {
+            $results[] = $coachAgent->getAgent();
+        }
+        foreach ($agentSecteurs as $agentSecteur) {
+            $results[] = $agentSecteur->getUser();
+        }        
+        $results = array_unique($results, SORT_REGULAR);
+        return $results;
     }
 
     // /**

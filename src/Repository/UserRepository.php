@@ -98,9 +98,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * Permet de filtrer les utilisateurs par son role
      *
      * @param UserSearch $search
-     * @param string $role
+     * @param string $role (COACH | AGENT)
      */
-    public function findUserByRoleQuery(UserSearch $search, string $role)
+    public function findCoachOrAgentQuery(UserSearch $search, string $role)
     {
         $query = $this->createQueryBuilder('u');
 
@@ -125,11 +125,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('telephone', '%'.$search->getTelephone().'%');
         }
         if ($search->getSecteur()) {
-            $query = $query
-                ->join('u.coachSecteurs', 'cs')
-                ->join('cs.secteur', 's')
-                ->andwhere('s.nom LIKE :nomSecteur')
-                ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
+            if ($role === 'COACH') {
+                $query = $query
+                    ->join('u.coachSecteurs', 'cs')
+                    ->join('cs.secteur', 's')
+                    ->andwhere('s.nom LIKE :nomSecteur')
+                    ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
+            }else if($role === 'AGENT'){
+                $query = $query
+                    ->join('u.userSecteurs', 'us')
+                    ->join('us.secteur', 's')
+                    ->andwhere('s.nom LIKE :nomSecteur')
+                    ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
+            }
         }
 
         return $query->getQuery()

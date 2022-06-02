@@ -1,6 +1,8 @@
 <?php
 namespace App\Entity\SearchEntity;
 
+use App\Entity\Secteur;
+
 class UserSearch {
 
     /**
@@ -98,7 +100,7 @@ class UserSearch {
     /**
      * Get the value of secteur
      *
-     * @return  string|null
+     * @return  Secteur|null
      */ 
     public function getSecteur()
     {

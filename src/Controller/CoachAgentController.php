@@ -44,17 +44,16 @@ class CoachAgentController extends AbstractController
         $coach = $this->getUser();
 
         $search = new UserSearch();
-        $searchForm = $this->createForm(UserSearchType::class, $search);
+        $searchForm = $this->createForm(UserSearchType::class, $search)->remove('secteur');
         $searchForm->handleRequest($request);
-        
-        $coachAgentRelations = $paginator->paginate(
+        $agents = $paginator->paginate(
             $this->coachAgentRepository->findAgentByCoach($search, $coach),
             $request->query->getInt('page', 1),
             20
         );
 
         return $this->render('user_category/coach/agent/list_agents.html.twig', [
-            'coachAgentRelations' => $coachAgentRelations,
+            'agents' => $agents,
             'searchForm' => $searchForm->createView()
         ]);
     }

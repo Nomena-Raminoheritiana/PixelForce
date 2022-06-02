@@ -34,7 +34,7 @@
 			<div class="form-relate-secteur">
 				{{ form_start(formCoachSecteur) }}
 				{{ form_row(formCoachSecteur.secteur) }}
-				<button type="submit" class="btn btn-primary">Suivant</button>
+				<button type="submit" class="btn btn-primary">{{ button|default('Suivant') }}</button>
 				{{ form_end(formCoachSecteur) }}
 			</div>
 		</div>

@@ -59,7 +59,7 @@ class AdminAgentController extends AbstractController
         $searchForm->handleRequest($request);
         
         $agents = $paginator->paginate(
-            $this->repoUser->findUserByRoleQuery($search, 'AGENT'),
+            $this->repoUser->findCoachOrAgentQuery($search, 'AGENT'),
             $request->query->getInt('page', 1),
             20
         );

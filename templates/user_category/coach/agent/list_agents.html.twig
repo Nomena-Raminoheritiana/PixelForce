@@ -66,8 +66,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for coachAgentRelation in coachAgentRelations %}
-                    {% set agent = coachAgentRelation.agent %}
+					{% for agent in agents %}
                         <tr>
                             <td>{{ agent.id }}</td>
                             <td>{{ agent.fullName }}</td>
@@ -87,7 +86,7 @@
 		</div>
 
 		<div class="pagination d-flex justify-content-center">
-			{{ knp_pagination_render(coachAgentRelations)}}
+			{{ knp_pagination_render(agents)}}
 		</div>
     </div>
 {% endblock %}

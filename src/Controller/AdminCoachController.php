@@ -8,11 +8,14 @@ use App\Entity\SearchEntity\UserSearch;
 use App\Entity\Secteur;
 use App\Entity\User;
 use App\Form\ResetPasswordType;
+use App\Form\SecteurType;
 use App\Form\UserSearchType;
+use App\Form\UserSecteurType;
 use App\Form\UserType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
 use App\Repository\CoachAgentRepository;
+use App\Repository\CoachSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -31,13 +34,16 @@ class AdminCoachController extends AbstractController
 
     protected $repoSecteur;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, SecteurRepository $repoSecteur)
+    protected $repoCoachSecteur;
+
+    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, SecteurRepository $repoSecteur, CoachSecteurRepository $repoCoachSecteur)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->repoCoachAgent = $repoCoachAgent;
         $this->repoSecteur = $repoSecteur;
+        $this->repoCoachSecteur = $repoCoachSecteur;
     }
 
     /**
@@ -50,7 +56,7 @@ class AdminCoachController extends AbstractController
         $searchForm->handleRequest($request);
         
         $coachs = $paginator->paginate(
-            $this->repoUser->findUserByRoleQuery($search, 'COACH'),
+            $this->repoUser->findCoachOrAgentQuery($search, 'COACH'),
             $request->query->getInt('page', 1),
             20
         );
@@ -110,6 +116,13 @@ class AdminCoachController extends AbstractController
             ->add('email')
         ;
        
+        $coachSecteur = $this->repoCoachSecteur->findBy(['coach' => $coach]);
+        if ($coachSecteur) {
+            $coachSecteur = $coachSecteur[0];
+        }
+       
+        $formSecteur = $this->createForm(UserSecteurType::class);
+
         $formUser->handleRequest($request);
         if ($formUser->isSubmitted() && $formUser->isValid()) {
             $this->entityManager->save($coach);
@@ -117,9 +130,11 @@ class AdminCoachController extends AbstractController
             return $this->redirectToRoute('admin_coach_list');    
         }
 
-        return $this->render('user_category/admin/coach/add_coach.html.twig', [
+        return $this->render('user_category/admin/coach/edit_coach.html.twig', [
             'formUser' => $formUser->createView(),
-            'coach' => $coach
+            'coach' => $coach,
+            'coachSecteur' => $coachSecteur,
+            'formSecteur' => $formSecteur->createView()
         ]);    
     }
 
@@ -138,6 +153,12 @@ class AdminCoachController extends AbstractController
             ->getForm()
         ;
         $formCoachSecteur->handleRequest($request);
+
+        $button = 'Suivant';
+        if ($request->query->get('edition') === 'attribution_only') {
+            $button = 'Enregistrer';
+        }
+        
         if ($formCoachSecteur->isSubmitted() && $formCoachSecteur->isValid()) {
             $secteurId = $request->request->get('form')['secteur'];
             $coach->setActive(true);
@@ -145,12 +166,18 @@ class AdminCoachController extends AbstractController
             $coachSecteur->setSecteur($this->repoSecteur->find($secteurId));
             $this->entityManager->save($coachSecteur);
 
+            if ($request->query->get('edition') === 'attribution_only') {
+                $this->addFlash('success', 'Secteur attribué avec succès');
+                return $this->redirectToRoute('admin_coach_list');    
+            }
+
             $this->addFlash('primary', "Secteur choisi avec succès, procéder maintenant à la création de son mot de passe");
             return $this->redirectToRoute('admin_coach_password_generate', ['id' => $coach->getId()]);    
         }
         return $this->render('user_category/admin/coach/relate_secteur.html.twig', [
             'formCoachSecteur' => $formCoachSecteur->createView(),
-            'coach' => $coach
+            'coach' => $coach,
+            'button' => $button
         ]);
     }
 
@@ -189,4 +216,25 @@ class AdminCoachController extends AbstractController
         return $this->redirectToRoute('admin_coach_list');    
     }
     
+    
+    /**
+     * @Route("/admin/coach/secteur/{coachSecteur}/edit", name="admin_coach_secteur_edit")
+     */
+    public function admin_coach_secteur_edit(CoachSecteur $coachSecteur, Request $request)
+    {
+        $data = $_POST;
+
+        $secteur = $this->repoSecteur->find($data["newSecteurId"]);
+        
+        // Si il n'y a pas de doublon, on sauvegarde la modification
+        if ($request->getMethod() === "POST") {
+            $coachSecteur->setSecteur($secteur);
+            $this->entityManager->save($coachSecteur);
+
+            return $this->json([
+                'edit' => 'successfully',
+                'newSector' => $secteur->getNom()
+            ], 200);    
+        }
+    }    
 }
