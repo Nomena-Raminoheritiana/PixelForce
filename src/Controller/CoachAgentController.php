@@ -13,6 +13,7 @@ use App\Manager\EntityManager;
 use App\Manager\UserManager;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\CoachAgentRepository;
+use App\Repository\CoachSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSecteurRepository;
@@ -28,13 +29,15 @@ class CoachAgentController extends AbstractController
     protected $repoUser;
     protected $userManager;
     protected $entityManager;
+    protected $repoCoachSecteur;
 
-    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser, UserManager $userManager, EntityManager $entityManager)
+    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser, UserManager $userManager, EntityManager $entityManager, CoachSecteurRepository $repoCoachSecteur)
     {
         $this->coachAgentRepository = $coachAgentRepository;
         $this->repoUser = $repoUser;
         $this->userManager = $userManager;
         $this->entityManager = $entityManager;
+        $this->repoCoachSecteur = $repoCoachSecteur;
     }
 
     /**
@@ -61,29 +64,29 @@ class CoachAgentController extends AbstractController
     }
 
     
-
     /**
      * @Route("/coach/agent/add", name="coach_agent_add")
      */
     public function coach_agent_add(Request $request, SecteurRepository $secteurRepository, AgentSecteurRepository $tset)
     {
         $user = new User();
-        $userSecteur = new AgentSecteur();
-        $coachAgent = new CoachAgent();
-        $formUser = $this->createForm(InscriptionAgentType::class, $user);
-        $formUser->handleRequest($request);
+        $coach = $this->getUser();
 
+        $agentSecteur = new AgentSecteur();
+        $coachAgent = new CoachAgent();
+        $formUser = $this->createForm(InscriptionAgentType::class, $user)->remove('secteur');
+        $formUser->handleRequest($request);
 
         if($formUser->isSubmitted() && $formUser->isValid()) {
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
-            $userSecteur->setAgent($user);
-            $secteur = $secteurRepository->find($request->request->get('inscription_agent')['secteur']['secteur']);
-            $userSecteur->setSecteur($secteur);
+            $agentSecteur->setAgent($user);
+            $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach])[0]->getSecteur();
+            $agentSecteur->setSecteur($secteur);
             $user->setRoles([ User::ROLE_AGENT ]);
             $coachAgent->setCoach($this->getUser());
             $coachAgent->setAgent($user);
             $this->entityManager->save($user);
-            $this->entityManager->save($userSecteur);
+            $this->entityManager->save($agentSecteur);
             $this->entityManager->save($coachAgent);
 
             $this->addFlash('success', 'Ajout de l\'utilisateur Agent efféctué avec succès');
