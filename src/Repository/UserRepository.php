@@ -133,10 +133,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
             }else if($role === 'AGENT'){
                 $query = $query
-                    ->join('u.userSecteurs', 'us')
-                    ->join('us.secteur', 's')
-                    ->andwhere('s.nom LIKE :nomSecteur')
-                    ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
+                    ->join('u.agentSecteurs', 'aSec')
+                    ->join('aSec.secteur', 'tre')
+                    ->andwhere('tre.nom LIKE :nomSecteur')
+                    ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%')
+                ;
             }
         }
 

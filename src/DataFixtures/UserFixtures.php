@@ -2,9 +2,9 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\AgentSecteur;
 use App\Entity\CoachSecteur;
 use App\Entity\User;
-use App\Entity\UserSecteur;
 use App\Repository\SecteurRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -102,8 +102,8 @@ class UserFixtures extends Fixture
              ]);
             
              $rand_key = array_rand($secteurIds, 1);           
-             $this->objectManager->createObject(UserSecteur::class, [
-                 'user' => $user,
+             $this->objectManager->createObject(AgentSecteur::class, [
+                 'agent' => $user,
                  'secteur' =>  $this->secteurRepoSitory->find($secteurIds[$rand_key])
              ]);
          }

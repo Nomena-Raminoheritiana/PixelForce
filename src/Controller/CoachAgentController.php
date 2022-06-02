@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\AgentSecteur;
 use App\Entity\CoachAgent;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
@@ -10,6 +11,7 @@ use App\Form\InscriptionAgentType;
 use App\Form\UserSearchType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
+use App\Repository\AgentSecteurRepository;
 use App\Repository\CoachAgentRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
@@ -63,10 +65,10 @@ class CoachAgentController extends AbstractController
     /**
      * @Route("/coach/agent/add", name="coach_agent_add")
      */
-    public function coach_agent_add(Request $request, SecteurRepository $secteurRepository, UserSecteurRepository $tset)
+    public function coach_agent_add(Request $request, SecteurRepository $secteurRepository, AgentSecteurRepository $tset)
     {
         $user = new User();
-        $userSecteur = new UserSecteur();
+        $userSecteur = new AgentSecteur();
         $coachAgent = new CoachAgent();
         $formUser = $this->createForm(InscriptionAgentType::class, $user);
         $formUser->handleRequest($request);
@@ -74,7 +76,7 @@ class CoachAgentController extends AbstractController
 
         if($formUser->isSubmitted() && $formUser->isValid()) {
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
-            $userSecteur->setUser($user);
+            $userSecteur->setAgent($user);
             $secteur = $secteurRepository->find($request->request->get('inscription_agent')['secteur']['secteur']);
             $userSecteur->setSecteur($secteur);
             $user->setRoles([ User::ROLE_AGENT ]);

@@ -30,19 +30,25 @@ class Secteur
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity=UserSecteur::class, mappedBy="secteur")
+     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="secteur")
      */
-    private $userSecteurs;
+    private $agentSecteurs;
 
     /**
      * @ORM\OneToMany(targetEntity=CoachSecteur::class, mappedBy="secteur")
      */
     private $coachSecteurs;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="secteur")
+     */
+    private $secteurAgentSecteurs;
+
     public function __construct()
     {
-        $this->userSecteurs = new ArrayCollection();
+        $this->agentSecteurs = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
+        $this->secteurAgentSecteurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,29 +81,29 @@ class Secteur
     }
 
     /**
-     * @return Collection<int, UserSecteur>
+     * @return Collection<int, AgentSecteur>
      */
-    public function getUserSecteurs(): Collection
+    public function getAgentSecteurs(): Collection
     {
-        return $this->userSecteurs;
+        return $this->agentSecteurs;
     }
 
-    public function addUserSecteur(UserSecteur $userSecteur): self
+    public function addAgentSecteur(AgentSecteur $agentSecteur): self
     {
-        if (!$this->userSecteurs->contains($userSecteur)) {
-            $this->userSecteurs[] = $userSecteur;
-            $userSecteur->setSecteur($this);
+        if (!$this->agentSecteurs->contains($agentSecteur)) {
+            $this->agentSecteurs[] = $agentSecteur;
+            $agentSecteur->setSecteur($this);
         }
 
         return $this;
     }
 
-    public function removeUserSecteur(UserSecteur $userSecteur): self
+    public function removeAgentSecteur(AgentSecteur $agentSecteur): self
     {
-        if ($this->userSecteurs->removeElement($userSecteur)) {
+        if ($this->agentSecteurs->removeElement($agentSecteur)) {
             // set the owning side to null (unless already changed)
-            if ($userSecteur->getSecteur() === $this) {
-                $userSecteur->setSecteur(null);
+            if ($agentSecteur->getSecteur() === $this) {
+                $agentSecteur->setSecteur(null);
             }
         }
 
@@ -128,6 +134,36 @@ class Secteur
             // set the owning side to null (unless already changed)
             if ($coachSecteur->getSecteur() === $this) {
                 $coachSecteur->setSecteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AgentSecteur>
+     */
+    public function getSecteurAgentSecteurs(): Collection
+    {
+        return $this->secteurAgentSecteurs;
+    }
+
+    public function addSecteurAgentSecteur(AgentSecteur $secteurAgentSecteur): self
+    {
+        if (!$this->secteurAgentSecteurs->contains($secteurAgentSecteur)) {
+            $this->secteurAgentSecteurs[] = $secteurAgentSecteur;
+            $secteurAgentSecteur->setSecteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSecteurAgentSecteur(AgentSecteur $secteurAgentSecteur): self
+    {
+        if ($this->secteurAgentSecteurs->removeElement($secteurAgentSecteur)) {
+            // set the owning side to null (unless already changed)
+            if ($secteurAgentSecteur->getSecteur() === $this) {
+                $secteurAgentSecteur->setSecteur(null);
             }
         }
 

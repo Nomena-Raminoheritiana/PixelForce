@@ -172,10 +172,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="client")
      */
     private $contact_client;
-    /*
-     * @ORM\OneToMany(targetEntity=UserSecteur::class, mappedBy="user", cascade={"persist"})
-     */
-    private $userSecteurs;
+
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -197,6 +194,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $coachSecteurs;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent")
+     */
+    private $agentSecteurs;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -208,10 +210,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->canalMessages = new ArrayCollection();
         $this->created_at = new \DateTime();
         $this->contact = new ArrayCollection();
-        $this->userSecteurs = new ArrayCollection();
         $this->formations = new ArrayCollection();
         $this->formationAgents = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
+        $this->agentSecteurs = new ArrayCollection();
 
     }
 
@@ -775,39 +777,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    /**
-     * @return Collection<int, UserSecteur>
-     */
-    public function getUserSecteurs(): Collection
+
+    public function removeAllAgentSecteur()
     {
-        return $this->userSecteurs;
-    }
-
-    public function addUserSecteur(UserSecteur $userSecteur): self
-    {
-        if (!$this->userSecteurs->contains($userSecteur)) {
-            $this->userSecteurs[] = $userSecteur;
-            $userSecteur->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserSecteur(UserSecteur $userSecteur): self
-    {
-        if ($this->userSecteurs->removeElement($userSecteur)) {
-            // set the owning side to null (unless already changed)
-            if ($userSecteur->getUser() === $this) {
-                $userSecteur->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function removeAllUserSecteur()
-    {
-        $this->userSecteurs->clear();
+        $this->agentSecteurs->clear();
     }
 
     public function getCodePostal(): ?string
@@ -891,7 +864,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function allSecteursOfAgent(array $secteurs)
     {
         $mySecteurs = [];
-        /** @var UserSecteur $secteur */
+        /** @var AgentSecteur $secteur */
         foreach ($secteurs as $secteur) {
            $mySecteurs[] = $secteur->getSecteur()->getNom();
         }
@@ -924,6 +897,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($coachSecteur->getCoach() === $this) {
                 $coachSecteur->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AgentSecteur>
+     */
+    public function getAgentSecteurs(): Collection
+    {
+        return $this->agentSecteurs;
+    }
+
+    public function addAgentSecteur(AgentSecteur $agentSecteur): self
+    {
+        if (!$this->agentSecteurs->contains($agentSecteur)) {
+            $this->agentSecteurs[] = $agentSecteur;
+            $agentSecteur->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAgentSecteur(AgentSecteur $agentSecteur): self
+    {
+        if ($this->agentSecteurs->removeElement($agentSecteur)) {
+            // set the owning side to null (unless already changed)
+            if ($agentSecteur->getAgent() === $this) {
+                $agentSecteur->setAgent(null);
             }
         }
 

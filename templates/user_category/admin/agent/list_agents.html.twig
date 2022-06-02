@@ -77,7 +77,7 @@
                             <td>{{ agent.createdAt|date('d/m/Y') }}</td>
                             <td> 
                                 {# On récupère les secteurs reliés par l'agent  #}
-                                {% set secteurs = repoUserSecteur.findBy({'user' : agent}) %}
+                                {% set secteurs = repoAgentSecteur.findBy({'agent' : agent}) %}
                                 {{ agent.allSecteursOfAgent(secteurs)|default('-') }}                                
                             </td>
                             <td >

@@ -22,13 +22,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class CoachAgentRepository extends ServiceEntityRepository
 {
     protected $repoCoachSecteur;
-    protected $repoUserSecteur;
+    protected $repoAgentSecteur;
 
-    public function __construct(ManagerRegistry $registry, CoachSecteurRepository $repoCoachSecteur, UserSecteurRepository $repoUserSecteur)
+    public function __construct(ManagerRegistry $registry, CoachSecteurRepository $repoCoachSecteur, AgentSecteurRepository $repoAgentSecteur)
     {
         parent::__construct($registry, CoachAgent::class);
         $this->repoCoachSecteur = $repoCoachSecteur;
-        $this->repoUserSecteur = $repoUserSecteur;
+        $this->repoAgentSecteur = $repoAgentSecteur;
     }
 
 
@@ -109,9 +109,9 @@ class CoachAgentRepository extends ServiceEntityRepository
                 $this->repoCoachSecteur->remove($coachSecteur);
             }
         }else if($user->getRoles()[0] === User::ROLE_AGENT) {
-            $agentSecteurs = $this->repoUserSecteur->findBy(['user' => $user]);
+            $agentSecteurs = $this->repoAgentSecteur->findBy(['user' => $user]);
             foreach ($agentSecteurs as $agentSecteur) {
-                $this->repoUserSecteur->remove($agentSecteur);
+                $this->repoAgentSecteur->remove($agentSecteur);
             }
         }
 
@@ -132,7 +132,7 @@ class CoachAgentRepository extends ServiceEntityRepository
     public function findAgentByCoach(UserSearch $search, $coach)
     {
         $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach])[0]->getSecteur();
-        $agentSecteurs = $this->repoUserSecteur->findBy(['secteur' => $secteur]);
+        $agentSecteurs = $this->repoAgentSecteur->findBy(['secteur' => $secteur]);
         $results = [];
         
         $query = $this->createQueryBuilder('ca');
@@ -166,7 +166,7 @@ class CoachAgentRepository extends ServiceEntityRepository
             $results[] = $coachAgent->getAgent();
         }
         foreach ($agentSecteurs as $agentSecteur) {
-            $results[] = $agentSecteur->getUser();
+            $results[] = $agentSecteur->getAgent();
         }        
         $results = array_unique($results, SORT_REGULAR);
         return $results;

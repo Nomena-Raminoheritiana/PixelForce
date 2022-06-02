@@ -24,10 +24,10 @@
 					</div>
 					<div class="col-12 col-md-2">
 						<h1 class="text-center fw-bold">Secteur(s)</h1>
-						{% for myUserSecteur in myUserSecteurs %}
+						{% for myAgentSecteur in myAgentSecteurs %}
 							<div class="row">
-								<a href="#" data-secteur-value="{{ myUserSecteur.secteur.nom }}" data-userSecteur-id="{{ myUserSecteur.id }}" data-bs-toggle="modal" data-bs-target="#modal-edit-agent-secteur" class="text-decoration-none js-btn-edit-secteur">
-									<i class="fa-solid fa-pen-to-square"></i> <span class="secteur-name">{{myUserSecteur.secteur.nom}} </span> 
+								<a href="#" data-secteur-value="{{ myAgentSecteur.secteur.nom }}" data-agentSecteur-id="{{ myAgentSecteur.id }}" data-bs-toggle="modal" data-bs-target="#modal-edit-agent-secteur" class="text-decoration-none js-btn-edit-secteur">
+									<i class="fa-solid fa-pen-to-square"></i> <span class="secteur-name">{{myAgentSecteur.secteur.nom}} </span> 
 								</a> 							
 							</div>
 						{% endfor %}
@@ -80,7 +80,7 @@
 			$('.js-btn-edit-secteur').on('click', function () {
 				let that = $(this);
 				let secteurVal = that.attr("data-secteur-value");
-				let userSecteurId = that.attr("data-userSecteur-id");
+				let agentSecteurId = that.attr("data-agentSecteur-id");
 				let userId = "{{ agent.id }}";
 				
 				// Mettre à jour le nom du secteur dans le modal
@@ -89,17 +89,17 @@
 				// Submit action
 				$('#btn-saveSector').on('click', function(){
 					let newSecteurId = $('select#user_secteur_secteur').val();
-					let urlEditUserSecteur = `/admin/agent/secteur/${userSecteurId}/edit`
+					let urlEditAgentSecteur = `/admin/agent/secteur/${agentSecteurId}/edit`
 
 					let data = {
 						'secteurVal' : secteurVal,
 						'newSecteurId' : newSecteurId,
-						'userSecteurId' : userSecteurId,
+						'agentSecteurId' : agentSecteurId,
 						'userId' : userId
 					};
 
 					$.ajax({	
-						url: urlEditUserSecteur,
+						url: urlEditAgentSecteur,
 						data: data,
 						type: "POST",
 						beforeSend : function(){

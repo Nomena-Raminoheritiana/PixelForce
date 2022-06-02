@@ -2,30 +2,30 @@
 
 namespace App\Repository;
 
-use App\Entity\UserSecteur;
+use App\Entity\AgentSecteur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method UserSecteur|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserSecteur|null findOneBy(array $criteria, array $orderBy = null)
- * @method UserSecteur[]    findAll()
- * @method UserSecteur[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AgentSecteur|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AgentSecteur|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AgentSecteur[]    findAll()
+ * @method AgentSecteur[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserSecteurRepository extends ServiceEntityRepository
+class AgentSecteurRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, UserSecteur::class);
+        parent::__construct($registry, AgentSecteur::class);
     }
 
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(UserSecteur $entity, bool $flush = true): void
+    public function add(AgentSecteur $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
         if ($flush) {
@@ -37,7 +37,7 @@ class UserSecteurRepository extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function remove(UserSecteur $entity, bool $flush = true): void
+    public function remove(AgentSecteur $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
@@ -46,15 +46,15 @@ class UserSecteurRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return UserSecteur[] Returns an array of UserSecteur objects
+    //  * @return AgentSecteur[] Returns an array of AgentSecteur objects
     //  */
     /*
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
+            ->orderBy('a.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -63,10 +63,10 @@ class UserSecteurRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?UserSecteur
+    public function findOneBySomeField($value): ?AgentSecteur
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
