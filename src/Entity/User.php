@@ -172,7 +172,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="client")
      */
     private $contact_client;
-    /*
+    /**
      * @ORM\OneToMany(targetEntity=UserSecteur::class, mappedBy="user", cascade={"persist"})
      */
     private $userSecteurs;

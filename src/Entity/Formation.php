@@ -42,7 +42,7 @@ class Formation
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $lien_video;
+    private $video_id;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -138,14 +138,14 @@ class Formation
         return $this;
     }
 
-    public function getLienVideo(): ?string
+    public function getVideoId(): ?string
     {
-        return $this->lien_video;
+        return $this->video_id;
     }
 
-    public function setLienVideo(?string $lien_video): self
+    public function setVideoId(?string $video_id): self
     {
-        $this->lien_video = $lien_video;
+        $this->video_id = $video_id;
 
         return $this;
     }
