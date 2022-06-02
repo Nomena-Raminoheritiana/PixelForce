@@ -76,9 +76,10 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_view(User $agent)
     {
-
+        $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
         return $this->render('user_category/admin/agent/view_agent.html.twig', [
-            'agent' => $agent
+            'agent' => $agent,
+            'agentSecteurs' => $agentSecteurs
         ]);
     }
 
@@ -96,7 +97,7 @@ class AdminAgentController extends AbstractController
         $formSecteur = $this->createForm(AgentSecteurType::class);
         
         $secteurs = $secteurRepository->findAll();
-        $myAgentSecteurs = $this->repoAgentSecteur->findBy(['user' => $agent]);
+        $myAgentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
 
         $formUser->handleRequest($request);
         if ($formUser->isSubmitted() && $formUser->isValid()) {
@@ -160,7 +161,7 @@ class AdminAgentController extends AbstractController
         
         // On gère le cas, où il y a une duplication du secteur
         $agent = $this->repoUser->find($data["userId"]);
-        $myAllAgentSecteurs = $this->repoAgentSecteur->findBy(['user' => $agent]);
+        $myAllAgentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
         $isNewSectorInArray =  $this->agentSecteurService->isNewSectorInArray($secteur, $myAllAgentSecteurs);
         if ($isNewSectorInArray) {
             return $this->json([
@@ -180,4 +181,39 @@ class AdminAgentController extends AbstractController
             ], 200);    
         }
     }    
+
+    /**
+     * Permet de valider le secteur en attente de l'agent
+     * 
+     * @Route("/admin/agent/secteur/{agentSecteur}/validate", name="admin_agent_secteur_validate")
+     */
+    public function admin_agent_secteur_validate(AgentSecteur $agentSecteur, Request $request): Response
+    {
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setStatut(1);
+            $agentSecteur->setDateValidation(new \DateTime());
+            $this->entityManager->save($agentSecteur);
+            return $this->json([
+                'validation' => 'successfully'
+            ], 200); 
+        }
+        return $this->render('$0.html.twig', []);
+    }
+
+    /**
+     * Permet de bloquer un secteur validé de l'agent
+     * 
+     * @Route("/admin/agent/secteur/{agentSecteur}/invalidate", name="admin_agent_secteur_invalidate")
+     */
+    public function admin_agent_secteur_invalidate(AgentSecteur $agentSecteur, Request $request): Response
+    {
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setStatut(0);
+            $this->entityManager->save($agentSecteur);
+            return $this->json([
+                'invalidation' => 'successfully'
+            ], 200); 
+        }
+        return $this->render('$0.html.twig', []);
+    }
 }

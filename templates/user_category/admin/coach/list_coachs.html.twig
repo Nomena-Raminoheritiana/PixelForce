@@ -79,9 +79,9 @@
                             <td>{{ coach.email }}</td>
                             <td>{{ coach.createdAt|date('d/m/Y') }}</td>
                             <td>
-                                {% for coachSecteur in coach.coachSecteurs %}
-                                    {{ coachSecteur.secteur.nom }}
-                                {% endfor %}
+                                {# On récupère les secteurs reliés par l'agent  #}
+                                {% set secteurs = repoCoachSecteur.findBy({'coach' : coach}) %}
+                                {{ coach.allSecteursOfUser(secteurs)|default('-') }}     
                             </td>
                             <td >
                                 <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success">

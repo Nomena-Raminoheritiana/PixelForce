@@ -78,7 +78,7 @@
                             <td> 
                                 {# On récupère les secteurs reliés par l'agent  #}
                                 {% set secteurs = repoAgentSecteur.findBy({'agent' : agent}) %}
-                                {{ agent.allSecteursOfAgent(secteurs)|default('-') }}                                
+                                {{ agent.allSecteursOfUser(secteurs)|default('-') }}                                
                             </td>
                             <td >
                                 <a href="{{ path('admin_agent_edit', {'id': agent.id}) }}" class="btn btn-success">

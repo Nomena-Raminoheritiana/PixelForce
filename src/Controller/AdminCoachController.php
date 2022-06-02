@@ -7,6 +7,8 @@ use App\Entity\CoachSecteur;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\Secteur;
 use App\Entity\User;
+use App\Form\AgentSecteurType;
+use App\Form\CoachSecteurType;
 use App\Form\ResetPasswordType;
 use App\Form\SecteurType;
 use App\Form\UserSearchType;
@@ -51,6 +53,7 @@ class AdminCoachController extends AbstractController
      */
     public function admin_coach_list(Request $request, PaginatorInterface $paginator)
     {
+        $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search);
         $searchForm->handleRequest($request);
@@ -63,7 +66,8 @@ class AdminCoachController extends AbstractController
 
         return $this->render('user_category/admin/coach/list_coachs.html.twig', [
             'coachs' => $coachs,
-            'searchForm' => $searchForm->createView()
+            'searchForm' => $searchForm->createView(),
+            'repoCoachSecteur' => $repoCoachSecteur
         ]);
     }
 
@@ -121,7 +125,7 @@ class AdminCoachController extends AbstractController
             $coachSecteur = $coachSecteur[0];
         }
        
-        $formSecteur = $this->createForm(UserSecteurType::class);
+        $formSecteur = $this->createForm(CoachSecteurType::class);
 
         $formUser->handleRequest($request);
         if ($formUser->isSubmitted() && $formUser->isValid()) {

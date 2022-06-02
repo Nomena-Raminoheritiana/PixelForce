@@ -861,7 +861,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @param array $secteurs
      * @return string
      */
-    public function allSecteursOfAgent(array $secteurs)
+    public function allSecteursOfUser(array $secteurs)
     {
         $mySecteurs = [];
         /** @var AgentSecteur $secteur */
