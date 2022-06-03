@@ -48,7 +48,7 @@
             <div class="modal-content">
 				{{ form_start(formSecteur) }}
                 <div class="modal-header">
-                    <h5 class="modal-title text-success"><i class="fa-solid fa-pen-to-square"></i> Changer son secteur</h5>
+                    <h5 class="modal-title text-success"><i class="fa-solid fa-pen-to-square"></i> Changement secteur</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -88,7 +88,7 @@
 				
 				// Submit action
 				$('#btn-saveSector').on('click', function(){
-					let newSecteurId = $('select#agent_secteur_secteur').val();
+					let newSecteurId = $("#agent_secteur_secteur input[type='radio']:checked").val();
 					let urlEditAgentSecteur = `/admin/agent/secteur/${agentSecteurId}/edit`
 
 					let data = {

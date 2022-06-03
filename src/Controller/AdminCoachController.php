@@ -20,6 +20,7 @@ use App\Repository\CoachAgentRepository;
 use App\Repository\CoachSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
+use App\Services\AgentSecteurService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,10 +75,15 @@ class AdminCoachController extends AbstractController
     /**
      * @Route("/admin/coach/{id}//view", name="admin_coach_view")
      */
-    public function admin_coach_view(User $coach)
+    public function admin_coach_view(User $coach, AgentSecteurService $agentSecteurService)
     {
+        $coachtSecteurs = $this->repoCoachSecteur->findBy(['coach' => $coach]);
+        $secteurs = $agentSecteurService->getSecteurs($coachtSecteurs);
+
         return $this->render('user_category/admin/coach/view_coach.html.twig', [
-            'coach' => $coach
+            'coach' => $coach,
+            'secteurs' => $secteurs,
+            'coachtSecteurs' => $coachtSecteurs
         ]);
     }
 

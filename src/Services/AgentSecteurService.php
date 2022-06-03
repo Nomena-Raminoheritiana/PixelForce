@@ -22,4 +22,21 @@ class AgentSecteurService
         }
         return false;
     }
+
+    /**
+     * Permet de récupérer tous les secteurs d'un agent
+     *
+     * @param array $agentSecteurs
+     * @return array
+     */
+    public function getSecteurs(array $agentSecteurs)
+    {
+        $secteurs = [];
+        /** @var AgentSecteur @agentSecteur */
+        foreach ($agentSecteurs as $agentSecteur) {
+            $secteurs[] = $agentSecteur->getSecteur();
+        }
+
+        return $secteurs;
+    }
 }
