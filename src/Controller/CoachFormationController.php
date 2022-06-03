@@ -77,6 +77,22 @@ class CoachFormationController extends AbstractController
    }
 
     /**
+     * @Route("/coach/formation/fiche/{id}", name="coach_formation_fiche", options={"expose"=true})
+     */
+   public function coach_formation_fiche(Formation $formation, Request $request)
+   {
+       $form = $this->createForm(FormationType::class, $formation);
+       $form->handleRequest($request);
+       if($form->isSubmitted() && $form->isValid()) {
+           $this->addFlash('success', 'Formation ajouté avec succès');
+       }
+
+       return $this->render('formation/video/coach_formation_add.html.twig', [
+           'form' => $form->createView()
+       ]);
+   }
+
+    /**
      * @Route("/coach/formation/add", name="coach_formation_add", options={"expose"=true})
      */
    public function coach_formation_add(Request $request)

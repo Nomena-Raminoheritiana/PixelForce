@@ -60,7 +60,7 @@
                             {{ formation.description }}
                         </div>
                         <div class="col-12 col-md-2 text-end">
-                            <button class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i> Fiche formation</button>
+                            <a href="{{ path('coach_formation_fiche', {id:formation.id}) }}" class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i> Fiche formation</a>
                         </div>
 
                     </div>
