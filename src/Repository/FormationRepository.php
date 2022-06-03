@@ -73,4 +73,34 @@ class FormationRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function searchForCoach(?array $criteres)
+    {
+
+        $queryBuilder = ($this->createQueryBuilder('f'));
+        if(!empty($criteres['titre'])) {
+            $queryBuilder->andWhere('f.titre LIKE :titre')
+                ->setParameter('titre', '%'.$criteres['titre'].'%');
+        }
+        if(!empty($criteres['description'])) {
+            $queryBuilder->andWhere('f.description LIKE :description')
+                ->setParameter('description', '%'.$criteres['description'].'%');
+        }
+        if(!empty($criteres['etat'])) {
+            switch ($criteres['etat']) {
+                case 'disponible' :   $queryBuilder->andWhere('f.debloqueAgent = :etat')
+                    ->setParameter('etat', true );
+                    break;
+                case 'brouillon' : $queryBuilder->andWhere('f.brouillon = :etat')
+                    ->setParameter('etat', true );
+                break;
+            }
+
+        }
+        if(!empty($criteres['trie'])) {
+            $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
+        }
+
+      return $queryBuilder->getQuery();
+
+    }
 }

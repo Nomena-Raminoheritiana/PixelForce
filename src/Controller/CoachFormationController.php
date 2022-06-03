@@ -8,8 +8,10 @@ use App\Entity\Formation;
 use App\Entity\Media;
 use App\Form\FormationType;
 use App\Manager\EntityManager;
+use App\Repository\FormationRepository;
 use App\Services\DirectoryManagement;
 use App\Services\FileUploader;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,22 +31,49 @@ class CoachFormationController extends AbstractController
      * @var EntityManager
      */
     private $entityManager;
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
+    /**
+     * @var FormationRepository
+     */
+    private $formationRepository;
 
-    public function __construct(FileUploader $fileUploader, DirectoryManagement $directoryManagement, EntityManager $entityManager)
+    public function __construct(FormationRepository $formationRepository,
+                                FileUploader $fileUploader,
+                                DirectoryManagement $directoryManagement,
+                                EntityManager $entityManager,
+                                PaginatorInterface $paginator)
    {
        $this->fileUploader = $fileUploader;
        $this->directoryManagement = $directoryManagement;
        $this->entityManager = $entityManager;
+       $this->paginator = $paginator;
+       $this->formationRepository = $formationRepository;
    }
 
     /**
      * @Route("/coach/formation/list", name="coach_formation_list", options={"expose"=true})
      * @IsGranted("ROLE_COACH")
      */
-   public function coach_formation_list()
+   public function coach_formation_list(Request $request)
    {
+       if($criteres = $request->query->get('q')) {
+           $formations = $this->formationRepository->searchForCoach($criteres);
+       } else {
+           $formations = $this->formationRepository->createQueryBuilder('f')->getQuery();
+       }
+       $formations = $this->paginator->paginate(
+           $formations,
+           $request->query->getInt('page', 1),
+           5
+       );
 
-       return $this->render('formation/video/coach_formation_list.html.twig');
+       return $this->render('formation/video/coach_formation_list.html.twig', [
+           'formations' => $formations,
+           'criteres' => $criteres
+       ]);
    }
 
     /**

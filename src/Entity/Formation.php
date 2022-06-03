@@ -47,16 +47,6 @@ class Formation
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $estDisponible;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $estDebloquee;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
     private $debloqueAgent;
 
     /**
@@ -146,30 +136,6 @@ class Formation
     public function setVideoId(?string $video_id): self
     {
         $this->video_id = $video_id;
-
-        return $this;
-    }
-
-    public function getEstDisponible(): ?bool
-    {
-        return $this->estDisponible;
-    }
-
-    public function setEstDisponible(?bool $estDisponible): self
-    {
-        $this->estDisponible = $estDisponible;
-
-        return $this;
-    }
-
-    public function getEstDebloquee(): ?bool
-    {
-        return $this->estDebloquee;
-    }
-
-    public function setEstDebloquee(?bool $estDebloquee): self
-    {
-        $this->estDebloquee = $estDebloquee;
 
         return $this;
     }
