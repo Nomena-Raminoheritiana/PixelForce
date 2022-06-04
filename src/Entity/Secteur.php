@@ -39,10 +39,7 @@ class Secteur
      */
     private $coachSecteurs;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="secteur")
-     */
-    private $secteurAgentSecteurs;
+
     /**
      * @var array
      */
@@ -57,7 +54,6 @@ class Secteur
     {
         $this->agentSecteurs = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
-        $this->secteurAgentSecteurs = new ArrayCollection();
         $this->formations = new ArrayCollection();
     }
 
@@ -150,35 +146,6 @@ class Secteur
         return $this;
     }
 
-    /**
-     * @return Collection<int, AgentSecteur>
-     */
-    public function getSecteurAgentSecteurs(): Collection
-    {
-        return $this->secteurAgentSecteurs;
-    }
-
-    public function addSecteurAgentSecteur(AgentSecteur $secteurAgentSecteur): self
-    {
-        if (!$this->secteurAgentSecteurs->contains($secteurAgentSecteur)) {
-            $this->secteurAgentSecteurs[] = $secteurAgentSecteur;
-            $secteurAgentSecteur->setSecteur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSecteurAgentSecteur(AgentSecteur $secteurAgentSecteur): self
-    {
-        if ($this->secteurAgentSecteurs->removeElement($secteurAgentSecteur)) {
-            // set the owning side to null (unless already changed)
-            if ($secteurAgentSecteur->getSecteur() === $this) {
-                $secteurAgentSecteur->setSecteur(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getAgents()
     {

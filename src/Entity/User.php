@@ -194,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $coachSecteurs;
 
     /**
-     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent")
+     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent", fetch="EAGER")
      */
     private $agentSecteurs;
 
@@ -921,12 +921,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    public function getSecteursIdsByAgent()
+    {
+        $agentSecteurs = $this->getAgentSecteurs();
+        $secteurs_ids = [];
+        foreach($agentSecteurs->toArray() as $agentSecteur) {
+            $secteurs_ids[] = $agentSecteur->getSecteur()->getId();
+        }
+        return $secteurs_ids;
+    }
+
     /**
      * @return Collection<int, AgentSecteur>
      */
     public function getAgentSecteurs(): Collection
     {
-        return $this->agentSecteurs;
+        if(in_array(self::ROLE_AGENT, $this->roles)) {
+            return $this->agentSecteurs;
+        }
+        return $this->agentSecteurs->clear();
     }
 
     public function addAgentSecteur(AgentSecteur $agentSecteur): self

@@ -88,10 +88,10 @@ class CoachFormationController extends AbstractController
      */
    public function coach_formation_list(Request $request)
    {
+       $secteur = $this->getUser()->getSecteurByCoach();
        if($criteres = $request->query->get('q')) {
-           $formations = $this->formationRepository->searchForCoach($criteres);
+           $formations = $this->formationRepository->searchForCoach($criteres, $secteur);
        } else {
-           $secteur = $this->getUser()->getSecteurByCoach();
            $formations = $secteur ? $this->formationRepository->findBySecteur($secteur) : [];
        }
        $formations = $this->paginator->paginate(
@@ -100,10 +100,12 @@ class CoachFormationController extends AbstractController
            5
        );
 
+       $agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
+       $agent = $agent && in_array($secteur->getId(), $agent->getSecteursIdsByAgent()) ? $agent : null;
        return $this->render('formation/video/coach_formation_list.html.twig', [
            'formations' => $formations,
            'criteres' => $criteres,
-           'agent' => $this->userRepository->findOneBy(['id' => $request->query->get('agent')])
+           'agent' => $agent
        ]);
    }
 

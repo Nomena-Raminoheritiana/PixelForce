@@ -83,10 +83,11 @@ class FormationRepository extends ServiceEntityRepository
                 ->getQuery();
     }
 
-    public function searchForCoach(?array $criteres)
+    public function searchForCoach(?array $criteres, Secteur $secteur)
     {
 
-        $queryBuilder = ($this->createQueryBuilder('f'));
+        $queryBuilder = ($this->createQueryBuilder('f'))->where('f.secteur=:secteur')
+        ->setParameter('secteur',$secteur->getId());
         if(!empty($criteres['titre'])) {
             $queryBuilder->andWhere('f.titre LIKE :titre')
                 ->setParameter('titre', '%'.$criteres['titre'].'%');

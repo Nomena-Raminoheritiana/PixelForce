@@ -18,12 +18,12 @@ class AgentSecteur
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="agentSecteurs")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="agentSecteurs",fetch="EAGER")
      */
     private $agent;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="secteurAgentSecteurs")
+     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="agentSecteurs",fetch="EAGER")
      */
     private $secteur;
 
