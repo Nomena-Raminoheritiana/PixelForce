@@ -114,4 +114,45 @@ class FormationRepository extends ServiceEntityRepository
       return $queryBuilder->getQuery();
 
     }
+
+    public function searchForAgent(?int $criteres, $secteur)
+    {
+        $queryBuilder = ($this->createQueryBuilder('f'))->where('f.secteur=:secteur')
+            ->setParameter('secteur',$secteur->getId())
+            ->andWhere('f.brouillon=:brouillon')
+            ->setParameter('brouillon', false);
+        if(!empty($criteres['titre'])) {
+            $queryBuilder->andWhere('f.titre LIKE :titre')
+                ->setParameter('titre', '%'.$criteres['titre'].'%');
+        }
+        if(!empty($criteres['description'])) {
+            $queryBuilder->andWhere('f.description LIKE :description')
+                ->setParameter('description', '%'.$criteres['description'].'%');
+        }
+        if(!empty($criteres['etat'])) {
+            switch ($criteres['etat']) {
+                case 'bloquee' :
+                    $queryBuilder->andWhere('f.debloqueAgent = :etat')
+                        ->setParameter('etat', false ); break;
+                case 'disponible' :   $queryBuilder->andWhere('f.debloqueAgent = :etat')
+                    ->setParameter('etat', true );
+                    break;
+            }
+
+        }
+        if(!empty($criteres['trie'])) {
+            $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
+        }
+
+        return $queryBuilder->getQuery();
+    }
+
+    public function AgentfindBySecteur($secteur)
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.secteur=:secteur')
+            ->andWhere('f.brouillon=false')
+            ->setParameter('secteur',$secteur->getId())
+            ->getQuery();
+    }
 }
