@@ -55,4 +55,9 @@ class FormationService
         }
         $this->entityManager->flush();
     }
+
+    public function deleteMedia()
+    {
+
+    }
 }

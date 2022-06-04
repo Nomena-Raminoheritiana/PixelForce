@@ -23,62 +23,8 @@ $(document).ready(function () {
                     progressionBar(pourcentage);
                 },
                 complete: async function(videoId, url, prettyData) {
-                    let documentsData = [];
-                    let audiosData = [];
-                    // préparation du formulaire, fichiers Documents et Audios
-                    let fileDocuments = new FormData();
-                    let fileAudios = new FormData();
-                    let formData = new FormData($('form[name="formation"]')[0])
-                    $('#formation-document').find('input[type="file"]').each(function() {
-                        fileDocuments.append('documents[]', this.files[0]);
-                        const document = {
-                            name : this.files[0].name,
-                            mimeType: this.files[0].type,
-                            type: 'document'
-                        };
-                        documentsData.push(document);
-                    });
-                    $('#formation-audio').find('input[type="file"]').each(function() {
-                        fileAudios.append('audios[]', this.files[0]);
-                        const audio = {
-                            name : this.files[0].name,
-                            mimeType: this.files[0].type,
-                            type:'audio'
-                        };
-                        audiosData.push(audio);
-                    });
-                    progressionContainer.replaceWith('<img src="'+circleImage3+'" />');
-                    progressionLabel.html('<strong>Téléchargement des documents en cours ...</strong>');
-                    // envoie des fichiers Documents
-                    const responseDocuments = (await axios.post(Routing.generate('coach_formation_uploadDocument'), fileDocuments, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    })).data;
-                    if(!responseDocuments.error) {
-                        responseDocuments.files.forEach(function(e, i) {
-                            documentsData[i].slug = e;
-                        });
-                    }
-                    progressionLabel.html('<strong>Téléchargement des audios en cours ...</strong>')
-                    // envoie des fichiers audios
-                    const responseAudios = (await axios.post(Routing.generate('coach_formation_uploadAudio'), fileAudios, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    })).data;
-                    if(!responseAudios.error) {
-                        responseAudios.files.forEach(function(e, i) {
-                            audiosData[i].slug = e;
-                        });
-                    }
-                    progressionLabel.html('<strong>Finalisation ...</strong>');
-                    // récuperation de tout les médias importé, qu'importe que ce soit un document ou un fichier audio
-                    const mediasData = documentsData.concat(audiosData);
-                    // console.log(mediasData);
-                    formData.append('mediasData', JSON.stringify(mediasData));
-                    formData.append('video_id', videoId);
-                    (await axios.post(Routing.generate('coach_formation_add'),formData)).data;
+                    await saveData(videoId);
+                    progressionContainer.remove()
                     progressionLabel.html(
                         '<div class="text-center">' +
                         '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
@@ -86,8 +32,11 @@ $(document).ready(function () {
                         '</div>');
                     setTimeout(function() {
                         progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
-                        location.reload();
+                        setTimeout(function() {
+                            location.reload();
+                        },1000)
                     },1000)
+
                 }
             })
         });
@@ -184,7 +133,115 @@ $(document).ready(function () {
             $('#audio-upload-name').append('<span class="badge bg-light-info text-dark"><i class="fa-solid fa-music me-2"></i> '+audioLocalFile.name+'</span>').append('<br>')
         }
     })
+
+    /////// DEBUT FICHE FORMATION ///////
+    /**
+     * Début fiche formation
+     */
+    // supprimer un média
+    $(this).on('click', '.btn-media-delete', function(e) {
+        e.preventDefault();
+        let mediaDelete = $('<input />', {
+            type: 'hidden',
+            class: 'hidden_media_deleted',
+            name: 'deleted_media[]',
+            value: $(this).attr('data-media-id')
+        });
+        $('#formation-fiche').append(mediaDelete);
+        $(this).closest('.media').first().remove();
+    })
+    // enregistrement des données du formulaire
+    // etape 1 : upload video vers serveur vimeo
+    // etap 2 : submit formulaire (symfony : upload + flush Data)
+    $(this).on('click','#edit-formation',async function(e) {
+        e.preventDefault();
+        validationFormulaire(async function() {
+             progressionBar(0)
+            let fileDeleted = new FormData();
+             $('.hidden_media_deleted').each(function() {
+                fileDeleted.append('deleted_media[]', $(this).val())
+             });
+            await saveData();
+            (await axios.post(Routing.generate('coach_formation_deleteMedia'),fileDeleted))
+             progressionContainer.remove()
+            progressionLabel.html(
+                '<div class="text-center">' +
+                '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
+                '   <strong>Formation modifié avec succès</strong> ' +
+                '</div>');
+            setTimeout(function() {
+                progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
+                setTimeout(function() {
+                    location.reload();
+                },1000)
+            },1000)
+        })
+    })
+
+
 });
+
+async function saveData(videoId = '')
+{
+    let documentsData = [];
+    let audiosData = [];
+    // préparation du formulaire, fichiers Documents et Audios
+    let fileDocuments = new FormData();
+    let fileAudios = new FormData();
+    let formData = new FormData($('form[name="formation"]')[0])
+    $('#formation-document').find('input[type="file"]').each(function() {
+        fileDocuments.append('documents[]', this.files[0]);
+        const document = {
+            name : this.files[0].name,
+            mimeType: this.files[0].type,
+            type: 'document'
+        };
+        documentsData.push(document);
+    });
+    $('#formation-audio').find('input[type="file"]').each(function() {
+        fileAudios.append('audios[]', this.files[0]);
+        const audio = {
+            name : this.files[0].name,
+            mimeType: this.files[0].type,
+            type:'audio'
+        };
+        audiosData.push(audio);
+    });
+    const img_loader = $('<img src="'+circleImage3+'" />');
+    progressionContainer.replaceWith(img_loader);
+    progressionContainer = $(img_loader)
+    progressionLabel.html('<strong>Téléchargement des documents en cours ...</strong>');
+    // envoie des fichiers Documents
+    const responseDocuments = (await axios.post(Routing.generate('coach_formation_uploadDocument'), fileDocuments, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })).data;
+    if(!responseDocuments.error) {
+        responseDocuments.files.forEach(function(e, i) {
+            documentsData[i].slug = e;
+        });
+    }
+    progressionLabel.html('<strong>Téléchargement des audios en cours ...</strong>')
+    // envoie des fichiers audios
+    const responseAudios = (await axios.post(Routing.generate('coach_formation_uploadAudio'), fileAudios, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })).data;
+    if(!responseAudios.error) {
+        responseAudios.files.forEach(function(e, i) {
+            audiosData[i].slug = e;
+        });
+    }
+    progressionLabel.html('<strong>Finalisation ...</strong>');
+    // récuperation de tout les médias importé, qu'importe que ce soit un document ou un fichier audio
+    const mediasData = documentsData.concat(audiosData);
+    // console.log(mediasData);
+    formData.append('mediasData', JSON.stringify(mediasData));
+    formData.append('video_id', videoId);
+    (await axios.post($('#formation, #formation-fiche').attr('action'),formData)).data;
+}
 
 let calc,progressionContainer, calcChild,progression,progressionLabel = null;
 function progressionBar(pourcentage)
@@ -229,7 +286,7 @@ function progressionBar(pourcentage)
 
 function validationFormulaire(callback)
 {
-    $('#formation').validate({
+    $('#formation, #formation-fiche').validate({
         // in 'rules' user have to specify all the constraints for respective fields
         rules : {
             'formation[titre]' : "required",
@@ -251,12 +308,13 @@ function validationFormulaire(callback)
                     '  La vidéo est obligatoire\n' +
                     '</div>';
                 $('#formation').prepend(alert);
+
             } else {
                 callback();
             }
         }
     });
-    $('#formation').submit();
+    $('#formation, #formation-fiche').submit();
 }
 (function(i, s, o, g, r, a, m) {
     i['GoogleAnalyticsObject'] = r;

@@ -9,12 +9,14 @@ use App\Entity\Media;
 use App\Form\FormationType;
 use App\Manager\EntityManager;
 use App\Repository\FormationRepository;
+use App\Repository\MediaRepository;
 use App\Services\DirectoryManagement;
 use App\Services\FileUploader;
 use App\Services\FormationService;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -44,8 +46,13 @@ class CoachFormationController extends AbstractController
      * @var FormationService
      */
     private $formationService;
+    /**
+     * @var MediaRepository
+     */
+    private $mediaRepository;
 
     public function __construct(FormationRepository $formationRepository,
+                                MediaRepository $mediaRepository,
                                 FileUploader $fileUploader,
                                 FormationService $formationService,
                                 DirectoryManagement $directoryManagement,
@@ -58,6 +65,7 @@ class CoachFormationController extends AbstractController
        $this->paginator = $paginator;
        $this->formationRepository = $formationRepository;
        $this->formationService = $formationService;
+       $this->mediaRepository = $mediaRepository;
    }
 
     /**
@@ -88,14 +96,21 @@ class CoachFormationController extends AbstractController
      */
    public function coach_formation_fiche(Formation $formation, Request $request)
    {
-       $form = $this->createForm(FormationType::class, $formation);
+       $form = $this->createForm(FormationType::class, $formation)
+                    ->remove('brouillon');
        $form->handleRequest($request);
        if($form->isSubmitted() && $form->isValid()) {
+           $this->entityManager->save($formation);
+           $this->addMedia($request, $formation);
            $this->addFlash('success', 'Formation ajouté avec succès');
        }
 
+       $medias = $formation->getMedias();
+
        return $this->render('formation/video/coach_formation_fiche.html.twig', [
-           'form' => $form->createView()
+           'form' => $form->createView(),
+           'medias' => $medias,
+           'formation' => $formation
        ]);
    }
 
@@ -111,23 +126,12 @@ class CoachFormationController extends AbstractController
             $formation->setCoach($this->getUser());
             $formation->setVideoId($request->request->get('video_id'));
             $this->entityManager->save($formation);
-            if($medias = json_decode($request->request->get('mediasData'))){
-                foreach($medias as $media) {
-                    $mediaObject = (new Media())
-                        ->setFormation($formation)
-                        ->setMimeType($media->mimeType)
-                        ->setType($media->type)
-                        ->setTitre($media->name)
-                        ->setSlug($media->slug);
-                    $this->entityManager->persist($mediaObject);
-                }
-                $this->entityManager->flush();
-            }
+            $this->addMedia($request, $formation);
             $coachSecteurRelation = $this->getUser()->getCoachSecteurs();
             if($coachSecteurRelation->count() > 0) {
                 $this->formationService->affecterToutAgent($formation, $coachSecteurRelation->toArray()[0]->getSecteur());
             }
-            
+
             $this->addFlash('success', 'Formation ajouté avec succès');
         }
 
@@ -178,5 +182,50 @@ class CoachFormationController extends AbstractController
             'error' => true,
             'message' => 'Aucun fichier trouvé dans la requête'
         ]);
+    }
+
+    /**
+     * @Route("/coach/formation/delete/media", name="coach_formation_deleteMedia", options={"expose"=true})
+     */
+    public function coach_formation_deleteMedia(Request $request)
+    {
+        if($deleted_medias = $request->request->get('deleted_media')) {
+            foreach($deleted_medias as $deleted_media) {
+                $media = $this->mediaRepository->findOneBy(['id' => $deleted_media]);
+                $directory = $media->getType() == 'document' ?
+                    $this->directoryManagement->getMediaFolder_formation_document() :
+                    $this->directoryManagement->getMediaFolder_formation_audio();
+                $file = $directory.DIRECTORY_SEPARATOR.$media->getSlug();
+                if(file_exists($file)) {
+                    $filesystem = new Filesystem();
+                    $filesystem->remove($file);
+                }
+                $this->entityManager->remove($media);
+            }
+            $this->entityManager->flush();
+            return $this->json([
+               'error' => false
+            ]);
+        }
+        return $this->json([
+            'error' => true,
+            'message' => 'Pas de media a supprimer'
+        ]);
+    }
+
+    private function addMedia(Request $request, $formation)
+    {
+        if($medias = json_decode($request->request->get('mediasData'))){
+            foreach($medias as $media) {
+                $mediaObject = (new Media())
+                    ->setFormation($formation)
+                    ->setMimeType($media->mimeType)
+                    ->setType($media->type)
+                    ->setTitre($media->name)
+                    ->setSlug($media->slug);
+                $this->entityManager->persist($mediaObject);
+            }
+            $this->entityManager->flush();
+        }
     }
 }
