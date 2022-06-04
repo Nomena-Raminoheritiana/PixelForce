@@ -11,6 +11,7 @@ use App\Manager\EntityManager;
 use App\Repository\FormationRepository;
 use App\Services\DirectoryManagement;
 use App\Services\FileUploader;
+use App\Services\FormationService;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,9 +40,14 @@ class CoachFormationController extends AbstractController
      * @var FormationRepository
      */
     private $formationRepository;
+    /**
+     * @var FormationService
+     */
+    private $formationService;
 
     public function __construct(FormationRepository $formationRepository,
                                 FileUploader $fileUploader,
+                                FormationService $formationService,
                                 DirectoryManagement $directoryManagement,
                                 EntityManager $entityManager,
                                 PaginatorInterface $paginator)
@@ -51,6 +57,7 @@ class CoachFormationController extends AbstractController
        $this->entityManager = $entityManager;
        $this->paginator = $paginator;
        $this->formationRepository = $formationRepository;
+       $this->formationService = $formationService;
    }
 
     /**
@@ -87,7 +94,7 @@ class CoachFormationController extends AbstractController
            $this->addFlash('success', 'Formation ajouté avec succès');
        }
 
-       return $this->render('formation/video/coach_formation_add.html.twig', [
+       return $this->render('formation/video/coach_formation_fiche.html.twig', [
            'form' => $form->createView()
        ]);
    }
@@ -116,8 +123,11 @@ class CoachFormationController extends AbstractController
                 }
                 $this->entityManager->flush();
             }
-
-
+            $coachSecteurRelation = $this->getUser()->getCoachSecteurs();
+            if($coachSecteurRelation->count() > 0) {
+                $this->formationService->affecterToutAgent($formation, $coachSecteurRelation->toArray()[0]->getSecteur());
+            }
+            
             $this->addFlash('success', 'Formation ajouté avec succès');
         }
 

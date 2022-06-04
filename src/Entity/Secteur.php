@@ -43,6 +43,10 @@ class Secteur
      * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="secteur")
      */
     private $secteurAgentSecteurs;
+    /**
+     * @var array
+     */
+    private $agents;
 
     public function __construct()
     {
@@ -168,5 +172,16 @@ class Secteur
         }
 
         return $this;
+    }
+
+    public function getAgents()
+    {
+        /** @var  $agentSecteur AgentSecteur */
+       $agentSecteurs = $this->agentSecteurs->toArray();
+       foreach($agentSecteurs as $agentSecteur) {
+           $this->agents[] = $agentSecteur->getAgent();
+       }
+
+       return $this->agents;
     }
 }

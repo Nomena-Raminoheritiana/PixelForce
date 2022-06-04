@@ -25,14 +25,7 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $this->objectManager->createObject(User::class, [
-            'email' => 'n.raminoheritiana@gmail.com',
-            'roles' => [User::ROLE_ADMINISTRATEUR],
-            'password' => 'nomena',
-            'nom' => 'RAMINOHERITIANA',
-            'prenom' => 'Nomena',
-            'dateNaissance' => new \DateTime('03/08/1999')
-        ]);
+
 
         $this->objectManager->createObject(User::class, [
             'email' => 'admin@gmail.com',
@@ -47,11 +40,13 @@ class UserFixtures extends Fixture
             'email' => 'coach@gmail.com',
             'roles' => [User::ROLE_COACH],
             'password' => 'nomena',
-            'nom' => 'RAMINOHERITIANA',
-            'prenom' => 'Nomena',
+            'nom' => 'Coach nom',
+            'username' => 'coach',
+            'prenom' => 'Coach prenom',
             'dateNaissance' => new \DateTime('03/08/1999'),
             'adresse' => 'lot IVE 192H Ambodimita'
         ]);
+
 
 
         // Création coach
@@ -67,6 +62,7 @@ class UserFixtures extends Fixture
                 'email' => 'coach0'.$i.'@gmail.com',
                 'roles' => [User::ROLE_COACH],
                 'password' => 'coach0'.$i.'coach0'.$i,
+                'username' => 'coach0'.$i,
                 'nom' => 'coach0'.$i,
                 'prenom' => 'coach0'.$i,
                 'dateNaissance' => new \DateTime(),

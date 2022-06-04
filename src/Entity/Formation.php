@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Formation
 {
+    const STATUT_BLOQUEE = 'bloquee';
+    const STATUT_DISPONIBLE = 'disponible';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -43,11 +45,6 @@ class Formation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $video_id;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $debloqueAgent;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
