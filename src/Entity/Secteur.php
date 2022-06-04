@@ -48,11 +48,17 @@ class Secteur
      */
     private $agents;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Formation::class, mappedBy="secteur")
+     */
+    private $formations;
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
         $this->secteurAgentSecteurs = new ArrayCollection();
+        $this->formations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,5 +189,35 @@ class Secteur
        }
 
        return $this->agents;
+    }
+
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations[] = $formation;
+            $formation->setSecteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(Formation $formation): self
+    {
+        if ($this->formations->removeElement($formation)) {
+            // set the owning side to null (unless already changed)
+            if ($formation->getSecteur() === $this) {
+                $formation->setSecteur(null);
+            }
+        }
+
+        return $this;
     }
 }

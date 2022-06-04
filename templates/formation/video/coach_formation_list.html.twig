@@ -67,6 +67,8 @@
                                     <a href="{{ path('coach_formation_debloquer', {formation : formation.id, agent: agent.id}) }}" class="btn btn-success mt-2 btn-sm"><i class="fa fa-unlock"></i> Debloquer</a>
                                 {% elseif statut == constant('App\\Entity\\Formation::STATUT_DISPONIBLE') %}
                                     <a href="{{ path('coach_formation_bloquer', {formation : formation.id, agent: agent.id}) }}" class="btn btn-warning mt-2 btn-sm"><i class="fa fa-lock"></i> Bloquer</a>
+                                {% else %}
+                                    <a href="{{ path('coach_formation_createRelation', {formation : formation.id, agent: agent.id}) }}" class="btn btn-success mt-2 btn-sm"><i class="fa fa-unlock"></i> Debloquer</a>
                                 {% endif %}
 
                             {% endif %}

@@ -913,6 +913,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getSecteurByCoach()
+    {
+        if(in_array(self::ROLE_COACH, $this->roles) && $this->coachSecteurs->count() > 0) {
+            return $this->coachSecteurs->toArray()[0]->getSecteur();
+        }
+        return null;
+    }
+
     /**
      * @return Collection<int, AgentSecteur>
      */

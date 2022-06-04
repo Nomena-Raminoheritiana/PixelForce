@@ -71,6 +71,11 @@ class Formation
      */
     private $brouillon;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="formations")
+     */
+    private $secteur;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -236,6 +241,18 @@ class Formation
     public function setDebloqueAgent($debloqueAgent): self
     {
         $this->debloqueAgent = $debloqueAgent;
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
+
         return $this;
     }
 }

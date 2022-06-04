@@ -3,11 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Formation;
+use App\Entity\Secteur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Doctrine\ORM\Query\Expr;
 /**
  * @method Formation|null find($id, $lockMode = null, $lockVersion = null)
  * @method Formation|null findOneBy(array $criteria, array $orderBy = null)
@@ -73,6 +74,15 @@ class FormationRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findBySecteur(Secteur $secteur)
+    {
+            return $this->createQueryBuilder('f')
+                ->where('f.secteur=:secteur')
+                ->setParameter('secteur',$secteur->getId())
+                ->getQuery();
+    }
+
     public function searchForCoach(?array $criteres)
     {
 

@@ -91,7 +91,8 @@ class CoachFormationController extends AbstractController
        if($criteres = $request->query->get('q')) {
            $formations = $this->formationRepository->searchForCoach($criteres);
        } else {
-           $formations = $this->formationRepository->createQueryBuilder('f')->getQuery();
+           $secteur = $this->getUser()->getSecteurByCoach();
+           $formations = $secteur ? $this->formationRepository->findBySecteur($secteur) : [];
        }
        $formations = $this->paginator->paginate(
            $formations,
@@ -137,6 +138,7 @@ class CoachFormationController extends AbstractController
         $form = $this->createForm(FormationType::class, $formation);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
+            $formation->setSecteur($this->getUser()->getSecteurByCoach());
             $formation->setCoach($this->getUser());
             $formation->setVideoId($request->request->get('video_id'));
             $this->entityManager->save($formation);
@@ -230,6 +232,7 @@ class CoachFormationController extends AbstractController
     /**
      * @Route("/coach/formation/bloquer", name="coach_formation_bloquer" )
      * @Route("/coach/formation/debloquer", name="coach_formation_debloquer" )
+     * @Route("/coach/formation/debloquer", name="coach_formation_createRelation" )
      */
     public function coach_formation_bloquer(Request $request)
     {
@@ -243,6 +246,10 @@ class CoachFormationController extends AbstractController
                    Formation::STATUT_DISPONIBLE
                );
                $this->entityManager->save($formationAgentRelation);
+           } else {
+             $formationAgentRelation = $this->formationService->affecterAgent($formation, $agent, true);
+             $formationAgentRelation->setStatut(Formation::STATUT_DISPONIBLE);
+             $this->entityManager->save($formationAgentRelation);
            }
         }
 

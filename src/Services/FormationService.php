@@ -31,7 +31,7 @@ class FormationService
 
     public function affecterAgent(Formation $formation, User $agent, $onlyPersist = false)
     {
-        $this->objectManager->createObject(FormationAgent::class, [
+       return $this->objectManager->createObject(FormationAgent::class, [
             'agent' => $agent,
             'formation' => $formation,
             'statut' => $formation->getBrouillon() ? Formation::STATUT_BLOQUEE : Formation::STATUT_DISPONIBLE
