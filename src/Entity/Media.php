@@ -28,7 +28,7 @@ class Media
     private $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Formation::class, inversedBy="yes")
+     * @ORM\ManyToOne(targetEntity=Formation::class, inversedBy="medias")
      */
     private $formation;
 

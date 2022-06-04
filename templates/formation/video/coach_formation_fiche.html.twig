@@ -33,7 +33,7 @@
                                 {% endfor %}
                             {% else %}
                                 <div class="col-12">
-                                    <strong class="text-danger">Pas de documents</strong>
+                                    <strong class="text-danger">Pas de document</strong>
                                 </div>
                             {% endif %}
                             <div class="my-3" id="formation-document">
@@ -87,6 +87,7 @@
                             <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}
                             <hr>
                             {{ form_row(form.debloqueAgent) }}
+                            {{ form_row(form.brouillon) }}
                         </div>
                     </div>
                 </div>

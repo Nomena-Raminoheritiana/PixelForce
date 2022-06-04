@@ -8,8 +8,10 @@ use App\Entity\Formation;
 use App\Entity\Media;
 use App\Form\FormationType;
 use App\Manager\EntityManager;
+use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
 use App\Repository\MediaRepository;
+use App\Repository\UserRepository;
 use App\Services\DirectoryManagement;
 use App\Services\FileUploader;
 use App\Services\FormationService;
@@ -50,9 +52,19 @@ class CoachFormationController extends AbstractController
      * @var MediaRepository
      */
     private $mediaRepository;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+    /**
+     * @var FormationAgentRepository
+     */
+    private $formationAgentRepository;
 
     public function __construct(FormationRepository $formationRepository,
                                 MediaRepository $mediaRepository,
+                                UserRepository $userRepository,
+                                FormationAgentRepository $formationAgentRepository,
                                 FileUploader $fileUploader,
                                 FormationService $formationService,
                                 DirectoryManagement $directoryManagement,
@@ -66,6 +78,8 @@ class CoachFormationController extends AbstractController
        $this->formationRepository = $formationRepository;
        $this->formationService = $formationService;
        $this->mediaRepository = $mediaRepository;
+       $this->userRepository = $userRepository;
+       $this->formationAgentRepository = $formationAgentRepository;
    }
 
     /**
@@ -87,7 +101,8 @@ class CoachFormationController extends AbstractController
 
        return $this->render('formation/video/coach_formation_list.html.twig', [
            'formations' => $formations,
-           'criteres' => $criteres
+           'criteres' => $criteres,
+           'agent' => $this->userRepository->findOneBy(['id' => $request->query->get('agent')])
        ]);
    }
 
@@ -96,8 +111,7 @@ class CoachFormationController extends AbstractController
      */
    public function coach_formation_fiche(Formation $formation, Request $request)
    {
-       $form = $this->createForm(FormationType::class, $formation)
-                    ->remove('brouillon');
+       $form = $this->createForm(FormationType::class, $formation);
        $form->handleRequest($request);
        if($form->isSubmitted() && $form->isValid()) {
            $this->entityManager->save($formation);
@@ -212,6 +226,32 @@ class CoachFormationController extends AbstractController
             'message' => 'Pas de media a supprimer'
         ]);
     }
+
+    /**
+     * @Route("/coach/formation/bloquer", name="coach_formation_bloquer" )
+     * @Route("/coach/formation/debloquer", name="coach_formation_debloquer" )
+     */
+    public function coach_formation_bloquer(Request $request)
+    {
+        if($request->query->get('formation') && $request->query->get('agent')) {
+           $formation = $this->formationRepository->findOneBy(['id' => $request->query->get('formation')]);
+           $agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
+           $formationAgentRelation = $this->formationAgentRepository->findOneBy(['formation' => $formation, 'agent' => $agent]);
+           if($formationAgentRelation) {
+               $formationAgentRelation->setStatut($request->attributes->get('_route') === 'coach_formation_bloquer' ?
+                   Formation::STATUT_BLOQUEE:
+                   Formation::STATUT_DISPONIBLE
+               );
+               $this->entityManager->save($formationAgentRelation);
+           }
+        }
+
+        return $this->redirectToRoute('coach_formation_list', [
+            'agent' => isset($agent) ? $agent->getId() : null
+        ]);
+
+    }
+
 
     private function addMedia(Request $request, $formation)
     {

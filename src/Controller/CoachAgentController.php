@@ -101,7 +101,7 @@ class CoachAgentController extends AbstractController
     }
 
     /**
-     * @Route("/coach/agent/{id}//view", name="coach_agent_view")
+     * @Route("/coach/agent/{id}/view", name="coach_agent_view")
      */
     public function coach_agent_view(User $agent)
     {
@@ -109,8 +109,5 @@ class CoachAgentController extends AbstractController
             'agent' => $agent
         ]);
     }
-
-
-
 
 }

@@ -854,6 +854,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFormationStatut(Formation $formation)
+    {
+       $formationAgents =  $formation->getFormationAgents();
+       foreach($formationAgents->toArray() as $formationAgent) {
+           if($formationAgent->getAgent()->getId() === $this->getId()) {
+               return $formationAgent->getStatut();
+           }
+       }
+       return '';
+    }
+
     /**
      * Permet de renvoyer un string contenant les secteurs d'un agent en les cocaténant par une virgule
      *
