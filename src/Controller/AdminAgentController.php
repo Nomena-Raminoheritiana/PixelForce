@@ -6,16 +6,28 @@ namespace App\Controller;
 use App\Entity\CoachAgent;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
+use App\Entity\AgentSecteur;
+use App\Entity\Secteur;
+use App\Form\InscriptionAgentType;
 use App\Form\ResetPasswordType;
+use App\Form\SecteurType;
 use App\Form\UserSearchType;
+use App\Form\AgentSecteurType;
+use App\Form\MultipleSecteurType;
 use App\Form\UserType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
 use App\Repository\CoachAgentRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
+use App\Repository\AgentSecteurRepository;
+use App\Repository\CoachSecteurRepository;
+use App\Services\AgentSecteurService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminAgentController extends AbstractController
@@ -24,13 +36,19 @@ class AdminAgentController extends AbstractController
     protected $entityManager;
     protected $userManager;
     protected $repoCoachAgent;
+    protected $repoAgentSecteur;
+    protected $repoSecteur;
+    protected $agentSecteurService;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent)
+    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, AgentSecteurRepository $repoAgentSecteur, SecteurRepository $repoSecteur, AgentSecteurService $agentSecteurService)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->repoCoachAgent = $repoCoachAgent;
+        $this->repoAgentSecteur = $repoAgentSecteur;
+        $this->repoSecteur = $repoSecteur;
+        $this->agentSecteurService = $agentSecteurService;
     }
 
     /**
@@ -38,30 +56,40 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_list(Request $request, PaginatorInterface $paginator)
     {
+        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository('App:AgentSecteur');
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search);
         $searchForm->handleRequest($request);
         
         $agents = $paginator->paginate(
-            $this->repoUser->findUserByRoleQuery($search, 'AGENT'),
+            $this->repoUser->findCoachOrAgentQuery($search, 'AGENT'),
             $request->query->getInt('page', 1),
             20
         );
 
         return $this->render('user_category/admin/agent/list_agents.html.twig', [
             'agents' => $agents,
-            'searchForm' => $searchForm->createView()
+            'searchForm' => $searchForm->createView(),
+            'repoAgentSecteur' => $repoAgentSecteur
         ]);
     }
 
     /**
-     * @Route("/admin/agent/{id}//view", name="admin_agent_view")
+     * @Route("/admin/agent/{id}/view", name="admin_agent_view")
      */
-    public function admin_agent_view(User $agent)
+    public function admin_agent_view(User $agent,  AgentSecteurService $agentSecteurService)
     {
+        $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+        $secteurs = $agentSecteurService->getSecteurs($agentSecteurs);
+        $formSecteur = $this->createForm(MultipleSecteurType::class);
+        $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
 
         return $this->render('user_category/admin/agent/view_agent.html.twig', [
-            'agent' => $agent
+            'agent' => $agent,
+            'agentSecteurs' => $agentSecteurs,
+            'secteurs' => $secteurs,
+            'repoCoachSecteur' => $repoCoachSecteur,
+            'formSecteur' => $formSecteur->createView()
         ]);
     }
 
@@ -69,13 +97,18 @@ class AdminAgentController extends AbstractController
     /**
      * @Route("/admin/agent/{id}/edit", name="admin_agent_edit")
      */
-    public function admin_agent_edit(Request $request, User $agent)
+    public function admin_agent_edit(Request $request, User $agent, SecteurRepository $secteurRepository)
     {
-        $formUser = $this->createForm(UserType::class, $agent)
-            ->remove('photo')
-            ->add('email')
+        $formUser = $this->createForm(InscriptionAgentType::class, $agent)
+            ->remove('secteur')
+            ->remove('username')
+            ->remove('password')
         ;
-       
+        $formSecteur = $this->createForm(AgentSecteurType::class);
+        
+        $secteurs = $secteurRepository->findAll();
+        $myAgentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+
         $formUser->handleRequest($request);
         if ($formUser->isSubmitted() && $formUser->isValid()) {
             $this->entityManager->save($agent);
@@ -85,7 +118,11 @@ class AdminAgentController extends AbstractController
 
         return $this->render('user_category/admin/agent/edit_agent.html.twig', [
             'formUser' => $formUser->createView(),
-            'button' => 'Enregistrer'
+            'formSecteur' => $formSecteur->createView(),
+            'button' => 'Enregistrer',
+            'secteurs' => $secteurs,
+            'myAgentSecteurs' => $myAgentSecteurs,
+            'agent' => $agent
         ]);    
     }
 
@@ -123,5 +160,118 @@ class AdminAgentController extends AbstractController
         }
         return $this->redirectToRoute('admin_agent_list');    
     }
+
+    /**
+     * @Route("/admin/agent/secteur/multiple/add", name="admin_agent_secteur_multiple_add")
+     */
+    public function admin_agent_secteur_multiple_add(Request $request, CoachSecteurRepository $coachSecteurRepository)
+    {
+        $data = $_POST;
+        $errorMessages = [];
+        $secteurAdded = [];
+
+        foreach ($data["selectedSecteurId"] as $index => $sectuerId) {
+       
+        /** @var Secteur @secteur */
+            $secteur = $this->repoSecteur->find($sectuerId);
+
+            // On gère le cas, où il y a une duplication du secteur
+            $agent = $this->repoUser->find($data["userId"]);
+            $myAllAgentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+            $isNewSectorInArray =  $this->agentSecteurService->isNewSectorInArray($secteur, $myAllAgentSecteurs);
+            if ($isNewSectorInArray) {
+                $errorMessages[] = 'Duplication secteur ' . $secteur->getNom() .'<br>';  
+            }else{
+                $coach = $coachSecteurRepository->findOneBy(['secteur' => $secteur])->getCoach();
+
+                // Si il n'y a pas de doublon, on sauvegarde la modification
+                if ($request->getMethod() === "POST") {
+                    $agentSecteur  = new AgentSecteur();
+                    $agentSecteur->setAgent($agent);
+                    $agentSecteur->setSecteur($secteur);
+                    $agentSecteur->setStatut(1);
+                    $agentSecteur->setDateValidation(new \DateTime());
+                    $this->entityManager->save($agentSecteur);
+
+
+                    $secteurAdded['secteur'.$index]['nom'] = $secteur->getNom();
+                    $secteurAdded['secteur'.$index]['coach'] = $coach->getNom();
+                    $secteurAdded['secteur'.$index]['dateValidation'] = (new \DateTime())->format('d/m/Y');
+                    $secteurAdded['secteur'.$index]['agentSecteurId'] = $agentSecteur->getId();
+                }
+            }
+        }
+
     
+        return $this->json([
+            'errorMessages' => $errorMessages,
+            'secteurAdded' => $secteurAdded
+        ], 200); 
+    }    
+
+    /**
+     * @Route("/admin/agent/secteur/{agentSecteur}/edit", name="admin_agent_secteur_edit")
+     */
+    public function admin_agent_secteur_edit(AgentSecteur $agentSecteur, Request $request)
+    {
+        $data = $_POST;
+        $secteur = $this->repoSecteur->find($data["newSecteurId"]);
+        
+        // On gère le cas, où il y a une duplication du secteur
+        $agent = $this->repoUser->find($data["userId"]);
+        $myAllAgentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+        $isNewSectorInArray =  $this->agentSecteurService->isNewSectorInArray($secteur, $myAllAgentSecteurs);
+        if ($isNewSectorInArray) {
+            return $this->json([
+                'edit' => 'error',
+                'cause' => 'duplication_sector'
+            ], 200); 
+        }
+
+        // Si il n'y a pas de doublon, on sauvegarde la modification
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setSecteur($secteur);
+            $this->entityManager->save($agentSecteur);
+
+            return $this->json([
+                'edit' => 'successfully',
+                'newSector' => $secteur->getNom()
+            ], 200);    
+        }
+    }    
+
+    /**
+     * Permet de valider le secteur en attente de l'agent
+     * 
+     * @Route("/admin/agent/secteur/{agentSecteur}/validate", name="admin_agent_secteur_validate")
+     */
+    public function admin_agent_secteur_validate(AgentSecteur $agentSecteur, Request $request): Response
+    {
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setStatut(1);
+            $agentSecteur->setDateValidation(new \DateTime());
+            $this->entityManager->save($agentSecteur);
+            return $this->json([
+                'validation' => 'successfully'
+            ], 200); 
+        }
+        return $this->render('$0.html.twig', []);
+    }
+
+    /**
+     * Permet de bloquer un secteur validé de l'agent
+     * 
+     * @Route("/admin/agent/secteur/{agentSecteur}/invalidate", name="admin_agent_secteur_invalidate")
+     */
+    public function admin_agent_secteur_invalidate(AgentSecteur $agentSecteur, Request $request): Response
+    {
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setStatut(0);
+            $this->entityManager->save($agentSecteur);
+            return $this->json([
+                'invalidation' => 'successfully'
+            ], 200); 
+        }
+        return $this->render('$0.html.twig', []);
+    }
 }

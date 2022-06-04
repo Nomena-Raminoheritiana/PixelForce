@@ -1,6 +1,8 @@
 <?php
 namespace App\Entity\SearchEntity;
 
+use App\Entity\Secteur;
+
 class UserSearch {
 
     /**
@@ -18,6 +20,10 @@ class UserSearch {
      */
     private $telephone;
 
+    /**
+     * @var string|null
+     */
+    private $secteur;
 
     /**
      * Get the value of prenom
@@ -87,6 +93,30 @@ class UserSearch {
     public function setTelephone($telephone)
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of secteur
+     *
+     * @return  Secteur|null
+     */ 
+    public function getSecteur()
+    {
+        return $this->secteur;
+    }
+
+    /**
+     * Set the value of secteur
+     *
+     * @param  string|null  $secteur
+     *
+     * @return  self
+     */ 
+    public function setSecteur($secteur)
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }

@@ -1,14 +1,14 @@
 {% extends 'base_admin.html.twig' %}
 
 {% block title %}
-	Génération mot de passe coach
+	Choix du secteur
 {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
 	<style>
-		.form-add-coach{
-			padding: 0 100px;
+		.form-relate-secteur{
+			padding: 0 300px;
 		}
 	</style>
 {% endblock %}
@@ -16,7 +16,7 @@
 {% block body %}
 	<div class="container my-5">
 		<a href="{{ path('admin_coach_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
-	    
+		
 		<!-- Message alert -->
         <div class="alert-messager">
             {% for label, messages in app.flashes %}
@@ -30,9 +30,12 @@
 
 	    <!-- Formulaire -->
 		<div class="content-body-form">
-			<h1 class="text-center fw-bold">3- Mot de passe</h1>
-			<div class="form-add-coach">
-				{{ include ('global/user_form/_user_password_form.html.twig', {btn_class : 'btn-primary'}) }}
+			<h1 class="text-center fw-bold">2- Secteur</h1>
+			<div class="form-relate-secteur">
+				{{ form_start(formCoachSecteur) }}
+				{{ form_row(formCoachSecteur.secteur) }}
+				<button type="submit" class="btn btn-primary">{{ button|default('Suivant') }}</button>
+				{{ form_end(formCoachSecteur) }}
 			</div>
 		</div>
 	</div>

@@ -10,15 +10,267 @@
 
 {% block body %}
 	<div class="container mt-2">
-		<a href="{{ path('admin_coach_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+		<a href="{{ path('admin_agent_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
 
 		<div class="content-card-user-information mt-3">
-			{{ include ('global/card/_card_user_information.html.twig', {user : agent}) }}
+			<section class="app-user-view-account">
+				<div class="row">
+					<!-- User Sidebar -->
+					<div class="col-xl-4 col-lg-5 col-md-5 order-1 order-md-0">
+						{{ include ('global/card/_card_user_information.html.twig', {user : agent, secteurs: secteurs}) }}
+					</div>
+					<!--/ User Sidebar -->
+
+					<!-- User Content -->
+					<div class="col-xl-8 col-lg-7 col-md-7 order-0 order-md-1">
+						<!-- User Pills -->
+						<ul class="nav nav-pills mb-2">
+							<li class="nav-item">
+								<a class="nav-link active" href="{{ path('admin_agent_view', {id: agent.id})}}">
+									<i class="fa-solid fa-cube"></i>
+									<span class="fw-bold">Secteur</span></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="app-user-view-security.html">
+									<i data-feather="lock" class="font-medium-3 me-50"></i>
+									<span class="fw-bold">Securité</span>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="app-user-view-billing.html">
+									<i data-feather="bookmark" class="font-medium-3 me-50"></i>
+									<span class="fw-bold">Facturation & forfaits</span>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="app-user-view-notifications.html">
+									<i data-feather="bell" class="font-medium-3 me-50"></i><span class="fw-bold">Notifications</span>
+								</a>
+							</li>
+						</ul>
+						<!--/ User Pills -->
+
+						<!-- Project table -->
+						<div class="card">
+							<h4 class="card-header">Liste des secteurs de l'agent</h4>
+							<div class="table-responsive">
+								<div class="alert alert-danger d-none alert-errorMessages"></div>
+								<a href="#" data-bs-toggle="modal" data-bs-target="#modal-add-agent-secteur" class="btn btn-primary float-end my-4 me-4"><i class="fa-solid fa-circle-plus"></i> Ajouter un secteur</a>
+								<table class="table datatable-project">
+									<thead>
+										<tr>
+											<th></th>
+											<th>Secteur</th>
+											<th class="text-nowrap">Coach</th>
+											<th>Date de validation</th>
+											<th>Statut</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody class="body-sector-list">
+										{% for agentSecteur in agentSecteurs %}
+											<tr>
+												<th></th>
+												<th>{{ agentSecteur.secteur.nom }}</th>
+												{% set coachtSecteur = repoCoachSecteur.findOneBy({'secteur' : agentSecteur.secteur}) %}
+												<th>{{ coachtSecteur.coach.nom }}</th>
+												<th>{{ agentSecteur.dateValidation|date('d/m/Y') }}</th>
+												<th>
+													{% if agentSecteur.statut == false %}
+														<button class="btn btn-warning">Bloqué</button>
+													{% else %}
+														<button class="btn  btn-success"> Validé</button>
+													{% endif %}
+												</th>
+												<th>
+													{% if agentSecteur.statut == false or agentSecteur.statut == null or agentSecteur.dateValidation == null %}
+														<button data-agentSecteur-id="{{ agentSecteur.id }}" class="btn btn-lg  btn-outline-primary js-validate-secteur-agent btn-validate-sector">Valider</button>
+													{% else %}
+														<button data-agentSecteur-id="{{ agentSecteur.id }}" type="button" class="btn btn-lg  btn-outline-primary js-invalidate-secteur-agent">Bloquer</button>
+													{% endif %}
+												</th>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- /Project table -->
+
+					</div>
+					<!--/ User Content -->
+				</div>
+			</section>
 		</div>
 	</div>
+	
+    <!-- Modal : Ajout secteur  -->
+    <div class="modal fade" id="modal-add-agent-secteur" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+				{{ form_start(formSecteur) }}
+                <div class="modal-header">
+                    <h5 class="modal-title text-success"><i class="fa-solid fa-pen-to-square"></i> Ajout secteur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+					<h3>Choisissez un ou plusieurs secteurs</h3>
+					{{ form_row(formSecteur.secteur) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button id="js-btn-add-multiple-secteur" type="button" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Ajouter</button>
+                </div>
+				{{ form_end(formSecteur) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 	{{ encore_entry_script_tags('vuexy_app_user_view_js') }}
+	<script>
+		$(function() {
+
+			// Fucnion : Invalider un secteur
+			function invalidateSecteur (that){
+				let agentSecteurId = that.attr("data-agentSecteur-id");
+				console.log(agentSecteurId)
+				const urlValidateSecteur = `/admin/agent/secteur/${agentSecteurId}/invalidate`;
+
+				that.attr('disabled', true)
+				$.ajax({
+					url: urlValidateSecteur,
+					type: "POST",
+					beforeSend : function(){
+						that.html('<div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>')
+					},
+					success: function(responseAjax){
+						if (responseAjax.invalidation === 'successfully' ) {
+							that.html('OK');
+							setTimeout(function () {
+								that.html('Valider');
+							}, 1000);
+
+							let btn_secteur_status = that.parent().prev().children();
+							btn_secteur_status.removeClass('btn-success');
+							btn_secteur_status.addClass('btn-warning');
+							btn_secteur_status.html('Bloqué');
+						}
+					},
+					error : function(){
+						that.html('Erreur');
+					}
+				})
+			}
+
+
+
+			// Valider un secteur
+			$('.js-validate-secteur-agent').on('click', function(){	
+				let that =  $(this); 
+				let agentSecteurId = that.attr("data-agentSecteur-id");
+				const urlValidateSecteur = `/admin/agent/secteur/${agentSecteurId}/validate`;
+
+				that.attr('disabled', true)
+				$.ajax({
+					url: urlValidateSecteur,
+					type: "POST",
+					beforeSend : function(){
+						that.html('<div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>')
+					},
+					success: function(responseAjax){
+						if (responseAjax.validation === 'successfully' ) {
+							that.html('Ok');
+							setTimeout(function () {
+								that.html('Bloquer');
+							}, 1000);
+
+							let btn_secteur_status = that.parent().prev().children();
+							btn_secteur_status.removeClass('btn-warning');
+							btn_secteur_status.addClass('btn-success');
+							btn_secteur_status.html('Validé')
+						}
+					},
+					error : function(){
+						that.html('Erreur');
+					}
+				})
+			})
+
+
+
+			// Event : Invalider un secteur 
+			$('.js-invalidate-secteur-agent').on('click', function(){
+				invalidateSecteur($(this))
+			})
+		
+				
+			// Ajout un/multiple Secteurs
+			$('#js-btn-add-multiple-secteur').on('click', function(){
+				let userId = "{{ agent.id }}";
+
+				// On récupère les id de tous les secteurs cochés					
+				var selectedSecteurId = [];
+				$.each($("#multiple_secteur_secteur input[type='checkbox']:checked"), function(){
+					selectedSecteurId.push($(this).val());
+				});
+
+				let urlAddMultipletSecteur = "{{ path('admin_agent_secteur_multiple_add') }}";
+
+				let data = {
+					'userId' : userId,
+					'selectedSecteurId' : selectedSecteurId
+				};
+
+				$.ajax({	
+					url: urlAddMultipletSecteur,
+					data: data,
+					type: "POST",
+					beforeSend : function(){
+						$('#js-btn-add-multiple-secteur').html('<div class="spinner-border text-light" role="status"><span class="visually-hidden">Loading...</span></div>')
+					},
+					success: function(responseAjax){
+						$("#modal-add-agent-secteur").modal('hide')
+						$('#js-btn-add-multiple-secteur').html('<i class="fa-solid fa-floppy-disk"></i> Ajouter')
+
+						// On ajoute dans la liste les nouveaux secteurs ajoutés
+						var secteurAdd = responseAjax.secteurAdded;
+						var toArraySecteur = Object.values(secteurAdd)
+						
+						toArraySecteur.forEach((element) => {
+							$('.body-sector-list').append(`
+								<tr>
+									<th></th>
+									<th>${element.nom}</th>
+									<th>${element.coach}</th>
+									<th>${element.dateValidation}</th>
+									<th><button class="btn  btn-success"> Validé</button></th>
+									<th><button data-agentSecteur-id="${ element.agentSecteurId }" type="button" class="btn btn-lg  btn-outline-primary js-invalidate-secteur-agent waves-effect">Bloquer</button></th>
+								</tr>`);
+						});
+
+						$('.js-invalidate-secteur-agent').on('click', function(){
+							invalidateSecteur($(this))
+						})			
+						// Si la reponse renvoie une erreur(s) comme duplication du secteur
+						let errorMessagesResponse = responseAjax.errorMessages; 
+						if (errorMessagesResponse.length > 0 ) {
+							errorMessagesResponse.forEach(element => {
+								$('.alert-errorMessages').removeClass('d-none');
+								$('.alert-errorMessages').addClass('d-block');
+								$('.alert-errorMessages').append(element);
+							});
+						}
+					},
+					error : function(){
+						$('#js-btn-add-multiple-secteur').html('Erreur !');
+					}
+				});
+			})
+
+		})	
+	</script>
+	
 {% endblock %}

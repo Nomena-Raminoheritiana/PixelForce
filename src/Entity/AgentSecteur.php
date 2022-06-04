@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\UserSecteurRepository;
+use App\Repository\AgentSecteurRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=UserSecteurRepository::class)
+ * @ORM\Entity(repositoryClass=AgentSecteurRepository::class)
  */
-class UserSecteur
+class AgentSecteur
 {
     /**
      * @ORM\Id
@@ -18,12 +18,12 @@ class UserSecteur
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="userSecteurs", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="agentSecteurs")
      */
-    private $user;
+    private $agent;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="userSecteurs")
+     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="secteurAgentSecteurs")
      */
     private $secteur;
 
@@ -42,14 +42,14 @@ class UserSecteur
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getAgent(): ?User
     {
-        return $this->user;
+        return $this->agent;
     }
 
-    public function setUser(?User $user): self
+    public function setAgent(?User $agent): self
     {
-        $this->user = $user;
+        $this->agent = $agent;
 
         return $this;
     }

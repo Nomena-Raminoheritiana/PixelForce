@@ -50,6 +50,11 @@ class Formation
     private $debloqueAgent;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $debloqueAgent;
+
+    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="formations")
      */
     private $coach;
