@@ -58,12 +58,12 @@ class Formation
     private $coach;
 
     /**
-     * @ORM\OneToMany(targetEntity=Media::class, mappedBy="formation")
+     * @ORM\OneToMany(targetEntity=Media::class, mappedBy="formation", fetch="EAGER")
      */
     private $medias;
 
     /**
-     * @ORM\OneToMany(targetEntity=FormationAgent::class, mappedBy="formation")
+     * @ORM\OneToMany(targetEntity=FormationAgent::class, mappedBy="formation", fetch="EAGER")
      */
     private $formationAgents;
 

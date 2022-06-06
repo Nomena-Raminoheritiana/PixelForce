@@ -111,6 +111,7 @@ class CoachFormationController extends AbstractController
 
     /**
      * @Route("/coach/formation/fiche/{id}", name="coach_formation_fiche", options={"expose"=true})
+     * @IsGranted("ROLE_COACH")
      */
    public function coach_formation_fiche(Formation $formation, Request $request)
    {

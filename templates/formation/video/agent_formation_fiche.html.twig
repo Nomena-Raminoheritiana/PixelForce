@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% block title %}Agent - Formation fiche{% endblock %}
+{% block body %}
+<div class="p-5 pb-5 mb-5 bg-white border position-relative" id="form-formation">
+    <h3 class="mb-3"><i class="fa fa-book-open"></i> Fiche formation</h3>
+    <h5 class="mb-4"><span class="text-decoration-underline">Titre</span> : <span>{{ formation.titre }}</span></h5>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="border p-2 d-flex bg-white">
+                <iframe src="https://player.vimeo.com/video/{{ formation.videoId }}" style="width:100%; height:400px" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="col-md-4 ps-0">
+            <div class="border h-100 p-3">
+                <h5>Fichier joints:</h5>
+                <h6 class="text-decoration-underline">Documents</h6>
+                <ul>
+                    {% for media in formation.medias.toArray %}
+                        {% if media.type == 'document' %}
+                            <li><a href="{{ path('media_download', {id:media.id}) }}" class="text-dark cursor-pointer">{{ media.titre }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <h6 class="text-decoration-underline">Audios</h6>
+                <ul>
+                    {% for media in formation.medias.toArray %}
+                        {% if media.type == 'audio' %}
+                            <li><a href="{{ path('media_download', {id:media.id}) }}" class="text-dark cursor-pointer">{{ media.titre }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <h5 class="mt-4">Contenu</h5>
+    <p>{{ formation.contenu }}</p>
+    <div class="text-center mt-5">
+        {% set formationAgentRelation = formationAgentRepository.findOneBy({formation:formation, agent:app.user}) %}
+        {% if formationAgentRelation %}
+            {% if formationAgentRelation.statut == constant('App\\Entity\\Formation::STATUT_TERMINER') %}
+                <a href="#" class="btn btn-success"><i class="fa fa-check"></i> Vous avez déjà terminé cette formation</a>
+            {% else %}
+                <a href="{{ path('agent_formation_terminer', {id:formation.id}) }}" class="btn btn-success"><i class="fa fa-check"></i> J'ai terminé cette formation</a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
+
