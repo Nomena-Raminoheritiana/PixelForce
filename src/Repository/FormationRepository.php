@@ -107,6 +107,11 @@ class FormationRepository extends ServiceEntityRepository
             }
 
         }
+        if(!empty($criteres['auteur'])) {
+            $queryBuilder->innerJoin('App\Entity\User', 'u', 'ON')
+                ->andWhere('u.nom LIKE :nom')
+                ->setParameter('nom', '%'.$criteres['auteur'].'%');
+        }
         if(!empty($criteres['trie'])) {
             $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
         }
@@ -115,7 +120,7 @@ class FormationRepository extends ServiceEntityRepository
 
     }
 
-    public function searchForAgent(?int $criteres, $secteur)
+    public function searchForAgent(?array $criteres, $secteur)
     {
         $queryBuilder = ($this->createQueryBuilder('f'))->where('f.secteur=:secteur')
             ->setParameter('secteur',$secteur->getId())
@@ -140,9 +145,15 @@ class FormationRepository extends ServiceEntityRepository
             }
 
         }
+        if(!empty($criteres['auteur'])) {
+            $queryBuilder->innerJoin('App\Entity\User', 'u', 'ON')
+                ->andWhere('u.nom LIKE :nom')
+                ->setParameter('nom', '%'.$criteres['auteur'].'%');
+        }
         if(!empty($criteres['trie'])) {
             $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
         }
+//        dd((string) $queryBuilder);
 
         return $queryBuilder->getQuery();
     }
