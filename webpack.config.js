@@ -38,7 +38,8 @@ Encore
     .addEntry('ImportVideoVimeo', './assets/js/ImportVideoVimeo.js')
     .addEntry('commentaire', './assets/js/commentaire.js')
     .addEntry('chatJS', './assets/js/chat/chat.js')
-    
+    .addEntry('formationForm', './assets/js/formationForm.js')
+
     // Vuexy: Vendor JS
     .addEntry('vuexyJS', './assets/js/vuexy/vuexy.js')
     .addEntry('vuexy_vendors_js', './assets/js/vuexy/vendors/js/vendors.js')

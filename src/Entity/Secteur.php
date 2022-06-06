@@ -39,16 +39,22 @@ class Secteur
      */
     private $coachSecteurs;
 
+
     /**
-     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="secteur")
+     * @var array
      */
-    private $secteurAgentSecteurs;
+    private $agents;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Formation::class, mappedBy="secteur")
+     */
+    private $formations;
 
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
-        $this->secteurAgentSecteurs = new ArrayCollection();
+        $this->formations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -140,30 +146,42 @@ class Secteur
         return $this;
     }
 
-    /**
-     * @return Collection<int, AgentSecteur>
-     */
-    public function getSecteurAgentSecteurs(): Collection
+
+    public function getAgents()
     {
-        return $this->secteurAgentSecteurs;
+        /** @var  $agentSecteur AgentSecteur */
+       $agentSecteurs = $this->agentSecteurs->toArray();
+       foreach($agentSecteurs as $agentSecteur) {
+           $this->agents[] = $agentSecteur->getAgent();
+       }
+
+       return $this->agents;
     }
 
-    public function addSecteurAgentSecteur(AgentSecteur $secteurAgentSecteur): self
+    /**
+     * @return Collection<int, Formation>
+     */
+    public function getFormations(): Collection
     {
-        if (!$this->secteurAgentSecteurs->contains($secteurAgentSecteur)) {
-            $this->secteurAgentSecteurs[] = $secteurAgentSecteur;
-            $secteurAgentSecteur->setSecteur($this);
+        return $this->formations;
+    }
+
+    public function addFormation(Formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations[] = $formation;
+            $formation->setSecteur($this);
         }
 
         return $this;
     }
 
-    public function removeSecteurAgentSecteur(AgentSecteur $secteurAgentSecteur): self
+    public function removeFormation(Formation $formation): self
     {
-        if ($this->secteurAgentSecteurs->removeElement($secteurAgentSecteur)) {
+        if ($this->formations->removeElement($formation)) {
             // set the owning side to null (unless already changed)
-            if ($secteurAgentSecteur->getSecteur() === $this) {
-                $secteurAgentSecteur->setSecteur(null);
+            if ($formation->getSecteur() === $this) {
+                $formation->setSecteur(null);
             }
         }
 

@@ -131,7 +131,8 @@ class CoachAgentRepository extends ServiceEntityRepository
      */
     public function findAgentByCoach(UserSearch $search, $coach)
     {
-        $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach])[0]->getSecteur();
+        $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach]);
+        $secteur = isset($secteur[0]) ? $secteur[0]->getSecteur() : null;
         $agentSecteurs = $this->repoAgentSecteur->findBy(['secteur' => $secteur]);
         $results = [];
         

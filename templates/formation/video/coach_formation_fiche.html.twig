@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+{% block title %}Coach - Fiche formation{% endblock %}
+{% block body %}
+    <div class="p-5 pb-5 mb-5 bg-white border position-relative" id="form-formation">
+        <h3 class="mb-3"><i class="fa fa-book-open"></i> Fiche formation</h3>
+        {{ form_start(form,{attr:{id:'formation-fiche', action: path('coach_formation_fiche', {id:formation.id})}}) }}
+        <input type="hidden" id="inputVideo">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                {{ form_row(form.titre, {label_attr: {
+                    class:'fw-bold'
+                }}) }}
+                {{ form_row(form.contenu, {attr:{rows:20}, label_attr: {class:'fw-bold'}}) }}
+                <div>
+                    <div class="fw-bold text-decoration-underline mb-3">
+                        Fichiers joints
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <strong>Document</strong>
+                            {% if medias.count > 0 %}
+                                {% for media in medias %}
+                                    {% if media.type == 'document' %}
+                                        <div class="row media">
+                                            <div class="col-12 col-md-9 mt-4 font-small-2 ">
+                                                <span><i class="fa-solid {{ media.type == 'document' ? 'fa-book' : 'fa-music' }} me-2"></i> {{ media.titre}}</span>
+                                            </div>
+                                            <div class="col-12 col-md-3 mt-4 font-small-1">
+                                                <a href="#" class="btn btn-outline-danger btn-sm btn-media-delete" data-media-id="{{ media.id }}"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-12">
+                                    <strong class="text-danger">Pas de document</strong>
+                                </div>
+                            {% endif %}
+                            <div class="my-3" id="formation-document">
+                                <buton class="btn btn-primary btn-sm" id="btn-add-document"><i class="fa fa-plus"></i> Ajouter un document</buton>
+                                <div id="document-upload-name" class="mt-3"></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <strong>Audio</strong>
+                            {% if medias.count > 0 %}
+                                {% for media in medias %}
+                                    {% if media.type == 'audio' %}
+                                        <div class="row media">
+                                            <div class="col-12 col-md-9 mt-4 font-small-2 ">
+                                                <span><i class="fa-solid {{ media.type == 'document' ? 'fa-book' : 'fa-music' }} me-2"></i> {{ media.titre}}</span>
+                                            </div>
+                                            <div class="col-12 col-md-3 mt-4 font-small-1">
+                                                <a href="#" class="btn btn-outline-danger btn-sm btn-media-delete" data-media-id="{{ media.id }}"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-12">
+                                    <strong class="text-danger">Pas d'audio</strong>
+                                </div>
+                            {% endif %}
+                            <div class="my-3" id="formation-audio">
+                                <buton class="btn btn-primary btn-sm" id="btn-add-audio"><i class="fa fa-plus"></i> Ajouter un audio</buton>
+                                <div id="audio-upload-name" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="col-12 col-md-6">
+                {{ form_row(form.description, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
+                {{ form_row(form.description_deblocage, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
+                <div class="bg-light-info text-dark p-4 border">
+                    <div class="border-bottom border-2  border-bottom-black">
+                        <strong>Informations</strong>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-6">
+                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'valide' }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}
+                            <hr>
+                            {{ form_row(form.debloqueAgent) }}
+                            {{ form_row(form.brouillon) }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" id="edit-formation" class="btn bg-princ text-white">Enregistrer</button>
+        </div>
+
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('formationForm')}}
+{% endblock %}

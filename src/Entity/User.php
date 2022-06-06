@@ -173,7 +173,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $contact_client;
 
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -195,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $coachSecteurs;
 
     /**
-     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent")
+     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent", fetch="EAGER")
      */
     private $agentSecteurs;
 
@@ -855,6 +854,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFormationStatut(Formation $formation)
+    {
+       $formationAgents =  $formation->getFormationAgents();
+       foreach($formationAgents->toArray() as $formationAgent) {
+           if($formationAgent->getAgent()->getId() === $this->getId()) {
+               return $formationAgent->getStatut();
+           }
+       }
+       return '';
+    }
+
     /**
      * Permet de renvoyer un string contenant les secteurs d'un agent en les cocaténant par une virgule
      *
@@ -903,12 +913,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getSecteurByCoach()
+    {
+        if(in_array(self::ROLE_COACH, $this->roles) && $this->coachSecteurs->count() > 0) {
+            return $this->coachSecteurs->toArray()[0]->getSecteur();
+        }
+        return null;
+    }
+
+    public function getSecteursIdsByAgent()
+    {
+        $agentSecteurs = $this->getAgentSecteurs();
+        $secteurs_ids = [];
+        foreach($agentSecteurs->toArray() as $agentSecteur) {
+            $secteurs_ids[] = $agentSecteur->getSecteur()->getId();
+        }
+        return $secteurs_ids;
+    }
+
     /**
      * @return Collection<int, AgentSecteur>
      */
     public function getAgentSecteurs(): Collection
     {
-        return $this->agentSecteurs;
+        if(in_array(self::ROLE_AGENT, $this->roles)) {
+            return $this->agentSecteurs;
+        }
+        return $this->agentSecteurs->clear();
     }
 
     public function addAgentSecteur(AgentSecteur $agentSecteur): self

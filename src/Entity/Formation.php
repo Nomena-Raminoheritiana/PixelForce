@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Formation
 {
+    const STATUT_BLOQUEE = 'bloquee';
+    const STATUT_DISPONIBLE = 'disponible';
+    const STATUT_TERMINER = 'terminer';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -42,17 +45,7 @@ class Formation
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $lien_video;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $estDisponible;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $estDebloquee;
+    private $video_id;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -65,12 +58,12 @@ class Formation
     private $coach;
 
     /**
-     * @ORM\OneToMany(targetEntity=Media::class, mappedBy="formation")
+     * @ORM\OneToMany(targetEntity=Media::class, mappedBy="formation", fetch="EAGER")
      */
     private $medias;
 
     /**
-     * @ORM\OneToMany(targetEntity=FormationAgent::class, mappedBy="formation")
+     * @ORM\OneToMany(targetEntity=FormationAgent::class, mappedBy="formation", fetch="EAGER")
      */
     private $formationAgents;
 
@@ -78,6 +71,11 @@ class Formation
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $brouillon;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="formations")
+     */
+    private $secteur;
 
     public function __construct()
     {
@@ -138,38 +136,14 @@ class Formation
         return $this;
     }
 
-    public function getLienVideo(): ?string
+    public function getVideoId(): ?string
     {
-        return $this->lien_video;
+        return $this->video_id;
     }
 
-    public function setLienVideo(?string $lien_video): self
+    public function setVideoId(?string $video_id): self
     {
-        $this->lien_video = $lien_video;
-
-        return $this;
-    }
-
-    public function getEstDisponible(): ?bool
-    {
-        return $this->estDisponible;
-    }
-
-    public function setEstDisponible(?bool $estDisponible): self
-    {
-        $this->estDisponible = $estDisponible;
-
-        return $this;
-    }
-
-    public function getEstDebloquee(): ?bool
-    {
-        return $this->estDebloquee;
-    }
-
-    public function setEstDebloquee(?bool $estDebloquee): self
-    {
-        $this->estDebloquee = $estDebloquee;
+        $this->video_id = $video_id;
 
         return $this;
     }
@@ -246,6 +220,12 @@ class Formation
         return $this;
     }
 
+    public function getFormationAgentsByAgent()
+    {
+        $formationsAgents = $this->formationAgents;
+        
+    }
+
     public function getBrouillon(): ?bool
     {
         return $this->brouillon;
@@ -268,6 +248,18 @@ class Formation
     public function setDebloqueAgent($debloqueAgent): self
     {
         $this->debloqueAgent = $debloqueAgent;
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
+
         return $this;
     }
 }

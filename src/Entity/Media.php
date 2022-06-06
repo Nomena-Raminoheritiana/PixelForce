@@ -28,9 +28,19 @@ class Media
     private $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Formation::class, inversedBy="yes")
+     * @ORM\ManyToOne(targetEntity=Formation::class, inversedBy="medias")
      */
     private $formation;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slug;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $mimeType;
 
     public function getId(): ?int
     {
@@ -69,6 +79,30 @@ class Media
     public function setFormation(?Formation $formation): self
     {
         $this->formation = $formation;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(?string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
 
         return $this;
     }

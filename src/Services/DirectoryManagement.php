@@ -13,6 +13,7 @@ class DirectoryManagement
     private $mediaFolder_User = 'user';
     private $mediaFolder_UserAvatars = 'avatars';
     private $chat_folder = 'chat';
+    private $formation_folder = 'formation';
     private $project_dir;
     private $slugify;
 
@@ -45,6 +46,16 @@ class DirectoryManagement
     public function getMediaChatFolder()
     {
         return $this->getMediaFolder().DIRECTORY_SEPARATOR.$this->chat_folder;
+    }
+
+    public function getMediaFolder_formation_document()
+    {
+        return $this->getMediaFolder().DIRECTORY_SEPARATOR.$this->formation_folder.DIRECTORY_SEPARATOR.'documents';
+    }
+
+    public function getMediaFolder_formation_audio()
+    {
+        return $this->getMediaFolder().DIRECTORY_SEPARATOR.$this->formation_folder.DIRECTORY_SEPARATOR.'audios';
     }
 
 }
