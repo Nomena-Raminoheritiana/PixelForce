@@ -34,7 +34,7 @@ class FormationService
        return $this->objectManager->createObject(FormationAgent::class, [
             'agent' => $agent,
             'formation' => $formation,
-            'statut' => $formation->getBrouillon() ? Formation::STATUT_BLOQUEE : Formation::STATUT_DISPONIBLE
+            'statut' => $formation->getDebloqueAgent() ? Formation::STATUT_DISPONIBLE : Formation::STATUT_BLOQUEE,
         ], false, [], $onlyPersist);
     }
 
