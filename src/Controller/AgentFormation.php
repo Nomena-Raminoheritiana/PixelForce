@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -21,11 +22,16 @@ class AgentFormation extends AbstractController
      * @var FormationRepository
      */
     private $formationRepository;
+    /**
+     * @var FormationAgentRepository
+     */
+    private $formationAgentRepository;
 
-    public function __construct(PaginatorInterface $paginator, FormationRepository $formationRepository)
+    public function __construct(PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository)
     {
         $this->paginator = $paginator;
         $this->formationRepository = $formationRepository;
+        $this->formationAgentRepository = $formationAgentRepository;
     }
 
     /**
@@ -34,6 +40,7 @@ class AgentFormation extends AbstractController
      */
     public function agent_formation_list(Request $request)
     {
+        // todo: miandry anle login agent izay ataon Tsiory mba haazaoana ilay session micontenir anle secteur
         $secteur = $this->getUser()->getAgentSecteurs()->get(0)->getSecteur();
         if($criteres = $request->query->get('q')) {
             $formations = $this->formationRepository->searchForAgent($criteres, $secteur);
@@ -48,7 +55,8 @@ class AgentFormation extends AbstractController
 
         return $this->render('formation/video/agent_formation_list.html.twig', [
             'formations' => $formations,
-            'criteres' => $criteres
+            'criteres' => $criteres,
+            'formationAgentRepository' => $this->formationAgentRepository
         ]);
     }
 

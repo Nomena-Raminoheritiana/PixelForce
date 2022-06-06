@@ -87,6 +87,15 @@ textarea.error,input.error {
     border :1px solid red !important;
 }
 
+/**
+---- bootstrap fix
+ */
+
+/* popover*/
+.popover-header{
+    background: linear-gradient(118deg, #7367f0, rgba(115, 103, 240, 0.7)) !important;
+}
+
 /** version desktop **/
 @media screen and (min-width: 768px) {
     nav#menu-haut,.vh-8 {

@@ -14,6 +14,7 @@ class Formation
 {
     const STATUT_BLOQUEE = 'bloquee';
     const STATUT_DISPONIBLE = 'disponible';
+    const STATUT_TERMINER = 'terminer';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -217,6 +218,12 @@ class Formation
         }
 
         return $this;
+    }
+
+    public function getFormationAgentsByAgent()
+    {
+        $formationsAgents = $this->formationAgents;
+        
     }
 
     public function getBrouillon(): ?bool

@@ -34,6 +34,15 @@ $(document).ready(function() {
             $(this).removeClass('show');
         })
     });
+
+    // popover bootstrap fix
+    $('[data-bs-toggle="popover"]').each(function() {
+        var popover = new bootstrap.Popover(this, {
+            container: 'body',
+            trigger: 'hover'
+        })
+    })
+
 });
 
 require('./js/speedLiveVideo');
