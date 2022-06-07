@@ -67,29 +67,27 @@
 										</tr>
 									</thead>
 									<tbody class="body-sector-list">
-										{% for agentSecteur in agentSecteurs %}
-											<tr>
-												<th></th>
-												<th>{{ agentSecteur.secteur.nom }}</th>
-												{% set coachtSecteur = repoCoachSecteur.findOneBy({'secteur' : agentSecteur.secteur}) %}
-												<th>{{ coachtSecteur.coach.nom }}</th>
-												<th>{{ agentSecteur.dateValidation|date('d/m/Y') }}</th>
-												<th>
-													{% if agentSecteur.statut == false %}
-														<button class="btn btn-warning">Bloqué</button>
-													{% else %}
-														<button class="btn  btn-success"> Validé</button>
-													{% endif %}
-												</th>
-												<th>
-													{% if agentSecteur.statut == false or agentSecteur.statut == null or agentSecteur.dateValidation == null %}
-														<button data-agentSecteur-id="{{ agentSecteur.id }}" class="btn btn-lg  btn-outline-primary js-validate-secteur-agent btn-validate-sector">Valider</button>
-													{% else %}
-														<button data-agentSecteur-id="{{ agentSecteur.id }}" type="button" class="btn btn-lg  btn-outline-primary js-invalidate-secteur-agent">Bloquer</button>
-													{% endif %}
-												</th>
-											</tr>
-										{% endfor %}
+										<tr>
+											<th></th>
+											<th>{{ agentSecteur.secteur.nom }}</th>
+											{% set coachtSecteur = repoCoachSecteur.findOneBy({'secteur' : agentSecteur.secteur}) %}
+											<th>{{ coachtSecteur.coach.nom }}</th>
+											<th>{{ agentSecteur.dateValidation|date('d/m/Y') }}</th>
+											<th>
+												{% if agentSecteur.statut == false %}
+													<button class="btn btn-warning">Bloqué</button>
+												{% else %}
+													<button class="btn  btn-success"> Validé</button>
+												{% endif %}
+											</th>
+											<th>
+												{% if agentSecteur.statut == false or agentSecteur.statut == null or agentSecteur.dateValidation == null %}
+													<button data-agentSecteur-id="{{ agentSecteur.id }}" class="btn btn-lg  btn-outline-primary js-validate-secteur-agent btn-validate-sector">Valider</button>
+												{% else %}
+													<button data-agentSecteur-id="{{ agentSecteur.id }}" type="button" class="btn btn-lg  btn-outline-primary js-invalidate-secteur-agent">Bloquer</button>
+												{% endif %}
+											</th>
+										</tr>
 									</tbody>
 								</table>
 							</div>

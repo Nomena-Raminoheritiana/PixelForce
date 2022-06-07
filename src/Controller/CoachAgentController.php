@@ -52,6 +52,8 @@ class CoachAgentController extends AbstractController
     {
         /** @var User $coach */
         $coach = $this->getUser();
+        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository('App:AgentSecteur');
+        $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();
 
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)->remove('secteur');
@@ -64,7 +66,9 @@ class CoachAgentController extends AbstractController
 
         return $this->render('user_category/coach/agent/list_agents.html.twig', [
             'agents' => $agents,
-            'searchForm' => $searchForm->createView()
+            'searchForm' => $searchForm->createView(),
+            'repoAgentSecteur' => $repoAgentSecteur,
+            'mySector' => $mySector
         ]);
     }
 
@@ -85,6 +89,7 @@ class CoachAgentController extends AbstractController
         if($formUser->isSubmitted() && $formUser->isValid()) {
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
             $agentSecteur->setAgent($user);
+            $agentSecteur->setStatut(1);
             $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach])[0]->getSecteur();
             $agentSecteur->setSecteur($secteur);
             $user->setRoles([ User::ROLE_AGENT ]);
@@ -106,17 +111,19 @@ class CoachAgentController extends AbstractController
     }
 
     /**
-     * @Route("/coach/agent/{id}/view", name="coach_agent_view")
+     * @Route("/coach/agent/{id}/secteur/view", name="coach_agent_view")
      */
     public function coach_agent_view(User $agent,  AgentSecteurService $agentSecteurService)
     {
+        $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();
+        $agentSecteur = $this->repoAgentSecteur->findOneBy(['secteur' => $mySector, 'agent' => $agent]);
         $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
         $secteurs = $agentSecteurService->getSecteurs($agentSecteurs);
         $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
 
         return $this->render('user_category/coach/agent/view_agent.html.twig', [
             'agent' => $agent,
-            'agentSecteurs' => $agentSecteurs,
+            'agentSecteur' => $agentSecteur,
             'secteurs' => $secteurs,
             'repoCoachSecteur' => $repoCoachSecteur,
         ]);
@@ -131,30 +138,38 @@ class CoachAgentController extends AbstractController
      */
     public function coach_agent_secteur_validate(AgentSecteur $agentSecteur, Request $request): Response
     {
-        if ($request->getMethod() === "POST") {
-            $agentSecteur->setStatut(1);
-            $agentSecteur->setDateValidation(new \DateTime());
-            $this->entityManager->save($agentSecteur);
-            return $this->json([
-                'validation' => 'successfully'
-            ], 200); 
+        $agentSecteur->setStatut(1);
+        $agentSecteur->setDateValidation(new \DateTime());
+        $this->entityManager->save($agentSecteur);
+
+        if ($request->query->get('pageReloaded') === 'true') {
+            return $this->redirectToRoute('coach_agent_list');
         }
-        return $this->render('$0.html.twig', []);
+
+        return $this->json([
+            'validation' => 'successfully'
+        ], 200); 
     }
 
     /**
      * Permet de bloquer un secteur validé de l'agent
      * 
      * @Route("/coach/agent/secteur/{agentSecteur}/invalidate", name="coach_agent_secteur_invalidate")
+     * 
      */
     public function coach_agent_secteur_invalidate(AgentSecteur $agentSecteur, Request $request): Response
     {
-        if ($request->getMethod() === "POST") {
-            $agentSecteur->setStatut(0);
-            $this->entityManager->save($agentSecteur);
-            return $this->json([
-                'invalidation' => 'successfully'
-            ], 200); 
+
+        $agentSecteur->setStatut(0);
+        $this->entityManager->save($agentSecteur);
+
+        if ($request->query->get('pageReloaded') === 'true') {
+            return $this->redirectToRoute('coach_agent_list');
         }
+
+        return $this->json([
+            'invalidation' => 'successfully'
+        ], 200); 
+        
     }
 }

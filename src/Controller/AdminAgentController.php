@@ -249,15 +249,13 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_secteur_validate(AgentSecteur $agentSecteur, Request $request): Response
     {
-        if ($request->getMethod() === "POST") {
-            $agentSecteur->setStatut(1);
-            $agentSecteur->setDateValidation(new \DateTime());
-            $this->entityManager->save($agentSecteur);
-            return $this->json([
-                'validation' => 'successfully'
-            ], 200); 
-        }
-        return $this->render('$0.html.twig', []);
+        $agentSecteur->setStatut(1);
+        $agentSecteur->setDateValidation(new \DateTime());
+        $this->entityManager->save($agentSecteur);
+        return $this->json([
+            'validation' => 'successfully'
+        ], 200); 
+        
     }
 
     /**
@@ -267,12 +265,11 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_secteur_invalidate(AgentSecteur $agentSecteur, Request $request): Response
     {
-        if ($request->getMethod() === "POST") {
-            $agentSecteur->setStatut(0);
-            $this->entityManager->save($agentSecteur);
-            return $this->json([
-                'invalidation' => 'successfully'
-            ], 200); 
-        }
+        $agentSecteur->setStatut(0);
+        $this->entityManager->save($agentSecteur);
+        return $this->json([
+            'invalidation' => 'successfully'
+        ], 200); 
+        
     }
 }
