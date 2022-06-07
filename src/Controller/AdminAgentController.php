@@ -29,6 +29,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Json;
 
 class AdminAgentController extends AbstractController
 {
@@ -163,6 +164,7 @@ class AdminAgentController extends AbstractController
 
     /**
      * @Route("/admin/agent/secteur/multiple/add", name="admin_agent_secteur_multiple_add")
+     * @return Json
      */
     public function admin_agent_secteur_multiple_add(Request $request, CoachSecteurRepository $coachSecteurRepository)
     {
@@ -272,6 +274,5 @@ class AdminAgentController extends AbstractController
                 'invalidation' => 'successfully'
             ], 200); 
         }
-        return $this->render('$0.html.twig', []);
     }
 }

@@ -8,6 +8,7 @@ use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
 use App\Entity\UserSecteur;
 use App\Form\InscriptionAgentType;
+use App\Form\MultipleSecteurType;
 use App\Form\UserSearchType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
@@ -17,6 +18,7 @@ use App\Repository\CoachSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSecteurRepository;
+use App\Services\AgentSecteurService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,13 +33,16 @@ class CoachAgentController extends AbstractController
     protected $entityManager;
     protected $repoCoachSecteur;
 
-    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser, UserManager $userManager, EntityManager $entityManager, CoachSecteurRepository $repoCoachSecteur)
+    protected $repoAgentSecteur;
+
+    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser, UserManager $userManager, EntityManager $entityManager, CoachSecteurRepository $repoCoachSecteur, AgentSecteurRepository $repoAgentSecteur)
     {
         $this->coachAgentRepository = $coachAgentRepository;
         $this->repoUser = $repoUser;
         $this->userManager = $userManager;
         $this->entityManager = $entityManager;
         $this->repoCoachSecteur = $repoCoachSecteur;
+        $this->repoAgentSecteur = $repoAgentSecteur;
     }
 
     /**
@@ -103,11 +108,53 @@ class CoachAgentController extends AbstractController
     /**
      * @Route("/coach/agent/{id}/view", name="coach_agent_view")
      */
-    public function coach_agent_view(User $agent)
+    public function coach_agent_view(User $agent,  AgentSecteurService $agentSecteurService)
     {
+        $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+        $secteurs = $agentSecteurService->getSecteurs($agentSecteurs);
+        $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
+
         return $this->render('user_category/coach/agent/view_agent.html.twig', [
-            'agent' => $agent
+            'agent' => $agent,
+            'agentSecteurs' => $agentSecteurs,
+            'secteurs' => $secteurs,
+            'repoCoachSecteur' => $repoCoachSecteur,
         ]);
     }
 
+
+    
+    /**
+     * Permet de valider le secteur en attente de l'agent
+     * 
+     * @Route("/coach/agent/secteur/{agentSecteur}/validate", name="coach_agent_secteur_validate")
+     */
+    public function coach_agent_secteur_validate(AgentSecteur $agentSecteur, Request $request): Response
+    {
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setStatut(1);
+            $agentSecteur->setDateValidation(new \DateTime());
+            $this->entityManager->save($agentSecteur);
+            return $this->json([
+                'validation' => 'successfully'
+            ], 200); 
+        }
+        return $this->render('$0.html.twig', []);
+    }
+
+    /**
+     * Permet de bloquer un secteur validé de l'agent
+     * 
+     * @Route("/coach/agent/secteur/{agentSecteur}/invalidate", name="coach_agent_secteur_invalidate")
+     */
+    public function coach_agent_secteur_invalidate(AgentSecteur $agentSecteur, Request $request): Response
+    {
+        if ($request->getMethod() === "POST") {
+            $agentSecteur->setStatut(0);
+            $this->entityManager->save($agentSecteur);
+            return $this->json([
+                'invalidation' => 'successfully'
+            ], 200); 
+        }
+    }
 }

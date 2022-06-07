@@ -39,6 +39,7 @@ Encore
     .addEntry('commentaire', './assets/js/commentaire.js')
     .addEntry('chatJS', './assets/js/chat/chat.js')
     .addEntry('formationForm', './assets/js/formationForm.js')
+    .addEntry('validationSecteur', './assets/js/validationSecteur.js')
 
     // Vuexy: Vendor JS
     .addEntry('vuexyJS', './assets/js/vuexy/vuexy.js')
