@@ -92,8 +92,18 @@
 			</table>
 		</div>
 
+        <div class="row my-2">
+            <div class="d-flex flex-wrap align-items-center">
+                <a href="{{path('agent_contact_export_excel')}}" class="btn btn-success btn-sm"><i class="fa fa-file-text"></i>&nbsp;Exporter excel</a>
+                <a href="{{path('agent_contact_export_pdf')}}" class="btn btn-danger btn-sm mx-2"><i class="fa fa-file-text"></i>&nbsp;Exporter pdf</a>
+            </div>
+            
+		</div>
+
 		<div class="pagination d-flex justify-content-center">
 			{{ knp_pagination_render(contacts)}}
 		</div>
     </div>
+
+    
 {% endblock %}

@@ -47,6 +47,46 @@ class ContactInformation
      */
     private $contact;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $rue;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $numero;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $codePostal;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ville;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $compositionFoyer;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $nbrPersonne;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $commentaire;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=TypeLogement::class)
+     */
+    private $typeLogement;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,6 +170,102 @@ class ContactInformation
         }
 
         $this->contact = $contact;
+
+        return $this;
+    }
+
+    public function getRue(): ?string
+    {
+        return $this->rue;
+    }
+
+    public function setRue(?string $rue): self
+    {
+        $this->rue = $rue;
+
+        return $this;
+    }
+
+    public function getNumero(): ?string
+    {
+        return $this->numero;
+    }
+
+    public function setNumero(?string $numero): self
+    {
+        $this->numero = $numero;
+
+        return $this;
+    }
+
+    public function getCodePostal(): ?string
+    {
+        return $this->codePostal;
+    }
+
+    public function setCodePostal(?string $codePostal): self
+    {
+        $this->codePostal = $codePostal;
+
+        return $this;
+    }
+
+    public function getVille(): ?string
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?string $ville): self
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
+    public function getCompositionFoyer(): ?string
+    {
+        return $this->compositionFoyer;
+    }
+
+    public function setCompositionFoyer(?string $compositionFoyer): self
+    {
+        $this->compositionFoyer = $compositionFoyer;
+
+        return $this;
+    }
+
+    public function getNbrPersonne(): ?int
+    {
+        return $this->nbrPersonne;
+    }
+
+    public function setNbrPersonne(?int $nbrPersonne): self
+    {
+        $this->nbrPersonne = $nbrPersonne;
+
+        return $this;
+    }
+
+    public function getCommentaire(): ?string
+    {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire(?string $commentaire): self
+    {
+        $this->commentaire = $commentaire;
+
+        return $this;
+    }
+
+    public function getTypeLogement(): ?TypeLogement
+    {
+        return $this->typeLogement;
+    }
+
+    public function setTypeLogement(?TypeLogement $typeLogement): self
+    {
+        $this->typeLogement = $typeLogement;
 
         return $this;
     }
