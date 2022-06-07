@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Util\GenericUtil;
+use App\Helpers\GenericUtil;
 use SplFileObject;
 
 class ExcelService

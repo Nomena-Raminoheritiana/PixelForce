@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\AgentSecteur;
 use App\Entity\CoachAgent;
 use App\Entity\SearchEntity\UserSearch;
+use App\Entity\Secteur;
 use App\Entity\User;
-use App\Entity\UserSecteur;
 use App\Form\InscriptionAgentType;
 use App\Form\MultipleSecteurType;
 use App\Form\UserSearchType;
@@ -17,8 +17,8 @@ use App\Repository\CoachAgentRepository;
 use App\Repository\CoachSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
-use App\Repository\UserSecteurRepository;
 use App\Services\AgentSecteurService;
+use App\Services\FormationService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +34,18 @@ class CoachAgentController extends AbstractController
     protected $repoCoachSecteur;
 
     protected $repoAgentSecteur;
+    /**
+     * @var FormationService
+     */
+    private $formationService;
 
-    public function __construct(CoachAgentRepository $coachAgentRepository, UserRepository $repoUser, UserManager $userManager, EntityManager $entityManager, CoachSecteurRepository $repoCoachSecteur, AgentSecteurRepository $repoAgentSecteur)
+    public function __construct(FormationService $formationService,
+                                CoachAgentRepository $coachAgentRepository,
+                                UserRepository $repoUser,
+                                UserManager $userManager,
+                                EntityManager $entityManager,
+                                CoachSecteurRepository $repoCoachSecteur,
+                                AgentSecteurRepository $repoAgentSecteur)
     {
         $this->coachAgentRepository = $coachAgentRepository;
         $this->repoUser = $repoUser;
@@ -43,6 +53,7 @@ class CoachAgentController extends AbstractController
         $this->entityManager = $entityManager;
         $this->repoCoachSecteur = $repoCoachSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
+        $this->formationService = $formationService;
     }
 
     /**
@@ -52,7 +63,7 @@ class CoachAgentController extends AbstractController
     {
         /** @var User $coach */
         $coach = $this->getUser();
-        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository('App:AgentSecteur');
+        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository(AgentSecteur::class);
         $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();
 
         $search = new UserSearch();
@@ -141,6 +152,7 @@ class CoachAgentController extends AbstractController
         $agentSecteur->setStatut(1);
         $agentSecteur->setDateValidation(new \DateTime());
         $this->entityManager->save($agentSecteur);
+        $this->formationService->affecterToutFormation($agentSecteur->getAgent(), $agentSecteur->getSecteur());
 
         if ($request->query->get('pageReloaded') === 'true') {
             return $this->redirectToRoute('coach_agent_list');
