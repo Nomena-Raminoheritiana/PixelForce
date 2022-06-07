@@ -8,6 +8,10 @@ use App\Entity\AgentSecteur;
 class AgentSecteurService
 {
     
+    /**
+     * Permet de savoir sin un secteur est déjà attribué à un agent
+     * @return boolean
+     */
     public function isNewSectorInArray($newSector, $myAllAgentSecteurs)
     {
         $arrayAgentSector = [];
@@ -39,4 +43,13 @@ class AgentSecteurService
 
         return $secteurs;
     }
+
+
+    // public function primaryIfSecteurIsActive(AgentSecteur $agentSecteur)
+    // {
+    //     if ($agentSecteur and $agentSecteur->getStatut() === true) {
+    //         return 'primary';
+    //     }
+    //     return 'warning';
+    // }
 }

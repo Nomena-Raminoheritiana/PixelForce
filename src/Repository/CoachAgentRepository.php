@@ -142,6 +142,7 @@ class CoachAgentRepository extends ServiceEntityRepository
             ->where('ca.coach = :coach')
             ->setParameter('coach', $coach)
             ->join('ca.agent', 'a')
+            ->orderBy('a.id', 'DESC')
         ;   
 
         if ($search->getPrenom()) {

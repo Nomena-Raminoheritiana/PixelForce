@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,9 +55,12 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if(in_array('ROLE_ADMIN', $token->getRoleNames())) {
-            return new RedirectResponse('/admin_dashboard');
-        }
+        if(in_array(User::ROLE_ADMINISTRATEUR, $token->getRoleNames())) {
+            return new RedirectResponse('/admin/dashboard');
+        }else if(in_array(User::ROLE_AGENT, $token->getRoleNames())) { 
+            return new RedirectResponse('/agent/accueil'); 
+        } 
+
         return new RedirectResponse('/dashboard');
         // For example:
         //return new RedirectResponse($this->urlGenerator->generate('some_route'));

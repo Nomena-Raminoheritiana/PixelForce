@@ -3,7 +3,7 @@
 
 namespace App\Form\FormEvents;
 
-
+use App\Entity\AgentSecteur;
 use App\Entity\User;
 use App\Entity\UserSecteur;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -62,14 +62,14 @@ class SecteurChoiceListListener implements EventSubscriberInterface
         try {
             $secteurValue = $event->getForm()->get('secteur')->getData()['secteur'];
 
-            $userSecteur = (new UserSecteur())
-                ->setUser($user)
+            $userSecteur = (new AgentSecteur())
+                ->setAgent($user)
                 ->setSecteur($secteurValue)
                 ->setStatut(false)
             ;
 
-            $user->removeAllUserSecteur();
-            $user->addUserSecteur($userSecteur);
+            // $user->removeAllUserSecteur();
+            // $user->addUserSecteur($userSecteur);
 
         } catch(OutOfBoundsException $exception)
         {

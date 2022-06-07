@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Page d'accueil
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mt-3">Bienvenue sur PixelForce</h1>
+        <h4 class="text-center">[Texte pour inciter l'utilisateur à choisir un secteur]</h4>
+
+        <div class="block-list-card-secteur mt-5">
+            <div class="row">
+                {% for secteur in allSecteurs %}
+                    <div class="col-4">
+                        {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
+                      
+                        <div class="card bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}secondary{% endif %} p-3">
+
+                            <h2 class="text-white text-center">{{ secteur.nom }}</h2>
+                            <h4 class="text-white">{{ secteur.description }}</h4>
+
+                            <div class="button-block text-center mt-5">
+                                {% if agentSecteur is null %}
+                                    <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a>                 
+                                {% elseif agentSecteur and agentSecteur.statut == true %}
+                                    <a href="{{ path('app_dashboard') }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Acceder</a>
+                                {% elseif agentSecteur and agentSecteur.statut == false %}
+                                    <a href="{{ path('app_dashboard') }}" class="btn btn-success"><i class="fa-solid fa-spinner"></i> En attente de validation</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
