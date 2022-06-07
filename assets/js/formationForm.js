@@ -43,6 +43,7 @@ $(document).ready(function () {
     });
 
     // boutton ajout video (creation input-file + click automatique sur celui-ci)
+    let addVideo = false;
     $(this).on('click','#btn-add-video', function(e) {
         e.preventDefault();
         const inputFile = $('<input />', {
@@ -53,6 +54,7 @@ $(document).ready(function () {
         });
         $(this).closest('#formation-video').append(inputFile);
         inputFile.trigger('click');
+        addVideo = true;
     });
 
     // video local preview
@@ -156,25 +158,57 @@ $(document).ready(function () {
     $(this).on('click','#edit-formation',async function(e) {
         e.preventDefault();
         validationFormulaire(async function() {
-             progressionBar(0)
+             progressionBar(0);
             let fileDeleted = new FormData();
-             $('.hidden_media_deleted').each(function() {
+            $('.hidden_media_deleted').each(function() {
                 fileDeleted.append('deleted_media[]', $(this).val())
-             });
-            await saveData();
+            });
             (await axios.post(Routing.generate('coach_formation_deleteMedia'),fileDeleted))
-             progressionContainer.remove()
-            progressionLabel.html(
-                '<div class="text-center">' +
-                '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
-                '   <strong>Formation modifié avec succès</strong> ' +
-                '</div>');
-            setTimeout(function() {
-                progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
-                setTimeout(function() {
-                    location.reload();
-                },1000)
-            },1000)
+             if(addVideo) {
+                 $('.hiddenVideoData').remove();
+                 sendVideoToVimeo({
+                     selector:$('#inputVideo'),
+                     titre:$('#video-upload-name').text(),
+                     description:'',
+                     error: function(data) {
+                         alert('erreur lors du téléchargement video '+data)
+                     },
+                     progress: function(pourcentage) {
+                         progressionBar(pourcentage);
+                     },
+                     complete: async function(videoId, url, prettyData) {
+                         await saveData(videoId);
+                         progressionContainer.remove()
+                         progressionLabel.html(
+                             '<div class="text-center">' +
+                             '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
+                             '   <strong>Formation modifié avec succès</strong> ' +
+                             '</div>');
+                         setTimeout(function() {
+                             progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
+                             setTimeout(function() {
+                                 location.reload();
+                             },1000)
+                         },1000)
+                     }
+                 })
+             } else {
+                 await saveData();
+                 progressionContainer.remove()
+                 progressionLabel.html(
+                     '<div class="text-center">' +
+                     '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
+                     '   <strong>Formation modifié avec succès</strong> ' +
+                     '</div>');
+                 setTimeout(function() {
+                     progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
+                     setTimeout(function() {
+                         location.reload();
+                     },1000)
+                 },1000)
+             }
+
+
         })
     })
 
