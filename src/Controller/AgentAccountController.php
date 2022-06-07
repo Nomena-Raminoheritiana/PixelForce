@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\AgentSecteur;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Services\AgentSecteurService;
