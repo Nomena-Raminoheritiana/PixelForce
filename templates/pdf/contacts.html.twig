@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Liste des contacts</title>
+        <style>
+            .text-right{
+                text-align: right;
+            }
+            body{
+                padding : 12px;
+            }
+            h1{
+                font-family : 'Segoe UI';
+                margin : 0px;
+                margin-bottom: 10px;
+                color : #61071a;
+                font-weight : normal;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                text-align: center;
+            }
+            table{
+                margin : 0 auto;
+                font-size: 10px;
+            }
+            table, td, th{
+                border : none;
+            }
+            table td, table th{
+                padding : 5px;
+                border : 1px solid #eee;
+                font-family : 'Segoe UI';
+            }
+            table th{
+                background-color: #61071a;
+                color : #fff;
+                font-weight : normal;
+                text-transform: uppercase;
+            }
+        </style>
+        
+    </head>
+    
+    <body>
+        <h1>Liste des contacts</h1>
+        <br/><br/>
+        <table border="1">
+            <tr>
+                <th>Noms et prénoms</th>
+                <th>Mail</th>
+                <th>Téléphone</th>
+                <th>Adresse</th>
+                <th>Type du logement</th>
+                <th>Rue</th>
+                <th>Code postal</th>
+                <th>Ville</th>
+                <th>Nombre de personne</th>
+            </tr>
+            {% for contact in contacts %}            
+                {% set information = contact.information %}
+                <tr>
+                    <td>{{ information.lastname }}</td>
+                    <td>{{ information.email }}</td>
+                    <td>{{ information.phone }}</td>
+                    <td>{{ information.address }}</td>
+                    <td>{% if information.typeLogement %} {{ information.typeLogement.nom }} {% endif %}</td>
+                    <td>{{ information.rue }}</td>
+                    <td>{{ information.codePostal }}</td>
+                    <td>{{ information.ville }}</td>
+                    <td class="text-right">{{ information.nbrPersonne }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

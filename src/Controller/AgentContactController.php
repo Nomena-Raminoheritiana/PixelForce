@@ -15,7 +15,10 @@ use App\Repository\ContactInformationRepository;
 use App\Repository\ContactRepository;
 use App\Repository\UserRepository;
 use App\Services\ExcelService;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,6 +72,19 @@ class AgentContactController extends AbstractController
         $file = $excelService->export($contacts, $fields, $headers);
         $date = (new \DateTime())->format('Y-m-d');
         return $this->file($file, "contact-$date.csv");
+    }
+
+    /**
+     * @Route("/agent/contact/exportPdf", name="agent_contact_export_pdf")
+     */
+    public function agent_contact_export_pdf(Request $request, DompdfWrapperInterface $wrapper)
+    {
+        $contacts = $this->repoContact->findAll();
+        $html = $this->renderView('pdf/contacts.html.twig', [
+            'title' => "Liste des contacts",
+            'contacts' => $contacts
+        ]);
+        return $wrapper->getStreamResponse($html, 'document.pdf', ['isRemoteEnabled' => true]);
     }
 
     /**
