@@ -7,6 +7,7 @@ use App\Entity\TypeLogement;
 use App\Repository\TypeLogementRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -91,7 +92,7 @@ class ContactInformationType extends AbstractType
                 'trim' => true,
                 'required' => false
             ])
-            ->add('nbrPersonne', NumberType::class, [
+            ->add('nbrPersonne', IntegerType::class, [
                 'label' => 'Nombre de personne',
                 'required' => false
             ])

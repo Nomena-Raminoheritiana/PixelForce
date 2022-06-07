@@ -14,9 +14,11 @@ use App\Manager\ContactManager;
 use App\Repository\ContactInformationRepository;
 use App\Repository\ContactRepository;
 use App\Repository\UserRepository;
+use App\Services\ExcelService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AgentContactController extends AbstractController
@@ -52,6 +54,21 @@ class AgentContactController extends AbstractController
             'contacts' => $contacts,
             'searchForm' => $searchForm->createView()
         ]);
+    }
+
+    /**
+     * @Route("/agent/contact/exportExcel", name="agent_contact_export_excel")
+     */
+    public function agent_contact_export_excel(Request $request, ExcelService $excelService): Response
+    {
+        $contacts = $this->repoContact->findAll();
+        $headers = ["NOM ET PRÉNOMS", "EMAIL", "TÉLÉPHONE", "ADRESSE", "TYPE DU LOGEMENT", "RUE", "NUMÉRO", "CODE POSTAL", "VILLE", "COMPOSITION DU FOYER", "NOMBRE DE PERSONNE", "COMMENTAIRE"];
+        $fields = ["information.lastname", "information.email", "information.phone", "information.address", 
+            "information.typeLogement.nom", "information.rue", "information.numero", "information.codePostal", 
+            "information.ville", "information.compositionFoyer", "information.nbrPersonne", "information.commentaire"];
+        $file = $excelService->export($contacts, $fields, $headers);
+        $date = (new \DateTime())->format('Y-m-d');
+        return $this->file($file, "contact-$date.csv");
     }
 
     /**
