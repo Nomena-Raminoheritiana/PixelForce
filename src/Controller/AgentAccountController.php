@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\AgentSecteur;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\SecteurRepository;
 use App\Services\AgentSecteurService;
@@ -25,7 +26,7 @@ class AgentAccountController extends AbstractController
      */
     public function agent_accueil(AgentSecteurService $agentSecteurService)
     {
-        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository('App:AgentSecteur');
+        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository(AgentSecteur::class);
         $allSecteurs = $this->repoSecteur->findAll();
 
         return $this->render('user_category/agent/home_agent.html.twig', [
