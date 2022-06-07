@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\TypeLogementRepository;
 use App\Repository\ContactRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
