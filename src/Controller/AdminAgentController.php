@@ -40,8 +40,9 @@ class AdminAgentController extends AbstractController
     protected $repoAgentSecteur;
     protected $repoSecteur;
     protected $agentSecteurService;
+    protected $repoCoachSecteur;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, AgentSecteurRepository $repoAgentSecteur, SecteurRepository $repoSecteur, AgentSecteurService $agentSecteurService)
+    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, AgentSecteurRepository $repoAgentSecteur, SecteurRepository $repoSecteur, AgentSecteurService $agentSecteurService, CoachSecteurRepository $repoCoachSecteur)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
@@ -50,6 +51,7 @@ class AdminAgentController extends AbstractController
         $this->repoAgentSecteur = $repoAgentSecteur;
         $this->repoSecteur = $repoSecteur;
         $this->agentSecteurService = $agentSecteurService;
+        $this->repoCoachSecteur = $repoCoachSecteur;
     }
 
     /**
@@ -57,7 +59,6 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_list(Request $request, PaginatorInterface $paginator)
     {
-        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository('App:AgentSecteur');
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search);
         $searchForm->handleRequest($request);
@@ -71,7 +72,7 @@ class AdminAgentController extends AbstractController
         return $this->render('user_category/admin/agent/list_agents.html.twig', [
             'agents' => $agents,
             'searchForm' => $searchForm->createView(),
-            'repoAgentSecteur' => $repoAgentSecteur
+            'repoAgentSecteur' => $this->repoAgentSecteur
         ]);
     }
 
@@ -83,13 +84,12 @@ class AdminAgentController extends AbstractController
         $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
         $secteurs = $agentSecteurService->getSecteurs($agentSecteurs);
         $formSecteur = $this->createForm(MultipleSecteurType::class);
-        $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
 
         return $this->render('user_category/admin/agent/view_agent.html.twig', [
             'agent' => $agent,
             'agentSecteurs' => $agentSecteurs,
             'secteurs' => $secteurs,
-            'repoCoachSecteur' => $repoCoachSecteur,
+            'repoCoachSecteur' => $this->repoCoachSecteur,
             'formSecteur' => $formSecteur->createView()
         ]);
     }

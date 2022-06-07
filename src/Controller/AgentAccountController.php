@@ -25,12 +25,11 @@ class AgentAccountController extends AbstractController
      */
     public function agent_accueil(AgentSecteurService $agentSecteurService)
     {
-        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository('App:AgentSecteur');
         $allSecteurs = $this->repoSecteur->findAll();
 
         return $this->render('user_category/agent/home_agent.html.twig', [
             'allSecteurs' => $allSecteurs,
-            'repoAgentSecteur' => $repoAgentSecteur,
+            'repoAgentSecteur' => $this->repoAgentSecteur,
             'agent' => $this->getUser(),
             'agentSecteurService' => $agentSecteurService
         ]);

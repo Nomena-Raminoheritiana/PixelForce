@@ -54,7 +54,6 @@ class AdminCoachController extends AbstractController
      */
     public function admin_coach_list(Request $request, PaginatorInterface $paginator)
     {
-        $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search);
         $searchForm->handleRequest($request);
@@ -68,12 +67,12 @@ class AdminCoachController extends AbstractController
         return $this->render('user_category/admin/coach/list_coachs.html.twig', [
             'coachs' => $coachs,
             'searchForm' => $searchForm->createView(),
-            'repoCoachSecteur' => $repoCoachSecteur
+            'repoCoachSecteur' => $this->repoCoachSecteur
         ]);
     }
 
     /**
-     * @Route("/admin/coach/{id}//view", name="admin_coach_view")
+     * @Route("/admin/coach/{id}/view", name="admin_coach_view")
      */
     public function admin_coach_view(User $coach, AgentSecteurService $agentSecteurService)
     {

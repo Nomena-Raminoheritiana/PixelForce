@@ -63,7 +63,6 @@ class CoachAgentController extends AbstractController
     {
         /** @var User $coach */
         $coach = $this->getUser();
-        $repoAgentSecteur = $this->getDoctrine()->getManager()->getRepository(AgentSecteur::class);
         $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();
 
         $search = new UserSearch();
@@ -78,7 +77,7 @@ class CoachAgentController extends AbstractController
         return $this->render('user_category/coach/agent/list_agents.html.twig', [
             'agents' => $agents,
             'searchForm' => $searchForm->createView(),
-            'repoAgentSecteur' => $repoAgentSecteur,
+            'repoAgentSecteur' => $this->repoAgentSecteur,
             'mySector' => $mySector
         ]);
     }
@@ -130,13 +129,12 @@ class CoachAgentController extends AbstractController
         $agentSecteur = $this->repoAgentSecteur->findOneBy(['secteur' => $mySector, 'agent' => $agent]);
         $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
         $secteurs = $agentSecteurService->getSecteurs($agentSecteurs);
-        $repoCoachSecteur = $this->getDoctrine()->getManager()->getRepository('App:CoachSecteur');
 
         return $this->render('user_category/coach/agent/view_agent.html.twig', [
             'agent' => $agent,
             'agentSecteur' => $agentSecteur,
             'secteurs' => $secteurs,
-            'repoCoachSecteur' => $repoCoachSecteur,
+            'repoCoachSecteur' =>  $this->repoCoachSecteur,
         ]);
     }
 
