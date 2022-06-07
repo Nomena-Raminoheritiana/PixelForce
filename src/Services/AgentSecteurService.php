@@ -43,4 +43,13 @@ class AgentSecteurService
 
         return $secteurs;
     }
+
+
+    // public function primaryIfSecteurIsActive(AgentSecteur $agentSecteur)
+    // {
+    //     if ($agentSecteur and $agentSecteur->getStatut() === true) {
+    //         return 'primary';
+    //     }
+    //     return 'warning';
+    // }
 }

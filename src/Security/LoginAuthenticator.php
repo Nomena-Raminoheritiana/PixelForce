@@ -57,9 +57,9 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         if(in_array(User::ROLE_ADMINISTRATEUR, $token->getRoleNames())) {
             return new RedirectResponse('/admin/dashboard');
-        }else if(in_array(User::ROLE_AGENT, $token->getRoleNames())) {
-            return new RedirectResponse('/agent/accueil');
-        }
+        }else if(in_array(User::ROLE_AGENT, $token->getRoleNames())) { 
+            return new RedirectResponse('/agent/accueil'); 
+        } 
 
         return new RedirectResponse('/dashboard');
         // For example:
