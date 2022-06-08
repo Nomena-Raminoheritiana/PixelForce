@@ -12,6 +12,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AgentFormationController extends AbstractController
@@ -45,8 +46,9 @@ class AgentFormationController extends AbstractController
      * @Route("/agent/formation/list", name="agent_formation_list", options={"expose"=true})
      * @IsGranted("ROLE_AGENT")
      */
-    public function agent_formation_list(Request $request)
+    public function agent_formation_list(Request $request, SessionInterface $session)
     {
+        // dd($session->get('secteurId'));
         // todo: miandry anle login agent izay ataon Tsiory mba haazaoana ilay session micontenir anle secteur
         $secteur = $this->getUser()->getAgentSecteurs()->get(0)->getSecteur();
         if($criteres = $request->query->get('q')) {

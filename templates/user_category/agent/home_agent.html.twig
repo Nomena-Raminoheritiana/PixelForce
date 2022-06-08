@@ -19,18 +19,21 @@
                     <div class="col-4">
                         {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
                       
-                        <div class="card bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}secondary{% endif %} p-3">
+                        <div class="card-secteur bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}secondary{% endif %} p-3">
 
                             <h2 class="text-white text-center">{{ secteur.nom }}</h2>
-                            <h4 class="text-white">{{ secteur.description }}</h4>
+                            <div class="secteur-info d-none text-center">
+                                <h4 class="text-white secteur-description">{{ secteur.description }}</h4>
+                            </div>
+                            
 
                             <div class="button-block text-center mt-5">
                                 {% if agentSecteur is null %}
                                     <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a>                 
                                 {% elseif agentSecteur and agentSecteur.statut == true %}
-                                    <a href="{{ path('app_dashboard') }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Acceder</a>
+                                    <a href="{{ path('agent_dashboard_secteur', {id: secteur.id}) }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Acceder</a>
                                 {% elseif agentSecteur and agentSecteur.statut == false %}
-                                    <a href="{{ path('app_dashboard') }}" class="btn btn-success"><i class="fa-solid fa-spinner"></i> En attente de validation</a>
+                                    <a class="btn btn-success"><i class="fa-solid fa-spinner"></i> En attente de validation</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -39,4 +42,24 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+        $(function() {
+            $( ".card-secteur" ).each(function( index ) {
+                $(this).mouseover(function(){
+                    $(this).css("box-shadow", "12px 12px 2px 1px rgba(0, 0, 0, .2)");
+                    $(this).find('.secteur-info').removeClass('d-none');
+                });
+              
+                $(this).mouseout(function(){
+                    $(this).find('.secteur-info').addClass('d-none');
+                    $(this).css("box-shadow", "none");
+                });
+            });
+        })
+    </script>
 {% endblock %}
