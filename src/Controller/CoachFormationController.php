@@ -118,6 +118,9 @@ class CoachFormationController extends AbstractController
        $form = $this->createForm(FormationType::class, $formation);
        $form->handleRequest($request);
        if($form->isSubmitted() && $form->isValid()) {
+           if($request->request->get('video_id') && !is_null($request->request->get('video_id')) && !empty($request->request->get('video_id'))) {
+               $formation->setVideoId($request->request->get('video_id'));
+           }
            $this->entityManager->save($formation);
            $this->addMedia($request, $formation);
            $this->addFlash('success', 'Formation ajouté avec succès');

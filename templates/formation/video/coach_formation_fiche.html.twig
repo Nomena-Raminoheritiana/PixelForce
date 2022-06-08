@@ -4,7 +4,7 @@
     <div class="p-5 pb-5 mb-5 bg-white border position-relative" id="form-formation">
         <h3 class="mb-3"><i class="fa fa-book-open"></i> Fiche formation</h3>
         {{ form_start(form,{attr:{id:'formation-fiche', action: path('coach_formation_fiche', {id:formation.id})}}) }}
-        <input type="hidden" id="inputVideo">
+        <input type="hidden" id="inputVideo" class="hiddenVideoData">
         <div class="row">
             <div class="col-12 col-md-6">
                 {{ form_row(form.titre, {label_attr: {
@@ -12,6 +12,25 @@
                 }}) }}
                 {{ form_row(form.contenu, {attr:{rows:20}, label_attr: {class:'fw-bold'}}) }}
                 <div>
+                    <div class="fw-bold text-decoration-underline mb-3">
+                       Videos
+                    </div>
+                    <div class="border p-0 d-flex bg-black">
+                        <iframe src="https://player.vimeo.com/video/{{ formation.videoId }}" style="width:100%; height:400px" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                    </div>
+                    <div class="my-3" id="formation-video">
+                        <buton class="btn btn-primary btn-sm" id="btn-add-video"><i class="fa fa-plus"></i> Ajouter une nouvelle video</buton>
+                        <div>
+                            <span id="video-upload-name" class="badge bg-light-info text-dark mt-2 d-none"><i class="fa-solid fa-video me-2"></i></span>
+                        </div>
+                        <div>
+                            <span id="loading-video-container" class=" d-none">Loading : <span id="loading-video"></span>%</span>
+                        </div>
+                        <div>
+                            <video id="video-upload-preview" width="300" height="200" class="mt-2 d-none bg-dark"  controls></video>
+                        </div>
+
+                    </div>
                     <div class="fw-bold text-decoration-underline mb-3">
                         Fichiers joints
                     </div>
