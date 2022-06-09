@@ -20,6 +20,7 @@ use Dompdf\Options;
 use Knp\Component\Pager\PaginatorInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,7 +45,16 @@ class AgentContactController extends AbstractController
     {
         $agent = $this->getUser();
         $search = new UserSearch();
-        $searchForm = $this->createForm(UserSearchType::class, $search);
+        $searchForm = $this->createForm(UserSearchType::class, $search)
+            ->remove('secteur')
+            ->add('adresse', TextType::class, [
+                'required' => false,
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Adresse'
+                ]
+            ])
+        ;
         $searchForm->handleRequest($request);
         
         $contacts = $paginator->paginate(
@@ -134,7 +144,8 @@ class AgentContactController extends AbstractController
         return $this->render('user_category/agent/contact/add_contact.html.twig', [
             'formContact' => $formContact->createView(),
             'button' => 'Modifier',
-            'btn_class' =>  'success'
+            'btn_class' =>  'success',
+            'label' => 'Modification'
         ]);    
     }
 

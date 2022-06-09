@@ -11,7 +11,7 @@
 {% block body %}
     <div class="container">
         <h1 class="text-center mt-3">Bienvenue sur PixelForce</h1>
-        <h4 class="text-center">[Texte pour inciter l'utilisateur à choisir un secteur]</h4>
+        <h4 class="text-center mb-3" style="padding: 0 100px">Voici tous les secteurs disponibles sur la plateforme PixelForce. Vous pouvez accéder au secteur qui vous est attribué.</h4>
 
         <div class="block-list-card-secteur mt-5">
             <div class="row">
@@ -19,19 +19,19 @@
                     <div class="col-4">
                         {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
                       
-                        <div class="card-secteur bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}secondary{% endif %} p-3">
+                        <div style="min-height: 140px;" class="card-secteur bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}secondary{% endif %} p-3">
 
                             <h2 class="text-white text-center">{{ secteur.nom }}</h2>
                             <div class="secteur-info d-none text-center">
-                                <h4 class="text-white secteur-description">{{ secteur.description }}</h4>
+                                <h5 class="text-white secteur-description">{{ secteur.description }}</h5>
                             </div>
                             
 
                             <div class="button-block text-center mt-5">
                                 {% if agentSecteur is null %}
-                                    <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a>                 
+                                    {# <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a>                  #}
                                 {% elseif agentSecteur and agentSecteur.statut == true %}
-                                    <a href="{{ path('agent_dashboard_secteur', {id: secteur.id}) }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Acceder</a>
+                                    <a href="{{ path('agent_dashboard_secteur', {id: secteur.id}) }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
                                 {% elseif agentSecteur and agentSecteur.statut == false %}
                                     <a class="btn btn-success"><i class="fa-solid fa-spinner"></i> En attente de validation</a>
                                 {% endif %}

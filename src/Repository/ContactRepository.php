@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Contact;
 use App\Entity\SearchEntity\UserSearch;
+use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -57,22 +58,43 @@ class ContactRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('c');
         $query = $query
             ->andwhere('c.agent = :agent')
-            ->setParameter('agent', $agent);
+            ->setParameter('agent', $agent)
+            ->join('c.information', 'ci')
+        ;
 
         if ($search->getPrenom()) {
             $query = $query
-                ->andwhere('c.prenom LIKE :prenom')
-                ->setParameter('prenom', '%'.$search->getPrenom().'%');
+                ->andwhere('ci.lastname LIKE :lastname')
+                ->orwhere('ci.firstname LIKE :lastname')
+                ->setParameter('lastname', '%'.$search->getPrenom().'%');
         }
         if ($search->getEmail()) {
             $query = $query
-                ->andwhere('c.email LIKE :email')
+                ->andwhere('ci.email LIKE :email')
                 ->setParameter('email', '%'.$search->getEmail().'%');
         }
         if ($search->getTelephone()) {
             $query = $query
-                ->andwhere('c.telephone LIKE :telephone')
-                ->setParameter('telephone', '%'.$search->getTelephone().'%');
+                ->andwhere('ci.phone LIKE :phone')
+                ->setParameter('phone', '%'.$search->getTelephone().'%');
+        }
+        if ($search->getAdresse()) {
+            $query = $query
+                ->andwhere('ci.address LIKE :address')
+                ->setParameter('address', '%'.$search->getAdresse().'%');
+        }
+        if ($search->getDateInscriptionMin()) {
+            $query = $query
+                ->andwhere('c.created_at >= :dateInscriptionMin')
+                ->setParameter('dateInscriptionMin', $search->getDateInscriptionMin());
+        }
+        if ($search->getDateInscriptionMax()) {
+            // On ajoute +1day, car la requête ne prend que la date en dessous de la date recherchée
+            $search->getDateInscriptionMax()->add(new DateInterval('P1D'));
+
+            $query = $query
+                ->andwhere('c.created_at <= :dateInscriptionMax')
+                ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
         }
 
         return $query->getQuery()

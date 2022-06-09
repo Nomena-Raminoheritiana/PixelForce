@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Ajout client {% endblock %}
+{% block title %} {{ label|default('Ajout') }} client {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}

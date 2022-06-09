@@ -22,24 +22,37 @@
         </div>
 
         <!-- Formulaire de recherche -->
-        {# <div class="search-form">
+        <div class="search-form">
             {{form_start(searchForm)}}
             <div class="row text-center">
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.prenom)}}
                 </div>
                 <div class="col-12 col-sm-6 col-md-3">
                     {{form_row(searchForm.email)}}
                 </div>
-				<div class="col-12 col-sm-6 col-md-3">
+				<div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.telephone)}}
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <button class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <div class="col-12 col-sm-3 col-md-3">
+                    {{form_row(searchForm.adresse)}}
+                </div>
+                <div class="col-6">
+                    <label for="dateInscriptionMin" class="form-label">Date d'enregistrement à partir de</label>
+                    {{form_widget(searchForm.dateInscriptionMin)}}
+                </div>
+                <div class="col-6">
+                    <label for="dateInscriptionMax" class="form-label">Date d'enregistrement jusqu'à</label>
+                    {{form_widget(searchForm.dateInscriptionMax)}}
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 mt-3">
+                    <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
                 </div>
             </div>
             {{form_end(searchForm)}}
-        </div> #}
+        </div>
+
+        <hr class="my-5">
 
         <!-- Liste agent -->
         <div class="row mb-3">
@@ -59,7 +72,7 @@
 				<thead>
 					<tr>
 						<th scope="col">Prénoms</th>
-						<th scope="col">Mail</th>
+						<th scope="col">Email</th>
 						<th scope="col">Téléphone</th>
 						<th scope="col">Adresse</th>
 						<th scope="col">ACTION</th>

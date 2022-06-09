@@ -65,7 +65,7 @@
                             {% elseif statut == constant('App\\Entity\\Formation::STATUT_DISPONIBLE')%}
                                 <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i> Fiche formation</a>
                             {% elseif statut == constant('App\\Entity\\Formation::STATUT_TERMINER')%}
-                                <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Formation terminer</a>
+                                <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Formation terminée</a>
                             {% endif %}
                         </div>
 

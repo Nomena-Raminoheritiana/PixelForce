@@ -37,6 +37,11 @@ class UserSearch {
     private $dateInscriptionMax;
 
     /**
+     * @var string|null
+     */
+    private $adresse;
+
+    /**
      * Get the value of prenom
      *
      * @return  string|null
@@ -176,6 +181,30 @@ class UserSearch {
     public function setDateInscriptionMax($dateInscriptionMax)
     {
         $this->dateInscriptionMax = $dateInscriptionMax;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of adresse
+     *
+     * @return  string|null
+     */ 
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * Set the value of adresse
+     *
+     * @param  string|null  $adresse
+     *
+     * @return  self
+     */ 
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
 
         return $this;
     }

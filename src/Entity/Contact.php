@@ -49,9 +49,15 @@ class Contact
      */
     private $information;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created_at;
+
     public function __construct()
     {
         $this->client = new ArrayCollection();
+        $this->created_at = new \DateTime();
     }
 
     public function getId(): ?int
@@ -121,6 +127,18 @@ class Contact
     public function setInformation(?ContactInformation $information): self
     {
         $this->information = $information;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
 
         return $this;
     }
