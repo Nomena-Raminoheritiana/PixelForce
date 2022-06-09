@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 
 class FormationType extends AbstractType
 {
@@ -23,7 +24,7 @@ class FormationType extends AbstractType
             ->add('description_deblocage', TextareaType::class, [
                 'required' => true,
             ])
-            ->add('contenu', TextareaType::class, [
+            ->add('contenu', CKEditorType::class, [
                 'required' => true,
             ])
             ->add('debloqueAgent')
