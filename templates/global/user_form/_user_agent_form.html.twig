@@ -1,24 +1,30 @@
 <div class="row">
     <div class="col-md-6 col-12">
+        <label for="inscription_agent_nom" class="form-label">Nom</label>
         {{ form_row(formUser.nom, { attr: { placeholder : "Nom de l'utilisateur"  }}) }}
     </div>
     <div class="col-md-6 col-12">
+        <label for="inscription_agent_prenom" class="form-label">Prénom</label>
         {{ form_row(formUser.prenom, { attr: { placeholder : "Prénom de l'utilisateur" } }) }}
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 col-12">
+        <label for="inscription_agent_email" class="form-label">Email</label>
         {{ form_row(formUser.email, { attr: { placeholder : "Email de l'utilisateur"  }, type : "email" }) }}
     </div>
     <div class="col-md-6 col-12">
+        <label for="inscription_agent_telephone" class="form-label">Téléphone</label>
         {{ form_row(formUser.telephone, { attr: { placeholder : "Téléphone de l'utilisateur" } }) }}
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 col-12">
+        <label for="inscription_agent_adresse" class="form-label">Adresse</label>
         {{ form_row(formUser.adresse, { attr: { placeholder : "Adresse de l'utilisateur" } }) }}
     </div>
     <div class="col-md-6 col-12">
+        <label for="inscription_agent_codePostal" class="form-label">Code postal</label>
         {{ form_row(formUser.codePostal, { attr: { placeholder : "Code postal de l'utilisateur" } }) }}
     </div>
 </div>
@@ -40,6 +46,11 @@
 
 <!-- Connection Information -->
 {% if formUser.password is defined %}
-{{ form_row(formUser.username, { attr: { placeholder : "Nom ou prénom de l'utilisateur" } }) }}
-{{ form_row(formUser.password) }}
+<div class="block-password-form mt-5">
+    <label for="inscription_agent_username" class="form-label">Pseudo/Email (Utile pour la connexion)</label>
+    {{ form_row(formUser.username, { attr: { placeholder : "Nom ou prénom de l'utilisateur" } }) }}
+    
+    <label for="inscription_agent_password" class="form-label">Mot de passe</label>
+    {{ form_row(formUser.password) }}
+</div>
 {% endif %}

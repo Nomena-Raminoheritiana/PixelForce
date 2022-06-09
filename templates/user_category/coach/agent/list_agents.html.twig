@@ -25,17 +25,23 @@
         <div class="search-form">
             {{form_start(searchForm)}}
             <div class="row text-center">
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     {{form_row(searchForm.prenom)}}
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     {{form_row(searchForm.email)}}
                 </div>
-				<div class="col-12 col-sm-6 col-md-3">
+				<div class="col-12 col-sm-6 col-md-4">
                     {{form_row(searchForm.telephone)}}
                 </div>
-                <div class="col-12 col-sm-6 col-md-3">
-                    <button class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <div class="col-6">
+                    {{form_row(searchForm.dateInscriptionMin)}}
+                </div>
+                <div class="col-6">
+                    {{form_row(searchForm.dateInscriptionMax)}}
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 mt-3">
+                    <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
                 </div>
             </div>
             {{form_end(searchForm)}}
@@ -60,7 +66,8 @@
 					<tr>
 						<th scope="col">#</th>
 						<th scope="col">Nom et prénoms</th>
-						<th scope="col">Mail</th>
+						<th scope="col">Email</th>
+						<th scope="col">Téléphone</th>
 						<th scope="col">Date inscription</th>
 						<th scope="col">ACTION</th>
 					</tr>
@@ -71,6 +78,7 @@
                             <td>{{ agent.id }}</td>
                             <td>{{ agent.fullName }}</td>
                             <td>{{ agent.email }}</td>
+                            <td>{{ agent.telephone|default('-') }}</td>
                             <td>{{ agent.createdAt|date('d/m/Y') }}</td>
                             <td >
                                 <a href="{{ path('coach_agent_view', {'id': agent.id}) }}" class="btn btn-secondary">
@@ -78,13 +86,13 @@
                                 </a>
 
                                 {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : mySector, 'agent' : agent}) %}
-                            
+                                
                                 {% if agentSecteur.statut == false or agentSecteur.statut is null %}
-                                    <a href="{{ path('coach_agent_secteur_validate', {'agentSecteur': agentSecteur.id, 'pageReloaded': 'true'}) }}" class="btn btn-warning">
+                                    <a href="{{ path('coach_agent_secteur_validate', {'agentSecteur': agentSecteur.id, 'pageReloaded': 'true'}) }}" class="btn btn-success">
                                         <i class="fa-solid fa-circle-check"></i> Valider
                                     </a>
                                 {% else %}
-                                    <a href="{{ path('coach_agent_secteur_invalidate', {'agentSecteur': agentSecteur.id, 'pageReloaded': 'true'}) }}" class="btn btn-success" onclick="return confirm('Êtes vous vraiment sûr de bloquer le secteur de cet agent ?')">
+                                    <a href="{{ path('coach_agent_secteur_invalidate', {'agentSecteur': agentSecteur.id, 'pageReloaded': 'true'}) }}" class="btn btn-danger" onclick="return confirm('Êtes vous vraiment sûr de bloquer le secteur de cet agent ?')">
                                         <i class="fa-solid fa-circle-minus"></i> Bloquer
                                     </a>
                                 {% endif %}

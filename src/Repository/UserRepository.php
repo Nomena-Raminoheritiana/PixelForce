@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\CanalMessage;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
+use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -21,9 +22,15 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    protected $repoCoachSecteur;
+
+    protected $repoAgentSecteur;
+
+    public function __construct(ManagerRegistry $registry, CoachSecteurRepository $repoCoachSecteur, AgentSecteurRepository $repoAgentSecteur)
     {
         parent::__construct($registry, User::class);
+        $this->repoCoachSecteur = $repoCoachSecteur;
+        $this->repoAgentSecteur = $repoAgentSecteur;
     }
 
     /**
@@ -106,12 +113,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $query = $query
             ->where('u.roles LIKE :role')
-            ->setParameter('role', '%"'."ROLE_$role".'"%');
+            ->setParameter('role', "%$role%");
         ;   
 
         if ($search->getPrenom()) {
             $query = $query
                 ->andwhere('u.prenom LIKE :prenom')
+                ->orwhere('u.nom LIKE :prenom')
                 ->setParameter('prenom', '%'.$search->getPrenom().'%');
         }
         if ($search->getEmail()) {
@@ -124,14 +132,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->andwhere('u.telephone LIKE :telephone')
                 ->setParameter('telephone', '%'.$search->getTelephone().'%');
         }
+        if ($search->getDateInscriptionMin()) {
+            $query = $query
+                ->andwhere('u.created_at >= :dateInscriptionMin')
+                ->setParameter('dateInscriptionMin', $search->getDateInscriptionMin());
+        }
+        if ($search->getDateInscriptionMax()) {
+            // On ajoute +1day, car la requête ne prend que la date en dessous de la date recherchée
+            $search->getDateInscriptionMax()->add(new DateInterval('P1D'));
+
+            $query = $query
+                ->andwhere('u.created_at <= :dateInscriptionMax')
+                ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
+        }
         if ($search->getSecteur()) {
-            if ($role === 'COACH') {
+            if ($role === User::ROLE_COACH) {
                 $query = $query
                     ->join('u.coachSecteurs', 'cs')
                     ->join('cs.secteur', 's')
                     ->andwhere('s.nom LIKE :nomSecteur')
                     ->setParameter('nomSecteur', '%'.$search->getSecteur()->getNom().'%');
-            }else if($role === 'AGENT'){
+            }else if($role === User::ROLE_AGENT){
                 $query = $query
                     ->join('u.agentSecteurs', 'aSec')
                     ->join('aSec.secteur', 'tre')
@@ -140,6 +161,68 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ;
             }
         }
+
+        return $query->getQuery()
+            ->getResult()
+        ;
+    }
+
+
+
+    
+
+    /**
+     * Permet de filtrer tous les agents du coach
+     *
+     * @param UserSearch $search
+     * @param string $role
+     * @return array
+     */
+    public function findAgentByCoach(UserSearch $search, $coach)
+    {
+        $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach]);
+        $secteur = isset($secteur[0]) ? $secteur[0]->getSecteur() : null;
+
+        $query = $this->createQueryBuilder('a');
+
+        if ($search->getPrenom()) {
+            $query = $query
+                ->andwhere('a.prenom LIKE :prenom')
+                ->orwhere('a.nom LIKE :prenom')
+                ->setParameter('prenom', '%'.$search->getPrenom().'%');
+        }
+
+        
+        if ($search->getEmail()) {
+            $query = $query
+                ->andwhere('a.email LIKE :email')
+                ->setParameter('email', '%'.$search->getEmail().'%');
+        }
+        if ($search->getTelephone()) {
+            $query = $query
+                ->andwhere('a.telephone LIKE :telephone')
+                ->setParameter('telephone', '%'.$search->getTelephone().'%');
+        }
+        if ($search->getDateInscriptionMin()) {
+            $query = $query
+                ->andwhere('a.created_at >= :dateInscriptionMin')
+                ->setParameter('dateInscriptionMin', $search->getDateInscriptionMin());
+        }
+        if ($search->getDateInscriptionMax()) {
+            // On ajoute +1day, car la requête ne prend que la date en dessous de la date recherchée
+            $search->getDateInscriptionMax()->add(new DateInterval('P1D'));
+
+            $query = $query
+                ->andwhere('a.created_at <= :dateInscriptionMax')
+                ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
+        }
+
+        $query = $query
+            ->join('a.agentSecteurs', 'aSec')
+            ->andwhere('aSec.secteur = :secteur')
+            ->setParameter('secteur', $secteur)
+            ->orderBy('a.id', 'DESC')
+        ;   
 
         return $query->getQuery()
             ->getResult()

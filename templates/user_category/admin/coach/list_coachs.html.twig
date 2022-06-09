@@ -34,15 +34,23 @@
 				<div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.telephone)}}
                 </div>
-                <div class="col-12 col-sm-4 col-md-2">
+                <div class="col-12 col-sm-4 col-md-3">
                     {{form_row(searchForm.secteur)}}
                 </div>
-                <div class="col-12 col-sm-2 col-md-1">
-                    <button class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <div class="col-6">
+                    {{form_row(searchForm.dateInscriptionMin)}}
+                </div>
+                <div class="col-6">
+                    {{form_row(searchForm.dateInscriptionMax)}}
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 mt-3">
+                    <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
                 </div>
             </div>
             {{form_end(searchForm)}}
         </div>
+
+        <hr class="my-5">
 
         <!-- Liste coach -->
         <div class="row mb-3">
@@ -65,7 +73,8 @@
 					<tr>
 						<th scope="col">#</th>
 						<th scope="col">Nom et prénoms</th>
-						<th scope="col">Mail</th>
+						<th scope="col">Email</th>
+						<th scope="col">Téléphone</th>
 						<th scope="col">Date inscription</th>
 						<th scope="col">Secteur</th>
 						<th scope="col">ACTION</th>
@@ -77,6 +86,7 @@
                             <td>{{ coach.id }}</td>
                             <td>{{ coach.fullName }}</td>
                             <td>{{ coach.email }}</td>
+                            <td>{{ coach.telephone|default('-') }}</td>
                             <td>{{ coach.createdAt|date('d/m/Y') }}</td>
                             <td>
                                 {# On récupère les secteurs reliés par l'agent  #}

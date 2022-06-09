@@ -2,6 +2,7 @@
 namespace App\Entity\SearchEntity;
 
 use App\Entity\Secteur;
+use DateTime;
 
 class UserSearch {
 
@@ -24,6 +25,16 @@ class UserSearch {
      * @var string|null
      */
     private $secteur;
+
+    /**
+     * @var string|null|DateTime
+     */
+    private $dateInscriptionMin;
+
+    /**
+     * @var string|null|DateTime
+     */
+    private $dateInscriptionMax;
 
     /**
      * Get the value of prenom
@@ -117,6 +128,54 @@ class UserSearch {
     public function setSecteur($secteur)
     {
         $this->secteur = $secteur;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of dateInscriptionMin
+     *
+     * @return  string|null|DateTime
+     */ 
+    public function getDateInscriptionMin()
+    {
+        return $this->dateInscriptionMin;
+    }
+
+    /**
+     * Set the value of dateInscriptionMin
+     *
+     * @param  string|null|DateTime  $dateInscriptionMin
+     *
+     * @return  self
+     */ 
+    public function setDateInscriptionMin($dateInscriptionMin)
+    {
+        $this->dateInscriptionMin = $dateInscriptionMin;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of dateInscriptionMax
+     *
+     * @return  string|null|DateTime
+     */ 
+    public function getDateInscriptionMax()
+    {
+        return $this->dateInscriptionMax;
+    }
+
+    /**
+     * Set the value of dateInscriptionMax
+     *
+     * @param  string|null|DateTime  $dateInscriptionMax
+     *
+     * @return  self
+     */ 
+    public function setDateInscriptionMax($dateInscriptionMax)
+    {
+        $this->dateInscriptionMax = $dateInscriptionMax;
 
         return $this;
     }

@@ -19,8 +19,11 @@
 				{{ form_start(formUser) }}
 				<div class="row">
 					<div class="col-12 col-md-10">
-						<h1 class="text-center fw-bold">Information générale</h1>
+						<h1 class="text-center fw-bold mb-3">Information générale</h1>
 						{% include "global/user_form/_user_agent_form.html.twig" %}
+						<div class="row">
+							<div class="col-md-12 text-end"><button class="btn btn-success my-4">Enregistrer</button></div>
+						</div>
 					</div>
 					<div class="col-12 col-md-2">
 						<h1 class="text-center fw-bold">Secteur(s)</h1>
@@ -31,9 +34,6 @@
 								</a> 							
 							</div>
 						{% endfor %}
-					</div>
-					<div class="w-100 mt-3 text-center">
-						<button class="btn btn-primary" type="submit">Enregistrer</button>
 					</div>
 				</div>
 				{{ form_end(formUser) }}

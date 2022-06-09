@@ -122,8 +122,10 @@ class CoachAgentRepository extends ServiceEntityRepository
 
 
 
-        /**
+    /**
      * Permet de filtrer tous les agents du coach
+     * 
+     * NB : Tiako fafana fa mbola mieritreritra kely farany
      *
      * @param UserSearch $search
      * @param string $role
@@ -148,6 +150,7 @@ class CoachAgentRepository extends ServiceEntityRepository
         if ($search->getPrenom()) {
             $query = $query
                 ->andwhere('a.prenom LIKE :prenom')
+                ->orwhere('a.nom LIKE :prenom')
                 ->setParameter('prenom', '%'.$search->getPrenom().'%');
         }
         if ($search->getEmail()) {
@@ -171,6 +174,7 @@ class CoachAgentRepository extends ServiceEntityRepository
             $results[] = $agentSecteur->getAgent();
         }        
         $results = array_unique($results, SORT_REGULAR);
+
         return $results;
     }
 
