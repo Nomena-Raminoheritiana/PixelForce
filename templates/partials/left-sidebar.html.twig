@@ -46,14 +46,14 @@
                     {% endfor %}
                 {% endif %}
             {% else %}
-                <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('app_dashboard') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboards</span><span class="badge badge-light-warning rounded-pill ms-auto me-1">2</span></a>
+                {# <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('app_dashboard') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboards</span><span class="badge badge-light-warning rounded-pill ms-auto me-1">2</span></a>
                     <ul class="menu-content">
                         <li><a class="d-flex align-items-center" href="dashboard-analytics.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Analytics">Analytiques</span></a>
                         </li>
                         <li class="active"><a class="d-flex align-items-center" href="dashboard-ecommerce.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="eCommerce">eCommerce</span></a>
                         </li>
                     </ul>
-                </li>
+                </li> #}
                 {% set role = app.user.roles[0]  %}
                 {% if role == constant('App\\Entity\\User::ROLE_COACH') %}
                     {% include 'partials/menu-left-coach.html.twig' %}
@@ -62,7 +62,7 @@
                 {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
                     {% include 'partials/menu-left-agent.html.twig' %}
                 {% endif %}
-                <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">application</span><i data-feather="more-horizontal"></i>
+                {# <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">application</span><i data-feather="more-horizontal"></i>
                 </li>
                 <li class=" nav-item"><a class="d-flex align-items-center" href="app-email.html"><i data-feather="mail"></i><span class="menu-title text-truncate" data-i18n="Email">Email</span></a>
                 </li>
@@ -414,7 +414,7 @@
                 <li class=" nav-item"><a class="d-flex align-items-center" href="https://pixinvent.com/demo/vuexy-html-bootstrap-admin-template/documentation" target="_blank"><i data-feather="folder"></i><span class="menu-title text-truncate" data-i18n="Documentation">Documentation</span></a>
                 </li>
                 <li class=" nav-item"><a class="d-flex align-items-center" href="https://pixinvent.ticksy.com/" target="_blank"><i data-feather="life-buoy"></i><span class="menu-title text-truncate" data-i18n="Raise Support">Augmenter le soutien</span></a>
-                </li>
+                </li> #}
             {% endif %}
         </ul>
     </div>

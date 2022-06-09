@@ -31,7 +31,7 @@
                                 {% if agentSecteur is null %}
                                     {# <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a>                  #}
                                 {% elseif agentSecteur and agentSecteur.statut == true %}
-                                    <a href="{{ path('agent_dashboard_secteur', {id: secteur.id}) }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
+                                    <a href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id}) }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
                                 {% elseif agentSecteur and agentSecteur.statut == false %}
                                     <a class="btn btn-success"><i class="fa-solid fa-spinner"></i> En attente de validation</a>
                                 {% endif %}

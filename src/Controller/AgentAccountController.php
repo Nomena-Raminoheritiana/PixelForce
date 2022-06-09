@@ -29,12 +29,15 @@ class AgentAccountController extends AbstractController
     }
 
     /**
+     * Page d'accueil pour agent, qui sert de selection d'un secteur
+     * 
      * @Route("/agent/accueil", name="agent_accueil")
      */
-    public function agent_accueil(AgentSecteurService $agentSecteurService)
+    public function agent_accueil(AgentSecteurService $agentSecteurService, SessionInterface $session)
     {
-        $allSecteurs = $this->repoSecteur->findAll();
+        $session->remove('secteurId');
 
+        $allSecteurs = $this->repoSecteur->findAll();
         return $this->render('user_category/agent/home_agent.html.twig', [
             'allSecteurs' => $allSecteurs,
             'repoAgentSecteur' => $this->repoAgentSecteur,
@@ -43,12 +46,29 @@ class AgentAccountController extends AbstractController
         ]);
     }
 
+
+    /**
+     * Permet de générer une session qui contient l'id du secteur 
+     * Après génération du clé, on redirige l'utilisateur vers le dashboard
+     * 
+     * @Route("/agent/secteur/{id}/session/generate", name="agent_generate_sessionSecteur_before_redirect_to_route_dahsboard")
+     */
+    public function agent_generate_sessionSecteur_before_redirect_to_route_dahsboard(Secteur $secteur, SessionInterface $session)
+    {
+        $session->set('secteurId', $secteur->getId());
+        return $this->redirectToRoute('agent_dashboard_secteur', ['id' => $secteur->getId()]);
+    }
+
     /**
      * @Route("/agent/dashboard/secteur/{id}", name="agent_dashboard_secteur")
      */
     public function agent_dashboard_secteur(SessionInterface $session, Request $request, PaginatorInterface $paginator, Secteur $secteur)
     {
-        $session->set('secteurId', $secteur->getId());
+        // On vérifie d'abord si la session avec la clé 'secteurId' est générée
+        $sessionSecteurId =  $session->get('secteurId');
+        if (!$sessionSecteurId) {
+            return $this->redirectToRoute('agent_accueil');
+        }
 
         $formations = $this->repoFormation->AgentfindBySecteur($secteur);
         $formations = $paginator->paginate(
