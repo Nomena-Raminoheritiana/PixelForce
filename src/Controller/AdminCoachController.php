@@ -39,7 +39,12 @@ class AdminCoachController extends AbstractController
 
     protected $repoCoachSecteur;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, SecteurRepository $repoSecteur, CoachSecteurRepository $repoCoachSecteur)
+    public function __construct(UserRepository $repoUser,
+                                EntityManager $entityManager,
+                                UserManager $userManager,
+                                CoachAgentRepository $repoCoachAgent,
+                                SecteurRepository $repoSecteur,
+                                CoachSecteurRepository $repoCoachSecteur)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
@@ -169,6 +174,10 @@ class AdminCoachController extends AbstractController
         }
         
         if ($formCoachSecteur->isSubmitted() && $formCoachSecteur->isValid()) {
+            $coachRelations = $this->repoCoachSecteur->findBy(['coach' => $coach]);
+            if(count($coachRelations) > 0) {
+                $this->entityManager->removeMultiple($coachRelations);
+            }
             $secteurId = $request->request->get('form')['secteur'];
             $coach->setActive(true);
             $coachSecteur->setCoach($coach);
@@ -180,7 +189,7 @@ class AdminCoachController extends AbstractController
                 return $this->redirectToRoute('admin_coach_list');    
             }
 
-            $this->addFlash('primary', "Secteur choisi avec succès, procéder maintenant à la création de son mot de passe");
+            $this->addFlash('primary', "Secteur choisi avec succès, procédez maintenant à la création de son mot de passe");
             return $this->redirectToRoute('admin_coach_password_generate', ['id' => $coach->getId()]);    
         }
         return $this->render('user_category/admin/coach/relate_secteur.html.twig', [
@@ -200,7 +209,7 @@ class AdminCoachController extends AbstractController
         if ($formUserPassword->isSubmitted() && $formUserPassword->isValid()) {
             $coach->setActive(true);
             $this->userManager->setUserPasword($coach, $request->request->get('reset_password')['password']['first'], '', false);
-            $this->addFlash('success', 'Utilisateur coach ajouté avec succès');
+            $this->addFlash('success', 'Les informations sur le nouveau coach ont été bien enregistrées');
             return $this->redirectToRoute('admin_coach_list');    
         }
 

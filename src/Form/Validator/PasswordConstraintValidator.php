@@ -18,7 +18,7 @@ class PasswordConstraintValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
 
-        if (!preg_match('/[.\-#*^@~&()[\]]+/', $value, $matches) ||
+        if (!preg_match('/[.\-#*^@$_=+²~&()[\]]+/', $value, $matches) ||
             !preg_match('/[A-Z]+/', $value, $matches) ||
             !preg_match('/[a-z]+/', $value, $matches) ||
             !preg_match('/[0-9]+/', $value, $matches)) {

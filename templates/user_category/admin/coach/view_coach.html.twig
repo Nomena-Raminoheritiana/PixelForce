@@ -16,13 +16,13 @@
 			<section class="app-user-view-account">
 				<div class="row">
 					<!-- User Sidebar -->
-					<div class="col-xl-4 col-lg-5 col-md-5 order-1 order-md-0">
+					<div class="col-12  col-md-7 order-1 order-md-0">
 						{{ include ('global/card/_card_user_information.html.twig', {user : coach, secteurs: secteurs}) }}
 					</div>
 					<!--/ User Sidebar -->
 
 					<!-- User Content -->
-					<div class="col-xl-8 col-lg-7 col-md-7 order-0 order-md-1">
+					<div class="col-12  col-md-5 order-0 order-md-1">
 						<!-- User Pills -->
 						<ul class="nav nav-pills mb-2">
 							<li class="nav-item">
@@ -30,32 +30,16 @@
 									<i class="fa-solid fa-cube"></i>
 									<span class="fw-bold">Secteur</span></a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="app-user-view-security.html">
-									<i data-feather="lock" class="font-medium-3 me-50"></i>
-									<span class="fw-bold">Securité</span>
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="app-user-view-billing.html">
-									<i data-feather="bookmark" class="font-medium-3 me-50"></i>
-									<span class="fw-bold">Facturation & forfaits</span>
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="app-user-view-notifications.html">
-									<i data-feather="bell" class="font-medium-3 me-50"></i><span class="fw-bold">Notifications</span>
-								</a>
-							</li>
 						</ul>
 						<!--/ User Pills -->
 
 						<!-- Project table -->
 						<div class="card">
-							<h4 class="card-header">Liste des secteurs du coach</h4>
+							<h4 class="card-header">Secteurs du coach</h4>
 							<div class="table-responsive">
 								<div class="alert alert-danger d-none alert-errorMessages"></div>
-								<a href="#" data-bs-toggle="modal" data-bs-target="#modal-add-coach-secteur" class="btn btn-primary float-end my-4 me-4"><i class="fa-solid fa-circle-plus"></i> Ajouter un secteur</a>
+								<a href="{{ path('admin_coach_secteur_relate', {id : coach.id, edition:'attribution_only'}) }}" class="btn btn-primary float-end my-4 me-4"><i class="fa-solid fa-circle-plus"></i> Modifier secteur</a>
+
 								<table class="table datatable-project">
 									<thead>
 										<tr>
@@ -71,6 +55,10 @@
 												<th>{{ coachtSecteur.secteur.nom }}</th>
 												<th>{{ coachtSecteur.secteur.description }}</th>
 											</tr>
+										{% else %}
+											<div class="text-center">
+												Aucun secteur n’est attribué au coach
+											</div>
 										{% endfor %}
 									</tbody>
 								</table>

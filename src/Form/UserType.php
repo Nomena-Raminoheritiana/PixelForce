@@ -38,7 +38,8 @@ class UserType extends AbstractType
             ->add('prenom', TextType::class, [
                 'attr' => [
                     'placeholder' => 'Entrer votre prénom'
-                ]
+                ],
+                'required' => false
             ])
             ->add('dateNaissance', DateType::class, [
                 'widget' => 'single_text',

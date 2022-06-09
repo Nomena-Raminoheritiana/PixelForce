@@ -14,27 +14,27 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-around my-2 pt-75">
-            <div class="d-flex align-items-start me-2">
-                <span class="badge bg-light-primary p-75 rounded">
-                    <i data-feather="check" class="font-medium-2"></i>
-                </span>
-                <div class="ms-75">
-                    <h4 class="mb-0">1.23k</h4>
-                    <small>Tâches</small>
-                </div>
-            </div>
-            <div class="d-flex align-items-start">
-                <span class="badge bg-light-primary p-75 rounded">
-                    <i class="fa-solid fa-cube"></i>
-                </span>
-                <div class="ms-75">
-                    <h4 class="mb-0">{{ secteurs|length }}</h4>
-                    <small>Secteurs</small>
-                </div>
-            </div>
-        </div>
-        <h4 class="fw-bolder border-bottom pb-50 mb-1">Détails</h4>
+{#        <div class="d-flex justify-content-around my-2 pt-75">#}
+{#            <div class="d-flex align-items-start me-2">#}
+{#                <span class="badge bg-light-primary p-75 rounded">#}
+{#                    <i data-feather="check" class="font-medium-2"></i>#}
+{#                </span>#}
+{#                <div class="ms-75">#}
+{#                    <h4 class="mb-0">1.23k</h4>#}
+{#                    <small>Tâches</small>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="d-flex align-items-start">#}
+{#                <span class="badge bg-light-primary p-75 rounded">#}
+{#                    <i class="fa-solid fa-cube"></i>#}
+{#                </span>#}
+{#                <div class="ms-75">#}
+{#                    <h4 class="mb-0">{{ secteurs|length }}</h4>#}
+{#                    <small>Secteurs</small>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+        <h4 class="fw-bolder border-bottom pb-50 mb-1 mt-4">Détails</h4>
         <div class="info-container">
             <ul class="list-unstyled">
                 <li class="mb-75">
@@ -49,10 +49,10 @@
                     <span class="fw-bolder me-25">Statut:</span>
                     <span class="badge bg-light-success">Active</span>
                 </li>
-                <li class="mb-75">
-                    <span class="fw-bolder me-25">Role:</span>
-                    <span>{{ user.roles[0]|slice(5)}}</span>
-                </li>
+{#                <li class="mb-75">#}
+{#                    <span class="fw-bolder me-25">Role:</span>#}
+{#                    <span>{{ user.roles[0]|slice(5)}}</span>#}
+{#                </li>#}
                 <li class="mb-75">
                     <span class="fw-bolder me-25">Contact:</span>
                     <span>{% if user.telephone %} {{ user.telephone }} {% else %} Pas de numero {% endif %}</span>
@@ -63,13 +63,13 @@
                 </li>
             </ul>
             <div class="d-flex justify-content-center pt-2">
-                <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >
-                    Attribuer formation
-                </a>
-                <a href="javascript:;" class="btn btn-primary me-1" data-bs-target="#editUser" data-bs-toggle="modal">
+{#                <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >#}
+{#                    Attribuer formation#}
+{#                </a>#}
+                <a href="{{ path('admin_coach_edit', {id:user.id}) }}" class="btn btn-primary me-1" >
                     Modifier
                 </a>
-                <a href="javascript:;" class="btn btn-outline-danger suspend-user">Suspendu</a>
+{#                <a href="javascript:;" class="btn btn-outline-danger suspend-user">Suspendu</a>#}
             </div>
         </div>
     </div>

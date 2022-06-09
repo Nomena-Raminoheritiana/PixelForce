@@ -18,22 +18,22 @@ class ResetPasswordType extends AbstractType
     {
         $builder
             ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'invalid_message' => 'Le mot de passe saisi doit être le même.',
-                'options' => [
-                    'attr' =>
-                        [
-                            'class' => 'password-field',
-                            'placeholder' => 'xxxxxxxxxx'
-                        ]
-                ],
-                'required' => true,
-                'first_options'  => [
-                    'label' => 'Nouveau mot de passe',
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'Le mot de passe saisi doit être le même.',
+                    'options' => [
+                        'attr' =>
+                            [
+                                'class' => 'password-field',
+                                'placeholder' => 'xxxxxxxxxx'
+                            ]
+                    ],
+                    'required' => true,
+                    'first_options'  => [
+                        'label' => 'Nouveau mot de passe',
 
-                ],
-                'second_options' => ['label' => 'Repéter le mot de passe'],
-                'mapped' => false,
+                    ],
+                    'second_options' => ['label' => 'Repéter le mot de passe'],
+                    'mapped' => false,
                     'constraints' => [
                         new Length([
                             'min' => 8,
@@ -47,7 +47,7 @@ class ResetPasswordType extends AbstractType
                         ]),
                         new PasswordConstraint()
                     ]
-                    ]
+                ]
             )
         ;
     }
