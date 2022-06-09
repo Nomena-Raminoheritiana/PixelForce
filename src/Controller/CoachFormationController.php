@@ -11,12 +11,14 @@ use App\Manager\EntityManager;
 use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
 use App\Repository\MediaRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Services\DirectoryManagement;
 use App\Services\FileUploader;
 use App\Services\FormationService;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,6 +62,10 @@ class CoachFormationController extends AbstractController
      * @var FormationAgentRepository
      */
     private $formationAgentRepository;
+    /**
+     * @var SecteurRepository
+     */
+    private $secteurRepository;
 
     public function __construct(FormationRepository $formationRepository,
                                 MediaRepository $mediaRepository,
@@ -69,6 +75,7 @@ class CoachFormationController extends AbstractController
                                 FormationService $formationService,
                                 DirectoryManagement $directoryManagement,
                                 EntityManager $entityManager,
+                                SecteurRepository $secteurRepository,
                                 PaginatorInterface $paginator)
    {
        $this->fileUploader = $fileUploader;
@@ -80,15 +87,20 @@ class CoachFormationController extends AbstractController
        $this->mediaRepository = $mediaRepository;
        $this->userRepository = $userRepository;
        $this->formationAgentRepository = $formationAgentRepository;
+       $this->secteurRepository = $secteurRepository;
    }
 
     /**
      * @Route("/coach/formation/list", name="coach_formation_list", options={"expose"=true})
-     * @IsGranted("ROLE_COACH")
+     *
+     * @Security("is_granted('ROLE_COACH') or is_granted('ROLE_ADMINISTRATEUR')")
      */
    public function coach_formation_list(Request $request)
    {
        $secteur = $this->getUser()->getSecteurByCoach();
+       if($secteur_id = $request->query->get('secteur')) {
+           $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
+       }
        if($criteres = $request->query->get('q')) {
            $formations = $this->formationRepository->searchForCoach($criteres, $secteur);
        } else {
@@ -105,7 +117,8 @@ class CoachFormationController extends AbstractController
        return $this->render('formation/video/coach_formation_list.html.twig', [
            'formations' => $formations,
            'criteres' => $criteres,
-           'agent' => $agent
+           'agent' => $agent,
+           'secteur' => $secteur
        ]);
    }
 
@@ -260,7 +273,8 @@ class CoachFormationController extends AbstractController
         }
 
         return $this->redirectToRoute('coach_formation_list', [
-            'agent' => isset($agent) ? $agent->getId() : null
+            'agent' => isset($agent) ? $agent->getId() : null,
+            'secteur' => $request->query->get('secteur') ? $request->query->get('secteur'): null,
         ]);
 
     }

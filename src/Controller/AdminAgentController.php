@@ -272,4 +272,21 @@ class AdminAgentController extends AbstractController
         ], 200); 
         
     }
+
+    /**
+     * @Route("/admin/agent/attribuerFormation/{id}", name="admin_agent_attribuerFormation")
+     */
+    public function admin_agent_attributionFormation(User $user, AgentSecteurRepository $agentSecteurRepository)
+    {
+        if(in_array(User::ROLE_AGENT,$user->getRoles())) {
+            $secteurs = $user->getSecteursByAgent();
+            return $this->render('user_category/admin/agent/attribuerFormation.html.twig', [
+                'secteurs' => $secteurs,
+                'repoAgentSecteur' => $agentSecteurRepository,
+                'agent' => $user
+            ]);
+        }
+        $this->addFlash('danger', 'Erreur : '.$user->getNom().' n\'est pas un agent');
+        return $this->redirectToRoute('admin_agent_list');
+    }
 }

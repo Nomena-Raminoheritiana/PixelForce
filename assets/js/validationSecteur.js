@@ -114,12 +114,12 @@ $(function() {
                 toArraySecteur.forEach((element) => {
                     $('.body-sector-list').append(`
                         <tr>
-                            <th></th>
-                            <th>${element.nom}</th>
-                            <th>${element.coach}</th>
-                            <th>${element.dateValidation}</th>
-                            <th><button class="btn  btn-success"> Validé</button></th>
-                            <th><button data-agentSecteur-id="${ element.agentSecteurId }" type="button" class="btn btn-lg  btn-outline-primary js-invalidate-secteur-agent waves-effect">Bloquer</button></th>
+                            <td></td>
+                            <td>${element.nom}</td>
+                            <td>${element.coach}</td>
+                            <td>${element.dateValidation}</td>
+                            <td><button class="btn  btn-success btn-sm"> Validé</button></td>
+                            <td><button data-agentSecteur-id="${ element.agentSecteurId }" type="button" class="btn btn-sm  btn-outline-primary js-invalidate-secteur-agent waves-effect">Bloquer</button></td>
                         </tr>`);
                 });
 

@@ -63,9 +63,16 @@
                 </li>
             </ul>
             <div class="d-flex justify-content-center pt-2">
-{#                <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >#}
-{#                    Attribuer formation#}
-{#                </a>#}
+                {% if is_granted('ROLE_ADMINISTRATEUR') and user.roles[0] == 'ROLE_AGENT' %}
+                    <a class="btn btn-outline-primary me-1" href="{{ path('admin_agent_attribuerFormation', {id: user.id}) }}" >
+                        Attribuer formation
+                    </a>
+                {% endif %}
+                {% if is_granted('ROLE_COACH') and user.roles[0] == 'ROLE_AGENT' %}
+                    <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >
+                        Attribuer formation
+                    </a>
+                {% endif %}
                 <a href="{{ path('admin_coach_edit', {id:user.id}) }}" class="btn btn-primary me-1" >
                     Modifier
                 </a>

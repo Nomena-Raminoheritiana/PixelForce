@@ -7,11 +7,15 @@
                 <h3>Liste des formations</h3>
             </div>
             <div class="col-12 col-md-6 text-end">
+                {% if is_granted('ROLE_COACH') %}
                 <a href="{{ path('coach_formation_add') }}" class="btn bg-princ text-white"><i class="fa fa-plus"></i> Ajouter</a>
+                {% endif %}
             </div>
         </div>
 
         <form action="" method="get">
+            <input type="hidden" name="secteur" value="{{ secteur is not null ? secteur.id : null }}">
+            <input type="hidden" name="agent" value="{{ agent is not null ? agent.id : null }}">
             <div class="row">
                 <div class="col-12 col-md-2 mt-4">
                     <input type="text" name="q[titre]" value="{{ criteres ? criteres.titre }}" class="form-control" placeholder="Titre"/>
@@ -60,15 +64,17 @@
                             {{ formation.description }}
                         </div>
                         <div class="col-12 col-md-2 text-end">
+                            {% if is_granted('ROLE_COACH') %}
                             <a href="{{ path('coach_formation_fiche', {id:formation.id}) }}" class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i> Fiche formation</a>
+                            {% endif %}
                             {% if agent %}
                                 {% set statut = agent.formationStatut(formation) %}
                                 {% if statut == constant('App\\Entity\\Formation::STATUT_BLOQUEE') %}
-                                    <a href="{{ path('coach_formation_debloquer', {formation : formation.id, agent: agent.id}) }}" class="btn btn-success mt-2 btn-sm"><i class="fa fa-unlock"></i> Debloquer</a>
+                                    <a href="{{ path('coach_formation_debloquer', {formation : formation.id, agent: agent.id, secteur: secteur.id}) }}" class="btn btn-success mt-2 btn-sm"><i class="fa fa-unlock"></i> Debloquer</a>
                                 {% elseif statut == constant('App\\Entity\\Formation::STATUT_DISPONIBLE') %}
-                                    <a href="{{ path('coach_formation_bloquer', {formation : formation.id, agent: agent.id}) }}" class="btn btn-warning mt-2 btn-sm"><i class="fa fa-lock"></i> Bloquer</a>
+                                    <a href="{{ path('coach_formation_bloquer', {formation : formation.id, agent: agent.id, secteur: secteur.id}) }}" class="btn btn-warning mt-2 btn-sm"><i class="fa fa-lock"></i> Bloquer</a>
                                 {% else %}
-                                    <a href="{{ path('coach_formation_createRelation', {formation : formation.id, agent: agent.id}) }}" class="btn btn-success mt-2 btn-sm"><i class="fa fa-unlock"></i> Debloquer</a>
+                                    <a href="{{ path('coach_formation_createRelation', {formation : formation.id, agent: agent.id, secteur: secteur.id}) }}" class="btn btn-success mt-2 btn-sm"><i class="fa fa-unlock"></i> Debloquer</a>
                                 {% endif %}
 
                             {% endif %}

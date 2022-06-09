@@ -1,0 +1,33 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block body %}
+<div class="container mt-2">
+    <a href="{{ path('admin_agent_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+    <h5 class="mt-4">Choisissez un seteur</h5>
+    <div class="row">
+        {% for secteur in secteurs %}
+            <div class="col-4">
+                {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
+
+                <div style="min-height: 140px;" class="card-secteur bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}info{% endif %} p-3">
+
+                    <h2 class="text-white text-center">{{ secteur.nom }}</h2>
+                    <div class="secteur-info d-none text-center">
+                        <h5 class="text-white secteur-description">{{ secteur.description }}</h5>
+                    </div>
+
+
+                    <div class="button-block text-center mt-5">
+                        <a href="{{ path('coach_formation_list', {secteur:secteur.id, agent: agent.id}) }}" class="btn btn-sm btn-secondary">Attribuer formation</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block title %}
+Administrateur - Agent - attribuer formation
+{% endblock %}
+

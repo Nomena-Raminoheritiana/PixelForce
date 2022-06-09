@@ -931,6 +931,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $secteurs_ids;
     }
 
+    public function getSecteursByAgent()
+    {
+        $agentSecteurs = $this->getAgentSecteurs();
+        $secteurs_ids = [];
+        foreach($agentSecteurs->toArray() as $agentSecteur) {
+            $secteurs_ids[] = $agentSecteur->getSecteur();
+        }
+        return $secteurs_ids;
+    }
+
     /**
      * @return Collection<int, AgentSecteur>
      */

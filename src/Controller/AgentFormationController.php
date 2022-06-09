@@ -8,6 +8,7 @@ use App\Entity\Formation;
 use App\Manager\EntityManager;
 use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
+use App\Repository\SecteurRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,13 +34,18 @@ class AgentFormationController extends AbstractController
      * @var EntityManager
      */
     private $entityManager;
+    /**
+     * @var SecteurRepository
+     */
+    private $secteurRepository;
 
-    public function __construct(EntityManager $entityManager, PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository)
+    public function __construct(EntityManager $entityManager, SecteurRepository $secteurRepository, PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository)
     {
         $this->paginator = $paginator;
         $this->formationRepository = $formationRepository;
         $this->formationAgentRepository = $formationAgentRepository;
         $this->entityManager = $entityManager;
+        $this->secteurRepository = $secteurRepository;
     }
 
     /**
@@ -50,23 +56,29 @@ class AgentFormationController extends AbstractController
     {
         // dd($session->get('secteurId'));
         // todo: miandry anle login agent izay ataon Tsiory mba haazaoana ilay session micontenir anle secteur
-        $secteur = $this->getUser()->getAgentSecteurs()->get(0)->getSecteur();
-        if($criteres = $request->query->get('q')) {
-            $formations = $this->formationRepository->searchForAgent($criteres, $secteur);
-        } else {
-            $formations = $secteur ? $this->formationRepository->AgentfindBySecteur($secteur) : [];
-        }
-        $formations = $this->paginator->paginate(
-            $formations,
-            $request->query->getInt('page', 1),
-            5
-        );
+        $secteur_id = $session->get('secteurId');
+        $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
+        if($secteur) {
+            if($criteres = $request->query->get('q')) {
+                $formations = $this->formationRepository->searchForAgent($criteres, $secteur);
+            } else {
+                $formations = $secteur ? $this->formationRepository->AgentfindBySecteur($secteur) : [];
+            }
+            $formations = $this->paginator->paginate(
+                $formations,
+                $request->query->getInt('page', 1),
+                5
+            );
 
-        return $this->render('formation/video/agent_formation_list.html.twig', [
-            'formations' => $formations,
-            'criteres' => $criteres,
-            'formationAgentRepository' => $this->formationAgentRepository
-        ]);
+            return $this->render('formation/video/agent_formation_list.html.twig', [
+                'formations' => $formations,
+                'criteres' => $criteres,
+                'formationAgentRepository' => $this->formationAgentRepository
+            ]);
+        }
+
+        $this->addFlash('danger', 'Vous \'avez pas renseigné le secteur');
+        return $this->redirectToRoute('agent_accueil');
     }
 
     /**
