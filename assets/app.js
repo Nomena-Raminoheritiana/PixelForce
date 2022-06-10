@@ -43,6 +43,12 @@ $(document).ready(function() {
         })
     })
 
+    // tooltip bootstrap fix
+    $('[data-toggle="tooltip"]').each(function() {
+        $(this).tooltip()
+    })
+
+
 });
 
 require('./js/speedLiveVideo');

@@ -33,7 +33,7 @@ $(document).ready(function () {
                     setTimeout(function() {
                         progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
                         setTimeout(function() {
-                            location.reload();
+                            location.href = Routing.generate('coach_formation_list')
                         },1000)
                     },1000)
 

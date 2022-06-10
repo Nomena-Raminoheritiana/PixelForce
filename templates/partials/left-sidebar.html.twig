@@ -36,21 +36,32 @@
             {# On vérifie si l'user est dans la page d'accueil pour Agent  #}
             {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
 
-            {# <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('app_dashboard') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboards</span><span class="badge badge-light-warning rounded-pill ms-auto me-1">2</span></a>
-                <ul class="menu-content">
-                    <li><a class="d-flex align-items-center" href="dashboard-analytics.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Analytics">Analytiques</span></a>
-                    </li>
-                    <li class="active"><a class="d-flex align-items-center" href="dashboard-ecommerce.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="eCommerce">eCommerce</span></a>
-                    </li>
-                </ul>
-            </li> #}
-            {% set role = app.user.roles[0]  %}
-            {% if role == constant('App\\Entity\\User::ROLE_COACH') %}
-                {% include 'partials/menu-left-coach.html.twig' %}
-            {% elseif role == constant('App\\Entity\\User::ROLE_ADMINISTRATEUR') %}
-                {% include 'partials/menu-left-admin.html.twig' %}
-            {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
-                {% include 'partials/menu-left-agent.html.twig' %}
+            {% if currentPath == '/agent/accueil' %}
+                {% if allSecteurs is defined %}
+                    {% for secteur in allSecteurs %}
+                        {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
+                            <li class=" nav-item">
+                                <a role="button" data-toggle="tooltip" data-placement="right" title="{{ agentSecteur and agentSecteur.statut == true ? 'Aller vers' : 'Lien non disponible' }}" class="d-flex align-items-center" {% if agentSecteur and agentSecteur.statut == true %}href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id})}}"{% endif %}  ><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">{{ secteur.nom }}</span></a>
+                            </li>
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                {# <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('app_dashboard') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboards</span><span class="badge badge-light-warning rounded-pill ms-auto me-1">2</span></a>
+                    <ul class="menu-content">
+                        <li><a class="d-flex align-items-center" href="dashboard-analytics.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Analytics">Analytiques</span></a>
+                        </li>
+                        <li class="active"><a class="d-flex align-items-center" href="dashboard-ecommerce.html"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="eCommerce">eCommerce</span></a>
+                        </li>
+                    </ul>
+                </li> #}
+                {% set role = app.user.roles[0]  %}
+                {% if role == constant('App\\Entity\\User::ROLE_COACH') %}
+                    {% include 'partials/menu-left-coach.html.twig' %}
+                {% elseif role == constant('App\\Entity\\User::ROLE_ADMINISTRATEUR') %}
+                    {% include 'partials/menu-left-admin.html.twig' %}
+                {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
+                    {% include 'partials/menu-left-agent.html.twig' %}
+                {% endif %}
             {% endif %}
             {# <li class=" navigation-header"><span data-i18n="Apps &amp; Pages">application</span><i data-feather="more-horizontal"></i>
             </li>
