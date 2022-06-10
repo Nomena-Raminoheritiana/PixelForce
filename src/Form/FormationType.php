@@ -25,6 +25,9 @@ class FormationType extends AbstractType
                 'required' => true,
             ])
             ->add('contenu', CKEditorType::class, [
+                'config' => [
+                    'uiColor' => '#cccccc',
+                ],
                 'required' => true,
             ])
             ->add('debloqueAgent')
