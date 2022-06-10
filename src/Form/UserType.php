@@ -42,6 +42,7 @@ class UserType extends AbstractType
                 'required' => false
             ])
             ->add('dateNaissance', DateType::class, [
+                'label' => 'Date de naissance',
                 'widget' => 'single_text',
                 'attr'   => [
                     'placeholder' => 'Votre date de naissance'
