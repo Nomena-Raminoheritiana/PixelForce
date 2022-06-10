@@ -20,22 +20,24 @@ class AgentAccountController extends AbstractController
     protected $repoSecteur;
     protected $repoAgentSecteur;
     protected $repoFormation;
+    protected $session;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation)
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
         $this->repoFormation = $repoFormation;
+        $this->session = $session;
     }
 
     /**
      * Page d'accueil pour agent, qui sert de selection d'un secteur
      * 
-     * @Route("/agent/accueil", name="agent_accueil")
+     * @Route("/agent/accueil", name="agent_home")
      */
-    public function agent_accueil(AgentSecteurService $agentSecteurService, SessionInterface $session)
+    public function agent_home(AgentSecteurService $agentSecteurService)
     {
-        $session->remove('secteurId');
+        $this->session->remove('secteurId');
 
         $allSecteurs = $this->repoSecteur->findAll();
         return $this->render('user_category/agent/home_agent.html.twig', [
@@ -53,21 +55,21 @@ class AgentAccountController extends AbstractController
      * 
      * @Route("/agent/secteur/{id}/session/generate", name="agent_generate_sessionSecteur_before_redirect_to_route_dahsboard")
      */
-    public function agent_generate_sessionSecteur_before_redirect_to_route_dahsboard(Secteur $secteur, SessionInterface $session)
+    public function agent_generate_sessionSecteur_before_redirect_to_route_dahsboard(Secteur $secteur)
     {
-        $session->set('secteurId', $secteur->getId());
+        $this->session->set('secteurId', $secteur->getId());
         return $this->redirectToRoute('agent_dashboard_secteur', ['id' => $secteur->getId()]);
     }
 
     /**
      * @Route("/agent/dashboard/secteur/{id}", name="agent_dashboard_secteur")
      */
-    public function agent_dashboard_secteur(SessionInterface $session, Request $request, PaginatorInterface $paginator, Secteur $secteur)
+    public function agent_dashboard_secteur( Request $request, PaginatorInterface $paginator, Secteur $secteur)
     {
         // On vérifie d'abord si la session avec la clé 'secteurId' est générée
-        $sessionSecteurId =  $session->get('secteurId');
+        $sessionSecteurId =  $this->session->get('secteurId');
         if (!$sessionSecteurId) {
-            return $this->redirectToRoute('agent_accueil');
+            return $this->redirectToRoute('agent_home');
         }
 
         $formations = $this->repoFormation->AgentfindBySecteur($secteur);

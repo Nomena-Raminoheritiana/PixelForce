@@ -1,6 +1,21 @@
-<li class=" navigation-header"><span data-i18n="User Interface">Espace agent</span><i data-feather="more-horizontal"></i></li>
-<li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_accueil') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Choix secteur</span></a></li>
+{% if currentPath == '/agent/accueil' %}
+    {% if allSecteurs is defined %}
+        {% for secteur in allSecteurs %}
+            {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
+                <li class=" nav-item">
+                    <a class="d-flex align-items-center" {% if agentSecteur and agentSecteur.statut == true %}href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id})}}"{% endif %}  ><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">{{ secteur.nom }}</span></a>
+                </li>
+        {% endfor %}
+    {% endif %}
+{% else %}
+    {% if app.session.get('secteurId') %}
+        <li class=" navigation-header"><span data-i18n="User Interface">Espace agent</span><i data-feather="more-horizontal"></i></li>
+        <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_home') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Choix secteur</span></a></li>
 
-<li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_contact_list') }}"><i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="User">Contacts</span></a></li>
-<li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_formation_list') }}"><i data-feather="eye"></i><span class="menu-title text-truncate" data-i18n="Feather">Formations</span></a></li>
-{# <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('live_video_list') }}"><i data-feather="calendar"></i><span class="menu-title text-truncate" data-i18n="Calendar">Réunions</span></a></li> #}
+        <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_contact_list') }}"><i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="User">Contacts</span></a></li>
+        <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_formation_list') }}"><i data-feather="eye"></i><span class="menu-title text-truncate" data-i18n="Feather">Formations</span></a></li>
+        {# <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('live_video_list') }}"><i data-feather="calendar"></i><span class="menu-title text-truncate" data-i18n="Calendar">Réunions</span></a></li> #}
+    {% else %}
+        <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_home') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Choix secteur</span></a></li>
+    {% endif %}
+{% endif %}

@@ -11,30 +11,38 @@
 		<div class="content-body-form">
 			<a href="{{ path('agent_contact_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
 			<h1 class="text-center fw-bold">Information personnelle</h1>
-			<div class="form-add-contact">
-				{{ form_start(formContact) }}
-					<div class="row">
-						<div class="col-md-6">
-							{{ form_row(formContact.firstname) }}
+			{% if app.session.get('secteurId') %}
+				<div class="form-add-contact">
+					{{ form_start(formContact) }}
+						<div class="row">
+							<div class="col-md-6">
+								{{ form_row(formContact.firstname) }}
+							</div>
+							<div class="col-md-6">{{ form_row(formContact.lastname) }}</div>
 						</div>
-						<div class="col-md-6">{{ form_row(formContact.lastname) }}</div>
-					</div>
-					{{ form_row(formContact.email) }}
-					{{ form_row(formContact.phone) }}
-					{{ form_row(formContact.address) }}
-					{{ form_row(formContact.rue) }}
-					{{ form_row(formContact.numero) }}
-					{{ form_row(formContact.codePostal) }}
-					{{ form_row(formContact.ville) }}
-					{{ form_row(formContact.typeLogement) }}
-					{{ form_row(formContact.compositionFoyer) }}
-					{{ form_row(formContact.nbrPersonne) }}
-					{{ form_row(formContact.commentaire) }}
-					<div class="row">
-						<div class="col-md-12 text-end"><button class="btn btn-{{btn_class}}">{{ button|default('Suivant') }}</button></div>
-					</div>
-				{{ form_end(formContact) }}
-			</div>
+						{{ form_row(formContact.email) }}
+						{{ form_row(formContact.phone) }}
+						{{ form_row(formContact.address) }}
+						{{ form_row(formContact.rue) }}
+						{{ form_row(formContact.numero) }}
+						{{ form_row(formContact.codePostal) }}
+						{{ form_row(formContact.ville) }}
+						{{ form_row(formContact.typeLogement) }}
+						{{ form_row(formContact.compositionFoyer) }}
+						{{ form_row(formContact.nbrPersonne) }}
+						{{ form_row(formContact.commentaire) }}
+					
+						<div class="row">
+							<div class="col-md-12 text-end"><button class="btn btn-{{btn_class}}">{{ button|default('Suivant') }}</button></div>
+						</div>
+					{{ form_end(formContact) }}
+				</div>
+			{% else %}
+				<div class="alert alert-warning text-center">
+					Une erreur s'est survenue, veuillez retourner dans la page de selection de secteur. <br>
+					Merci ! 
+				</div>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

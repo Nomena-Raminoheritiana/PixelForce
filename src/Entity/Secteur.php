@@ -50,11 +50,17 @@ class Secteur
      */
     private $formations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Contact::class, mappedBy="secteur")
+     */
+    private $contacts_agent;
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
         $this->formations = new ArrayCollection();
+        $this->contacts_agent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -182,6 +188,36 @@ class Secteur
             // set the owning side to null (unless already changed)
             if ($formation->getSecteur() === $this) {
                 $formation->setSecteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contact>
+     */
+    public function getContactsAgent(): Collection
+    {
+        return $this->contacts_agent;
+    }
+
+    public function addContactsAgent(Contact $contactsAgent): self
+    {
+        if (!$this->contacts_agent->contains($contactsAgent)) {
+            $this->contacts_agent[] = $contactsAgent;
+            $contactsAgent->setSecteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContactsAgent(Contact $contactsAgent): self
+    {
+        if ($this->contacts_agent->removeElement($contactsAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($contactsAgent->getSecteur() === $this) {
+                $contactsAgent->setSecteur(null);
             }
         }
 

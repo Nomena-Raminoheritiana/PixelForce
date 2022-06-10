@@ -102,6 +102,64 @@ class ContactRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @param UserSearch $search
+     * @param string $role
+     * @return Query
+     */
+    public function findContactBySecteur(UserSearch $search, $agent, $secteurId)
+    {
+        $query = $this->createQueryBuilder('c');
+        $query = $query
+            ->andwhere('c.agent = :agent')
+            ->setParameter('agent', $agent)
+            ->join('c.secteur', 'cs')
+            ->andwhere('cs.id = :secteurId')
+            ->setParameter('secteurId', $secteurId)
+            ->join('c.information', 'ci')
+        ;
+
+        if ($search->getPrenom()) {
+            $query = $query
+                ->andwhere('ci.lastname LIKE :lastname')
+                ->orwhere('ci.firstname LIKE :lastname')
+                ->setParameter('lastname', '%'.$search->getPrenom().'%');
+        }
+        if ($search->getEmail()) {
+            $query = $query
+                ->andwhere('ci.email LIKE :email')
+                ->setParameter('email', '%'.$search->getEmail().'%');
+        }
+        if ($search->getTelephone()) {
+            $query = $query
+                ->andwhere('ci.phone LIKE :phone')
+                ->setParameter('phone', '%'.$search->getTelephone().'%');
+        }
+        if ($search->getAdresse()) {
+            $query = $query
+                ->andwhere('ci.address LIKE :address')
+                ->setParameter('address', '%'.$search->getAdresse().'%');
+        }
+        if ($search->getDateInscriptionMin()) {
+            $query = $query
+                ->andwhere('c.created_at >= :dateInscriptionMin')
+                ->setParameter('dateInscriptionMin', $search->getDateInscriptionMin());
+        }
+        if ($search->getDateInscriptionMax()) {
+            // On ajoute +1day, car la requête ne prend que la date en dessous de la date recherchée
+            $search->getDateInscriptionMax()->add(new DateInterval('P1D'));
+
+            $query = $query
+                ->andwhere('c.created_at <= :dateInscriptionMax')
+                ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
+        }
+
+        return $query->getQuery()
+            ->getResult()
+        ;
+    }
+
+
     // /**
     //  * @return Contact[] Returns an array of Contact objects
     //  */

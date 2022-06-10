@@ -54,6 +54,11 @@ class Contact
      */
     private $created_at;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="contacts_agent")
+     */
+    private $secteur;
+
     public function __construct()
     {
         $this->client = new ArrayCollection();
@@ -139,6 +144,18 @@ class Contact
     public function setCreatedAt(?\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }

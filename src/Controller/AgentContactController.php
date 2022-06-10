@@ -13,6 +13,7 @@ use App\Form\UserSearchType;
 use App\Manager\ContactManager;
 use App\Repository\ContactInformationRepository;
 use App\Repository\ContactRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Services\ExcelService;
 use Dompdf\Dompdf;
@@ -23,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AgentContactController extends AbstractController
@@ -30,12 +32,16 @@ class AgentContactController extends AbstractController
     protected $repoUser;
     protected $repoContact;
     protected $repoContactInfo;
-
-    public function __construct(UserRepository $repoUser, ContactRepository $repoContact, ContactInformationRepository $repoContactInfo)
+    protected $session;
+    protected $repoSecteur;
+    
+    public function __construct(UserRepository $repoUser, ContactRepository $repoContact, ContactInformationRepository $repoContactInfo, SessionInterface $session, SecteurRepository $repoSecteur)
     {
         $this->repoUser = $repoUser;
         $this->repoContact = $repoContact;
         $this->repoContactInfo = $repoContactInfo;
+        $this->session = $session;
+        $this->repoSecteur = $repoSecteur;
     }
 
     /**
@@ -43,6 +49,7 @@ class AgentContactController extends AbstractController
      */
     public function agent_contact_list(Request $request, PaginatorInterface $paginator)
     {
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->getUser();
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)
@@ -58,7 +65,7 @@ class AgentContactController extends AbstractController
         $searchForm->handleRequest($request);
         
         $contacts = $paginator->paginate(
-            $this->repoContact->findContactQuery($search, $agent),
+            $this->repoContact->findContactBySecteur($search, $agent, $secteurId),
             $request->query->getInt('page', 1),
             20
         );
@@ -100,7 +107,7 @@ class AgentContactController extends AbstractController
     /**
      * @Route("/agent/client/contact/add", name="agent_contact_info_add")
      */
-    public function agent_contact_info_add(Request $request)
+    public function agent_contact_info_add(Request $request, )
     {
         $contact = new Contact();
         $contactInfo = new ContactInformation();
@@ -108,9 +115,17 @@ class AgentContactController extends AbstractController
        
         $formContact->handleRequest($request);
         if ($formContact->isSubmitted() && $formContact->isValid()) {
+            $secteurId = $this->session->get('secteurId');
+            if ($secteurId === null) {
+                $this->addFlash('danger', "Désolé, une erreur s'est survenue !");
+                return $this->redirectToRoute('agent_home');
+            }
+
+            $secteur = $this->repoSecteur->find($secteurId);
             $contact->setInformation($contactInfo);
             $contact->setAgent($this->getUser());
             $contact->setStatus(0);
+            $contact->setSecteur($secteur);
             $this->repoContact->add($contact);
 
             $this->addFlash('success', "Ajout du client avec succès");
