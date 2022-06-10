@@ -32,7 +32,7 @@ class FormationType extends AbstractType
                 'required' => true,
             ])
             ->add('debloqueAgent', null, [
-                'label' => 'Requiert une attribution pour être débloqué'
+                'label' => 'Disponible pour tous les agents'
             ])
             ->add('brouillon')
         ;
