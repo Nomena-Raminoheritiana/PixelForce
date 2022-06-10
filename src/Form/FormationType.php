@@ -31,7 +31,9 @@ class FormationType extends AbstractType
                 ],
                 'required' => true,
             ])
-            ->add('debloqueAgent')
+            ->add('debloqueAgent', null, [
+                'label' => 'Requiert une attribution pour être débloqué'
+            ])
             ->add('brouillon')
         ;
     }
