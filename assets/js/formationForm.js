@@ -318,20 +318,6 @@ function progressionBar(pourcentage)
     }
 }
 
-// Permet de mettre à jour les donnés insérées dans les champs ckEditor
-/**
- * On essaie ceci, 
- * si ça ne marchera pas, on essaie de modifier la version de ckEditor avec la version '^2.3'
- * 
- * Car après avoir intégré CkEditor, les champs d'origines restent null et ckEditor les changent avec ses propres champs personnalisés
- * Les champs d'origines se mettent seulement en display:none
- */
-$('form#formation').on('submit',  function(e){
-    for (let index = 0; index < CKEDITOR.instances.length; index++) {
-        const instance = array[index];
-        $('#' + instance).val(CKEDITOR.instances[instance].getData());
-    }
-});
 
 function validationFormulaire(callback)
 {
