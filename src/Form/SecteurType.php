@@ -12,8 +12,8 @@ class SecteurType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
-            ->add('description')
+            ->add('nom', null, ['attr' => ['placeholder' => 'Nom du secteur']])
+            ->add('description', null, ['attr' => ['placeholder' => 'Description du secteur']])
         ;
     }
 

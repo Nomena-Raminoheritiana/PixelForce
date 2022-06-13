@@ -1,0 +1,70 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+	Liste des secteurs
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}	
+    <div class="container mt-3">
+        <!-- Message alert -->
+        <div class="alert-message">
+            {% for label, messages in app.flashes %}
+                <div class="alert alert-{{label}} text-center">
+                    {% for message in messages %}
+                        {{message | raw}}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Liste secteurs -->
+        <div class="row mb-3">
+            <div class="col-12  mt-2 mt-md-3">
+                <div class=" w-100 h-100 ps-3 py-3  bg-white border pe-3">
+                    <div class="row h-100">
+                        <div class="col-6">
+                            <h4 class="my-auto">Liste des secteurs</h4>
+                        </div>
+                        <div class="col-6 ">
+                            <a href="{{ path('admin_sector_add') }}" class="btn btn-primary btn-sm waves-effect waves-float waves-light fw-bolder d-flex float-end d-flex align-items-center"><i class="fa-solid fa-user-plus me-2"></i> Ajouter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <div class="table-responsive">
+			<table class="table table-striped table-hover text-center">
+				<thead>
+					<tr>
+						<th scope="col">Nom</th>
+						<th scope="col">Description</th>
+						<th scope="col">Coach</th>
+						<th scope="col">ACTION</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for sector in sectors %}
+                        <tr>
+                            <td>{{ sector.nom }}</td>
+                            <td>{{ sector.description|slice(0, 50) }}...</td>
+                            <td>
+                               {{ repoCoachSecteur.findBy({'secteur' : sector})[0].coach.prenom}}
+                            </td>
+                            <td >
+                                <a href="{{ path('admin_sector_edit', {'id': sector.id}) }}" class="btn btn-success">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+						
+					{% endfor %}
+
+				</tbody>
+			</table>
+		</div>
+    </div>
+{% endblock %}

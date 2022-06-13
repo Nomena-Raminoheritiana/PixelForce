@@ -1,0 +1,37 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+	Edition secteur
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+	<style>
+		.form-add-secteur{
+			padding: 0 100px;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<div class="content-body-form">
+			<a href="{{ path('admin_sector_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+			<div class="form-add-secteur">
+				<div class="container">
+					<h1 class="fw-bolder text-center">Modification secteur : {{ sector.nom }}</h1>
+					<div class="row">
+						{{ form_start(formSecteur) }}
+							{{ form_row(formSecteur.nom) }}
+							{{ form_row(formSecteur.description) }}
+						
+							<div class="row">
+								<div class="col-md-12 text-end"><button class="btn btn-success my-4">Enregistrer</button></div>
+							</div>
+						{{ form_end(formSecteur) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
