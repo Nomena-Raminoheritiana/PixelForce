@@ -106,7 +106,7 @@
 							$('#btn-saveSector').html('<div class="spinner-border text-light" role="status"><span class="visually-hidden">Loading...</span></div>')
 						},
 						success: function(responseAjax){
-							$("#modal-edit-agent-secteur").modal('hide')
+							$('[data-bs-dismiss="modal"]').trigger('click')
 							$('#btn-saveSector').html('<i class="fa-solid fa-floppy-disk"></i> Changer');
 
 							// Si la reponse renvoie une erreur comme duplication du secteur
@@ -120,6 +120,9 @@
 								that.find('.secteur-name').text(responseAjax.newSector);
 								$('#error-dulication-secteur').removeClass('d-block');
 								$('#error-dulication-secteur').addClass('d-none');
+								setTimeout(function() {
+									location.href = Routing.generate('admin_agent_view', {id:{{ agent.id}}})
+								}, 1000)
 							}
 						},
 						error : function(){

@@ -131,7 +131,7 @@
 							$('#btn-saveSector').html('<div class="spinner-border text-light" role="status"><span class="visually-hidden">Loading...</span></div>')
 						},
 						success: function(responseAjax){
-							$("#modal-edit-coach-secteur").modal('hide')
+							$('[data-bs-dismiss="modal"]').trigger('click')
 							$('#btn-saveSector').html('<i class="fa-solid fa-floppy-disk"></i> Changer');
 
 							if (responseAjax.edit === 'successfully') {
