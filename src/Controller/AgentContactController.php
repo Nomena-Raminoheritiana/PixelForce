@@ -81,7 +81,10 @@ class AgentContactController extends AbstractController
      */
     public function agent_contact_export_excel(Request $request, ExcelService $excelService): Response
     {
-        $contacts = $this->repoContact->findAll();
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $this->repoSecteur->find($secteurId);
+        $contacts = $this->repoContact->findBy(['agent' => $this->getUser(), 'secteur' => $secteur]);
+
         $headers = ["NOM ET PRÉNOMS", "EMAIL", "TÉLÉPHONE", "ADRESSE", "TYPE DU LOGEMENT", "RUE", "NUMÉRO", "CODE POSTAL", "VILLE", "COMPOSITION DU FOYER", "NOMBRE DE PERSONNE", "COMMENTAIRE"];
         $fields = ["information.lastname", "information.email", "information.phone", "information.address", 
             "information.typeLogement.nom", "information.rue", "information.numero", "information.codePostal", 
@@ -96,12 +99,16 @@ class AgentContactController extends AbstractController
      */
     public function agent_contact_export_pdf(Request $request, DompdfWrapperInterface $wrapper)
     {
-        $contacts = $this->repoContact->findAll();
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $this->repoSecteur->find($secteurId);
+        $contacts = $this->repoContact->findBy(['agent' => $this->getUser(), 'secteur' => $secteur]);
+
         $html = $this->renderView('pdf/contacts.html.twig', [
             'title' => "Liste des contacts",
             'contacts' => $contacts
         ]);
-        return $wrapper->getStreamResponse($html, 'document.pdf', ['isRemoteEnabled' => true]);
+        $date = (new \DateTime())->format('Y-m-d');
+        return $wrapper->getStreamResponse($html, "contact-$date.pdf", ['isRemoteEnabled' => true]);
     }
 
     /**
