@@ -38,6 +38,8 @@ Encore
     .addEntry('ImportVideoVimeo', './assets/js/ImportVideoVimeo.js')
     .addEntry('commentaire', './assets/js/commentaire.js')
     .addEntry('chatJS', './assets/js/chat/chat.js')
+    .addEntry('calendarJS', './assets/js/calendar/calendar.js')
+
     
     // Vuexy: Vendor JS
     .addEntry('vuexy_js', './assets/js/vuexy/vuexy.js')
@@ -55,6 +57,8 @@ Encore
 
     .addStyleEntry('base', './assets/styles/base.css')
     .addStyleEntry('chat', './assets/styles/chat/chat.css')
+    .addStyleEntry('calendarCSS', './assets/styles/calendar/calendar.css')
+
     // Vuexy: Theme CSS
     .addStyleEntry('vuexy_bootstrap', './assets/styles/vuexy/bootstrap.css')
     .addStyleEntry('vuexy_apexcharts', './assets/styles/vuexy/vendors/css/charts/apexcharts.css')
