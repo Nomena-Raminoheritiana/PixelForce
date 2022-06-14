@@ -35,7 +35,7 @@
     </div>
 
     <h5 class="mt-4">Contenu</h5>
-    <p>{{ formation.contenu }}</p>
+    <p>{{ formation.contenu|raw }}</p>
     <div class="text-center mt-5">
         {% set formationAgentRelation = formationAgentRepository.findOneBy({formation:formation, agent:app.user}) %}
         {% if formationAgentRelation %}

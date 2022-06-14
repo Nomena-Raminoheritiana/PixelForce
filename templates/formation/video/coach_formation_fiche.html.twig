@@ -6,11 +6,31 @@
         {{ form_start(form,{attr:{id:'formation-fiche', action: path('coach_formation_fiche', {id:formation.id})}}) }}
         <input type="hidden" id="inputVideo" class="hiddenVideoData">
         <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-8">
                 {{ form_row(form.titre, {label_attr: {
                     class:'fw-bold'
                 }}) }}
+                {{ form_row(form.description, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
+                {{ form_row(form.description_deblocage, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
                 {{ form_row(form.contenu, {attr:{rows:20}, label_attr: {class:'fw-bold'}}) }}
+                <div class="bg-light-info text-dark p-4 border">
+                    <div class="border-bottom border-2  border-bottom-black">
+                        <strong>Informations</strong>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-6">
+                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'valide' }}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}
+                            <hr>
+                            {{ form_row(form.debloqueAgent) }}
+                            {{ form_row(form.brouillon) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
                 <div>
                     <div class="fw-bold text-decoration-underline mb-3">
                        Videos
@@ -86,31 +106,7 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
-
-            </div>
-            <div class="col-12 col-md-6">
-                {{ form_row(form.description, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
-                {{ form_row(form.description_deblocage, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
-                <div class="bg-light-info text-dark p-4 border">
-                    <div class="border-bottom border-2  border-bottom-black">
-                        <strong>Informations</strong>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-12 col-md-6">
-                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'valide' }}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}
-                            <hr>
-                            {{ form_row(form.debloqueAgent) }}
-                            {{ form_row(form.brouillon) }}
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
         <div class="mt-4">

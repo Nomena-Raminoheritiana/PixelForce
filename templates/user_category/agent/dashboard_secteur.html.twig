@@ -122,11 +122,11 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar rounded">
                                                             <div class="avatar-content">
-                                                                <img src="{{asset('assets/vuexy/images/icons/toolbox.svg')}}" alt="Toolbar svg" />
+                                                                <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}"><img src="{{asset('assets/vuexy/images/icons/toolbox.svg')}}" alt="Toolbar svg" /></a>
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div class="fw-bolder">{{ formation.titre }}</div>
+                                                            <div class="fw-bolder"> <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="text-black">{{ formation.titre }}</a> </div>
                                                             <div class="font-small-2 text-muted">{{ formation.secteur.nom }}</div>
                                                         </div>
                                                     </div>

@@ -16,7 +16,7 @@
         <div class="block-list-card-secteur mt-5">
             <div class="row">
                 {% for secteur in allSecteurs %}
-                    <div class="col-4">
+                    <div class="col-4 mb-3">
                         {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
                       
                         <div style="min-height: 140px;" class="card-secteur bg-{% if agentSecteur and agentSecteur.statut == true %}primary{% elseif agentSecteur and agentSecteur.statut == false %}warning{% else %}secondary{% endif %} p-3">
