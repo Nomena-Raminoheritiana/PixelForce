@@ -77,7 +77,7 @@ class AdminAgentController extends AbstractController
     }
 
     /**
-     * @Route("/admin/agent/{id}/view", name="admin_agent_view")
+     * @Route("/admin/agent/{id}/view", name="admin_agent_view", options={"expose"=true})
      */
     public function admin_agent_view(User $agent,  AgentSecteurService $agentSecteurService)
     {
