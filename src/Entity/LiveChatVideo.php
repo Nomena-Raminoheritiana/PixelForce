@@ -57,6 +57,11 @@ class LiveChatVideo
      */
     private $isInProcess;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class, inversedBy="liveChatVideos")
+     */
+    private $secteur;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -154,6 +159,18 @@ class LiveChatVideo
     public function setIsInProcess(?bool $isInProcess): self
     {
         $this->isInProcess = $isInProcess;
+
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }
