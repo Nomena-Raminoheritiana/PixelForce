@@ -3,7 +3,7 @@
 
 namespace App\Services;
 
-
+use App\Entity\Formation;
 use App\Entity\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -56,6 +56,23 @@ class MailerService
             'template' => 'security/sixDigitKey.html.twig',
             'template_vars' => [
                 'sixDigitKey' => $user->getSixDigitCode()
+            ]
+        ]);
+    }
+
+    public function sendMailAfterDoneFormation(User $sender, User $recipient, Formation $formation)
+    {
+        $this->sendMail([
+            'subject' => 'Formation terminée',
+            'from' => $sender->getEmail(),
+            'from_name' => $sender->getNom(),
+            'to' => [
+                $recipient->getEmail()
+            ],
+            'template' => 'formation/formation_done.html.twig',
+            'template_vars' => [
+                'formation' => $formation,
+                'agent' => $sender
             ]
         ]);
     }
@@ -113,5 +130,6 @@ class MailerService
 //        ]
 //
 //    ];
+
 
 }

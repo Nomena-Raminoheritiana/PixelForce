@@ -142,9 +142,9 @@
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                                <div class="d-flex justify-content-center my-2">
-                                    <a href="{{ path('agent_formation_list') }}" class="btn btn-primary">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
-                                </div>
+                            </div>
+                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                                <a href="{{ path('agent_formation_list') }}" class="btn btn-primary">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
                             </div>
                         </div>
                     </div>
@@ -247,12 +247,12 @@
                                         {% endif %}
                                     </tbody>
                                 </table>
-                                {% if contacts|length > 0 %}
-                                <div class="d-flex justify-content-center">
-                                    <a href="{{ path('agent_contact_list') }}" class="btn btn-primary float-bottom">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
-                                </div>
-                                {% endif %}
                             </div>
+                            {% if contacts|length > 0 %}
+                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                                <a href="{{ path('agent_contact_list') }}" class="btn btn-primary float-bottom">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

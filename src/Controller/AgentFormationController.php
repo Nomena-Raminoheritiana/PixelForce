@@ -9,6 +9,7 @@ use App\Manager\EntityManager;
 use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
 use App\Repository\SecteurRepository;
+use App\Services\MailerService;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,13 +40,17 @@ class AgentFormationController extends AbstractController
      */
     private $secteurRepository;
 
-    public function __construct(EntityManager $entityManager, SecteurRepository $secteurRepository, PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository)
+    /** @var MailerService $mailerService; */
+    private $mailerService;
+
+    public function __construct(EntityManager $entityManager, SecteurRepository $secteurRepository, PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository, MailerService $mailerService)
     {
         $this->paginator = $paginator;
         $this->formationRepository = $formationRepository;
         $this->formationAgentRepository = $formationAgentRepository;
         $this->entityManager = $entityManager;
         $this->secteurRepository = $secteurRepository;
+        $this->mailerService = $mailerService;
     }
 
     /**
@@ -100,14 +105,16 @@ class AgentFormationController extends AbstractController
      */
     public function coach_formation_terminer(Formation $formation, Request $request)
     {
-       $formationAgentRelation = $this->formationAgentRepository->findOneBy(['formation' => $formation, 'agent' => $this->getUser()]);
-       if($formationAgentRelation) {
-           $formationAgentRelation->setStatut(Formation::STATUT_TERMINER);
-           $this->entityManager->save($formationAgentRelation);
-       }
-
-       $this->addFlash('success', 'Vous venez de terminer la formation : '.$formation->getTitre());
-       return $this->redirectToRoute('agent_formation_list');
+        $agent = $this->getUser();
+        $coach = $formation->getCoach();
+        $formationAgentRelation = $this->formationAgentRepository->findOneBy(['formation' => $formation, 'agent' => $this->getUser()]);
+        if($formationAgentRelation) {
+            $formationAgentRelation->setStatut(Formation::STATUT_TERMINER);
+            $this->entityManager->save($formationAgentRelation);
+        }
+        $this->mailerService->sendMailAfterDoneFormation($agent, $coach, $formation);
+        $this->addFlash('success', 'Vous venez de terminer la formation : '.$formation->getTitre());
+        return $this->redirectToRoute('agent_formation_list');
     }
 
 }
