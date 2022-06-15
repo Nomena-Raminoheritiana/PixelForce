@@ -73,9 +73,11 @@
                         Attribuer formation
                     </a>
                 {% endif %}
-                <a href="{{ path('admin_agent_edit', {id:user.id}) }}" class="btn btn-primary me-1" >
-                    Modifier
-                </a>
+                {% if is_granted('ROLE_ADMINISTRATEUR')  %}
+                    <a href="{{ path('admin_agent_edit', {id:user.id}) }}" class="btn btn-primary me-1" >
+                        Modifier
+                    </a>
+                {% endif %}
 {#                <a href="javascript:;" class="btn btn-outline-danger suspend-user">Suspendu</a>#}
             </div>
         </div>

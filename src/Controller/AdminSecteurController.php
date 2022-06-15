@@ -66,26 +66,26 @@ class AdminSecteurController extends AbstractController
         $sector = new Secteur();
         $coachSecteur = new CoachSecteur();
         $formSecteur = $this->createForm(SecteurType::class, $sector)
-            ->add('coach', EntityType::class, [
-                'mapped' => false,
-                'class' => User::class,
-                'choice_label' => 'prenom',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->where('u.roles LIKE :role')
-                        ->setParameter('role', '%'. User::ROLE_COACH.'%');
-                    ;
-                }
-            ])
+            // ->add('coach', EntityType::class, [
+            //     'mapped' => false,
+            //     'class' => User::class,
+            //     'choice_label' => 'prenom',
+            //     'query_builder' => function (EntityRepository $er) {
+            //         return $er->createQueryBuilder('u')
+            //             ->where('u.roles LIKE :role')
+            //             ->setParameter('role', '%'. User::ROLE_COACH.'%');
+            //         ;
+            //     }
+            // ])
         ;
 
         $formSecteur->handleRequest($request);
         if ($formSecteur->isSubmitted() && $formSecteur->isValid()) {
             $this->entityManager->save($sector);
             
-            $coachId = $request->request->get('secteur')['coach'];
-            $coach = $this->repoUser->find($coachId);
-            $coachSecteur->setCoach($coach);
+            // $coachId = $request->request->get('secteur')['coach'];
+            // $coach = $this->repoUser->find($coachId);
+            // $coachSecteur->setCoach($coach);
             $coachSecteur->setSecteur($sector);
             $this->entityManager->save($coachSecteur);
 
@@ -117,5 +117,18 @@ class AdminSecteurController extends AbstractController
             'formSecteur' => $formSecteur->createView(),
             'sector' => $sector
         ]);    
+    }
+
+    /**
+     * @Route("/admin/secteur/{id}/delete", name="admin_sector_delete")
+     */
+    public function admin_sector_delete(Secteur $sector, Request $request)
+    {
+        if ($this->isCsrfTokenValid('delete'. $sector->getId(), $request->get('_token'))) {
+            $this->repoSecteur->removeSectorAndCoachSecteur($sector);
+
+            $this->addFlash( 'danger', 'Secteur supprimé');
+        }
+        return $this->redirectToRoute('admin_sector_list');    
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Secteur;
+use App\Manager\EntityManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -16,9 +17,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SecteurRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    protected $repoCoachSecteur;
+    protected $entityManager;
+
+    public function __construct(ManagerRegistry $registry, CoachSecteurRepository $repoCoachSecteur, EntityManager $entityManager)
     {
         parent::__construct($registry, Secteur::class);
+        $this->repoCoachSecteur = $repoCoachSecteur;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -43,6 +49,23 @@ class SecteurRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    /**
+     * Permet de supprimer un secteur et la relation coachSecteur
+     *
+     * NB: On doit suivre cette procédure pour eviter l'erreur de "Violation de relation"
+     */
+    public function removeSectorAndCoachSecteur(Secteur $sector)
+    {
+        // (1) => On supprime d'abord toutes les relations entre coach et agent
+        $coachSecteur = $this->repoCoachSecteur->findOneBy(['secteur' => $sector]);
+        if ($coachSecteur) {
+            $this->entityManager->delete($coachSecteur);
+        }
+        
+        // (2) => Et enfin on supprime l'utilisateur en question
+        $this->entityManager->delete($sector);
     }
 
     // /**

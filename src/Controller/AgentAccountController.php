@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\AgentSecteur;
 use App\Entity\Secteur;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\ContactRepository;
 use App\Repository\FormationRepository;
 use App\Repository\SecteurRepository;
 use App\Services\AgentSecteurService;
@@ -22,12 +23,15 @@ class AgentAccountController extends AbstractController
     protected $repoFormation;
     protected $session;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session)
+    protected $repoContact;
+
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
         $this->repoFormation = $repoFormation;
         $this->session = $session;
+        $this->repoContact = $repoContact;
     }
 
     /**
@@ -78,10 +82,18 @@ class AgentAccountController extends AbstractController
             $request->query->getInt('page', 1),
             5
         );
+
+        $contacts = $this->repoContact->findBy(['secteur' => $secteur]);
+        $contacts = $paginator->paginate(
+            $contacts,
+            $request->query->getInt('page', 1),
+            5
+        );
         
         return $this->render('user_category/agent/dashboard_secteur.html.twig', [
             'secteur' => $secteur,
-            'formations' => $formations
+            'formations' => $formations,
+            'contacts' => $contacts
         ]);
     }
 }

@@ -42,7 +42,7 @@
 					<tr>
 						<th scope="col">Nom</th>
 						<th scope="col">Description</th>
-						<th scope="col">Coach</th>
+						{# <th scope="col">Coach</th> #}
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -51,13 +51,23 @@
                         <tr>
                             <td>{{ sector.nom }}</td>
                             <td>{{ sector.description|slice(0, 50) }}...</td>
-                            <td>
-                               {{ repoCoachSecteur.findBy({'secteur' : sector})[0].coach.prenom}}
-                            </td>
+                            {# <td>
+                                {% set CoachSecteur = repoCoachSecteur.findBy({'secteur' : sector}) %}                                
+                                {% if CoachSecteur|length > 0  and CoachSecteur[0].coach %}
+                                    {{ CoachSecteur[0].coach.prenom}}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td> #}
                             <td >
                                 <a href="{{ path('admin_sector_edit', {'id': sector.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>
                                 </a>
+                                <form method="post" action="{{path('admin_sector_delete', {id: sector.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer ce secteur ?')">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sector.id) }}">
+                                    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                </form>  
                             </td>
                         </tr>
 						

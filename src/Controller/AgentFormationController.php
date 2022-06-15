@@ -54,7 +54,6 @@ class AgentFormationController extends AbstractController
      */
     public function agent_formation_list(Request $request, SessionInterface $session)
     {
-        // dd($session->get('secteurId'));
         // todo: miandry anle login agent izay ataon Tsiory mba haazaoana ilay session micontenir anle secteur
         $secteur_id = $session->get('secteurId');
         $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);

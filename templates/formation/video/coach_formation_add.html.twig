@@ -5,7 +5,7 @@
         <h3 class="mb-3">Création d'une formation</h3>
         {{ form_start(form,{attr:{id:'formation', action:path('coach_formation_add')}}) }}
         <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-8">
                 {{ form_row(form.titre) }}
                 {{ form_row(form.description) }}
                 {{ form_row(form.description_deblocage) }}
@@ -22,7 +22,7 @@
                     <button type="submit" id="submit-formation" class="btn bg-princ text-white">Enregistrer</button>
                 </div>
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
                 <h5>Vidéo</h5>
                 <div class="my-3" id="formation-video">
                     <buton class="btn btn-primary btn-sm" id="btn-add-video"><i class="fa fa-plus"></i> Ajouter une video</buton>

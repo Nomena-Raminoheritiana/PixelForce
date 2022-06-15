@@ -110,9 +110,6 @@
                                         <tr>
                                             <th>Formation</th>
                                             <th>Coach</th>
-                                            <th>Vues</th>
-                                            <th>Utilisateur</th>
-                                            <th>Ventes</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -141,25 +138,12 @@
                                                         <span>{{ formation.coach.prenom }}</span>
                                                     </div>
                                                 </td>
-                                                <td class="text-nowrap">
-                                                    <div class="d-flex flex-column">
-                                                        <span class="fw-bolder mb-25">23.4k</span>
-                                                        <span class="font-small-2 text-muted">en 24 heures</span>
-                                                    </div>
-                                                </td>
-                                                <td>$891.2</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <span class="fw-bolder me-1">68%</span>
-                                                        <i data-feather="trending-down" class="text-danger font-medium-1"></i>
-                                                    </div>
-                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
                                 </table>
-                                <div class="pagination d-flex justify-content-center">
-                                    {{ knp_pagination_render(formations)}}
+                                <div class="d-flex justify-content-center my-2">
+                                    <a href="{{ path('agent_formation_list') }}" class="btn btn-primary">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -230,6 +214,48 @@
                 <!--/ Developer Meetup Card -->
     
                 <!-- Browser States Card -->
+                <div class="col-lg-8 col-12">
+                    <div class="card card-company-table">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Prénoms</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Téléphone</th>
+                                            <th scope="col">Adresse</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if contacts|length < 1 %}
+                                            <div class="d-flex justify-content-center my-2">
+                                                <a href="{{ path('agent_contact_info_add') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter un contact</a>
+                                            </div>
+                                        {% else %}
+                                            {% for contact in contacts %}
+                                            {% set information = contact.information %}
+                                                <tr>
+                                                    <td><i class="fa-solid fa-address-card"></i></td>
+                                                    <td>{{ information.lastname }}</td>
+                                                    <td>{{ information.email }}</td>
+                                                    <td>{{ information.phone }}</td>
+                                                    <td>{{ information.address }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                                {% if contacts|length > 0 %}
+                                <div class="d-flex justify-content-center">
+                                    <a href="{{ path('agent_contact_list') }}" class="btn btn-primary float-bottom">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-4 col-md-6 col-12">
                     <div class="card card-browser-states">
                         <div class="card-header">
