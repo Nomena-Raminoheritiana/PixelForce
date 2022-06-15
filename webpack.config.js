@@ -43,6 +43,7 @@ Encore
     .addEntry('validationSecteur', './assets/js/validationSecteur.js')
     .addEntry('calendarJS', './assets/js/calendar/calendar.js')
 
+    
     // Vuexy: Vendor JS
     .addEntry('vuexyJS', './assets/js/vuexy/vuexy.js')
     .addEntry('vuexy_vendors_js', './assets/js/vuexy/vendors/js/vendors.js')
@@ -66,6 +67,7 @@ Encore
     .addStyleEntry('chat', './assets/styles/chat/chat.css')
     .addStyleEntry('calendarCSS', './assets/styles/calendar/calendar.css')
     
+
     // Vuexy: Theme CSS
     .addStyleEntry('vuexy_bootstrap', './assets/styles/vuexy/bootstrap.css')
     .addStyleEntry('vuexy_apexcharts', './assets/styles/vuexy/vendors/css/charts/apexcharts.css')
