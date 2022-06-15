@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="mb-3">
-                                <input type="datetime-local" placeholder="Date de debut live" class="form-control" value="{{ live is defined ? live.date_debut_live : '' }}" name="dateDebutLive" required />
+                                <input type="datetime-local" placeholder="Date de debut live" class="form-control" value="{{ live is defined ? live.dateDebutLive|date('Y-m-dTH:i:s')|replace({'U':'','C':''}) : '' }}" name="dateDebutLive" required />
                             </div>
                             <div class="mb-3">
                                 <input type="text" name="theme" placeholder="Ajouter un theme" value="{{ live is defined ? live.theme : '' }}" class="form-control" required />
@@ -28,7 +28,7 @@
                             <h6><u>Acteurs</u></h6>
                             {% for agent in agents %}
                                 <div class="form-check">
-                                    <input class="form-check-input" {{ live is defined ? (agent.id in live.userB|split(',') ? 'checked':'') : '' }} name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
+                                    <input class="form-check-input" {{ live is defined ? (agent.id in agentsCompare|split(',') ? 'checked':'') : '' }} name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
                                     <label class="form-check-label" for="agent-{{ agent.id }}">
                                         {{ agent.nom }} {{ agent.prenom }}
                                     </label>

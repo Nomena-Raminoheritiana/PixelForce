@@ -61,12 +61,12 @@ class CoachZoomController extends AbstractController
         $livesForDeletingAuto2 = $this->liveChatVideoRepository->findBy(['isInProcess' => true]);
         $this->entityManager->removeMultiple($livesForDeletingAuto2);
         $this->liveVideo->remove($livesForDeletingAuto);
-        $lives = $this->liveChatVideoRepository->groupByCode($this->getUser(), ['user_a_id'=>$this->getUser()->getId(),'perimee' => $request->query->get('perimee'), 'a_supprimer' => $request->query->get('a_supprimer')]);
+        $livesQuery = $this->liveChatVideoRepository->findByCoach($this->getUser());
 
         return $this->render('user_category/coach/zoom/zoom_list.html.twig',[
-            'lives' => $lives,
+            'livesQuery' => $livesQuery,
             'agents' => $agents,
-            'total' => count($lives),
+            'liveChatRepo' => $this->liveChatVideoRepository
         ]);
     }
 
@@ -80,7 +80,7 @@ class CoachZoomController extends AbstractController
         if($users) {
             // si la différence entre la date d'aujourd'hui et la date prévu de la réunion est supérieur à 1journnée, on la suprrime
             $dateNow = new \DateTime();
-            if(($dateNow->diff(new \DateTime($request->request->get('dateDebutLive'))))->days >= 1) {
+            if(new \DateTime($request->request->get('dateDebutLive')) < $dateNow &&  ($dateNow->diff(new \DateTime($request->request->get('dateDebutLive'))))->days >= 1) {
                 $this->addFlash('danger', 'Veuillez entrer une date dans le futur');
                 return $this->redirectToRoute('coach_zoom_list');
             }
