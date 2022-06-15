@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
@@ -203,6 +204,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $lienCalendly;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="user")
+     */
+    private $calendarEvents;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -218,6 +224,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->formationAgents = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
         $this->agentSecteurs = new ArrayCollection();
+        $this->calendarEvents = new ArrayCollection();
 
     }
 
