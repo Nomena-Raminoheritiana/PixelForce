@@ -63,7 +63,7 @@ class LiveVideo
      * @param string $byChamps ex: code, id
      * @return LiveChatVideo|mixed|null
      */
-    public function create($userA, $userB, $code = null, $is_speedLive = false, \DateTimeInterface $dateDebutLive = null, $theme = '', $description = '')
+    public function create($userA, $userB, $code = null, $is_speedLive = false, \DateTimeInterface $dateDebutLive = null, $theme = '', $description = '', $secteur = null)
     {
         $findParam = $is_speedLive ? ['isSpeedLive' => true] : [];
         $live = $this->liveChatVideoRepository->findOneBy(array_merge(['userA' => $userA, 'userB' => $userB], $findParam));
@@ -77,7 +77,8 @@ class LiveVideo
             'code' => $code,
             'dateDebutLive' => $dateDebutLive,
             'theme' => $theme,
-            'description' => $description
+            'description' => $description,
+            'secteur' => $secteur,
         ], $findParam));
         return $live;
     }

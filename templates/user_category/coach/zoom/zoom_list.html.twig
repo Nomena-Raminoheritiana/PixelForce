@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Coach - zoom{% endblock %}
 {% block body %}
     <div class="px-2 px-md-3">
         <!-- bar navigation -->
@@ -8,7 +8,7 @@
                 <div class=" w-100 h-100 ps-3 py-3  bg-white border">
                     <div class="row h-100">
                         <div class="col-12 col-md-6 d-flex">
-                            <h4 class="my-auto"><span class="text-danger "><span class="fw-bold">L</span>ive</span> <span class="text-muted">Formation</span></h4>
+                            <h4 class="text-danger"><i class="fa-solid fa-video"></i> Planifier une réunion</h4>
                         </div>
                         <div class="col-12 col-md-6  pe-4 text-start text-md-end ">
                             {% if constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and lives|length > 0 %}
@@ -22,7 +22,7 @@
         </div>
         <!-- end bar navigation -->
         <!-- bar dashboard -->
-        {% include "live/video/dashboard.html.twig" %}
+{#        {% include "live/video/dashboard.html.twig" %}#}
         <!-- endbar dashboard -->
         <div class="row">
             {% for live in lives %}
@@ -30,11 +30,11 @@
                     <div class="live w-100 h-100 bg-white border p-3 position-relative" >
                         <div class="row">
                             <div class="col-6">
-                                <h1><i class="fa-solid fa-video text-danger"></i></h1>
+                                <h1><i data-feather="video" class="font-large-5 text-danger"></i></h1>
                             </div>
                             <div class="col-6 d-flex pe-1">
-                                <span class="my-auto ms-auto text-success fw-bold ">
-                                    {{ (live.userB|split(','))|length }} <i class="fa-solid fa-users"></i>
+                                <span class="my-auto ms-auto text-danger fw-bold ">
+                                     <i class="fa-solid fa-users"></i> {{ (live.userB|split(','))|length }} participants
                                 </span>
                             </div>
                         </div>
@@ -42,71 +42,76 @@
                             <small class="my-auto fw-bold text-danger">{{ live.is_in_process ? 'En ligne' : 'Hors ligne' }}</small>
                         </div>
                         <h5> {{ live.theme ? live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
-                        <p class="text-start"><small><u>Date début du live</u> : <span class="text-success">{{ live.date_debut_live|date('d-m-Y H:i:s') }}</span></small></p>
+                        <p class="text-start"><small><u>Date début de la réunion</u> : <span class="text-danger">{{ live.date_debut_live|date('d-m-Y H:i:s') }}</span></small></p>
                         <p class="mb-5 pb-3"><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
                         <div class="w-100 position-absolute bottom-0 pe-4 pb-2 text-end">
                             {% if (constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and date(live.date_debut_live|date("d-m-Y H:i:s")) <= date("now"|date("d-m-Y H:i:s"))) or live.is_in_process == '1' %}
                                 <a href="{{ path('coach_zoom_lancerReunion', {codeEncoded: live.code|base64_encode}) }}" class="btn btn-sm btn-info text-white"><i class="fa-solid fa-play"></i>
-                                {{ constant('App\\Entity\\User::ROLE_AGENT') in app.user.roles ? 'Rejoindre' : 'Lancer' }}
+                                    {{ constant('App\\Entity\\User::ROLE_AGENT') in app.user.roles ? 'Rejoindre' : 'Lancer' }}
                                 </a>
                             {% endif %}
                             {% if live.userA == app.user.id %}
                                 <a href="#" class="btn btn-sm btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>
                             {% endif %}
-                            <a href="{{ path('live_destruct', {code: live.code, }) }}" class="btn btn-danger btn-sm">{{  constant('App\\Entity\\User::ROLE_COACH') in app.user.roles ? 'Abandonner' : 'Se retirer' }}</a>
+                            <a href="{{ path('coach_zoom_destruct', {code: live.code, }) }}" class="btn btn-danger btn-sm">{{  constant('App\\Entity\\User::ROLE_COACH') in app.user.roles ? 'Abandonner' : 'Se retirer' }}</a>
                         </div>
                     </div>
                 </div>
                 <!-- import modal -->
                 {% include 'live/video/modal_modification.html.twig' with {live:live, agents: agents} %}
 
-                {% else %}
-                <div class="col-12  col-md-6 col-lg-4  h-100 d-flex mt-2 mt-md-3">
-                    <div class="m-auto">
-                        <img src="{{ asset('build/images/live-illustration.webp') }}" alt="" class="border border-danger border-5 img-fluid" style="border-style:double !important" />
-                        <h1 class="text-md-center text-muted mt-3">Aucun live n'est programmé </h1>
-                    </div>
+            {% else %}
+{#                <div class="col-12  col-md-6 col-lg-4  h-100 d-flex mt-2 mt-md-3">#}
+{#                    <div class="m-auto border border-danger border-5 h-100">#}
+{#                        <img src="{{ asset('build/images/live-illustration.webp') }}" alt="" class="border border-danger border-5 img-fluid" style="border-style:double !important" />#}
+{#                        <h1 class="text-md-center text-muted mt-3">Aucun live n'est programmé </h1>#}
+{#                    </div>#}
 
-                </div>
-                    {% if constant('App\\Entity\\User::ROLE_COACH') in app.user.roles %}
-                <div class="col-12 col-md-6 col-lg-8 mt-4 mt-md-4">
-                    <form action="{{ path('live_planifier') }}" name="form-planification" method="post">
-                        <div class="row">
-                            <div class="col-12 col-lg-8">
-                                    <h4 class="mb-4 text-danger"><i class="fa-solid fa-video"></i> Planifier une réunion</h4>
+{#                </div>#}
+                {% if constant('App\\Entity\\User::ROLE_COACH') in app.user.roles %}
+                    <div class="col-12 col-md-6 col-lg-8 mt-4 mt-md-4">
+                        <form action="{{ path('coach_zoom_planifier') }}" name="form-planification" method="post">
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
                                     <div class="mb-3">
+                                        <h6>Date et heure :</h6>
                                         <input type="datetime-local" placeholder="Date de debut live" class="form-control" name="dateDebutLive" required />
                                     </div>
                                     <div class="mb-3">
+                                        <h6>Theme :</h6>
                                         <input type="text" name="theme" placeholder="Ajouter un theme" class="form-control" required />
                                     </div>
                                     <div class="mb-3 text-strat ">
+                                        <h6>Donner une petite description à la réunion :</h6>
                                         <textarea name="description" placeholder="Une petite description concernant la réunion" class="border w-100 p-2" rows="10"></textarea>
                                     </div>
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-danger"><i class="fa-solid fa-calendar-plus me-2"></i> Planifier</button>
                                     </div>
-                            </div>
-                            <div class="col-12 col-lg-4 mt-5 pt-1">
-                                <div class="agentChecker">
-                                    <div class="list-group">
-                                        <label class="list-group-item">
-                                            <input class="form-check-input me-3"  name="all-agents" type="checkbox" value="all" id="agent-all">
-                                            Cocher tout le monde
-                                        </label>
-                                        {% for agent in agents %}
-                                            <label class="list-group-item">
-                                                <input class="form-check-input me-3"  name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
-                                                {{ agent.nom }} {{ agent.prenom }}
-                                            </label>
-                                        {% endfor %}
-                                    </div>
                                 </div>
+                                <div class="col-12 col-lg-4 pt-1">
+                                    <div class="agentChecker">
+                                        <div class="list-group">
+                                            <label class="list-group-item text-center bg-princ text-white border-2">
+                                                <h6 class="text-white">Liste des agents</h6>
+                                            </label>
+                                            <label class="list-group-item">
+                                                <input class="form-check-input me-3"  name="all-agents" type="checkbox" value="all" id="agent-all">
+                                                Cocher tout le monde
+                                            </label>
+                                            {% for agent in agents %}
+                                                <label class="list-group-item">
+                                                    <input class="form-check-input me-3"  name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
+                                                    {{ agent.nom }} {{ agent.prenom }}
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
 
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
                 {% endif %}
             {% endfor %}
         </div>
@@ -130,12 +135,10 @@
                             Cocher tout le monde
                         </label>
                         {% for agent in agents %}
-                            {% if agent.active %}
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-3"  name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
-                                    {{ agent.nom }} {{ agent.prenom }}
-                                </label>
-                            {% endif %}
+                            <label class="list-group-item">
+                                <input class="form-check-input me-3"  name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
+                                {{ agent.nom }} {{ agent.prenom }}
+                            </label>
                         {% endfor %}
                     </div>
                 </div>
@@ -146,10 +149,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block title %}
-    Liste des videos planifier
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
