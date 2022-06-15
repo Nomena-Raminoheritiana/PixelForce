@@ -1,0 +1,56 @@
+.calendar {
+    
+}
+.agenda-configuration .agenda-configuration__title-wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.agenda-configuration .agenda-configuration__title{
+    font-weight: bolder;
+    text-transform: uppercase;
+    font-size : 40px;
+    color : #7367f0;
+    letter-spacing: 2px;
+}
+
+.agenda-configuration .agenda-configuration__title .agenda-configuration__title-value{
+    padding : 0px 10px;
+    background-color: #7367f0;
+    color : #fff;
+    border-radius: 10px;
+    font-size : 40px;
+
+}
+.agenda-configuration .agenda-configuration__img-wrapper{
+    background-color: #7367f0;
+    color : #fff;
+    padding : 20px;
+    border-radius: 15px;
+}
+.agenda-configuration .agenda-configuration__img{
+    width : 35px !important;
+    height : 35px !important;
+
+}
+.agenda-configuration .agenda-configuration__steps{
+    padding : 20px 0px;
+}
+.agenda-configuration .agenda-configuration__step{
+    margin-bottom: 20px;
+}
+.agenda-configuration .agenda-configuration__step p{
+    margin-bottom: 5px;
+}
+.agenda-configuration .agenda-configuration__step .agenda-configuration__step_input{
+    max-width : 500px;
+    width : 100%;
+}
+.agenda-configuration .agenda-configuration__step .agenda-configuration__step_btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap : 5px;
+    letter-spacing: 1.5px;
+    float : right;
+}

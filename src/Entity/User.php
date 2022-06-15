@@ -198,6 +198,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $agentSecteurs;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lienCalendly;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -970,6 +975,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $agentSecteur->setAgent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLienCalendly(): ?string
+    {
+        return $this->lienCalendly;
+    }
+
+    public function setLienCalendly(?string $lienCalendly): self
+    {
+        $this->lienCalendly = $lienCalendly;
 
         return $this;
     }

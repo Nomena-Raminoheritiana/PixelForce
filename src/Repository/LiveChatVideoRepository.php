@@ -85,16 +85,35 @@ class LiveChatVideoRepository extends ServiceEntityRepository
     {
         $a_supprimer='';
         $perimee='';
-        if($options['a_supprimer']) {
+        $user_b_id='';
+        $user_a_id='';
+        if(isset($options['a_supprimer']) && $options['a_supprimer']) {
             $a_supprimer = 'and is_in_process=1';
         }
-        if($options['perimee']) {
+        if(isset($options['perimee']) && $options['perimee']) {
             $perimee = 'and date_debut_live <= NOW()';
         }
-        $table = $this->getClassMetadata()->table["name"];
 
-        return $this->_em->getConnection()->prepare('SELECT id,code,is_in_process,is_speed_live, DATE_FORMAT(date_debut_live, "%Y-%m-%dT%H:%i:%s") as date_debut_live,description,theme, code,count(id) as total, GROUP_CONCAT(DISTINCT (user_a_id)) as userA, GROUP_CONCAT(DISTINCT (user_b_id)) as userB FROM `'.$table.'` where code IN (select code from `live_chat_video` where user_a_id=? or user_b_id=? )'.$a_supprimer.' '.$perimee.' group by code order by date_debut_live')
+        if(isset($options['user_b_id']) && $options['user_b_id']) {
+            $user_b_id = 'and user_b_id ='.$options['user_b_id'];
+        }
+
+        if(isset($options['user_a_id']) && $options['user_a_id']) {
+            $user_a_id = 'and user_a_id ='.$options['user_a_id'];
+        }
+        $table = $this->getClassMetadata()->table["name"];
+        return $this->_em->getConnection()->prepare('SELECT id,code,is_in_process,is_speed_live, DATE_FORMAT(date_debut_live, "%Y-%m-%dT%H:%i:%s") as date_debut_live,description,theme, code,count(id) as total, GROUP_CONCAT(DISTINCT (user_a_id)) as userA, GROUP_CONCAT(DISTINCT (user_b_id)) as userB FROM `'.$table.'` where code IN (select code from `live_chat_video` where user_a_id=? or user_b_id=? )'.' '.$user_a_id.' '.$user_b_id.' '.$a_supprimer.' '.$perimee.' group by code order by date_debut_live')
             ->execute([$user->getId(), $user->getId()])->fetchAll();
+    }
+
+    public function countParticipants(LiveChatVideo $liveChatVideo) {
+        $code = $liveChatVideo->getCode();
+        return $this->createQueryBuilder('l')
+            ->select('count(l.id) as nombreParticipants')
+            ->where('l.code = :code')
+            ->setParameter('code', $code)
+            ->getQuery()
+            ->getSingleResult();
     }
 
     /**

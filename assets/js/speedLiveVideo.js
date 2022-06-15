@@ -46,7 +46,7 @@ $(function() {
         $(this).closest('.users').find('input[type="hidden"][name="users[]"]').each(function() {
             params.append('users[]', $(this).val());
         });
-        axios.post(Routing.generate('live_videoRapide'), params)
+        axios.post(Routing.generate('coach_zoom_liveRapide'), params)
         .then(function (response) {
             live_en_cours = true;
             // lancé l'appel local
@@ -128,7 +128,7 @@ $(function() {
     $(this).on('click','.call-rapel', async function(e) {
         e.preventDefault();
         $(this).closest('.alert').remove();
-        await axios.post(Routing.generate('live_reCall', {encodedUser:$(this).attr('data-user-id')}))
+        await axios.post(Routing.generate('coach_zoom_rappelerAgent', {encodedUser:$(this).attr('data-user-id')}))
     });
 
     // detecter s'il y a un appel entrant
@@ -137,7 +137,7 @@ $(function() {
     eventDetectionAppelSource.onmessage = async event => {
         const data = JSON.parse(event.data);
         // puis on récupère toute les appels entrants
-        const response = await axios.get(Routing.generate('live_joinLiveVideo', {code: data.code}))
+        const response = await axios.get(Routing.generate('agent_zoom_rejoindreReunion', {code: data.code}))
         if(typeof response.data != 'object'  && live_en_cours === false) {
             // afficher le modal
             if($('#ModalJoinCall').length>0) {
@@ -178,7 +178,7 @@ $(function() {
     $(this).on('hide.bs.modal','#ModalJoinCall', async function(e) {
         if(refuserCall) {
             $('.remove-live').each(async function () {
-                await axios.get(Routing.generate('live_refuserCall', {code : $(this).attr('id-live')}));
+                await axios.get(Routing.generate('agent_zoom_refuserReunion', {code : $(this).attr('id-live')}));
             });
         }
 

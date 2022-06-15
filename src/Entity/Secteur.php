@@ -55,12 +55,18 @@ class Secteur
      */
     private $contacts_agent;
 
+    /**
+     * @ORM\OneToMany(targetEntity=LiveChatVideo::class, mappedBy="secteur")
+     */
+    private $liveChatVideos;
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
         $this->formations = new ArrayCollection();
         $this->contacts_agent = new ArrayCollection();
+        $this->liveChatVideos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +224,36 @@ class Secteur
             // set the owning side to null (unless already changed)
             if ($contactsAgent->getSecteur() === $this) {
                 $contactsAgent->setSecteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LiveChatVideo>
+     */
+    public function getLiveChatVideos(): Collection
+    {
+        return $this->liveChatVideos;
+    }
+
+    public function addLiveChatVideo(LiveChatVideo $liveChatVideo): self
+    {
+        if (!$this->liveChatVideos->contains($liveChatVideo)) {
+            $this->liveChatVideos[] = $liveChatVideo;
+            $liveChatVideo->setSecteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiveChatVideo(LiveChatVideo $liveChatVideo): self
+    {
+        if ($this->liveChatVideos->removeElement($liveChatVideo)) {
+            // set the owning side to null (unless already changed)
+            if ($liveChatVideo->getSecteur() === $this) {
+                $liveChatVideo->setSecteur(null);
             }
         }
 

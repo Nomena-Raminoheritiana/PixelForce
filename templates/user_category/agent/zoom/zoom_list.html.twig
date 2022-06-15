@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block title %}Coach - zoom{% endblock %}
+{% block body %}
+    <div class="px-2 px-md-3">
+        <!-- bar navigation -->
+        <div class="row ">
+            <div class="col-12  mt-2 mt-md-3">
+                <div class=" w-100 h-100 ps-3 py-3  bg-white border">
+                    <div class="row h-100">
+                        <div class="col-12 col-md-6 d-flex">
+                            <h4 class="text-danger"><i class="fa-solid fa-video"></i> Liste des réunions</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end bar navigation -->
+        <!-- bar dashboard -->
+        {#        {% include "live/video/dashboard.html.twig" %}#}
+        <!-- endbar dashboard -->
+        <div class="row">
+            {% for live in lives %}
+                <div class="col-lg-4 col-md-5 col-12 mt-2 mt-md-3">
+                    <div class="live w-100 h-100 bg-white border {{ live.isInProcess ? 'border-success' : '' }} p-3 position-relative" >
+                        <div class="row">
+                            <div class="col-6">
+                                <h1><i data-feather="video" class="font-large-5 {{ live.isInProcess ? 'text-success' : 'text-danger' }}"></i></h1>
+                            </div>
+                            <div class="col-6 d-flex pe-2">
+                                <span class="my-auto ms-auto {{ live.isInProcess ? 'text-success' : 'text-danger' }} fw-bold ">
+                                   <i class="fa-solid fa-users"></i> {{ liveChatVideoRepo.countParticipants(live).nombreParticipants }} participants
+                                </span>
+                            </div>
+                        </div>
+                        <div class=" mb-4">
+                            <small class="my-auto fw-bold {{ live.isInProcess ? 'text-success' : 'text-danger' }}">{{ live.isInProcess ? 'En ligne ( <small>votre coach vient de démarrer cette réunion)</small>'|raw : 'Hors ligne' }}</small>
+                        </div>
+                        <h5> {{ live.theme ? live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
+                        <p class="text-start"><small><u>Date début de la réunion</u> : <span class="{{ live.isInProcess ? 'text-success' : 'text-danger' }}">{{ live.dateDebutLive|date('d-m-Y H:i:s') }}</span></small></p>
+                        <p class="mb-5 pb-3"><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
+                        <div class="w-100 position-absolute bottom-0 pe-4 pb-2 text-end">
+                            {% if (constant('App\\Entity\\User::ROLE_AGENT') in app.user.roles and live.isInProcess) %}
+                                <a href="{{ path('coach_zoom_lancerReunion', {codeEncoded: live.code|base64_encode}) }}" class="btn btn-sm btn-success text-white"><i class="fa-solid fa-play"></i>
+                                    Rejoindre la réunion
+                                </a>
+                            {% else %}
+                                <button type="button"  class="btn  btn-sm btn-danger text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="Veuillez attendre que le coach lance la réunion"><i class="fa-solid fa-play"></i>
+                                    Rejoindre la réunion
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                    <h5 class="mt-5 text-center">Aucun réunion n'est disponible</h5>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('PlanificationLiveVideo') }}
+{% endblock %}
