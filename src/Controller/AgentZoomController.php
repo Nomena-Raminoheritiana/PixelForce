@@ -52,6 +52,8 @@ class AgentZoomController extends AbstractController
     {
         $secteur_id = $this->session->get('secteurId');
         $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
+        $livesForDeletingAuto = $this->liveChatVideoRepository->findBy(['userB' => $this->getUser()]);
+        $this->liveVideo->remove($livesForDeletingAuto);
         $lives = $this->liveChatVideoRepository->findBy(['secteur' => $secteur, 'userB' => $this->getUser(), 'isSpeedLive' => null]);
         return $this->render('user_category/agent/zoom/zoom_list.html.twig',[
             'lives' => $lives,

@@ -58,7 +58,7 @@ class CoachZoomController extends AbstractController
         }
 
         $livesForDeletingAuto = $this->liveChatVideoRepository->findBy(['userA' => $this->getUser()]);
-        $livesForDeletingAuto2 = $this->liveChatVideoRepository->findBy(['isInProcess' => true]);
+        $livesForDeletingAuto2 = $this->liveChatVideoRepository->findBy(['userA' => $this->getUser(), 'isInProcess' => true]);
         $this->entityManager->removeMultiple($livesForDeletingAuto2);
         $this->liveVideo->remove($livesForDeletingAuto);
         $livesQuery = $this->liveChatVideoRepository->findByCoach($this->getUser());
