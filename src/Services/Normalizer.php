@@ -17,6 +17,9 @@ use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 
 class Normalizer
 {
@@ -55,16 +58,18 @@ class Normalizer
                 return $object->getId();
             },
         ];
-        $normalizer = new GetSetMethodNormalizer(null, null, null, null, null, $defaultContext);
+        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+        $normalizer = new GetSetMethodNormalizer($classMetadataFactory, null, null, null, null, $defaultContext);
 
         $this->serializer = new Serializer([$normalizer]);
     }
 
-    public function getNormalizeData($object, $attributes)
+    public function getNormalizeData($object, $attributes, $groupe)
     {
         try {
             $normalizedData = $this->serializer->normalize($object, null, [
-                AbstractNormalizer::ATTRIBUTES => $attributes
+                AbstractNormalizer::ATTRIBUTES => $attributes,
+                'groups' => $groupe
             ]);
             return array_merge($normalizedData, ['error' => false]);
 

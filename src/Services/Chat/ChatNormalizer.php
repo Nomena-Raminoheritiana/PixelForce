@@ -45,13 +45,13 @@ class ChatNormalizer
 
     public function getMessageNormalized(Message $message)
     {
-       $messageNormalized = $this->normalizer->getNormalizeData($message, self::MESSAGE_PROPS);
-       $canalMessageNormalized = $this->getCanalMessageNormalized($message->getCanalMessage());
+       $messageNormalized = $this->normalizer->getNormalizeData($message, null, 'chat');
+       $canalMessageNormalized = $this->getCanalMessageNormalized($message->getCanalMessage(), 'chat_getMessage');
        $messageNormalized['canal'] = $canalMessageNormalized;
        return $messageNormalized;
     }
 
-    public function getCanalMessageNormalized(CanalMessage $canalMessage)
+    public function getCanalMessageNormalized(CanalMessage $canalMessage, $groupe = null)
     {
         if(!isset($this->canalMessageRegister[$canalMessage->getId()])) {
             $users = $this->userRepository->getUserByCanal($canalMessage);
@@ -65,7 +65,7 @@ class ChatNormalizer
                     }
                 }
             }
-            $data = $this->normalizer->getNormalizeData($canalMessage, self::CANAL_MESSAGE_PROPS);
+            $data = $this->normalizer->getNormalizeData($canalMessage, null, $groupe ? $groupe : 'chat');
             $this->canalMessageRegister[$canalMessage->getId()] = array_merge($data, $usersArray);
 
         }
