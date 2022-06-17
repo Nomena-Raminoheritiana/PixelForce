@@ -156,7 +156,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ApiToken;
-
+    /**
+     * @Groups({"chat"})
+     */
     private $chatCode;
 
     /**

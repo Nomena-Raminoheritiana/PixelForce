@@ -38,7 +38,6 @@ export class MenuComponent {
                avatar += user.id
            }
         });
-        console.log(avatar);
         const lastMessageClass = !canalMessage.isSeen? 'col-7' : 'col-9';
         let onerror = 'onerror="this.onerror=null; this.src=\'/assets/vuexy/images/portrait/small/avatar-s-11.jpg\'"'
         let component=
