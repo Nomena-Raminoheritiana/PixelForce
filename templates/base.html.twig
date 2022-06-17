@@ -85,6 +85,7 @@
             <script type="application/json" id="chat-vu-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_VU_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="chat-userTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="chat-userStopTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_STOP_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json"  id="current-user-id">{{ app.user.id }}</script>
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
             <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
