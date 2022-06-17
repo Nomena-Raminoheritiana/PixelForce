@@ -59,6 +59,11 @@ class Contact
      */
     private $secteur;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $note;
+
     public function __construct()
     {
         $this->client = new ArrayCollection();
@@ -156,6 +161,18 @@ class Contact
     public function setSecteur(?Secteur $secteur): self
     {
         $this->secteur = $secteur;
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): self
+    {
+        $this->note = $note;
 
         return $this;
     }

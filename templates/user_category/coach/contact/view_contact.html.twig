@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Visualisation Contact
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-2">
+		<a href="{{ path('agent_contact_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+
+        <!-- Message alert -->
+        <div class="alert-message">
+            {% for label, messages in app.flashes %}
+                <div class="alert alert-{{label}} text-center">
+                    {% for message in messages %}
+                        {{message | raw}}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+		<div class="content-card-user-information mt-3">
+			{% set info = contact.information %}
+			<section class="app-user-view-account">
+				<div class="row">
+					<div class="col-4">
+						<h4 class="text-primary">Information agent</h4>
+						<p><span class="fw-bolder">Nom</span>: {{ info.firstname }}</p>
+						<p><span class="fw-bolder">Prénom</span>: {{ info.lastname }}</p>
+						<p><span class="fw-bolder">Email</span>:  {{ info.email }}</p>
+						<p><span class="fw-bolder">Téléphone</span>:  {{ info.phone }}</p>
+					</div>
+					<div class="col-8">
+						<h3 class="text-primary">Note</h3>
+						{{ form_start(formNote) }}
+						{{ form_row(formNote.note) }}
+						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>
+						{{ form_end(formNote) }}
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

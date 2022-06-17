@@ -11,6 +11,7 @@ use App\Form\ContactInformationType;
 use App\Form\ContactType;
 use App\Form\UserSearchType;
 use App\Manager\ContactManager;
+use App\Manager\EntityManager;
 use App\Repository\ContactInformationRepository;
 use App\Repository\ContactRepository;
 use App\Repository\SecteurRepository;
@@ -18,6 +19,7 @@ use App\Repository\UserRepository;
 use App\Services\ExcelService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Component\Pager\PaginatorInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,14 +36,16 @@ class AgentContactController extends AbstractController
     protected $repoContactInfo;
     protected $session;
     protected $repoSecteur;
-    
-    public function __construct(UserRepository $repoUser, ContactRepository $repoContact, ContactInformationRepository $repoContactInfo, SessionInterface $session, SecteurRepository $repoSecteur)
+    protected $entityManager;
+
+    public function __construct(UserRepository $repoUser, ContactRepository $repoContact, ContactInformationRepository $repoContactInfo, SessionInterface $session, SecteurRepository $repoSecteur, EntityManager $entityManager)
     {
         $this->repoUser = $repoUser;
         $this->repoContact = $repoContact;
         $this->repoContactInfo = $repoContactInfo;
         $this->session = $session;
         $this->repoSecteur = $repoSecteur;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -75,6 +79,39 @@ class AgentContactController extends AbstractController
             'searchForm' => $searchForm->createView()
         ]);
     }
+
+    /**
+     * @Route("/agent/contact/{id}/view", name="agent_contact_view")
+     */
+    public function agent_contact_view(Contact $contact, Request $request)
+    {
+
+        $formNote = $this->createFormBuilder($contact)
+            ->add('note', CKEditorType::class, [
+                'required' => false,
+                'label' => false
+            ])
+            ->getForm()
+        ;
+
+        $formNote->handleRequest($request);
+        if($formNote->isSubmitted() && $formNote->isValid()) {
+            $note = $request->request->get('form')['note'];
+            $contact->setNote($note);
+            $this->entityManager->save($contact);
+
+            $this->addFlash('success', 'Note enregistré avec succès');
+            return $this->redirectToRoute('agent_contact_view', ['id' => $contact->getId()]);
+
+        }
+
+
+        return $this->render('user_category/agent/contact/view_contact.html.twig', [
+            'contact' => $contact,
+            'formNote' => $formNote->createView()
+        ]);
+    }
+
 
     /**
      * @Route("/agent/contact/exportExcel", name="agent_contact_export_excel")
