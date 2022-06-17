@@ -1,7 +1,7 @@
 export class ConversationBaseComponent {
     getEmptyMessages()
     {
-        return '<div class="text-center chat-empty-message">' +
+        return '<div class="text-center mt-4 chat-empty-message">' +
             '<i class="fa-solid fa-eye-dropper-empty"></i> Aucun message disponible<br>' +
             '<small class="text-muted">Envoyer un message pour démarrer la discussion</small>'+
             '</div>'

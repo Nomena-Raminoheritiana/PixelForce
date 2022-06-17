@@ -18,19 +18,19 @@ class CanalMessage
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"chat"})
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"chat"})
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $code;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"chat"})
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $nom;
 
@@ -62,7 +62,7 @@ class CanalMessage
 
     /**
      * @ORM\Column(type="array", nullable=true)
-     * @Groups({"chat"})
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $vus = [];
 

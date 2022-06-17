@@ -26,15 +26,19 @@
         <div class="chat-single-canal">
 
         </div>
-        <div class="mt-3 text-end pe-4">
-            <b><u><i class="fa-brands fa-rocketchat"></i> Discussion de groupe</u></b><br>
-            <a href="#" class="fs-12 text-decoration-none chat-showModal-canalGroup" role="button" data-bs-toggle="modal" data-bs-target="#chatModalCreateGroups">+ créer un nouveau groupe</a>
-            {% include 'live/chat/chatModal_createGroup.html.twig' %}
-        </div>
 
-        <div class="chat-groupe-canal">
+            <div class="mt-3 text-end pe-4">
+                <b><u><i class="fa-brands fa-rocketchat"></i> Discussion de groupe</u></b><br>
+                {% if is_granted('ROLE_COACH') %}
+                <a href="#" class="fs-12 text-decoration-none chat-showModal-canalGroup" role="button" data-bs-toggle="modal" data-bs-target="#chatModalCreateGroups">+ créer un nouveau groupe</a>
+                {% include 'live/chat/chatModal_createGroup.html.twig' %}
+                {% endif %}
+            </div>
 
-        </div>
+            <div class="chat-groupe-canal">
+
+            </div>
+
 
     </div>
 

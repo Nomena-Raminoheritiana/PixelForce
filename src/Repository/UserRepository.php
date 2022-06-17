@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\AgentSecteur;
 use App\Entity\CanalMessage;
+use App\Entity\CoachSecteur;
 use App\Entity\SearchEntity\UserSearch;
+use App\Entity\Secteur;
 use App\Entity\User;
 use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -70,16 +73,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function findDestinaire($finder)
+    public function findDestinaire($finder, User $currentUser)
     {
+        // select * from user inner join agent_secteur on agent_secteur.agent_id=user.id innerjoin secteur on agent_secteur.secteur=secteur.
         $arrayFinder = explode(' ', $finder);
         $queryBuilder = $this->createQueryBuilder('u');
         foreach($arrayFinder as $realFinder) {
             $queryBuilder->orWhere('u.nom LIKE :finder')
-                    ->orWhere('u.prenom LIKE :finder')
-                    ->orWhere('u.email LIKE :finder')
-                    ->setParameter('finder', '%'.$realFinder.'%');
+                ->orWhere('u.prenom LIKE :finder')
+                ->orWhere('u.email LIKE :finder')
+                ->setParameter('finder', '%'.$realFinder.'%');
         }
+        if(in_array(User::ROLE_COACH, $currentUser->getRoles())) {
+            $secteur = $currentUser->getSecteurByCoach();
+            $queryBuilder = $queryBuilder->innerJoin(AgentSecteur::class, 'a', 'WITH', 'a.agent=u.id')
+                ->innerJoin(Secteur::class, 's', 'WITH', 'a.secteur=s.id')
+                ->andWhere('u.roles LIKE :role')
+                ->andWhere('s.id=:secteur')
+                ->setParameter('secteur', $secteur)
+                ->setParameter('role', '%'.User::ROLE_AGENT.'%')
+            ;
+
+        }
+        if(in_array(User::ROLE_AGENT, $currentUser->getRoles())) {
+            $secteurs = $currentUser->getSecteursIdsByAgent();
+            $queryBuilder = $queryBuilder->innerJoin(CoachSecteur::class, 'a', 'WITH', 'a.coach=u.id')
+                ->innerJoin(Secteur::class, 's', 'WITH', 'a.secteur=s.id')
+                ->andWhere('u.roles LIKE :role')
+                ->andWhere('s.id in (:secteurs)')
+                ->setParameter('secteurs', $secteurs)
+                ->setParameter('role', '%'.User::ROLE_COACH.'%')
+            ;
+
+        }
+
        return $queryBuilder->getQuery()
             ->getResult();
     }

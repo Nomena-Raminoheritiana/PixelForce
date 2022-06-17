@@ -81,6 +81,17 @@
                             <td>{{ agent.telephone|default('-') }}</td>
                             <td>{{ agent.createdAt|date('d/m/Y') }}</td>
                             <td >
+                                {% set chatCanal =  render(controller(
+                                    'App\\Controller\\ChatController::getSingleCanalBy_idUser',
+                                    {
+                                        id: agent.id
+                                    }
+                                    ))
+                                %}
+
+                                <a href="#" class="btn btn-primary chat-choose-canal" data-canal="{{ chatCanal|url_encode }}">
+                                    <i class="fa-brands fa-facebook-messenger"></i>
+                                </a>
                                 <a href="{{ path('coach_agent_view', {'id': agent.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
@@ -96,6 +107,7 @@
                                         <i class="fa-solid fa-circle-minus"></i> Bloquer
                                     </a>
                                 {% endif %}
+
                               
                             </td>
                         </tr>
