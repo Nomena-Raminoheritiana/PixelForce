@@ -87,11 +87,11 @@
                             <td>{{ information.phone }}</td>
                             <td>{{ information.address }}</td>
                             <td >
-                                <a href="{{ path('agent_contact_info_edit', {'id': information.id}) }}" class="btn btn-success">
-                                    <i class="fas fa-edit"></i>
-                                </a>
                                 <a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="{{ path('agent_contact_info_edit', {'id': information.id}) }}" class="btn btn-success">
+                                    <i class="fas fa-edit"></i>
                                 </a>
                                 <form method="post" action="{{path('agent_contact_info_delete', {id: contact.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer ce contact ?')">
                                     <input type="hidden" name="_method" value="DELETE">

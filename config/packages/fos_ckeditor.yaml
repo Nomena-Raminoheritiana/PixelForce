@@ -13,3 +13,15 @@ fos_ck_editor:
                     items: ['Bold', 'Italic', 'Underline', 'Strike', 'Blockquote', '-', 'Link', '-', 'RemoveFormat', '-', 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Table', '-', 'Styles', 'Format','Font','FontSize', '-', 'TextColor', 'BGColor', 'Source', 'Image'] 
                 }
             filebrowserBrowseRouteParameters: []
+    toolbars:
+        configs:
+            custom_toolbar_1: [ "@document", "/", "@link" , "/", "@tool" ]
+            note_contact_toolbar:
+                - { 
+                    name: "styles", 
+                    items: ['Bold', 'Italic', 'Underline', 'Strike', '-', 'Link', 'NumberedList', 'BulletedList', '-', 'Styles', 'Format','Font','FontSize', '-', 'TextColor'] 
+                }
+        items:
+            document: [ "Source", "-", "Save" ]
+            link:     [ "Anchor" ]
+            tool:     [ "Maximize" ]

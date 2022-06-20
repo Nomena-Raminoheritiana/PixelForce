@@ -87,7 +87,10 @@ class CoachAgentContactController extends AbstractController
         $formNote = $this->createFormBuilder($contact)
             ->add('note', CKEditorType::class, [
                 'required' => false,
-                'label' => false
+                'label' => false,
+                'config' => [
+                    'toolbar' => 'note_contact_toolbar'
+                ]
             ])
             ->getForm()
         ;

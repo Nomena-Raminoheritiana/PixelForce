@@ -10,7 +10,7 @@
 
 {% block body %}
 	<div class="container mt-2">
-		<a href="{{ path('agent_contact_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+		<a href="{{ path('coach_agent_contact_list', {agent: contact.agent.id}) }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
 
         <!-- Message alert -->
         <div class="alert-message">
@@ -28,11 +28,41 @@
 			<section class="app-user-view-account">
 				<div class="row">
 					<div class="col-4">
-						<h4 class="text-primary">Information agent</h4>
-						<p><span class="fw-bolder">Nom</span>: {{ info.firstname }}</p>
-						<p><span class="fw-bolder">Prénom</span>: {{ info.lastname }}</p>
-						<p><span class="fw-bolder">Email</span>:  {{ info.email }}</p>
-						<p><span class="fw-bolder">Téléphone</span>:  {{ info.phone }}</p>
+						<h3 class="text-primary">Information</h3>
+						<div class="card">
+							<div class="card-body">
+								<div class="user-avatar-section">
+									<div class="d-flex align-items-center flex-column">
+										<i class="fa-solid fa-address-card fa-5x"></i>
+										<div class="user-info text-center">
+											<h4>{{ contact.information.fullName }}</h4>
+											<span class="badge bg-light-secondary">Contact</span>
+										</div>
+									</div>
+								</div>
+								<h4 class="fw-bolder border-bottom pb-50 mb-1 mt-4">Détails</h4>
+								<div class="info-container">
+									<ul class="list-unstyled">
+										<li class="mb-75">
+											<span class="fw-bolder me-25">Nom et prénom:</span>
+											<span>{{ contact.information.fullName }}</span>
+										</li>
+										<li class="mb-75">
+											<span class="fw-bolder me-25">Email:</span>
+											<span>{{ contact.information.email }}</span>
+										</li>
+										<li class="mb-75">
+											<span class="fw-bolder me-25">Téléphone:</span>
+											<span>{% if contact.information.phone %} {{ contact.information.phone }} {% else %} Pas de numero {% endif %}</span>
+										</li>
+										<li class="mb-75">
+											<span class="fw-bolder me-25">Adresse:</span>
+											<span>{{ contact.information.address }}</span>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="col-8">
 						<h3 class="text-primary">Note</h3>

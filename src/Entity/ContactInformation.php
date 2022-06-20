@@ -269,4 +269,10 @@ class ContactInformation
 
         return $this;
     }
+
+    public function fullName()
+    {
+        return $this->firstname .' '. $this->lastname;
+    }
+
 }
