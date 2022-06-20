@@ -11,7 +11,7 @@
                             <h4 class="text-danger"><i class="fa-solid fa-video"></i> Planifier une réunion</h4>
                         </div>
                         <div class="col-12 col-md-6  pe-4 text-start text-md-end ">
-                            {% if constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and lives|length > 0 %}
+                            {% if constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and livesQuery|length > 0 %}
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#ModalEditLivef12d" class="btn btn-secondary btn-sm my-3 my-md-0 "><i class="fa-solid fa-calendar-check me-2"></i> Plannifier</a>
                             {% endif %}
                             <a href="#" data-bs-toggle="modal" data-bs-target="#modal-select-agent" class="btn btn-danger btn-sm "><i class="fa-solid fa-video me-2"></i> Démarrer un live</a>
@@ -25,7 +25,7 @@
 {#        {% include "live/video/dashboard.html.twig" %}#}
         <!-- endbar dashboard -->
         <div class="row">
-            {% for live in lives %}
+            {% for liveQuery in livesQuery %}
                 <div class="col-lg-4 col-md-5 col-12 mt-2 mt-md-3">
                     <div class="live w-100 h-100 bg-white border p-3 position-relative" >
                         <div class="row">
@@ -34,31 +34,29 @@
                             </div>
                             <div class="col-6 d-flex pe-1">
                                 <span class="my-auto ms-auto text-danger fw-bold ">
-                                     <i class="fa-solid fa-users"></i> {{ (live.userB|split(','))|length }} participants
+                                     <i class="fa-solid fa-users"></i> {{ liveChatRepo.countParticipants(liveQuery.live).nombreParticipants }} participants
                                 </span>
                             </div>
                         </div>
                         <div class=" mb-4">
-                            <small class="my-auto fw-bold text-danger">{{ live.is_in_process ? 'En ligne' : 'Hors ligne' }}</small>
+                            <small class="my-auto fw-bold text-danger">{{ liveQuery.live.isInProcess ? 'En ligne' : 'Hors ligne' }}</small>
                         </div>
-                        <h5> {{ live.theme ? live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
-                        <p class="text-start"><small><u>Date début de la réunion</u> : <span class="text-danger">{{ live.date_debut_live|date('d-m-Y H:i:s') }}</span></small></p>
-                        <p class="mb-5 pb-3"><u>Description</u> : {{ live.description ? live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
+                        <h5> {{ liveQuery.live.theme ? liveQuery.live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
+                        <p class="text-start"><small><u>Date début de la réunion</u> : <span class="text-danger">{{ liveQuery.live.dateDebutLive|date('d-m-Y H:i:s') }}</span></small></p>
+                        <p class="mb-5 pb-3"><u>Description</u> : {{ liveQuery.live.description ? liveQuery.live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
                         <div class="w-100 position-absolute bottom-0 pe-4 pb-2 text-end">
-                            {% if (constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and date(live.date_debut_live|date("d-m-Y H:i:s")) <= date("now"|date("d-m-Y H:i:s"))) or live.is_in_process == '1' %}
-                                <a href="{{ path('coach_zoom_lancerReunion', {codeEncoded: live.code|base64_encode}) }}" class="btn btn-sm btn-info text-white"><i class="fa-solid fa-play"></i>
-                                    {{ constant('App\\Entity\\User::ROLE_AGENT') in app.user.roles ? 'Rejoindre' : 'Lancer' }}
+                            {% if (constant('App\\Entity\\User::ROLE_COACH') in app.user.roles and date(liveQuery.live.dateDebutLive|date("d-m-Y H:i:s")) <= date("now"|date("d-m-Y H:i:s"))) or liveQuery.live.isInProcess == '1' %}
+                                <a href="{{ path('coach_zoom_lancerReunion', {codeEncoded: liveQuery.live.code|base64_encode}) }}" class="btn btn-sm btn-info text-white"><i class="fa-solid fa-play"></i>
+                                    Lancer
                                 </a>
                             {% endif %}
-                            {% if live.userA == app.user.id %}
-                                <a href="#" class="btn btn-sm btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ live.id }}"><i class="fa fa-edit"></i> Modifier</a>
-                            {% endif %}
-                            <a href="{{ path('coach_zoom_destruct', {code: live.code, }) }}" class="btn btn-danger btn-sm">{{  constant('App\\Entity\\User::ROLE_COACH') in app.user.roles ? 'Abandonner' : 'Se retirer' }}</a>
+                            <a href="#" class="btn btn-sm btn-secondary text-white" data-bs-toggle="modal" data-bs-target="#ModalEditLive{{ liveQuery.live.id }}"><i class="fa fa-edit"></i> Modifier</a>
+                            <a href="{{ path('coach_zoom_destruct', {code: liveQuery.live.code, }) }}" class="btn btn-danger btn-sm">{{  constant('App\\Entity\\User::ROLE_COACH') in app.user.roles ? 'Abandonner' : 'Se retirer' }}</a>
                         </div>
                     </div>
                 </div>
                 <!-- import modal -->
-                {% include 'live/video/modal_modification.html.twig' with {live:live, agents: agents} %}
+                {% include 'live/video/modal_modification.html.twig' with {live:liveQuery.live, agentsCompare:liveQuery.agents, agents: agents} %}
 
             {% else %}
 {#                <div class="col-12  col-md-6 col-lg-4  h-100 d-flex mt-2 mt-md-3">#}

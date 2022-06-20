@@ -30,12 +30,21 @@ export class MenuComponent {
             ' <div class="col-2 text-danger chat-not-seen">' +
             '        <i class="fa-solid fa-eye-slash"></i>'+
             ' </div>' : '';
+        const current_user_id = parseInt($('#current-user-id').text());
+        const membres = canalMessage.membres;
+        let avatar = '/user/avatar/';
+        membres.forEach(function(user){
+           if(user.id !== current_user_id) {
+               avatar += user.id
+           }
+        });
         const lastMessageClass = !canalMessage.isSeen? 'col-7' : 'col-9';
+        let onerror = 'onerror="this.onerror=null; this.src=\'/assets/vuexy/images/portrait/small/avatar-s-11.jpg\'"'
         let component=
             '<li class="list-group-item chat-choose-canal '+seenClass+' pb-0 ps-3" data-canal-menu-id="'+canalMessage.id+'" data-canal="'+canalStringify+'" data-search="'+canalMessage.nom+'">\n' +
             '     <div class="row">\n' +
             '         <div class="col-3">\n' +
-            '             <img src="https://github.com/mdo.png" alt="hugenerd" width="50" height="50" class="rounded-circle">\n' +
+            '             <img src="'+avatar+'" '+onerror+' alt="hugenerd" width="50" height="50" class="rounded-circle">\n' +
             '          </div>\n' +
             '          <div class="'+lastMessageClass+' ps-2">\n' +
             '              <span>'+canalMessage.nom+'</span><br>\n' +

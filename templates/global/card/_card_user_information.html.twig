@@ -72,6 +72,17 @@
                     <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >
                         Attribuer formation
                     </a>
+                    {% set chatCanal =  render(controller(
+                        'App\\Controller\\ChatController::getSingleCanalBy_idUser',
+                        {
+                            id: agent.id
+                        }
+                        ))
+                    %}
+
+                    <a href="#" class="btn btn-primary chat-choose-canal me-2" data-canal="{{ chatCanal|url_encode }}">
+                        <i class="fa-brands fa-facebook-messenger"> </i> envoyer un message
+                    </a>
                 {% endif %}
                 {% if is_granted('ROLE_ADMINISTRATEUR')  %}
                     <a href="{{ path('admin_agent_edit', {id:user.id}) }}" class="btn btn-primary me-1" >

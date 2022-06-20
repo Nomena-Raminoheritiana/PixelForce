@@ -62,6 +62,14 @@ Encore
     .addEntry('vuexy_page_account_settings_account_js', './assets/js/vuexy/js/scripts/pages/page-account-settings-account.js')
 
 
+    // .addEntry('vuexy_calendar_fullcalendar', './public/assets/vuexy/vendors/js/calendar/fullcalendar.min.js')
+    // .addEntry('vuexy_extensions_moment', './public/assets/vuexy/vendors/js/extensions/moment.min.js')
+    // .addEntry('vuexy_forms_select_select2', './public/assets/vuexy/vendors/js/forms/select/select2.full.min.js')
+    // .addEntry('vuexy_forms_validation_jquery_validate', './public/assets/vuexy/vendors/js/forms/validation/jquery.validate.min.js')
+    // .addEntry('vuexy_pickers_flatpickr', './public/assets/vuexy/vendors/js/pickers/flatpickr/flatpickr.min.js')
+    
+
+
 
     .addStyleEntry('base', './assets/styles/base.css')
     .addStyleEntry('chat', './assets/styles/chat/chat.css')
@@ -76,13 +84,17 @@ Encore
     .addStyleEntry('vuexy_colors', './assets/styles/vuexy/colors.css')
     .addStyleEntry('vuexy_components', './assets/styles/vuexy/components.css')
     .addStyleEntry('vuexy_dark_layout', './assets/styles/vuexy/themes/dark-layout.css')
+    
+
     // Vuexy: Page CSS
     .addStyleEntry('vuexy_vertical_menu', './assets/styles/vuexy/core/menu/menu-types/vertical-menu.css')
     .addStyleEntry('vuexy_dashboard_ecommerce', './assets/styles/vuexy/pages/dashboard-ecommerce.css')
     .addStyleEntry('vuexy_chart_apex', './assets/styles/vuexy/plugins/charts/chart-apex.css')
     .addStyleEntry('vuexy_ext_component_toastr', './assets/styles/vuexy/plugins/extensions/ext-component-toastr.css')
-    // Vuexy: pugins
+    // Vuexy: plugins
     .addStyleEntry('vuexy_form_validation', './assets/styles/vuexy/plugins/forms/form_validation.css')
+
+    
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
 
     .enableStimulusBridge('./assets/controllers.json')

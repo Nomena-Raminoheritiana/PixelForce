@@ -54,3 +54,25 @@
     letter-spacing: 1.5px;
     float : right;
 }
+
+
+
+/**
+* Vuexy Calendar :
+*/
+.calendar-wrapper{
+    padding-bottom : 50px;
+    --label-color : #3a3a40;
+}
+.calendar-wrapper .form-switch .form-check-input{
+    width : 40px;
+}
+.form-check:not(.form-switch) .form-check-input[type='checkbox']{
+    box-shadow: unset;
+}
+.form-check:not(.form-switch) .form-check-input[type='checkbox']:checked {
+    background-size: 100%;
+    border-color: var(--label-color);
+    background-color: var(--label-color);
+    
+}

@@ -105,6 +105,17 @@ class LiveChatVideoRepository extends ServiceEntityRepository
         return $this->_em->getConnection()->prepare('SELECT id,code,is_in_process,is_speed_live, DATE_FORMAT(date_debut_live, "%Y-%m-%dT%H:%i:%s") as date_debut_live,description,theme, code,count(id) as total, GROUP_CONCAT(DISTINCT (user_a_id)) as userA, GROUP_CONCAT(DISTINCT (user_b_id)) as userB FROM `'.$table.'` where code IN (select code from `live_chat_video` where user_a_id=? or user_b_id=? )'.' '.$user_a_id.' '.$user_b_id.' '.$a_supprimer.' '.$perimee.' group by code order by date_debut_live')
             ->execute([$user->getId(), $user->getId()])->fetchAll();
     }
+    public function findByCoach(User $coach)
+    {
+        return $this->createQueryBuilder('l')
+            ->select('l as live, GROUP_CONCAT(IDENTITY(l.userB)) as agents')
+            ->andWhere('l.userA=:coach')
+            ->andWhere('l.isSpeedLive is null')
+            ->setParameter('coach', $coach)
+            ->groupBy('l.code')
+            ->getQuery()
+            ->getResult();
+    }
 
     public function countParticipants(LiveChatVideo $liveChatVideo) {
         $code = $liveChatVideo->getCode();

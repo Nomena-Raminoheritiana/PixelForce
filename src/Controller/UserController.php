@@ -111,7 +111,8 @@ class UserController extends AbstractController
     public function findDestinataire(Request $request)
     {
         $finder = $request->query->get('finder');
-        $users = $this->userRepository->findDestinaire($finder);
+        $currentUser = $this->getUser();
+        $users = $this->userRepository->findDestinaire($finder, $currentUser);
         $normalizedUser = $this->userNormalizer->normalizeArrayUsers($users);
         return $this->json($normalizedUser);
     }

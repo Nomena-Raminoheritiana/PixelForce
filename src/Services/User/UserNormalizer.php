@@ -22,7 +22,7 @@ class UserNormalizer
 
     public function normalize(User $user)
     {
-        return $this->normalizer->getNormalizeData($user, self::USER_PROPS);
+        return $this->normalizer->getNormalizeData($user, null, 'chat');
     }
 
     public function normalizeArrayUsers($users = []) {

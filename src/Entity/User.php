@@ -9,8 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -37,11 +39,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"chat"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"chat"})
      */
     private $email;
 
@@ -63,11 +67,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"chat"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"chat"})
      */
     private $prenom;
 
@@ -150,7 +156,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ApiToken;
-
+    /**
+     * @Groups({"chat"})
+     */
     private $chatCode;
 
     /**
@@ -203,6 +211,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $lienCalendly;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="user")
+     */
+    private $calendarEvents;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -218,6 +231,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->formationAgents = new ArrayCollection();
         $this->coachSecteurs = new ArrayCollection();
         $this->agentSecteurs = new ArrayCollection();
+        $this->calendarEvents = new ArrayCollection();
 
     }
 
@@ -954,7 +968,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if(in_array(self::ROLE_AGENT, $this->roles)) {
             return $this->agentSecteurs;
         }
-        return $this->agentSecteurs->clear();
+        $this->agentSecteurs->clear();
+        return $this->agentSecteurs;
     }
 
     public function addAgentSecteur(AgentSecteur $agentSecteur): self

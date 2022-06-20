@@ -311,6 +311,15 @@ class ChatController extends AbstractController
     }
 
     /**
+     * @Route("/chat/getCanalSingleMessageByUser/{id}", name="getCanalSingleMessageByUser", options={"expose"=true})
+     */
+    public function getSingleCanalBy_idUser(User $user)
+    {
+        $normalizedCanals = $this->chatCanalService->createSingleCanal($user, $this->getUser());
+        return $this->json($normalizedCanals);
+    }
+
+    /**
      * @Route("/chat/canal/{id}/userTyping", name="chat_notifyUserTyping", options={"expose"=true})
      */
     public function notifyUserTyping(CanalMessage $canalMessage)

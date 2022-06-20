@@ -1,7 +1,7 @@
 export class ConversationBaseComponent {
     getEmptyMessages()
     {
-        return '<div class="text-center chat-empty-message">' +
+        return '<div class="text-center mt-4 chat-empty-message">' +
             '<i class="fa-solid fa-eye-dropper-empty"></i> Aucun message disponible<br>' +
             '<small class="text-muted">Envoyer un message pour démarrer la discussion</small>'+
             '</div>'
@@ -34,10 +34,12 @@ export class ConversationBaseComponent {
                        '</div>';
             })
         }
+        let avatar = '/user/avatar/'+message.user.id;
+        let onerror = 'onerror="this.onerror=null; this.src=\'/assets/vuexy/images/portrait/small/avatar-s-11.jpg\'"'
         return '<li class="list-group-item  pb-0 ps-3" data-id-user="'+message.user.id+'">\n' +
             '                <div class="row">\n' +
             '                    <div class="col-2">\n' +
-            '                        <img src="https://github.com/mdo.png" alt="hugenerd" width="40" height="40" class="rounded-circle">\n' +
+            '                        <img src="'+avatar+'" '+onerror+' alt="hugenerd" width="40" height="40" class="rounded-circle">\n' +
             '                    </div>\n' +
             '                    <div class="col-10 ps-2">\n' +
             '                        <span class="fw-bold line-height-13 fs-13">'+message.user.nom+' '+message.user.prenom+'</span><br>\n' +

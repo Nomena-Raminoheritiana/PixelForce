@@ -6,6 +6,7 @@ use App\Repository\CanalMessageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CanalMessageRepository::class)
@@ -17,21 +18,25 @@ class CanalMessage
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $code;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $isGroup;
 
@@ -39,6 +44,9 @@ class CanalMessage
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="canalMessage")
      */
     private $messages;
+    /**
+     * @Groups({"chat"})
+     */
     private $lastMessage;
 
     /**
@@ -54,6 +62,7 @@ class CanalMessage
 
     /**
      * @ORM\Column(type="array", nullable=true)
+     * @Groups({"chat", "chat_getMessage"})
      */
     private $vus = [];
 
