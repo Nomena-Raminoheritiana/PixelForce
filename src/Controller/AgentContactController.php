@@ -154,7 +154,7 @@ class AgentContactController extends AbstractController
     /**
      * @Route("/agent/client/contact/add", name="agent_contact_info_add")
      */
-    public function agent_contact_info_add(Request $request, )
+    public function agent_contact_info_add(Request $request)
     {
         $contact = new Contact();
         $contactInfo = new ContactInformation();

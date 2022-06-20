@@ -259,4 +259,16 @@ class Secteur
 
         return $this;
     }
+
+    public function getCoachs()
+    {
+       $coachs = [];
+       $coachSecteurs = $this->coachSecteurs->toArray();
+        /** @var CoachSecteur $coachSecteur */
+        foreach($coachSecteurs as $coachSecteur) {
+           $coachs[] = $coachSecteur->getCoach();
+       }
+
+        return $coachs;
+    }
 }

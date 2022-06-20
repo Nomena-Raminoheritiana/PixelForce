@@ -255,32 +255,51 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ;
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findCoachBySecteur(UserSearch $search, Secteur $secteur)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $query = $this->createQueryBuilder('a');
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
+        if ($search->getPrenom()) {
+            $query = $query
+                ->andwhere('a.prenom LIKE :prenom')
+                ->orwhere('a.nom LIKE :prenom')
+                ->setParameter('prenom', '%'.$search->getPrenom().'%');
+        }
+
+
+        if ($search->getEmail()) {
+            $query = $query
+                ->andwhere('a.email LIKE :email')
+                ->setParameter('email', '%'.$search->getEmail().'%');
+        }
+        if ($search->getTelephone()) {
+            $query = $query
+                ->andwhere('a.telephone LIKE :telephone')
+                ->setParameter('telephone', '%'.$search->getTelephone().'%');
+        }
+        if ($search->getDateInscriptionMin()) {
+            $query = $query
+                ->andwhere('a.created_at >= :dateInscriptionMin')
+                ->setParameter('dateInscriptionMin', $search->getDateInscriptionMin());
+        }
+        if ($search->getDateInscriptionMax()) {
+            // On ajoute +1day, car la requête ne prend que la date en dessous de la date recherchée
+            $search->getDateInscriptionMax()->add(new DateInterval('P1D'));
+
+            $query = $query
+                ->andwhere('a.created_at <= :dateInscriptionMax')
+                ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
+        }
+
+        $query = $query
+            ->join('a.coachSecteurs', 'aSec')
+            ->andwhere('aSec.secteur = :secteur')
+            ->setParameter('secteur', $secteur)
+            ->orderBy('a.id', 'DESC')
         ;
+
+        return $query->getQuery()
+            ->getResult()
+            ;
     }
-    */
 }
