@@ -176,7 +176,6 @@ class CalendarController extends AbstractController
             $this->entityManager->remove($event);
             $this->entityManager->flush();
         }
-    
         return new JsonResponse($event);
     }
     

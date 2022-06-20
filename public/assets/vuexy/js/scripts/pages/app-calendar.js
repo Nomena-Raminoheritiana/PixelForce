@@ -176,7 +176,8 @@ document.addEventListener('DOMContentLoaded', function () {
     eventToUpdate.end !== null
       ? end.setDate(eventToUpdate.end, true, 'Y-m-d')
       : end.setDate(eventToUpdate.start, true, 'Y-m-d');
-    sidebar.find(eventLabel).val(eventToUpdate.extendedProps.calendar).trigger('change');
+    sidebar.find(eventLabel).val(eventToUpdate.extendedProps.calendarEventLabel.id).trigger('change');
+
     eventToUpdate.extendedProps.location !== undefined ? eventLocation.val(eventToUpdate.extendedProps.location) : null;
     eventToUpdate.extendedProps.guests !== undefined
       ? eventGuests.val(eventToUpdate.extendedProps.guests).trigger('change')
@@ -184,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
     eventToUpdate.extendedProps.guests !== undefined
       ? calendarEditor.val(eventToUpdate.extendedProps.description)
       : null;
+      eventUrl.val(eventToUpdate.url);
 
     //  Delete Event
     btnDeleteEvent.on('click', function () {
@@ -368,9 +370,9 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       request.fail(function(jqXHR, textStatus) {
-          let errMessage = jqXHR.responseText;
-          console.log(errMessage);
-          alert("Erreur: "+errMessage);
+        let errMessage = jqXHR.responseJSON.detail;
+        console.log(jqXHR);
+        alert("Erreur: "+errMessage);
       });
 
       
@@ -399,9 +401,9 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       request.fail(function(jqXHR, textStatus) {
-          let errMessage = jqXHR.responseText;
-          console.log(errMessage);
-          alert("Erreur: "+errMessage);
+        let errMessage = jqXHR.responseJSON.detail;
+        console.log(jqXHR);
+        alert("Erreur: "+errMessage);
       });
 
       // var propsToUpdate = ['id', 'title', 'url'];
@@ -431,8 +433,8 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       request.fail(function(jqXHR, textStatus) {
-          let errMessage = jqXHR.responseText;
-          console.log(errMessage);
+          let errMessage = jqXHR.responseJSON.detail;
+          console.log(jqXHR);
           alert("Erreur: "+errMessage);
       });
       // removeEventInCalendar(eventId);
