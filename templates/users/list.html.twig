@@ -25,7 +25,7 @@
                     </thead>
                     <tbody>
                     {% for user in relationCoachAgent %}
-                        {% if user.agent.active %}
+                        {% if user.agent.active == 1 %}
                             <tr class="text-muted">
                                 <td class="pt-3">{{ user.agent.email }}</td>
                                 <td class="pt-3">{{ user.agent.nom }} </td>

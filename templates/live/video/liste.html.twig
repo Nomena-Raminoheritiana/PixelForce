@@ -130,7 +130,7 @@
                             Cocher tout le monde
                         </label>
                         {% for agent in agents %}
-                            {% if agent.active %}
+                            {% if agent.active == 1 %}
                                 <label class="list-group-item">
                                     <input class="form-check-input me-3"  name="users[]" type="checkbox" value="{{ agent.id|base64_encode }}" id="agent-{{ agent.id }}">
                                     {{ agent.nom }} {{ agent.prenom }}

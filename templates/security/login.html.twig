@@ -49,22 +49,24 @@
                         <!-- Login-->
                         <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
                             <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
-                                <!-- Affichage des messages flash -->
-                                {% for label, messages in app.flashes %}
-                                    {% for message in messages %}
-                                        <div id="msgFlash" class="alert alert-{{ label }} msgFlash mb-2 ">
-                                            {{ message | raw }}
-                                        </div>
-                                    {% endfor %}
-                                {% endfor %}
+
 
                                 <h2 class="card-title fw-bold mb-1"><a href="{{ path('app_dashboard') }}" class="text-muted text-decoration-none">Bienvenue sur Pixelforce</a></h2>
 
                                 {% block form %}
                                     <form class="auth-login-form mt-2" method="POST">
-                                        {% if error %}
-                                            <div class="mt-3 alert alert-danger">Email ou mot de passe invalide</div>
-                                        {% endif %}
+                                        <!-- Affichage des messages flash -->
+                                        {% for label, messages in app.flashes %}
+                                            {% for message in messages %}
+                                                <div id="msgFlash" class="alert alert-{{ label }} msgFlash mb-2 ">
+                                                    {{ message | raw }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% if error %}
+                                                <div class="mt-3 alert alert-danger">Email ou mot de passe invalide</div>
+                                            {% endif %}
+                                        {% endfor %}
                                         <div class="mb-1">
                                             <label class="form-label" for="login-email">Adresse mail</label>
                                             <input type="text" class="form-control"  placeholder="Nom d'utilisateur/Email" value="{{ last_username }}" name="email" id="inputMail_users"  required autofocus>

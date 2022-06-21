@@ -41,6 +41,8 @@ class UserSearch {
      */
     private $adresse;
 
+    private $active;
+
     /**
      * Get the value of prenom
      *
@@ -208,4 +210,24 @@ class UserSearch {
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param mixed $active
+     * @return UserSearch
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+        return $this;
+    }
+
+
 }

@@ -118,7 +118,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $coachAgents;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $active;
 
@@ -496,12 +496,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getActive(): ?bool
+    public function getActive(): ?int
     {
         return $this->active;
     }
 
-    public function setActive(?bool $active): self
+    public function setActive(?int $active): self
     {
         $this->active = $active;
 

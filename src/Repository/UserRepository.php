@@ -142,6 +142,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('role', "%$role%");
         ;   
 
+        if($search->getActive()) {
+            $query = $query
+                ->andwhere('u.active = :active')
+                ->setParameter('active', $search->getActive());
+        }
+
         if ($search->getPrenom()) {
             $query = $query
                 ->andwhere('u.prenom LIKE :prenom')
