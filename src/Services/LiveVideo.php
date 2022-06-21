@@ -90,7 +90,7 @@ class LiveVideo
         foreach($lives as $live) {
             // si la différence entre la date d'aujourd'hui et la date prévu de la réunion est supérieur à 1journnée, on la suprrime
             $dateNow = new \DateTime();
-            if(($dateNow > $live->getDateDebutLive() && ($dateNow->diff($live->getDateDebutLive()))->days >= 1) || $live->getIsSpeedLive() ) {
+            if($live->getIsSpeedLive() || ($dateNow > $live->getDateDebutLive() && ($dateNow->diff($live->getDateDebutLive()))->days >= 1)) {
                 $this->entityManager->remove($live);
             } else {
                 $lives_restant[] = $live;

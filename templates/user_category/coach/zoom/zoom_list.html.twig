@@ -41,7 +41,7 @@
                         <div class=" mb-4">
                             <small class="my-auto fw-bold text-danger">{{ liveQuery.live.isInProcess ? 'En ligne' : 'Hors ligne' }}</small>
                         </div>
-                        <h5> {{ liveQuery.live.theme ? liveQuery.live.theme : 'Cette réunion n\'a pas de theme' }}</h5>
+                        <h5> {{ liveQuery.live.theme ? liveQuery.live.theme : 'Cette réunion n\'a pas de thème' }}</h5>
                         <p class="text-start"><small><u>Date début de la réunion</u> : <span class="text-danger">{{ liveQuery.live.dateDebutLive|date('d-m-Y H:i:s') }}</span></small></p>
                         <p class="mb-5 pb-3"><u>Description</u> : {{ liveQuery.live.description ? liveQuery.live.description|slice(0, 150) : 'pas de description sur ce live' }}</p>
                         <div class="w-100 position-absolute bottom-0 pe-4 pb-2 text-end">
@@ -76,8 +76,8 @@
                                         <input type="datetime-local" placeholder="Date de debut live" class="form-control" name="dateDebutLive" required />
                                     </div>
                                     <div class="mb-3">
-                                        <h6>Theme :</h6>
-                                        <input type="text" name="theme" placeholder="Ajouter un theme" class="form-control" required />
+                                        <h6>Thème :</h6>
+                                        <input type="text" name="theme" placeholder="Ajouter un thème" class="form-control" required />
                                     </div>
                                     <div class="mb-3 text-strat ">
                                         <h6>Donner une petite description à la réunion :</h6>
