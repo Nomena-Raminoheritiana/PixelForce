@@ -42,7 +42,14 @@ class AdminAgentController extends AbstractController
     protected $agentSecteurService;
     protected $repoCoachSecteur;
 
-    public function __construct(UserRepository $repoUser, EntityManager $entityManager, UserManager $userManager, CoachAgentRepository $repoCoachAgent, AgentSecteurRepository $repoAgentSecteur, SecteurRepository $repoSecteur, AgentSecteurService $agentSecteurService, CoachSecteurRepository $repoCoachSecteur)
+    public function __construct(UserRepository $repoUser,
+                                EntityManager $entityManager,
+                                UserManager $userManager,
+                                CoachAgentRepository $repoCoachAgent,
+                                AgentSecteurRepository $repoAgentSecteur,
+                                SecteurRepository $repoSecteur,
+                                AgentSecteurService $agentSecteurService,
+                                CoachSecteurRepository $repoCoachSecteur)
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
@@ -215,7 +222,7 @@ class AdminAgentController extends AbstractController
     }    
 
     /**
-     * @Route("/admin/agent/secteur/{agentSecteur}/edit", name="admin_agent_secteur_edit")
+     * @Route("/admin/agent/secteur/{agentSecteur}/edit", name="admin_agent_secteur_edit", requirements={"agentSecteur"="\d+"})
      */
     public function admin_agent_secteur_edit(AgentSecteur $agentSecteur, Request $request)
     {
@@ -243,7 +250,31 @@ class AdminAgentController extends AbstractController
                 'newSector' => $secteur->getNom()
             ], 200);    
         }
-    }    
+    }
+
+    /**
+     * @Route("/admin/agent/secteur/editOne", name="admin_agent_secteur_editOne")
+     */
+    public function admin_agent_secteur_editOne(Request $request)
+    {
+        if($request->getMethod() === 'POST') {
+            $agentSecteurId = $request->request->get('agentSecteur');
+            $secteur = $request->request->get('secteur');
+            if($agentSecteurId && $secteur) {
+                $agentSecteur = $this->repoAgentSecteur->findOneBy(['id' => $agentSecteurId]);
+                $secteur = $this->repoSecteur->findOneBy(['id' => $secteur]);
+                $agentSecteur->setSecteur($secteur);
+                $this->entityManager->save($agentSecteur);
+                $this->addFlash('success', 'Le secteur a été changé avec succès');
+                return $this->redirectToRoute('admin_agent_view', ['id' => $request->request->get('agent_id')]);
+            }
+        }
+
+        $this->addFlash('danger', 'Aucun paramètre posté');
+
+        return $this->redirectToRoute('admin_agent_list');
+
+    }
 
     /**
      * Permet de valider le secteur en attente de l'agent

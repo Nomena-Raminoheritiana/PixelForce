@@ -66,7 +66,7 @@
 													{% endif %}
 												</td>
 												<td>
-													<button class="btn btn-warning btn-sm edit-secteur" data-secteur-id="{{ agentSecteur.secteur.id }}" data-bs-toggle="modal" data-bs-target="#modal-edit-agent-secteur"><i class="fa fa-edit"></i></button>
+													<button class="btn btn-warning btn-sm edit-secteur" data-agentSecteur-id="{{ agentSecteur.id }}" data-secteur-id="{{ agentSecteur.secteur.id }}" data-bs-toggle="modal" data-bs-target="#modal-edit-agent-secteur"><i class="fa fa-edit"></i></button>
 													{% if agentSecteur.statut == false or agentSecteur.statut == null or agentSecteur.dateValidation == null %}
 														<button data-agentSecteur-id="{{ agentSecteur.id }}" class="btn btn-sm  btn-outline-primary js-validate-secteur-agent btn-validate-sector">Valider</button>
 													{% else %}
@@ -114,7 +114,7 @@
 	<div class="modal fade" id="modal-edit-agent-secteur" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form action="">
+				<form action="{{ path('admin_agent_secteur_editOne') }}" method="post">
 					<div class="modal-header">
 						<h5 class="modal-title text-success"><i class="fa-solid fa-pen-to-square"></i> Modifier le secteur</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -126,10 +126,12 @@
 								<option value="{{ secteur.id }}">{{ secteur.nom }}</option>
 							{% endfor %}
 						</select>
+						<input type="hidden" name="agentSecteur" />
+						<input type="hidden" name="agent_id" value="{{ agent.id }}" />
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-						<button id="js-btn-add-multiple-secteur" type="button" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
+						<button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
 					</div>
 				</form>>
 			</div>

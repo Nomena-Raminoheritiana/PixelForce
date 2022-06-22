@@ -139,6 +139,8 @@ $(function() {
     $(this).on('click', '.edit-secteur', function(e) {
         e.preventDefault();
         let secteurId = $(this).attr('data-secteur-id');
+        let agentSecteurId = $(this).attr('data-agentSecteur-id');
         $('[name="secteur"]').val(secteurId);
+        $('[name="agentSecteur"]').val(agentSecteurId)
     })
 })	
