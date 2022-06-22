@@ -66,7 +66,9 @@ class CoachAgentController extends AbstractController
         $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();
 
         $search = new UserSearch();
-        $searchForm = $this->createForm(UserSearchType::class, $search)->remove('secteur');
+        $searchForm = $this->createForm(UserSearchType::class, $search)
+            ->remove('secteur')
+            ->remove('active');
         $searchForm->handleRequest($request);
         $agents = $paginator->paginate(
             $this->repoUser->findAgentByCoach($search, $coach),

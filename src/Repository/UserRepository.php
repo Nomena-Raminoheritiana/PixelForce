@@ -215,7 +215,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach]);
         $secteur = isset($secteur[0]) ? $secteur[0]->getSecteur() : null;
 
-        $query = $this->createQueryBuilder('a');
+        $query = $this->createQueryBuilder('a')
+                        ->andWhere('a.active != -1')
+                        ->orWhere('a.active is null');
 
         if ($search->getPrenom()) {
             $query = $query
