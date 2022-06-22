@@ -43,7 +43,7 @@ class AgentAccountController extends AbstractController
     {
         $this->session->remove('secteurId');
 
-        $allSecteurs = $this->repoSecteur->findAll();
+        $allSecteurs = $this->repoSecteur->findAllActive();
         return $this->render('user_category/agent/home_agent.html.twig', [
             'allSecteurs' => $allSecteurs,
             'repoAgentSecteur' => $this->repoAgentSecteur,
