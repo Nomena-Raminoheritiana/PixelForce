@@ -71,7 +71,7 @@
             </div>
 		</div>
         <div class="table-responsive">
-			<table class="table table-striped table-hover text-center">
+			<table class="table table-striped table-hover text-center sortable">
 				<thead>
 					<tr>
 						<th scope="col">#</th>
@@ -81,7 +81,7 @@
 						<th scope="col">Date inscription</th>
 						<th scope="col">Secteur</th>
 						<th scope="col">Etat</th>
-						<th scope="col">ACTION</th>
+						<th scope="col" class="table-th-notSortable">ACTION</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -98,7 +98,7 @@
                                 {{ coach.allSecteursOfUser(secteurs)|default('-') }}     
                             </td>
                             <td>
-                                <div class="m-auto {{ coach.active == 1 ? 'bg-success' : (coach.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"></div>
+                                <div class="m-auto {{ coach.active == 1 ? 'bg-success' : (coach.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"><span class="d-none">{{  coach.active }}</span></div>
                             </td>
                             <td >
                                 <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success d-none">
@@ -136,4 +136,7 @@
 			{{ knp_pagination_render(coachs)}}
 		</div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
 {% endblock %}

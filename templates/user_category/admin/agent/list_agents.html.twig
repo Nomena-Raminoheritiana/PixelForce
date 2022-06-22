@@ -68,7 +68,7 @@
             </div>
 		</div>
         <div class="table-responsive">
-			<table class="table table-striped table-hover text-center">
+			<table class="table table-striped table-hover text-center sortable">
 				<thead>
 					<tr>
 						<th scope="col">#</th>
@@ -78,7 +78,7 @@
 						<th scope="col">Date inscription</th>
 						<th scope="col">Secteur</th>
                         <th scope="col">Etat</th>
-						<th scope="col">ACTION</th>
+						<th scope="col" class="table-th-notSortable">ACTION</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -95,7 +95,7 @@
                                 {{ agent.allSecteursOfUser(secteurs)|default('-') }}                                
                             </td>
                             <td>
-                                <div class="m-auto {{ agent.active == 1 ? 'bg-success' : (agent.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"></div>
+                                <div class="m-auto {{ agent.active == 1 ? 'bg-success' : (agent.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"><span class="d-none">{{  agent.active }}</span></div>
                             </td>
                             <td >
                                 <a href="{{ path('admin_agent_edit', {'id': agent.id}) }}" class="btn btn-success d-none">
