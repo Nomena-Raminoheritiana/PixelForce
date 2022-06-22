@@ -79,10 +79,11 @@ class AdminAgentController extends AbstractController
     /**
      * @Route("/admin/agent/{id}/view", name="admin_agent_view", options={"expose"=true})
      */
-    public function admin_agent_view(User $agent,  AgentSecteurService $agentSecteurService)
+    public function admin_agent_view(User $agent,  AgentSecteurService $agentSecteurService, SecteurRepository $secteurRepository)
     {
         $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
         $secteurs = $agentSecteurService->getSecteurs($agentSecteurs);
+        $secteursForEdition = $secteurRepository->findAll();
         $formSecteur = $this->createForm(MultipleSecteurType::class);
 
         return $this->render('user_category/admin/agent/view_agent.html.twig', [
@@ -90,7 +91,8 @@ class AdminAgentController extends AbstractController
             'agentSecteurs' => $agentSecteurs,
             'secteurs' => $secteurs,
             'repoCoachSecteur' => $this->repoCoachSecteur,
-            'formSecteur' => $formSecteur->createView()
+            'formSecteur' => $formSecteur->createView(),
+            'secteursForEdition' => $secteursForEdition
         ]);
     }
 
@@ -155,7 +157,8 @@ class AdminAgentController extends AbstractController
     public function admin_agent_delete(User $agent, Request $request)
     {
         if ($this->isCsrfTokenValid('delete'. $agent->getId(), $request->get('_token'))) {
-            $this->repoCoachAgent->removeCoachOrAgent($agent, $this->entityManager);
+            $agent->setActive(-1);
+            $this->entityManager->save($agent);
 
             $this->addFlash( 'danger', 'Agent supprimé');
         }

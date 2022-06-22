@@ -101,9 +101,9 @@
                                 <div class="m-auto {{ coach.active == 1 ? 'bg-success' : (coach.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"></div>
                             </td>
                             <td >
-{#                                <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success">#}
-{#                                    <i class="fas fa-edit"></i>#}
-{#                                </a>#}
+                                <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success d-none">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                                 {% set chatCanal =  render(controller(
                                     'App\\Controller\\ChatController::getSingleCanalBy_idUser',
                                     {

@@ -25,6 +25,9 @@
         <div class="search-form">
             {{form_start(searchForm)}}
             <div class="row text-center">
+                <div class="col-12 text-end">
+                    {{form_row(searchForm.active)}}
+                </div>
                 <div class="col-12 col-sm-6 col-md-3">
                     {{form_row(searchForm.prenom)}}
                 </div>
@@ -74,6 +77,7 @@
 						<th scope="col">Téléphone</th>
 						<th scope="col">Date inscription</th>
 						<th scope="col">Secteur</th>
+                        <th scope="col">Etat</th>
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -90,9 +94,23 @@
                                 {% set secteurs = repoAgentSecteur.findBy({'agent' : agent}) %}
                                 {{ agent.allSecteursOfUser(secteurs)|default('-') }}                                
                             </td>
+                            <td>
+                                <div class="m-auto {{ agent.active == 1 ? 'bg-success' : (agent.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"></div>
+                            </td>
                             <td >
-                                <a href="{{ path('admin_agent_edit', {'id': agent.id}) }}" class="btn btn-success">
+                                <a href="{{ path('admin_agent_edit', {'id': agent.id}) }}" class="btn btn-success d-none">
                                     <i class="fas fa-edit"></i>
+                                </a>
+                                {% set chatCanal =  render(controller(
+                                    'App\\Controller\\ChatController::getSingleCanalBy_idUser',
+                                    {
+                                        id: agent.id
+                                    }
+                                    ))
+                                %}
+
+                                <a href="#" class="btn btn-primary chat-choose-canal" data-canal="{{ chatCanal|url_encode }}">
+                                    <i class="fa-brands fa-facebook-messenger"></i>
                                 </a>
                                 <a href="{{ path('admin_agent_view', {'id': agent.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>
