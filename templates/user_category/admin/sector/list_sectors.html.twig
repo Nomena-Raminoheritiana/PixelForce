@@ -60,7 +60,9 @@
                                     -
                                 {% endif %}
                             </td> #}
-                            <td>{{ sector.active == 1 ? 'Actif' : 'Non valide' }}</td>
+                            <td>
+                                <div class="m-auto {{ sector.active == 1 ? 'bg-success' : (sector.active == -1 ? 'bg-danger' : 'bg-primary') }} rounded-circle caret"><span class="d-none">{{  sector.active }}</span></div>
+                            </td>
                             <td >
                                 <a href="{{ path('admin_sector_edit', {'id': sector.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>

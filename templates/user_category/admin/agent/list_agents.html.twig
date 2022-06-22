@@ -95,7 +95,7 @@
                                 {{ agent.allSecteursOfUser(secteurs)|default('-') }}                                
                             </td>
                             <td>
-                                <div class="m-auto {{ agent.active == 1 ? 'bg-success' : (agent.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"><span class="d-none">{{  agent.active }}</span></div>
+                                <div class="m-auto {{ agent.active == 1 ? 'bg-success' : (agent.active == -1 ? 'bg-danger' : 'bg-primary') }} rounded-circle caret"><span class="d-none">{{  agent.active }}</span></div>
                             </td>
                             <td >
                                 <a href="{{ path('admin_agent_edit', {'id': agent.id}) }}" class="btn btn-success d-none">

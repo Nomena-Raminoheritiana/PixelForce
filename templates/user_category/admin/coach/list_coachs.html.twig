@@ -98,7 +98,7 @@
                                 {{ coach.allSecteursOfUser(secteurs)|default('-') }}     
                             </td>
                             <td>
-                                <div class="m-auto {{ coach.active == 1 ? 'bg-success' : (coach.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"><span class="d-none">{{  coach.active }}</span></div>
+                                <div class="m-auto {{ coach.active == 1 ? 'bg-success' : (coach.active == -1 ? 'bg-danger' : 'bg-primary') }} rounded-circle caret"><span class="d-none">{{  coach.active }}</span></div>
                             </td>
                             <td >
                                 <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success d-none">
