@@ -80,6 +80,7 @@
 						<th scope="col">Téléphone</th>
 						<th scope="col">Date inscription</th>
 						<th scope="col">Secteur</th>
+						<th scope="col">Etat</th>
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -96,9 +97,23 @@
                                 {% set secteurs = repoCoachSecteur.findBy({'coach' : coach}) %}
                                 {{ coach.allSecteursOfUser(secteurs)|default('-') }}     
                             </td>
+                            <td>
+                                <div class="m-auto {{ coach.active == 1 ? 'bg-success' : (coach.active == -1 ? 'bg-primary' : 'bg-danger') }} rounded-circle caret"></div>
+                            </td>
                             <td >
-                                <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success">
-                                    <i class="fas fa-edit"></i>
+{#                                <a href="{{ path('admin_coach_edit', {'id': coach.id}) }}" class="btn btn-success">#}
+{#                                    <i class="fas fa-edit"></i>#}
+{#                                </a>#}
+                                {% set chatCanal =  render(controller(
+                                    'App\\Controller\\ChatController::getSingleCanalBy_idUser',
+                                    {
+                                        id: coach.id
+                                    }
+                                    ))
+                                %}
+
+                                <a href="#" class="btn btn-primary chat-choose-canal" data-canal="{{ chatCanal|url_encode }}">
+                                    <i class="fa-brands fa-facebook-messenger"></i>
                                 </a>
                                 <a href="{{ path('admin_coach_view', {'id': coach.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>

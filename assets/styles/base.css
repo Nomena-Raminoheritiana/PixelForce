@@ -156,3 +156,9 @@ textarea.error,input.error {
 a{
     text-decoration: none;
 }
+
+/** caret **/
+.caret {
+    width:30px !important;
+    height: 30px !important;
+}

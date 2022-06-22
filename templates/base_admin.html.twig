@@ -65,19 +65,52 @@
 
         <!-- Overlay -->
         <div class="sidenav-overlay"></div>
-        <div class="drag-target"></div> 
-        
+        <div class="drag-target"></div>
+        {% include 'live/video/liveVideoRapide.html.twig' %}
+        {% include 'live/chat/mini_menu_chat.html.twig'  %}
+
         {% block javascripts %}
+            <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-newMessage-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_MESSAGE_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-vu-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_VU_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-userTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-userStopTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_STOP_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json"  id="current-user-id">{{ app.user.id }}</script>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
             <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
             <script src="{{ asset('assets/vuexy/vendors/js/vendors.min.js') }}" ></script>
             <script src="{{ asset('assets/vuexy/vendors/js/extensions/toastr.min.js') }}"></script>
+
+
+
+            {# {{ encore_entry_script_tags('vuexy_calendar_fullcalendar') }} #}
+            {# {{ encore_entry_script_tags('vuexy_extensions_moment') }} #}
+            {# {{ encore_entry_script_tags('vuexy_forms_select_select2') }} #}
+            {# {{ encore_entry_script_tags('vuexy_forms_validation_jquery_validate') }}
+            {{ encore_entry_script_tags('vuexy_pickers_flatpickr') }} #}
+
+            {{ encore_entry_script_tags('app') }}
             {{ encore_entry_script_tags('bootstrap_touchspin') }}
             {{ encore_entry_script_tags('vuexy_app_menu') }}
             {{ encore_entry_script_tags('vuexy_app') }}
             {{ encore_entry_script_tags('vuexyJS') }}
-            {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('chatJS')}}
+
+
+            <script src="{{ asset('assets/vuexy/vendors/js/calendar/fullcalendar.min.js') }}"></script>
+            <script src="{{ asset('assets/vuexy/vendors/js/extensions/moment.min.js') }}"></script>
+            <script src="{{ asset('assets/vuexy/vendors/js/forms/select/select2.full.min.js') }}" defer></script>
+            <script src="{{ asset('assets/vuexy/vendors/js/forms/validation/jquery.validate.min.js') }}" defer></script>
+            <script src="{{ asset('assets/vuexy/vendors/js/pickers/flatpickr/flatpickr.min.js') }}" defer></script>
+
+
+
+
+
+
         {% endblock %}
     </body>
 </html>
