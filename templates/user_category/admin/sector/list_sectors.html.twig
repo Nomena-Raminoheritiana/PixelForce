@@ -43,6 +43,7 @@
 						<th scope="col">Nom</th>
 						<th scope="col">Description</th>
 						{# <th scope="col">Coach</th> #}
+                        <th scope="col">état secteur</th>
 						<th scope="col" class="table-th-notSortable">ACTION</th>
 					</tr>
 				</thead>
@@ -59,6 +60,7 @@
                                     -
                                 {% endif %}
                             </td> #}
+                            <td>{{ sector.active == 1 ? 'Actif' : 'Non valide' }}</td>
                             <td >
                                 <a href="{{ path('admin_sector_edit', {'id': sector.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>
