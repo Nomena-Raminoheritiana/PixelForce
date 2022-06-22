@@ -16,16 +16,21 @@ use App\Repository\ContactInformationRepository;
 use App\Repository\ContactRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
+use App\Services\ContactService;
 use App\Services\ExcelService;
+use App\Services\Google\PeopleService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Exception;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Component\Pager\PaginatorInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
+use PHPStan\PhpDocParser\Ast\Type\ThisTypeNode;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -130,7 +135,8 @@ class AgentContactController extends AbstractController
             "information.typeLogement.nom", "information.rue", "information.numero", "information.codePostal", 
             "information.ville", "information.compositionFoyer", "information.nbrPersonne", "information.commentaire"];
         $file = $excelService->export($contacts, $fields, $headers);
-        $date = (new \DateTime())->format('Y-m-d');
+
+        $date = (new \DateTime())->format('Y-m-d m:s');
         return $this->file($file, "contact-$date.csv");
     }
 
@@ -147,8 +153,128 @@ class AgentContactController extends AbstractController
             'title' => "Liste des contacts",
             'contacts' => $contacts
         ]);
-        $date = (new \DateTime())->format('Y-m-d');
+        $date = (new \DateTime())->format('Y-m-d m:s');
         return $wrapper->getStreamResponse($html, "contact-$date.pdf", ['isRemoteEnabled' => true]);
+    }
+
+    /**
+     * @Route("/agent/mobile/contacts/exportPdf", name="agent_mobile_contact_export_pdf")
+     */
+    public function agent_mobile_contact_export_pdf(DompdfWrapperInterface $wrapper, ContactService $contactService)
+    {
+        $agent = $this->getUser();
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $this->repoSecteur->find($secteurId);
+
+        $contacts = [];
+        if ($_POST['contacts']) {
+            $contactsApi = $_POST['contacts'];
+
+            foreach ($contactsApi as $contactApi) {
+                $contactEntity = new Contact();
+                // /** @var ContactInformation $information */
+                $information = $contactEntity->getInformation();
+                $information = new ContactInformation();
+                $contactEntity = $contactService->contactApiToContactEntity($contactApi, $contactEntity, $information);
+                $contactEntity->setAgent($agent);
+                $contactEntity->setSecteur($secteur);
+                $contacts[] = $contactEntity;
+            }
+
+        }else{
+            return $this->redirectToRoute('agent_contact_list');
+        }
+
+        $html = $this->renderView('pdf/contacts.html.twig', [
+            'title' => "Liste des contacts",
+            'contacts' => $contacts
+        ]);
+
+        $date = (new \DateTime())->format('Y-m-d m:s');
+        return $wrapper->getStreamResponse($html, "contact-$date.pdf", ['isRemoteEnabled' => true]);
+    }
+
+    /**
+     * @Route("/agent/mobile/contacts/exportExcel", name="agent_mobile_contact_export_excel")
+     */
+    public function agent_mobile_contact_export_excel(ExcelService $excelService, ContactService $contactService)
+    {
+        $agent = $this->getUser();
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $this->repoSecteur->find($secteurId);
+
+        $contacts = [];
+        if ($_POST['contacts']) {
+            $contactsApi = $_POST['contacts'];
+
+            foreach ($contactsApi as $contactApi) {
+                $contactEntity = new Contact();
+                // /** @var ContactInformation $information */
+                $information = $contactEntity->getInformation();
+                $information = new ContactInformation();
+                $contactEntity = $contactService->contactApiToContactEntity($contactApi, $contactEntity, $information);
+                $contactEntity->setAgent($agent);
+                $contactEntity->setSecteur($secteur);
+                $contacts[] = $contactEntity;
+            }
+
+        }else{
+            return $this->redirectToRoute('agent_contact_list');
+        }
+
+        $fields = [
+            "information.lastname", "information.email", "information.phone", "information.address", 
+            "information.typeLogement.nom", "information.rue", "information.numero", "information.codePostal", 
+            "information.ville", "information.compositionFoyer", "information.nbrPersonne", "information.commentaire"
+        ];
+       
+        $rows = $excelService->getrowsInTable($contacts, $fields);
+        return $this->json(
+            $rows
+        );
+        
+        // return $rows;
+    }
+
+    /**
+     * @Route("agent/contac/import/mobile", name="agent_contact_import_mobile")
+     */
+    public function agent_contact_import_mobile(): Response
+    {
+        return $this->render('user_category/agent/contact/test_import_mobill.html.twig', [
+            'google_client_id' => $_ENV['OAUTH_GOOGLE_ID'],
+            'google_api_key' => $_ENV['GOOGLE_API_KEY'],
+            
+        ]);
+    }
+    
+    /**
+     * @Route("/agent/contact/dump", name="agent_contact_dump")
+     */
+    public function agent_contact_dump(PeopleService $peopleService, Request $request): Response
+    {
+        $peopleService->getContacts();
+        return $this->render('$0.html.twig', []);
+    }
+
+    /**
+     * @Route("/agent/contact/mobile/import", name="agent_contact_mobile_import")
+     */
+    public function agent_contact_mobile_import(ContactManager $contactManager): Response
+    {
+        /** @var User $agent */
+        $agent =  $this->getUser();
+        $secteurId = $this->session->get('secteurId');
+        $contacts = $_POST['contacts'];
+
+        $contactManager->persistContactInformation($contacts, $agent->getid(), $secteurId);
+        
+        return $this->json(
+            [
+                'contact' => 'added'
+            ],
+            200
+        );
     }
 
     /**

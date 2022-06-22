@@ -51,30 +51,26 @@ class UserFixtures extends Fixture
 
         // Création coach
         $secteurs = $this->secteurRepoSitory->findAll();
-        $secteurIds = [];
         foreach ($secteurs as $secteur) {
-            $secteurIds[] = $secteur->getId();
-        }
-
-        for ($i=1; $i < 6; $i++) { 
             $user = User::class;
+            
             $user = $this->objectManager->createObject($user, [
-                'email' => 'coach0'.$i.'@gmail.com',
+                'email' => 'coach0'.$secteur->getId().'@gmail.com',
                 'roles' => [User::ROLE_COACH],
-                'password' => 'coach0'.$i.'coach0'.$i,
-                'username' => 'coach0'.$i,
-                'nom' => 'coach0'.$i,
-                'prenom' => 'coach0'.$i,
+                'password' => 'coach0'.$secteur->getId().'coach0'.$secteur->getId(),
+                'username' => 'coach0'.$secteur->getId(),
+                'nom' => 'coach0'.$secteur->getId(),
+                'prenom' => 'coach0'.$secteur->getId(),
                 'dateNaissance' => new \DateTime(),
-                'adresse' => 'lot coach0'.$i
+                'adresse' => 'lot coach0'.$secteur->getId()
             ]);
-           
-            $rand_key = array_rand($secteurIds, 1);           
+            
             $this->objectManager->createObject(CoachSecteur::class, [
                 'coach' => $user,
-                'secteur' =>  $this->secteurRepoSitory->find($secteurIds[$rand_key])
+                'secteur' =>  $this->secteurRepoSitory->find($secteur->getId())
             ]);
         }
+
 
 
 

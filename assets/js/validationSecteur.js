@@ -53,15 +53,7 @@ $(function() {
             },
             success: function(responseAjax){
                 if (responseAjax.validation === 'successfully' ) {
-                    that.html('Ok');
-                    setTimeout(function () {
-                        that.html('Bloquer');
-                    }, 1000);
-
-                    let btn_secteur_status = that.parent().prev().children();
-                    btn_secteur_status.removeClass('btn-warning');
-                    btn_secteur_status.addClass('btn-success');
-                    btn_secteur_status.html('Validé')
+                    window.location.href = 'your_url';
                 }
             },
             error : function(){

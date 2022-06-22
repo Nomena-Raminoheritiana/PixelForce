@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "pixelforce",
+  "private_key_id": "97faf78647b7f92bd9893d9443857bdf04694e05",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDD6d+7bTevEeSN\nuPOm4HZkP0xTrgBJKskdSORZfCuAFcoXCwzHtEttpUlxt4JqsiFI2syjd+0Yzif6\nh41HeM6VNf3w/gTrCMKMwhkiKKKxIVFdE5bW4nZHZLa+g4jIYp0y8zDUSIvhDq3U\nmewV4yoapxaUd4fO5sEJ9b3zq4M8c3FVuTdHi59j4Z9ibSNjnbNDC0tj1JShwkF4\nIq29McglvaPM4aGNK918WN00SYOL8CQ0XvnQq/wFoWKFgj95JAYg/2P8/XhwPijA\neaMUEDm8Wu7zzC50Lth/yhTHRuMrRBX+wKKSG3u+axXTW6Iw5am/IWDi0KvIzNro\npNFX1df1AgMBAAECggEACToGAe86XKHkmDIaM4VFviHnB9fdhpSfxSPOMVKyP8WG\n73/jObKJjN/obhUc7MZ339UCJz66KV1oL5nbsv6DCC7zRzrHY4RVmUh4441zYBE4\nIkCObY9bz6/0FVPfiMRwL9qZNZ43DEHjOOyI3F0G+htdal+Yw0tF0yDCMewlcZ7P\nA2HqbzY3n+rHPwC/s6s/86VilS3tKN9a3LYY3MnHRWFFJx5LbP8i+sW9G6WtHQg+\nU1r80RLBLVpWxrSuvEBor6LPIcLsvt8ZmbVxZ78YANmrfEsL6ep46UzvNAmXvCSK\n9DlNMkw/buFVCV28pukQDh2HhPIpdHsev8mMS6bZbwKBgQD5ggbl0HHndlVOt4s8\ncPukm+3vnbTm7+DeyZ0zgzM012XHSnkMYtzcVHq/q07n4zakw3H0acqZDrtXVcUq\nW+NIeL4BD+T8ZNMToYsVDxAudWh4/uZWMet1Rlp5tDhVbsk9uIqz6VG1irztEt5E\nLgF67FT7vJiv0HfYydDN6BiK9wKBgQDJAtrZumUq6meEUSPITr50blrCCS50mycz\n+t9r+FWTlUvqPttUPTbUNXO1/dyk+QYweOdd5VHAg5EPH1xrLAErzN/oVQ78tEz6\nGP93J0FXDJVKCsAWzNO4geYBQtkocdnDhEV9j1Rkcb2CpPjIfxQ1huZNoyfRnct4\nvCTqlC4tcwKBgCemuU/mW2OsU4xJ8O+vCN61BRASYQBeWL8vDTN1gzq/jGYqeKg2\nQeEl78fsAoMpgbKXeNGdyluekrkjYU0FA06uGYvzqbFOmJjDEGZNWYX4lJy97X7/\nOesOPiyfLmCtVX/ghvJmfty56qJGYFo3cXbGfg7vfthZ6eHi2LMQUm4rAoGAFi9D\neh4xRjBCpn7SBSxzpqP7Tkj3IJVzGTCJ8f+haj1i+IJhcIWlBHy1vZM8A9UcEsN1\nPY6unCGpI9MhPw7HPk9JMvoYQlmf2UZjA4KImpPf8iEHnDyU7VsgyGjZULZoA0UY\n6kekV8WZ1c5hSreDwniV+GGWZnMU3sldBaq/AfMCgYBYQOrvI4XgQRTpXJoB08H5\nIa7SLNA6ra7+8HWIsG3fB5EDTO/Jk6PkJGL92h9f8rUwTJVktXRJZtbgfG40Tf/S\nPHuononIoc0CmyCQKS1cf50kg2IsNO3oW3P/ETvLKmRPl4aMw0qnm15ZptU46QUS\n2fYYREP3I0VrtYooMfpKyA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "fordevproject@pixelforce.iam.gserviceaccount.com",
+  "client_id": "102006299057176466723",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fordevproject%40pixelforce.iam.gserviceaccount.com"
+}

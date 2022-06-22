@@ -19,6 +19,12 @@
                     {% endfor %}
                 </div>
             {% endfor %}
+            {% if app.request.get('contactMobile') and app.request.get('contactMobile') == 'added' %}
+                <div class="alert alert-success text-center">
+                    Contact ajouté avec succès
+                </div>
+            {% endif %}
+            
         </div>
 
         <!-- Formulaire de recherche -->
@@ -107,8 +113,9 @@
 
         <div class="row my-2">
             <div class="d-flex flex-wrap align-items-center">
-                <a href="{{path('agent_contact_export_excel')}}" class="btn btn-success btn-sm"><i class="fa fa-file-text"></i>&nbsp;Exporter excel</a>
+                <a href="{{path('agent_contact_export_excel')}}" class="btn btn-success btn-sm mx-2"><i class="fa fa-file-text"></i>&nbsp;Exporter excel</a>
                 <a href="{{path('agent_contact_export_pdf')}}" class="btn btn-danger btn-sm mx-2"><i class="fa fa-file-text"></i>&nbsp;Exporter pdf</a>
+                <a href="{{path('agent_contact_import_mobile')}}" class="btn btn-secondary btn-sm mx-2"><i class="fa fa-file-text"></i>&nbsp;Importer/Exportation mobile</a>
             </div>
             
 		</div>

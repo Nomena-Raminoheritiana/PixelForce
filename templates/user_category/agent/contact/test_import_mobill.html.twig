@@ -1,0 +1,345 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ label|default('Ajout') }} client {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+	<div class="container p-4">
+		<h2 class="text-center fw-bolder">Importation contact depuis smartphone</h2>
+		<h4 class="text-center">1- Cliquer sur le bouton "Importer"</h4>
+		<h4 class="text-center">2- Connecter vous à votre compte google</h4>
+		<h4 class="text-center">3- Cocher les contacts à importer</h4>
+		<h4 class="text-center">3- Valider via le bouton "Valider"</h4>
+
+		<!--Add buttons to initiate auth sequence and sign out-->
+		{# <a href="{{ path('agent_contact_dump')}}" class="btn btn-primary">Importer PHP</a> #}
+		<button id="authorize_button" class="btn btn-primary" onclick="handleAuthClick()">Récupérer </button>
+		<button id="signout_button" onclick="handleSignoutClick()">Déconncter</button>
+		
+		
+		<!-- block list contact -->
+		<div id="spinner_loader"></div>
+		<form id="contact_form" action="">
+			<div id="before_list_checkbox"></div>
+			<button id="btn_submit_form" type="submit" class="d-none btn btn-success mb-3">Importer vers Pixelforce</button>
+			<button id="btn_export_mobile_pdf" type="button" class="d-none btn btn-success mb-3">Exporter PDF</button>
+			<button id="btn_export_mobile_excel" type="button" class="d-none btn btn-success">Exporter EXCEL</button>
+		</form>
+
+		<!-- <button onclick="test()">Test</button> -->
+		<div id="agentId" class="d-none">{{app.user.id}}</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+
+		// function test(){
+			// const rows = [
+			// 	["name1", "city1", "some ot"],
+			// 	["name2", "city2", "more info"]
+			// ];
+
+			// let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join("\r")).join("\n");
+			// var encodedUri = encodeURI(csvContent);
+			// window.open(encodedUri);
+
+			// const data = [
+			// 	{id:28797,name:"משה"},
+			// 	{id:23423,name:"אהרן"},
+			// 	{id:435,name:"יוסף"},
+			// 	{id:6768,name:"לוי"}
+			// ]
+			// const csv = data.map((item) => {
+			// 	return item.join(",");
+			// });
+			// downloadBlob(csv.join("\n"), name + ".csv", "text/csv");
+		// }
+
+
+		/* exported gapiLoaded */
+		/* exported gisLoaded */
+		/* exported handleAuthClick */
+		/* exported handleSignoutClick */
+
+		// TODO(developer): Set to client ID and API key from the Developer Console
+		const CLIENT_ID = "{{ google_client_id }}";
+		const API_KEY = "{{ google_api_key }}";
+
+
+		// Discovery doc URL for APIs used by the quickstart
+		const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/people/v1/rest';
+
+		// Authorization scopes required by the API; multiple scopes can be
+		// included, separated by spaces.
+		const SCOPES = 'https://www.googleapis.com/auth/contacts.readonly';
+
+		let tokenClient;
+		let gapiInited = false;
+		let gisInited = false;
+		let contacts = {};
+		let agentId = $('#agentId').text();
+
+		$('#authorize_button').css('visibility', 'hidden');
+		$('#signout_button').css('visibility', 'hidden');
+
+		/**
+		* Callback after api.js is loaded.
+		*/
+		function gapiLoaded() {
+			gapi.load('client', intializeGapiClient);
+		}
+
+		/**
+		* Callback after the API client is loaded. Loads the
+		* discovery doc to initialize the API.
+		*/
+		async function intializeGapiClient() {
+			await gapi.client.init({
+				apiKey: API_KEY,
+				discoveryDocs: [DISCOVERY_DOC],
+			});
+			gapiInited = true;
+			maybeEnableButtons();
+		}
+
+		/**
+		* Callback after Google Identity Services are loaded.
+		*/
+		function gisLoaded() {
+			tokenClient = google.accounts.oauth2.initTokenClient({
+			client_id: CLIENT_ID,
+			scope: SCOPES,
+			callback: '', // defined later
+			});
+			gisInited = true;
+			maybeEnableButtons();
+		}
+
+		/**
+		* Enables user interaction after all libraries are loaded.
+		*/
+		function maybeEnableButtons() {
+			if (gapiInited && gisInited) {
+				$('#authorize_button').css('visibility', 'visible');
+			}
+		}
+
+		/**
+		*  Sign in the user upon button click.
+		*/
+		function handleAuthClick() {
+			tokenClient.callback = async (resp) => {
+			if (resp.error !== undefined) {
+				throw (resp);
+			}
+				$('#signout_button').css('visibility', 'visible');
+				$('#authorize_button').text('Rafraichir');
+
+				await listConnectionNames();
+			};
+
+			if (gapi.client.getToken() === null) {
+				// Prompt the user to select a Google Account and ask for consent to share their data
+				// when establishing a new session.
+				tokenClient.requestAccessToken({prompt: 'consent'});
+			} else {
+				// Skip display of account chooser and consent dialog for an existing session.
+				tokenClient.requestAccessToken({prompt: ''});
+			}
+		}
+
+		/**
+		*  Sign out the user upon button click.
+		*/
+		function handleSignoutClick() {
+			const token = gapi.client.getToken();
+			if (token !== null) {
+				google.accounts.oauth2.revoke(token.access_token);
+				gapi.client.setToken('');
+				$('#content').text('');
+				$('#authorize_button').text('Authorize');
+				$('#signout_button').css('visibility', 'hidden');
+			}
+		}
+
+		/**
+		* Print the display name if available for 10 connections.
+		*/
+		async function listConnectionNames() {
+			let response;
+			try {
+				// Fetch first 10 files
+				response = await gapi.client.people.people.connections.list({
+					'resourceName': 'people/me',
+					'pageSize': 50,
+					'personFields': 'names,phoneNumbers,emailAddresses,addresses',
+					'sortOrder': 'FIRST_NAME_ASCENDING'
+				});
+			} catch (err) {
+				$('#content').text(err.message);
+				return;
+			}
+
+			const connections = response.result.connections;
+			if (!connections || connections.length == 0) {
+				$('#content').text('No connections found.');
+				
+				return;
+			}
+
+			for (let index = 0; index < connections.length; index++) {
+				connections[index].names[0]	
+				$('#before_list_checkbox').append(`
+					<input type="checkbox" id="contact_${index}" name="contact_${index}" value="${index}">
+					<label for="contact_${index}"> ${connections[index].names[0].displayName}</label><br>
+				`);
+			}
+			$('form#contact_form #btn_submit_form').removeClass('d-none');
+			$('form#contact_form #btn_submit_form').addClass('d-block');
+			$('#btn_export_mobile_pdf').removeClass('d-none');
+			$('#btn_export_mobile_pdf').addClass('d-block');
+			$('#btn_export_mobile_excel').removeClass('d-none');
+			$('#btn_export_mobile_excel').addClass('d-block');
+			
+			contacts = connections;
+
+		}
+
+		
+		// Exportation contact en fichier excel
+		$('#btn_export_mobile_excel').on('click', function(e){
+			let that = $(this);
+			that.attr('disabled', true);
+
+			var indexConnexions = [];
+			var contactsChecked = [];
+
+			$('form#contact_form input[type="checkbox"]:checked').each(function () {
+				indexConnexions.push($(this).val());
+			});
+
+			indexConnexions.forEach(element => {
+				contactsChecked.push(contacts[element]);
+			});
+
+			let datas = {
+				'contacts' : contactsChecked,
+			}
+
+			const urlExportMobile =  '/agent/mobile/contacts/exportExcel';
+			$.ajax({
+				url: urlExportMobile,
+				type: "POST",
+				data: datas,
+				beforeSend : function(){
+                	$('#spinner_loader').html('<div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>')
+				},
+				success: function(responseAjax){
+					that.attr('disabled', false)
+
+					console.log(responseAjax);
+					const rows = responseAjax;
+					// const rows = [
+					// 	["name1", "city1", "some other info"],
+					// 	["name2", "city2", "more info"]
+					// ];
+
+					let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+					var encodedUri = encodeURI(csvContent);
+					window.open(encodedUri);
+				},
+				error : function(){
+					that.html('Erreur');
+				}
+        	})
+
+		});
+	
+		// Exportation contact en fichier PDF
+		$('#btn_export_mobile_pdf').on('click', function(e){
+			let that = $(this);
+			that.attr('disabled', true);
+
+			var indexConnexions = [];
+			var contactsChecked = [];
+
+			$('form#contact_form input[type="checkbox"]:checked').each(function () {
+				indexConnexions.push($(this).val());
+			});
+
+			indexConnexions.forEach(element => {
+				contactsChecked.push(contacts[element]);
+			});
+
+			let datas = {
+				'contacts' : contactsChecked,
+			}
+
+			const urlExportMobile =  '/agent/mobile/contacts/exportPdf';
+			$.ajax({
+				url: urlExportMobile,
+				type: "POST",
+				data: datas,
+				beforeSend : function(){
+                	$('#spinner_loader').html('<div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>')
+				},
+				success: function(responseAjax){
+					that.attr('disabled', false)
+				},
+				error : function(){
+					that.html('Erreur');
+				}
+        	})
+
+		});
+
+		// Permet d'importer les contacts vers PixelForce
+		$('#contact_form').on('submit', function(e){
+			e.preventDefault();
+			$('#btn_submit_form').attr('disabled', true)
+
+			var indexConnexions = [];
+			var contactsChecked = [];
+
+
+			$('form#contact_form input[type="checkbox"]:checked').each(function () {
+				indexConnexions.push($(this).val());
+			});
+
+			indexConnexions.forEach(element => {
+				contactsChecked.push(contacts[element]);
+			});
+
+			let datas = {
+				'contacts' : contactsChecked,
+				'agentId' : agentId
+			}
+
+			const urlPostContact = '/agent/contact/mobile/import';
+			$.ajax({
+				url: urlPostContact,
+				type: "POST",
+				data: datas,
+				beforeSend : function(){
+                	$('#spinner_loader').html('<div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>')
+				},
+				success: function(responseAjax){
+					if (responseAjax.contact === 'added' ) {
+						window.location.href = '/agent/contact/liste?contactMobile=added';
+					}
+				},
+				error : function(){
+					$('#spinner_loader').html('Erreur');
+				}
+        	})
+		})
+
+
+	</script>
+	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+{% endblock %}
