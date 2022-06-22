@@ -61,7 +61,7 @@ class Secteur
     private $liveChatVideos;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, options={"default" : 1})
      */
     private $active;
 
@@ -279,7 +279,7 @@ class Secteur
 
     public function getActive(): ?int
     {
-        return $this->active;
+        return !is_null($this->active) ? $this->active : 1;
     }
 
     public function setActive(?int $active): self
