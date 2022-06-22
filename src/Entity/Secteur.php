@@ -60,6 +60,11 @@ class Secteur
      */
     private $liveChatVideos;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $active;
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
@@ -270,5 +275,17 @@ class Secteur
        }
 
         return $coachs;
+    }
+
+    public function getActive(): ?int
+    {
+        return $this->active;
+    }
+
+    public function setActive(?int $active): self
+    {
+        $this->active = $active;
+
+        return $this;
     }
 }
