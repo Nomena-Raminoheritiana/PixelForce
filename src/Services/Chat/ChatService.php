@@ -59,7 +59,7 @@ class ChatService
         $this->entityManager = $entityManager;
     }
 
-    public function addMessage(CanalMessage $canalMessage, User $user, $textes, $files = null)
+    public function addMessage(CanalMessage $canalMessage, User $user, $textes = null, $files = null)
     {
         /** @var Message $message */
         $message = $this->objectManager->createObject(Message::class, [

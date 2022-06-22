@@ -56,6 +56,15 @@ class UserSearchType extends AbstractType
                 'label' => 'Date d\'inscription jusqu\'à',
                 'widget' => 'single_text',
             ])
+            ->add('active', ChoiceType::class, [
+                'required' => false,
+                'label' => false,
+                'choices' => [
+                    'Tous' => null,
+                    'Activé' => 1,
+                    'Banni' => -1
+                ]
+            ])
         ;
     }
 

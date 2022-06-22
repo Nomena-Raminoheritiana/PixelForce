@@ -18,7 +18,7 @@ class FileUploader
         $this->slugger = new Slugify();
     }
 
-    public function upload(?UploadedFile $file = null, $targetFolder = null, $fileName=null)
+    public function upload(UploadedFile $file = null, $targetFolder = null, $fileName=null)
     {
         if($file != null) {
             // suppression de l'ancien fichier s'il existe
@@ -31,7 +31,12 @@ class FileUploader
             $this->targetDirectory = $targetFolder ? $targetFolder : $this->targetDirectory;
             $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $safeFilename = $this->slugger->slugify($originalFilename);
-            $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+            try{
+                $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+            }catch(\LogicException $e) {
+                $extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
+                $fileName = $safeFilename.'-'.uniqid().'.'.$extension;
+            }
 
             try {
                 $file->move($this->getTargetDirectory(), $fileName);
@@ -39,7 +44,7 @@ class FileUploader
                 return null;
             }
         }
-       return $fileName;
+        return $fileName;
     }
 
     public function getTargetDirectory()

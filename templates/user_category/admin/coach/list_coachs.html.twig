@@ -25,6 +25,9 @@
         <div class="search-form">
             {{form_start(searchForm)}}
             <div class="row text-center">
+                <div class="col-12 text-end">
+                    {{form_row(searchForm.active)}}
+                </div>
                 <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.prenom)}}
                 </div>

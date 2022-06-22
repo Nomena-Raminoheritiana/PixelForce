@@ -227,7 +227,8 @@ class AdminCoachController extends AbstractController
     public function admin_coach_delete(User $coach, Request $request)
     {
         if ($this->isCsrfTokenValid('delete'. $coach->getId(), $request->get('_token'))) {
-            $this->repoCoachAgent->removeCoachOrAgent($coach, $this->entityManager);
+           $coach->setActive(-1);
+           $this->entityManager->save($coach);
 
             $this->addFlash('danger', 'Coach supprimé');
         }

@@ -15,6 +15,10 @@
 
 }
 
+.border-color-light-primary {
+    border-color:rgba(115, 103 ,240, 0.2) !important;
+}
+
 .chat-float-menu .list-group-item, .chat-float-newOne .list-group-item, .chat-canal-instance .list-group-item, .chat-modal-container .list-group-item{
     border:none;
     cursor: pointer;
@@ -31,7 +35,7 @@
 }
 
 .chat-float-newOne, .chat-canal-instance {
-    width: 336px !important;
+    width: 380px !important;
     height: 500px;
     z-index: 99998 !important;
     margin-top:auto !important;

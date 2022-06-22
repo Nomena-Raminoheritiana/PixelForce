@@ -15,7 +15,7 @@
                                 <input type="datetime-local" placeholder="Date de debut live" class="form-control" value="{{ live is defined ? live.dateDebutLive|date('Y-m-dTH:i:s')|replace({'U':'','C':''}) : '' }}" name="dateDebutLive" required />
                             </div>
                             <div class="mb-3">
-                                <input type="text" name="theme" placeholder="Ajouter un theme" value="{{ live is defined ? live.theme : '' }}" class="form-control" required />
+                                <input type="text" name="theme" placeholder="Ajouter un thème" value="{{ live is defined ? live.theme : '' }}" class="form-control" required />
                             </div>
                             <div class="mb-3">
                                 <textarea name="description" class="form-control" placeholder="Une petite description concernant la réunion ..."  rows="10">{{ live is defined ? live.description : '' }}</textarea>

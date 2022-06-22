@@ -74,7 +74,7 @@ class Message
         return $this->textes;
     }
 
-    public function setTextes(?string $textes): self
+    public function setTextes(?string $textes=null): self
     {
         $this->textes = $textes;
 

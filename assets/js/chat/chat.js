@@ -17,7 +17,6 @@ $(function() {
         const inputText = chatContainer.find('.chat-input-textes');
         const emptyMessage = chatContainer.find('.chat-empty-message');
         const conversationBaseComponent = new ConversationBaseComponent();
-        loaderOn(bodyMessage[0]);
         // soit on a le canal, soit on a le code
         const code  = $(this).attr('data-code');
         let files = [];
@@ -26,7 +25,8 @@ $(function() {
             $(this).remove();
         });
         const messageValue = inputText.val();
-        if(messageValue.length > 0) {
+        if(messageValue.length > 0 || files.length > 0) {
+            loaderOn(bodyMessage[0]);
             const message = await sendMessage(messageValue,code, files)
             conversationBaseComponent.clearVu(bodyMessage);
             conversationBaseComponent.clearFile(chatContainer);

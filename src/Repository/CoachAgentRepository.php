@@ -57,7 +57,7 @@ class CoachAgentRepository extends ServiceEntityRepository
         $agents = [];
         foreach($coachAgents as $coachAgent) {
             $agent = $coachAgent->getAgent();
-            if($agent->getActive()){
+            if($agent->getActive() === 1){
                 $agents[] = $agent;
             }
         }

@@ -14,7 +14,7 @@ function loader(options={
     if(options.elementCible !== undefined )
     {
         if( options.directive === 'ON' && $(options.elementCible).find('.loader-container').length === 0) {
-            const position = options.relative === 'OFF' ? 'position-absolute' : 'position-relative';
+            const position = options.relative === 'OFF' ? 'position-sticky' : 'position-relative';
             const backdrop_color = options["backdrop-color"]!=null ? 'background:'+options['backdrop-color'] : '';
             const loaderContainer = $('<div />', {
                 id: 'loader-container',
