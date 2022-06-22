@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\Secteur;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -56,6 +55,11 @@ class UserSearchType extends AbstractType
                 'label' => 'Date d\'inscription jusqu\'à',
                 'widget' => 'single_text',
             ])
+            // ->add('order', DateType::class, [
+            //     'required' => false,
+            //     'label' => false,
+            //     'widget' => 'single_text',
+            // ])
             ->add('active', ChoiceType::class, [
                 'required' => false,
                 'label' => false,

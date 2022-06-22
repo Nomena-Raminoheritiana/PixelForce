@@ -238,8 +238,8 @@
                                             {% set information = contact.information %}
                                                 <tr>
                                                     <td><i class="fa-solid fa-address-card"></i></td>
-                                                    <td>{{ information.lastname }}</td>
-                                                    <td>{{ information.email }}</td>
+                                                    <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black"> {{ information.lastname }}</a></td>
+                                                    <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black" > {{ information.email }}</a></td>
                                                     <td>{{ information.phone }}</td>
                                                     <td>{{ information.address }}</td>
                                                 </tr>

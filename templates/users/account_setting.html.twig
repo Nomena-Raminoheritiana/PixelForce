@@ -10,7 +10,15 @@
             <h2 class="content-header-title h-100 float-start mb-0">Votre compte</h2>
             <div class="breadcrumb-wrapper h-100 d-flex">
                 <ol class="breadcrumb my-auto ps-md-4 ps-0">
-                    <li class="breadcrumb-item"><a href="index.html">Accueil</a>
+                    <li class="breadcrumb-item">
+                        {% set role = app.user.roles[0]  %}
+                        {% if role == constant('App\\Entity\\User::ROLE_ADMINISTRATEUR') %}
+                            <a href="{{ path('admin_dashboard') }}">Accueil</a>
+                        {% elseif role == constant('App\\Entity\\User::ROLE_COACH') %}
+                            <a href="{{ path('coach_agent_list') }}">Accueil</a>
+                        {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
+                            <a href="{{ path('agent_home') }}">Accueil</a>
+                        {% endif %}
                     </li>
                     <li class="breadcrumb-item"><a href="#">Paramètre du compte </a>
                     </li>

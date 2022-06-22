@@ -154,6 +154,15 @@ class ContactRepository extends ServiceEntityRepository
                 ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
         }
 
+        if (isset($_GET['ordre'])) {
+            if ($_GET['ordre'] == 'ASC') {
+                $query = $query->orderBy('c.id', 'ASC');
+            }else {
+                $query = $query->orderBy('c.id', 'DESC');
+            }
+        }
+      
+
         return $query->getQuery()
             ->getResult()
         ;

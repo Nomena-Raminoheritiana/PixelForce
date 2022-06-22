@@ -75,7 +75,7 @@ class AccountAgentType extends AbstractType
                     'placeholder' => 'Adresse mail'
                 ],
                 'required' => false,
-                'disabled' => true
+                // 'disabled' => true
             ])
             ->add('secteur', SecteurChoiceType::class, [
                 'label' => false,
