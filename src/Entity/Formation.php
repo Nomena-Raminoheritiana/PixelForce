@@ -77,6 +77,11 @@ class Formation
      */
     private $secteur;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=CategorieFormation::class, inversedBy="formations")
+     */
+    private $CategorieFormation;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -259,6 +264,18 @@ class Formation
     public function setSecteur(?Secteur $secteur): self
     {
         $this->secteur = $secteur;
+
+        return $this;
+    }
+
+    public function getCategorieFormation(): ?CategorieFormation
+    {
+        return $this->CategorieFormation;
+    }
+
+    public function setCategorieFormation(?CategorieFormation $CategorieFormation): self
+    {
+        $this->CategorieFormation = $CategorieFormation;
 
         return $this;
     }
