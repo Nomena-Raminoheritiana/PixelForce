@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Importation / Exportation contact mobile {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+	<style>
+		.scroller-contact {
+			width: 300px;
+			height: 220px;
+			overflow-y: scroll;
+			scrollbar-color: rebeccapurple green;
+			scrollbar-width: thin;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container p-4">
+		<h2 class="text-center fw-bolder mb-2">Importation/Exportation contacts depuis smartphone</h2>
+		<h5 class="mt-5">1- Veuillez patienter, que la page a bien chargée</h5>
+		<h5>2- Cliquer sur le bouton "Récupérer", qui va appraître après le chargement</h5>
+		<h5>3- Connecter vous à votre compte google</h5>
+		<h5>3- Cocher les contacts à importer/exporter</h5>
+
+		<!--Add buttons to initiate auth sequence and sign out-->
+		{# <a href="{{ path('agent_contact_dump')}}" class="btn btn-primary">Importer PHP</a> #}
+		<button id="authorize_button" class="btn btn-primary mt-5 d-none"><i class="fa-solid fa-address-book me-2"></i> Récupérer </button>
+		<!-- <button id="signout_button" onclick="handleSignoutClick()">Déconncter</button> -->
+		
+		
+		<!-- block list contact -->
+		<div id="spinner_loader"></div>
+		<form id="contact_form" action="" class="d-none">
+			<div class="row mt-3">
+				<div class="col">
+					<div class="scroller-contact">
+						<div id="before_list_checkbox"></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="d-none mb-3" id="check-all">
+						<input type="radio" id="cocher"> <span class="fw-folder">Tout cocher</span>  <br>
+						<input type="radio" id="decocher"><span class="fw-folder">Tout décocher</span>
+					</div>
+
+					<button id="btn_submit_form" type="submit" class="d-none btn btn-success mb-3"><i class="fa-solid fa-cloud-arrow-down me-2"></i> Importer vers Pixelforce</button>
+					<button id="btn_export_mobile_pdf" type="button" class="d-none btn btn-success mb-3"><i class="fa-solid fa-file-arrow-up me-2"></i> Exporter PDF</button>
+					<button id="btn_export_mobile_excel" type="button" class="d-none btn btn-success"><i class="fa-solid fa-file-arrow-up me-2"></i> Exporter EXCEL</button>
+				</div>
+			</div>
+		</form>
+
+		<div id="agentId" class="d-none">{{app.user.id}}</div>
+		<div id="google_client_id" class="d-none">{{ google_client_id }}</div>
+		<div id="google_api_key" class="d-none">{{ google_api_key }}</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	{{ encore_entry_script_tags('impExpContact')}}
+	<script async defer src="https://apis.google.com/js/api.js"></script>
+    <script async defer src="https://accounts.google.com/gsi/client"></script>
+{% endblock %}

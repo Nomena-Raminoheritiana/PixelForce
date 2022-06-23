@@ -205,22 +205,26 @@ class AgentContactController extends AbstractController
         $secteur = $this->repoSecteur->find($secteurId);
 
         $contacts = [];
-        if ($_POST['contacts']) {
-            $contactsApi = $_POST['contacts'];
-
-            foreach ($contactsApi as $contactApi) {
-                $contactEntity = new Contact();
-                // /** @var ContactInformation $information */
-                $information = $contactEntity->getInformation();
-                $information = new ContactInformation();
-                $contactEntity = $contactService->contactApiToContactEntity($contactApi, $contactEntity, $information);
-                $contactEntity->setAgent($agent);
-                $contactEntity->setSecteur($secteur);
-                $contacts[] = $contactEntity;
+        if (isset($_POST['contacts'])) {
+            if ($_POST['contacts']) {
+                $contactsApi = $_POST['contacts'];
+    
+                foreach ($contactsApi as $contactApi) {
+                    $contactEntity = new Contact();
+                    // /** @var ContactInformation $information */
+                    $information = $contactEntity->getInformation();
+                    $information = new ContactInformation();
+                    $contactEntity = $contactService->contactApiToContactEntity($contactApi, $contactEntity, $information);
+                    $contactEntity->setAgent($agent);
+                    $contactEntity->setSecteur($secteur);
+                    $contacts[] = $contactEntity;
+                }
+    
+            }else{
+                return $this->redirectToRoute('agent_contact_list');
             }
-
-        }else{
-            return $this->redirectToRoute('agent_contact_list');
+        }else {
+            return $this->json(['contacts' => 'empty']);
         }
 
         $fields = [
@@ -230,33 +234,25 @@ class AgentContactController extends AbstractController
         ];
        
         $rows = $excelService->getrowsInTable($contacts, $fields);
-        return $this->json(
-            $rows
-        );
-        
-        // return $rows;
+        return $this->json([
+            'contacts' => 'successfully',
+            'datas' => $rows
+
+        ]);
     }
 
     /**
-     * @Route("agent/contac/import/mobile", name="agent_contact_import_mobile")
+     * @Route("agent/contac/import/export/mobile", name="agent_contact_import_export_mobile")
      */
-    public function agent_contact_import_mobile(): Response
+    public function agent_contact_import_export_mobile(): Response
     {
-        return $this->render('user_category/agent/contact/test_import_mobill.html.twig', [
+        return $this->render('user_category/agent/contact/list_contacts_mobile.html.twig', [
             'google_client_id' => $_ENV['OAUTH_GOOGLE_ID'],
             'google_api_key' => $_ENV['GOOGLE_API_KEY'],
             
         ]);
     }
     
-    /**
-     * @Route("/agent/contact/dump", name="agent_contact_dump")
-     */
-    public function agent_contact_dump(PeopleService $peopleService, Request $request): Response
-    {
-        $peopleService->getContacts();
-        return $this->render('$0.html.twig', []);
-    }
 
     /**
      * @Route("/agent/contact/mobile/import", name="agent_contact_mobile_import")
@@ -271,9 +267,7 @@ class AgentContactController extends AbstractController
         $contactManager->persistContactInformation($contacts, $agent->getid(), $secteurId);
         
         return $this->json(
-            [
-                'contact' => 'added'
-            ],
+            ['contact' => 'added'],
             200
         );
     }

@@ -66,6 +66,8 @@ class ContactManager
                 if (isset($contact['names'][0]['familyName'])) {
                     $contactInfo = $this->repoContactInfo->findOneBy(['firstname' => $contact['names'][0]['familyName']]);
                 }elseif (isset($contact['names'][0]['displayName'])){
+                    /** @var ContactInformation $contactInfo */
+                    $contactInfo = null;
                     if (isset($contact['phoneNumbers'][0]['value'])) {
                         $contactInfo = $this->repoContactInfo->findOneBy(['phone' => $contact['phoneNumbers'][0]['value']]);
                     } elseif (isset($contact['emailAddresses'][0]['value'])) {

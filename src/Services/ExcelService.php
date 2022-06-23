@@ -34,14 +34,14 @@ class ExcelService
     {
         $table = [];
         $headers = ["NOM ET PRÉNOMS", "EMAIL", "TÉLÉPHONE", "ADRESSE", "TYPE DU LOGEMENT", "RUE", "NUMÉRO", "CODE POSTAL", "VILLE", "COMPOSITION DU FOYER", "NOMBRE DE PERSONNE", "COMMENTAIRE"];
-        $table[] = $headers;
+        $table[] =  $headers;
       
         foreach($data as $obj){
             $row = [];
             foreach($fields as $field){
                 $value = GenericUtil::getPropertyValue($obj, $field);
                 if ($value === null) {
-                    $value = '-';
+                    $value = ' ';
                 }else{
                     $value = $value;
                 }
