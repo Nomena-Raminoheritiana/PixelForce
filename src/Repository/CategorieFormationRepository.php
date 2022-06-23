@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\CategorieFormation;
+use App\Entity\SearchEntity\CategorieFormationSearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -38,6 +39,39 @@ class CategorieFormationRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+
+    public function findCategorieFormationQuery(CategorieFormationSearch $search)
+    {
+        $query = $this->createQueryBuilder('cf');
+
+        if ($search->getNom()) {
+            $query = $query
+                ->andwhere('cf.nom LIKE :prenom')
+                ->setParameter('prenom', '%'.$search->getNom().'%');
+        }
+        if ($search->getDescription()) {
+            $query = $query
+                ->andwhere('cf.description LIKE :description')
+                ->setParameter('description', '%'.$search->getDescription().'%');
+        }
+        if ($search->getStatut()) {
+           
+            $query = $query
+                ->andwhere('cf.statut = :statut')
+                ->setParameter('statut', $search->getStatut());
+        }
+        if ($search->getOrdre()) {
+            $query = $query
+                ->andwhere('cf.ordreCatFormation LIKE :ordre')
+                ->setParameter('ordre', $search->getOrdre());
+        }
+       
+        return $query->getQuery()
+            ->getResult()
+        ;
+    }
+
 
 //    /**
 //     * @return CategorieFormation[] Returns an array of CategorieFormation objects

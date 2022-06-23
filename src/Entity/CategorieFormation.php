@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CategorieFormation
 {
+    const STATUT = [
+        1 => 'valide',
+        -1 => 'supprimé'
+    ];
 
     /**
      * @ORM\Id
@@ -136,6 +140,11 @@ class CategorieFormation
         }
 
         return $this;
+    }
+
+    public function getStatutType(): string
+    {
+        return self::STATUT[$this->statut];
     }
 
 }
