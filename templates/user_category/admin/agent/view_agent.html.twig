@@ -66,6 +66,7 @@
 													{% endif %}
 												</td>
 												<td>
+													<button class="btn btn-warning btn-sm edit-secteur" data-agentSecteur-id="{{ agentSecteur.id }}" data-secteur-id="{{ agentSecteur.secteur.id }}" data-bs-toggle="modal" data-bs-target="#modal-edit-agent-secteur"><i class="fa fa-edit"></i></button>
 													{% if agentSecteur.statut == false or agentSecteur.statut == null or agentSecteur.dateValidation == null %}
 														<button data-agentSecteur-id="{{ agentSecteur.id }}" class="btn btn-sm  btn-outline-primary js-validate-secteur-agent btn-validate-sector">Valider</button>
 													{% else %}
@@ -108,6 +109,34 @@
             </div>
         </div>
     </div>
+
+	<!-- Modal : Modifier secteur  -->
+	<div class="modal fade" id="modal-edit-agent-secteur" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form action="{{ path('admin_agent_secteur_editOne') }}" method="post">
+					<div class="modal-header">
+						<h5 class="modal-title text-success"><i class="fa-solid fa-pen-to-square"></i> Modifier le secteur</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<h3>Choisissez un ou plusieurs secteurs</h3>
+						<select name="secteur" class="form-control" id="">
+							{% for secteur in secteursForEdition %}
+								<option value="{{ secteur.id }}">{{ secteur.nom }}</option>
+							{% endfor %}
+						</select>
+						<input type="hidden" name="agentSecteur" />
+						<input type="hidden" name="agent_id" value="{{ agent.id }}" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+						<button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Enregistrer</button>
+					</div>
+				</form>>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -115,4 +144,5 @@
     <script type="application/json" id="agent-id">{{agent.id}}</script>
 	{{ encore_entry_script_tags('vuexy_app_user_view_js') }}
 	{{ encore_entry_script_tags('validationSecteur') }}
+
 {% endblock %}

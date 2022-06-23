@@ -111,7 +111,9 @@ $(function() {
                             <td>${element.coach}</td>
                             <td>${element.dateValidation}</td>
                             <td><button class="btn  btn-success btn-sm"> Validé</button></td>
-                            <td><button data-agentSecteur-id="${ element.agentSecteurId }" type="button" class="btn btn-sm  btn-outline-primary js-invalidate-secteur-agent waves-effect">Bloquer</button></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal-edit-agent-secteur"><i class="fa fa-edit"></i></button>
+                                <button data-agentSecteur-id="${ element.agentSecteurId }" type="button" class="btn btn-sm  btn-outline-primary js-invalidate-secteur-agent waves-effect">Bloquer</button></td>
                         </tr>`);
                 });
 
@@ -134,4 +136,11 @@ $(function() {
         });
     })
 
+    $(this).on('click', '.edit-secteur', function(e) {
+        e.preventDefault();
+        let secteurId = $(this).attr('data-secteur-id');
+        let agentSecteurId = $(this).attr('data-agentSecteur-id');
+        $('[name="secteur"]').val(secteurId);
+        $('[name="agentSecteur"]').val(agentSecteurId)
+    })
 })	

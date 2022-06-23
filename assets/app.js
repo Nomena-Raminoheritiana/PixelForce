@@ -9,13 +9,19 @@
 // You can specify which plugins you need
 
 import './styles/app.scss'; // On commente cette ligne si on veut la même affichage du template (vuexy)
+import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css'
 import jquery from 'jquery';
 global.$ = global.jQuery = $;
-import { Tooltip, Toast, Popover, Collapse, Modal } from 'bootstrap';
-
+import 'datatables.net-bs5';
 // start the Stimulus application
 import './bootstrap';
 $(document).ready(function() {
+    $('.sortable').DataTable({
+        paging: false,
+        ordering: true,
+        info: false,
+        searching : false
+    });
     // dropdown bootstrap fix
     let dropdown = false;
     $(this).on('click', '[data-bs-toggle="dropdown"]', function(e) {

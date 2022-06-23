@@ -44,7 +44,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         return new Passport(
             new UserBadge($email, function($value) use(&$request) {
                $user = $this->userRepository->findOneBy(['email' => $value]);
-                if($user->getActive() === -1) {
+                if($user && $user->getActive() === -1) {
                     $request->getSession()->getFlashBag()->add('danger', 'Vous n’êtes pas autorisé sur la plateforme Pixelforce');
                    return null;
                 }

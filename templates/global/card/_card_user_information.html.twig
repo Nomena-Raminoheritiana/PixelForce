@@ -85,7 +85,7 @@
                     </a>
                 {% endif %}
                 {% if is_granted('ROLE_ADMINISTRATEUR')  %}
-                    <a href="{{ path('admin_agent_edit', {id:user.id}) }}" class="btn btn-primary me-1" >
+                    <a href="{{ path('admin_agent_edit', {id:user.id}) }}" class="btn btn-primary me-1 d-none" >
                         Modifier
                     </a>
                 {% endif %}

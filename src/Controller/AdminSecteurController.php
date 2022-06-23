@@ -125,7 +125,8 @@ class AdminSecteurController extends AbstractController
     public function admin_sector_delete(Secteur $sector, Request $request)
     {
         if ($this->isCsrfTokenValid('delete'. $sector->getId(), $request->get('_token'))) {
-            $this->repoSecteur->removeSectorAndCoachSecteur($sector);
+            $sector->setActive(-1);
+            $this->entityManager->save($sector);
 
             $this->addFlash( 'danger', 'Secteur supprimé');
         }
