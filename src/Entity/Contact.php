@@ -65,7 +65,7 @@ class Contact
     private $note;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tag::class, mappedBy="contacts")
+     * @ORM\ManyToMany(targetEntity=Tag::class, mappedBy="contacts", fetch="EAGER")
      */
     private $tags;
 
@@ -189,6 +189,23 @@ class Contact
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getTagIds(): array
+    {
+        $ids = [];
+        foreach($this->tags->toArray() as $tag) {
+            array_push($ids, $tag->getId());
+        }
+        return $ids;
+    }
+
+    public function clearTags()
+    {
+        foreach($this->tags->toArray() as $tag) {
+            $this->removeTag($tag);
+        }
+        return $this;
     }
 
     public function addTag(Tag $tag): self
