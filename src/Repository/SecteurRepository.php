@@ -104,4 +104,33 @@ class SecteurRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function filter(\App\Entity\SearchEntity\SecteurSearch $secteurSearch)
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        if(!is_null($secteurSearch->getNom())) {
+            $queryBuilder = $queryBuilder->andWhere('s.nom = :nom')
+            ->setParameter('nom', $secteurSearch->getNom());
+        }
+
+        if(!is_null($secteurSearch->getDescription())) {
+            $queryBuilder =   $queryBuilder->andWhere('s.description LIKE :description')
+                ->setParameter('description', '%'.$secteurSearch->getDescription().'%');
+        }
+
+        if(!is_null($secteurSearch->getEtat())) {
+            if($secteurSearch->getEtat() === 1) {
+                $queryBuilder =  $queryBuilder->andWhere('s.active = :active')
+                    ->orWhere('s.active is null')
+                    ->setParameter('active', 1);
+            } else {
+                $queryBuilder =  $queryBuilder->andWhere('s.active = :active')
+                    ->setParameter('active', -1);
+            }
+
+        }
+
+
+        return $queryBuilder->getQuery();
+    }
 }
