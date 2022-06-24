@@ -72,6 +72,24 @@
 						<p><span class="fw-bolder">Prénom</span>: {{ info.lastname }}</p>
 						<p><span class="fw-bolder">Email</span>:  {{ info.email }}</p>
 						<p><span class="fw-bolder">Téléphone</span>:  {{ info.phone }}</p> #}
+
+						<h3 class="text-primary">Tags</h3>
+						<div>
+							{% for tag in tags %}
+								<div class="row px-3 mt-2">
+									<div class="col-2 bg-white py-2 border border-end-0">
+										<div class="caret rounded-circle bg-{{ tag.couleur }}"></div>
+									</div>
+									<div class="col-10 bg-white border border-start-0 py-2">
+										{{ tag.libelle|capitalize }}
+									</div>
+								</div>
+							{% else %}
+								<div class="bg-white border p-2 text-center">
+									Aucun tag disponible
+								</div>
+							{% endfor %}
+						</div>
 					</div>
 					<div class="col-8">
 						<h3 class="text-primary">Note</h3>

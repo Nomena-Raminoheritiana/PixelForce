@@ -120,10 +120,12 @@ class AgentContactController extends AbstractController
 
         }
 
+        $tags = $contact->getTags()->toArray();
 
         return $this->render('user_category/agent/contact/view_contact.html.twig', [
             'contact' => $contact,
-            'formNote' => $formNote->createView()
+            'formNote' => $formNote->createView(),
+            'tags' => $tags
         ]);
     }
 
@@ -301,7 +303,7 @@ class AgentContactController extends AbstractController
             $contact->setSecteur($secteur);
             $this->repoContact->add($contact);
             $tags_id = $request->request->get('tags');
-            foreach($tags_id as $tag_id) {
+            foreach($tags_id = $tags_id ?? [] as $tag_id) {
                 $tag = $this->tagRepository->findOneBy(['id' => $tag_id]);
                 $contact->addTag($tag);
             }
@@ -335,7 +337,7 @@ class AgentContactController extends AbstractController
             $this->repoContactInfo->add($contactInformation);
             $tags_id = $request->request->get('tags');
             $contact->clearTags();
-            foreach($tags_id as $tag_id) {
+            foreach($tags_id = $tags_id ?? [] as $tag_id) {
                 $tag = $this->tagRepository->findOneBy(['id' => $tag_id]);
                 $contact->addTag($tag);
             }
