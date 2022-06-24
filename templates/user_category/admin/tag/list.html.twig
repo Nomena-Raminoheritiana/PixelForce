@@ -1,0 +1,119 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+    Administrateur - liste - tag
+{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-3">
+        <!-- Message alert -->
+        <div class="alert-message">
+            {% for label, messages in app.flashes %}
+                <div class="alert alert-{{label}} text-center">
+                    {% for message in messages %}
+                        {{message | raw}}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Formulaire de recherche -->
+        <div class="search-form">
+{#            {{form_start(searchForm)}}#}
+{#            <div class="row text-center">#}
+{#                <div class="col-12 text-end">#}
+{#                    {{form_row(searchForm.active)}}#}
+{#                </div>#}
+{#                <div class="col-12 col-sm-3 col-md-3">#}
+{#                    {{form_row(searchForm.prenom)}}#}
+{#                </div>#}
+{#                <div class="col-12 col-sm-6 col-md-3">#}
+{#                    {{form_row(searchForm.email)}}#}
+{#                </div>#}
+{#                <div class="col-12 col-sm-3 col-md-3">#}
+{#                    {{form_row(searchForm.telephone)}}#}
+{#                </div>#}
+{#                <div class="col-12 col-sm-4 col-md-3">#}
+{#                    {{form_row(searchForm.secteur)}}#}
+{#                </div>#}
+{#                <div class="col-6">#}
+{#                    {{form_row(searchForm.dateInscriptionMin)}}#}
+{#                </div>#}
+{#                <div class="col-6">#}
+{#                    {{form_row(searchForm.dateInscriptionMax)}}#}
+{#                </div>#}
+{#                <div class="col-12 col-sm-12 col-md-12 mt-3">#}
+{#                    <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>#}
+{#                </div>#}
+{#            </div>#}
+{#            {{form_end(searchForm)}}#}
+        </div>
+
+        <hr class="my-5">
+
+        <!-- Liste tags -->
+        <div class="row mb-3">
+            <div class="col-12  mt-2 mt-md-3">
+                <div class=" w-100 h-100 ps-3 py-3  bg-white border pe-3">
+                    <div class="row h-100">
+                        <div class="col-6">
+                            <h4 class="my-auto">Liste des tags</h4>
+                        </div>
+                        <div class="col-6 ">
+                            <a href="{{ path('admin_tag_add') }}" class="btn btn-primary btn-sm waves-effect waves-float waves-light fw-bolder d-flex float-end d-flex align-items-center"><i class="fa-solid fa-user-plus me-2"></i> Ajouter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover  sortable">
+                <thead>
+                <tr >
+                    <th scope="col">#</th>
+                    <th scope="col">Libellé</th>
+                    <th scope="col">Déscription</th>
+                    <th scope="col">Couleur</th>
+                    <th scope="col" class="table-th-notSortable">ACTION</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag.id }}</td>
+                        <td>{{ tag.libelle }}</td>
+                        <td>{{ tag.description }}</td>
+                        <td>
+                            <div class="caret rounded-3 w-75 bg-{{ tag.couleur }}"></div>
+                        </td>
+                        <td >
+                            <a href="{{ path('admin_tag_edit', {'id': tag.id}) }}" class="btn btn-success">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="post" action="{{path('admin_tag_delete', {id: tag.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer ce tag ?')">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tag.id) }}">
+                                <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun tag n'est trouvé</td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination d-flex justify-content-center">
+            {{ knp_pagination_render(tags)}}
+        </div>
+    </div>
+
+{% endblock %}
+
+
