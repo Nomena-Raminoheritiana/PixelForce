@@ -8,6 +8,7 @@ use App\Entity\Formation;
 use App\Entity\Media;
 use App\Form\FormationType;
 use App\Manager\EntityManager;
+use App\Repository\CategorieFormationRepository;
 use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
 use App\Repository\MediaRepository;
@@ -66,6 +67,10 @@ class CoachFormationController extends AbstractController
      * @var SecteurRepository
      */
     private $secteurRepository;
+    /**
+     * @var CategorieFormationRepository
+     */
+    private $repoCatFormation;
 
     public function __construct(FormationRepository $formationRepository,
                                 MediaRepository $mediaRepository,
@@ -76,7 +81,9 @@ class CoachFormationController extends AbstractController
                                 DirectoryManagement $directoryManagement,
                                 EntityManager $entityManager,
                                 SecteurRepository $secteurRepository,
-                                PaginatorInterface $paginator)
+                                PaginatorInterface $paginator,
+                                CategorieFormationRepository $repoCatFormation
+    )
    {
        $this->fileUploader = $fileUploader;
        $this->directoryManagement = $directoryManagement;
@@ -88,6 +95,8 @@ class CoachFormationController extends AbstractController
        $this->userRepository = $userRepository;
        $this->formationAgentRepository = $formationAgentRepository;
        $this->secteurRepository = $secteurRepository;
+       $this->repoCatFormation = $repoCatFormation;
+       
    }
 
     /**
@@ -118,7 +127,8 @@ class CoachFormationController extends AbstractController
            'formations' => $formations,
            'criteres' => $criteres,
            'agent' => $agent,
-           'secteur' => $secteur
+           'secteur' => $secteur,
+           'categories' => $this->repoCatFormation->findBy(['statut' => 1])
        ]);
    }
 

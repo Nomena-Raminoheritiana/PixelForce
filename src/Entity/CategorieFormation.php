@@ -17,6 +17,11 @@ class CategorieFormation
         -1 => 'supprimé'
     ];
 
+    // const BIENVENUE = 1;
+    // const OUTIL_PIXELFORCE = 2;
+    // const LISTE_DE_CONTACT = 3;
+    // const ADDITIONNEL = 4;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

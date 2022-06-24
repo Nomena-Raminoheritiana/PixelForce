@@ -119,7 +119,7 @@ async function listConnectionNames() {
         // Fetch first 10 files
         response = await gapi.client.people.people.connections.list({
             'resourceName': 'people/me',
-            'pageSize': 50,
+            'pageSize': 100,
             'personFields': 'names,phoneNumbers,emailAddresses,addresses',
             'sortOrder': 'FIRST_NAME_ASCENDING'
         });
@@ -215,7 +215,7 @@ $('#btn_export_mobile_excel').on('click', function(e){
             $('#spinner_loader').html('');
             that.attr('disabled', false)
             if(responseAjax.contacts === 'empty'){
-                $('#spinner_loader').html('Veuillez cocher au moin, un contat');
+                $('#spinner_loader').html('<span class="text-waring"> Veuillez cocher au moin, un contat </span>');
             }
             if (responseAjax.contacts === 'successfully') { 
                 exportToCsv(responseAjax.datas);

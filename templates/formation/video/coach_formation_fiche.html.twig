@@ -13,13 +13,16 @@
                 {{ form_row(form.description, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
                 {{ form_row(form.description_deblocage, {attr:{rows:10}, label_attr: {class:'fw-bold'}}) }}
                 {{ form_row(form.contenu, {attr:{rows:20}, label_attr: {class:'fw-bold'}}) }}
+                <h5 class="fw-bolder">Catégorie</h5>
+                {{ form_row(form.categorieFormation ) }}
                 <div class="bg-light-info text-dark p-4 border">
                     <div class="border-bottom border-2  border-bottom-black">
                         <strong>Informations</strong>
                     </div>
                     <div class="row mt-4">
                         <div class="col-12 col-md-6">
-                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'valide' }}
+                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'valide' }} <br>
+                            <strong>Catégorie</strong> : {{ formation.categorieFormation.nom  }}
                         </div>
                         <div class="col-12 col-md-6">
                             <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}

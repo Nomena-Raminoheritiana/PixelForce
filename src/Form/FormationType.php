@@ -2,13 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\CategorieFormation;
 use App\Entity\Formation;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class FormationType extends AbstractType
 {
@@ -35,6 +38,18 @@ class FormationType extends AbstractType
                 'label' => 'Disponible pour tous les agents'
             ])
             ->add('brouillon')
+            ->add('categorieFormation', EntityType::class, [
+                'placeholder' => 'CATEGORIE',
+                'required' => false,
+                'label' => false,
+                'class' => CategorieFormation::class,
+                'choice_label' => 'nom',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('c')
+                        ->where('c.statut = 1')
+                    ;
+                },
+            ])
         ;
     }
 

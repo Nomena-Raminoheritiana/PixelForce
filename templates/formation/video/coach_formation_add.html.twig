@@ -10,12 +10,13 @@
                 {{ form_row(form.description) }}
                 {{ form_row(form.description_deblocage) }}
                 {{ form_row(form.contenu) }}
+                {{ form_row(form.categorieFormation) }}
                 <div class="row">
                     <div class="col-12 col-md-6">
                         {{ form_row(form.brouillon) }}
                     </div>
                     <div class="col-12 col-md-6">
-                        {{ form_row(form.debloqueAgent) }}
+                        {{ form_row(form.debloqueAgent, {'attr' : {'checked' : true} }) }}
                     </div>
                 </div>
                 <div>

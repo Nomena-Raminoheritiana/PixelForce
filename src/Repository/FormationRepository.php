@@ -116,6 +116,15 @@ class FormationRepository extends ServiceEntityRepository
             $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
         }
 
+
+        if (isset($criteres['categorie'])) {
+            $queryBuilder
+                ->join('f.CategorieFormation', 'cf')
+                ->andwhere('cf.nom LIKE :nomCategorie')
+                ->setParameter('nomCategorie', '%'.$criteres['categorie'].'%')
+            ;           
+        }
+
       return $queryBuilder->getQuery();
 
     }
