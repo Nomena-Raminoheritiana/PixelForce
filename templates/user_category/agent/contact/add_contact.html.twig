@@ -42,20 +42,40 @@
 						</div>
 					<!-- Modal tags -->
 					<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">>
-						<div class="modal-dialog" role="document">
+						<div class="modal-dialog modal-lg" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="exampleModalLabel">Choix tags</h5>
 									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 								</div>
 								<div class="modal-body">
-									{% for tag in tags %}
-										<div>
-											<input type="checkbox" {{ tag.id in tags_selectionner ? 'checked' : '' }} name="tags[]" value="{{ tag.id }}" /> {{ tag.libelle }}
-										</div>
-									{% else %}
-										<p class="text-center">Pas de tags diponibles</p>
-									{% endfor %}
+									<div class="row">
+										{% for tag in tags %}
+											<div class="col-6">
+												<div class="border p-3">
+													<div class="row">
+														<div class="col-10"></div>
+														<div class="col-2"></div>
+													</div>
+													<div class="row">
+														<div class="col-10">
+															<h4>{{ tag.libelle|capitalize }}</h4>
+														</div>
+														<div class="col-2">
+															<div class="caret rounded-circle bg-{{ tag.couleur }}"></div>
+														</div>
+													</div>
+													<hr>
+													<p>{{ tag.description }}</p>
+													<input type="checkbox" {{ tag.id in tags_selectionner ? 'checked' : '' }} name="tags[]" value="{{ tag.id }}" />
+												</div>
+											</div>
+
+										{% else %}
+											<p class="text-center">Pas de tags diponibles</p>
+										{% endfor %}
+									</div>
+
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
