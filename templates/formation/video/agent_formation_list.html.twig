@@ -57,30 +57,24 @@
         </form>
 
         <div>
+            {% set currentCategorie = firstFormation.categorieFormation %}
             {% for key,formation in formations %}
-                {% set currentCategorie = firstFormation.categorieFormation %}
-
-                {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
-                    <div class="bg-white border p-4 mt-3">
-                        <h5>{{ formation.titre }} {% if formation.brouillon %}<small class="text-danger">[ brouillon ]</small>{% endif %}</h5>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                {{ formation.description }}
+                <div class="bg-white border p-4 mt-3">
+                    <h3>{{ formation.titre }} {% if formation.brouillon %}<small class="text-danger">[ brouillon ]</small>{% endif %}</h3>
+                    <span>[{{ formation.categorieFormation.nom|default('-') }}]</span>
+                    <div class="row mt-3">
+                        <div class="col-12  col-md-10">
+                            <h5>{{ formation.description }}</h5>
+                            {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
                                 <div class="alert alert-warning">
                                     Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
                                 </div>
-                            </div>
+                            {% endif %}
                         </div>
-                    </div>
-
-                {% else %}
-                    <div class="bg-white border p-4 mt-3">
-                        <h5>{{ formation.titre }} {% if formation.brouillon %}<small class="text-danger">[ brouillon ]</small>{% endif %}</h5>
-                        <div class="row mt-3">
-                            <div class="col-12  col-md-10">
-                                {{ formation.description }}
-                            </div>
-                            <div class="col-12 col-md-2 text-end">
+                        <div class="col-12 col-md-2 text-end">
+                            {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                
+                            {% else %}
                                 {% set formationAgentRelation = formationAgentRepository.findOneBy({agent:app.user.id, formation:formation}) %}
                                 {% set statut = formationAgentRelation ? formationAgentRelation.statut : constant('App\\Entity\\Formation::STATUT_BLOQUEE') %}
 
@@ -91,11 +85,11 @@
                                 {% elseif statut == constant('App\\Entity\\Formation::STATUT_TERMINER')%}
                                     <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Formation terminée</a>
                                 {% endif %}
-                            </div>
-
+                            {% endif %}
                         </div>
+
                     </div>
-                {% endif %}
+                </div>
             {% endfor %}
         </div>
         {# display navigation #}
