@@ -9,7 +9,7 @@ class AgentSecteurService
 {
     
     /**
-     * Permet de savoir sin un secteur est déjà attribué à un agent
+     * Permet de savoir si un secteur est déjà attribué à un agent
      * @return boolean
      */
     public function isNewSectorInArray($newSector, $myAllAgentSecteurs)

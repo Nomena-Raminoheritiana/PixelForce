@@ -40,7 +40,6 @@ class FormationType extends AbstractType
             ->add('brouillon')
             ->add('categorieFormation', EntityType::class, [
                 'placeholder' => 'CATEGORIE',
-                'required' => false,
                 'label' => false,
                 'class' => CategorieFormation::class,
                 'choice_label' => 'nom',

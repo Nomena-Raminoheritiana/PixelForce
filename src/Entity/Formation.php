@@ -82,6 +82,11 @@ class Formation
      */
     private $CategorieFormation;
 
+    /**
+     * @ORM\OneToOne(targetEntity=RFormationCategorie::class, mappedBy="formation", cascade={"persist", "remove"})
+     */
+    private $rFormationCategorie;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -276,6 +281,23 @@ class Formation
     public function setCategorieFormation(?CategorieFormation $CategorieFormation): self
     {
         $this->CategorieFormation = $CategorieFormation;
+
+        return $this;
+    }
+
+    public function getRFormationCategorie(): ?RFormationCategorie
+    {
+        return $this->rFormationCategorie;
+    }
+
+    public function setRFormationCategorie(RFormationCategorie $rFormationCategorie): self
+    {
+        // set the owning side of the relation if necessary
+        if ($rFormationCategorie->getFormation() !== $this) {
+            $rFormationCategorie->setFormation($this);
+        }
+
+        $this->rFormationCategorie = $rFormationCategorie;
 
         return $this;
     }

@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Formation;
 use App\Entity\Media;
+use App\Entity\RFormationCategorie;
 use App\Form\FormationType;
 use App\Manager\EntityManager;
 use App\Repository\CategorieFormationRepository;
@@ -164,6 +165,7 @@ class CoachFormationController extends AbstractController
    public function coach_formation_add(Request $request)
    {
         $formation = new Formation();
+        $relationFormationCategorie = new RFormationCategorie();
         $form = $this->createForm(FormationType::class, $formation);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
@@ -171,6 +173,13 @@ class CoachFormationController extends AbstractController
             $formation->setCoach($this->getUser());
             $formation->setVideoId($request->request->get('video_id'));
             $this->entityManager->save($formation);
+            
+            $relationFormationCategorie->setFormation($formation);
+            $idCatFormation = $_POST['formation']['categorieFormation'];
+            $catFormation = $this->repoCatFormation->find($idCatFormation);
+            $relationFormationCategorie->setCategorie($catFormation);
+            $this->entityManager->save($relationFormationCategorie);
+            
             $this->addMedia($request, $formation);
             $coachSecteurRelation = $this->getUser()->getCoachSecteurs();
             if($coachSecteurRelation->count() > 0) {
