@@ -17,10 +17,12 @@ class CategorieFormation
         -1 => 'supprimé'
     ];
 
-    // const BIENVENUE = 1;
-    // const OUTIL_PIXELFORCE = 2;
-    // const LISTE_DE_CONTACT = 3;
-    // const ADDITIONNEL = 4;
+    const ORDRE_BIENVENUE = 1;
+    const ORDRE_OUTIL_PIXELFORCE = 2;
+    const ORDRE_LISTE_DE_CONTACT = 3;
+    const ORDRE_ADDITIONNEL = 4;
+
+    const CONDITION_LISTE_DE_CONTACT = 100;
 
     /**
      * @ORM\Id
@@ -58,10 +60,22 @@ class CategorieFormation
      */
     private $formations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CategorieFormationAgent::class, mappedBy="categorieFormation")
+     */
+    private $categorieFormationAgents;
+
+    /**
+     * @ORM\OneToMany(targetEntity=RFormationCategorie::class, mappedBy="categorie")
+     */
+    private $rFormationCategories;
+
     public function __construct()
     {
         $this->formations = new ArrayCollection();
         $this->statut = 1;
+        $this->categorieFormationAgents = new ArrayCollection();
+        $this->rFormationCategories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -150,6 +164,66 @@ class CategorieFormation
     public function getStatutType(): string
     {
         return self::STATUT[$this->statut];
+    }
+
+    /**
+     * @return Collection<int, CategorieFormationAgent>
+     */
+    public function getCategorieFormationAgents(): Collection
+    {
+        return $this->categorieFormationAgents;
+    }
+
+    public function addCategorieFormationAgent(CategorieFormationAgent $categorieFormationAgent): self
+    {
+        if (!$this->categorieFormationAgents->contains($categorieFormationAgent)) {
+            $this->categorieFormationAgents[] = $categorieFormationAgent;
+            $categorieFormationAgent->setCategorieFormation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorieFormationAgent(CategorieFormationAgent $categorieFormationAgent): self
+    {
+        if ($this->categorieFormationAgents->removeElement($categorieFormationAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($categorieFormationAgent->getCategorieFormation() === $this) {
+                $categorieFormationAgent->setCategorieFormation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RFormationCategorie>
+     */
+    public function getRFormationCategories(): Collection
+    {
+        return $this->rFormationCategories;
+    }
+
+    public function addRFormationCategory(RFormationCategorie $rFormationCategory): self
+    {
+        if (!$this->rFormationCategories->contains($rFormationCategory)) {
+            $this->rFormationCategories[] = $rFormationCategory;
+            $rFormationCategory->setCategorie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRFormationCategory(RFormationCategorie $rFormationCategory): self
+    {
+        if ($this->rFormationCategories->removeElement($rFormationCategory)) {
+            // set the owning side to null (unless already changed)
+            if ($rFormationCategory->getCategorie() === $this) {
+                $rFormationCategory->setCategorie(null);
+            }
+        }
+
+        return $this;
     }
 
 }

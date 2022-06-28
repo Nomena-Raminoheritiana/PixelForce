@@ -162,9 +162,9 @@ class ContactRepository extends ServiceEntityRepository
 
         if (isset($_GET['ordre'])) {
             if ($_GET['ordre'] == 'ASC') {
-                $query = $query->orderBy('c.id', 'ASC');
+                $query = $query->orderBy('ci.lastname', 'ASC');
             }else {
-                $query = $query->orderBy('c.id', 'DESC');
+                $query = $query->orderBy('ci.lastname', 'DESC');
             }
         }
       

@@ -2,13 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\CategorieFormation;
 use App\Entity\Formation;
 use App\Entity\Secteur;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query\Expr;
 /**
  * @method Formation|null find($id, $lockMode = null, $lockVersion = null)
  * @method Formation|null findOneBy(array $criteria, array $orderBy = null)
@@ -17,9 +18,12 @@ use Doctrine\ORM\Query\Expr;
  */
 class FormationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    protected $repoFormationAgent;
+
+    public function __construct(ManagerRegistry $registry, FormationAgentRepository $repoFormationAgent)
     {
         parent::__construct($registry, Formation::class);
+        $this->repoFormationAgent = $repoFormationAgent;
     }
 
     /**
@@ -162,6 +166,15 @@ class FormationRepository extends ServiceEntityRepository
         if(!empty($criteres['trie'])) {
             $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
         }
+
+        if (isset($criteres['categorie'])) {
+            $queryBuilder
+                ->join('f.CategorieFormation', 'cf')
+                ->andwhere('cf.nom LIKE :nomCategorie')
+                ->setParameter('nomCategorie', '%'.$criteres['categorie'].'%')
+            ;           
+        }
+        
 //        dd((string) $queryBuilder);
 
         return $queryBuilder->getQuery();
@@ -174,5 +187,49 @@ class FormationRepository extends ServiceEntityRepository
             ->andWhere('f.brouillon=false')
             ->setParameter('secteur',$secteur->getId())
             ->getQuery();
+    }
+
+    /**
+     * Permet de recupérer les formations de l'agent en fonction du secteur et de la catégorie
+     *
+     * @param Secteur $secteur
+     * @param CategorieFormation $categorie
+     * @param boolean $excludeFormationDone
+     */
+    public function findFormationsAgentBySecteurAndCategorie(Secteur $secteur, User $agent, CategorieFormation $categorie = null, $excludeFormationDone = false)
+    {
+        $queryBuilder = $this->createQueryBuilder('f');
+        
+        $queryBuilder
+            ->where('f.secteur=:secteur')
+            ->andWhere('f.brouillon=false')
+            ->setParameter('secteur',$secteur->getId())
+            ->join('f.CategorieFormation', 'cf')
+            ->join('f.formationAgents', 'fa')
+            ->andWhere('fa.agent = :agent')
+            ->setParameter('agent', $agent->getId())
+        ;
+            
+        if ($categorie) {
+            $queryBuilder
+                ->andWhere('cf.nom = :category')
+                ->setParameter('category', $categorie->getNom())
+            ;
+        }
+
+        
+        // // Lorsqu'on met $excludeFormationDone à true, on exclut les formations terminées
+        if ($excludeFormationDone === true) {
+            $statutBloquee = Formation::STATUT_BLOQUEE;
+            $statutTerminee = Formation::STATUT_TERMINER;
+            $queryBuilder
+                ->andWhere('fa.statut NOT LIKE :statutBloquee')
+                ->andWhere('fa.statut NOT LIKE :statutTerminee')
+                ->setParameter('statutBloquee', '%'.$statutBloquee.'%' )
+                ->setParameter('statutTerminee', '%'.$statutTerminee.'%' );
+        }
+
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

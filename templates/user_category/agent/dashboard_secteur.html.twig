@@ -11,6 +11,10 @@
 
 {% block body %}
     <div class="container">
+        {% if formations != null %}
+            {% set currentCategorie = firstFormation.categorieFormation %}
+        {% endif %}
+        
         <section id="dashboard-ecommerce">
             <div class="row match-height">
                 <!-- Medal Card -->
@@ -98,58 +102,34 @@
                 </div>
                 <!--/ Statistics Card -->
             </div>
-    
+
             <div class="row match-height">
-                <!-- Company Table Card -->
                 <div class="col-lg-8 col-12">
                     <div class="card card-company-table">
                         <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Formation</th>
-                                            <th>Coach</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for formation in formations %}
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar rounded">
-                                                            <div class="avatar-content">
-                                                                <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}"><img src="{{asset('assets/vuexy/images/icons/toolbox.svg')}}" alt="Toolbar svg" /></a>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <div class="fw-bolder"> <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="text-black">{{ formation.titre }}</a> </div>
-                                                            <div class="font-small-2 text-muted">{{ formation.secteur.nom }}</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar bg-light-primary me-1">
-                                                            <div class="avatar-content">
-                                                                <i data-feather="monitor" class="font-medium-3"></i>
-                                                            </div>
-                                                        </div>
-                                                        <span>{{ formation.coach.prenom }}</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
-                                <a href="{{ path('agent_formation_list') }}" class="btn btn-primary">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
-                            </div>
+                            {% if formations == null %}
+                                <div class="alert alert-primary text-center m-5">
+                                    Il n'y a plus de formation à terminer
+                                </div>
+                            {% else %}
+                                {% if currentCategorie and currentCategorie.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                    <div class="alert alert-warning m-5">
+                                        Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
+                                    </div>
+                                {% else %}
+                                    <h3 class="fw-bolder text-center mt-2">{{ firstFormation.titre}} </h3>
+                                    <div class="border d-flex bg-white">
+                                        <iframe src="https://player.vimeo.com/video/{{ firstFormation.videoId }}" width="700" height="400" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                    </div>
+                                    <div class="text-center m-2">
+                                        <a href="{{ path('agent_formation_terminer', {id:firstFormation.id, path: 'fromDashboard'}) }}" class="btn btn-success mt-4"><i class="fa fa-check"></i> J'ai terminé cette formation</a>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            
                         </div>
                     </div>
                 </div>
-                <!--/ Company Table Card -->
     
                 <!-- Developer Meetup Card -->
                 <div class="col-lg-4 col-md-6 col-12">
@@ -212,50 +192,76 @@
                     </div>
                 </div>
                 <!--/ Developer Meetup Card -->
-    
-                <!-- Browser States Card -->
+      
+                <!-- Liste des 5 premières formations-->
                 <div class="col-lg-8 col-12">
                     <div class="card card-company-table">
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"></th>
-                                            <th scope="col">Prénoms</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Téléphone</th>
-                                            <th scope="col">Adresse</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% if contacts|length < 1 %}
-                                            <div class="d-flex justify-content-center my-2">
-                                                <a href="{{ path('agent_contact_info_add') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter un contact</a>
-                                            </div>
-                                        {% else %}
-                                            {% for contact in contacts %}
-                                            {% set information = contact.information %}
+                        {% if formations == null %}
+                            <div class="alert alert-primary text-center m-5">
+                                Il n'y a plus de formation à terminer
+                            </div>
+                        {% else %}
+                            <!-- on vérifie si les formations sont de catégorie "Liste contact", et que la liste des contats dépasse de 100 -->
+                            {% if  currentCategorie and currentCategorie.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                <div class="alert alert-warning m-5">
+                                    Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
+                                </div>
+                            {% else %}
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
                                                 <tr>
-                                                    <td><i class="fa-solid fa-address-card"></i></td>
-                                                    <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black"> {{ information.lastname }}</a></td>
-                                                    <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black" > {{ information.email }}</a></td>
-                                                    <td>{{ information.phone }}</td>
-                                                    <td>{{ information.address }}</td>
+                                                    <th>Formation</th>
+                                                    <th>Coach</th>
                                                 </tr>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {% if contacts|length > 0 %}
-                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
-                                <a href="{{ path('agent_contact_list') }}" class="btn btn-primary float-bottom">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
-                            </div>
+                                            </thead>
+                                            <tbody>
+                                                {% for formation in formations %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="avatar rounded">
+                                                                    <div class="avatar-content">
+                                                                        <a href="{{ path('agent_formation_fiche', {id: formation.id}) }}"><img src="{{asset('assets/vuexy/images/icons/toolbox.svg')}}" alt="Toolbar svg" /></a>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="fw-bolder"> <a href="{{ path('agent_formation_fiche', {id: formation.id}) }}" class="text-black">{{ formation.titre }}</a> </div>
+                                                                    
+                                                                    {% set rFormationCategorie = repoRelationFormationCategorie.findOneBy({'formation' : formation}) %}
+                                                                    
+                                                                    {% if rFormationCategorie %}
+                                                                        <div class="font-small-2 text-muted">{{ rFormationCategorie.categorie.nom }}</div>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="avatar bg-light-primary me-1">
+                                                                    <div class="avatar-content">
+                                                                        <i data-feather="monitor" class="font-medium-3"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <span>{{ formation.coach.prenom }}</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                                        <a href="{{ path('agent_formation_list') }}" class="btn btn-primary">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
+                                    </div>
+                                </div>
                             {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
+                <!--/ Formations -->
+
                 <div class="col-lg-4 col-md-6 col-12">
                     <div class="card card-browser-states">
                         <div class="card-header">
@@ -323,6 +329,50 @@
                                     <div id="browser-state-chart-danger"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Browser States Card -->
+                <div class="col-lg-8 col-12">
+                    <div class="card card-company-table" style="min-height: 300px;">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Prénoms</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Téléphone</th>
+                                            <th scope="col">Adresse</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if contacts|length < 1 %}
+                                            <div class="d-flex justify-content-center my-2">
+                                                <a href="{{ path('agent_contact_info_add') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ajouter un contact</a>
+                                            </div>
+                                        {% else %}
+                                            {% for contact in contacts %}
+                                            {% set information = contact.information %}
+                                                <tr>
+                                                    <td><i class="fa-solid fa-address-card"></i></td>
+                                                    <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black"> {{ information.lastname }}</a></td>
+                                                    <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black" > {{ information.email }}</a></td>
+                                                    <td>{{ information.phone }}</td>
+                                                    <td>{{ information.address }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% if contacts|length > 0 %}
+                            <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3">
+                                <a href="{{ path('agent_contact_list') }}" class="btn btn-primary float-bottom">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

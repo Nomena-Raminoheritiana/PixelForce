@@ -216,6 +216,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $calendarEvents;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CategorieFormationAgent::class, mappedBy="agent", orphanRemoval=true)
+     */
+    private $categorieFormationAgents;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -232,6 +237,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->coachSecteurs = new ArrayCollection();
         $this->agentSecteurs = new ArrayCollection();
         $this->calendarEvents = new ArrayCollection();
+        $this->categorieFormationAgents = new ArrayCollection();
 
     }
 
@@ -1002,6 +1008,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLienCalendly(?string $lienCalendly): self
     {
         $this->lienCalendly = $lienCalendly;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CategorieFormationAgent>
+     */
+    public function getCategorieFormationAgents(): Collection
+    {
+        return $this->categorieFormationAgents;
+    }
+
+    public function addCategorieFormationAgent(CategorieFormationAgent $categorieFormationAgent): self
+    {
+        if (!$this->categorieFormationAgents->contains($categorieFormationAgent)) {
+            $this->categorieFormationAgents[] = $categorieFormationAgent;
+            $categorieFormationAgent->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorieFormationAgent(CategorieFormationAgent $categorieFormationAgent): self
+    {
+        if ($this->categorieFormationAgents->removeElement($categorieFormationAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($categorieFormationAgent->getAgent() === $this) {
+                $categorieFormationAgent->setAgent(null);
+            }
+        }
 
         return $this;
     }

@@ -4,12 +4,18 @@
 namespace App\Controller;
 
 use App\Entity\AgentSecteur;
+use App\Entity\CategorieFormation;
 use App\Entity\Secteur;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\CategorieFormationRepository;
 use App\Repository\ContactRepository;
+use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
+use App\Repository\RFormationCategorieRepository;
 use App\Repository\SecteurRepository;
 use App\Services\AgentSecteurService;
+use App\Services\CategorieFormationAgentService;
+use App\Services\FormationAgentService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,16 +28,23 @@ class AgentAccountController extends AbstractController
     protected $repoAgentSecteur;
     protected $repoFormation;
     protected $session;
-
     protected $repoContact;
+    protected $repoFormationAgent;
+    protected $repoCatFormation;
+    protected $repoRelationFormationCategorie;
+    protected $categorieFormationAgentService;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact)
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
         $this->repoFormation = $repoFormation;
         $this->session = $session;
         $this->repoContact = $repoContact;
+        $this->repoFormationAgent = $repoFormationAgent;
+        $this->repoCatFormation = $repoCatFormation;
+        $this->repoRelationFormationCategorie = $repoRelationFormationCategorie;
+        $this->categorieFormationAgentService = $categorieFormationAgentService;
     }
 
     /**
@@ -70,18 +83,23 @@ class AgentAccountController extends AbstractController
      */
     public function agent_dashboard_secteur( Request $request, PaginatorInterface $paginator, Secteur $secteur)
     {
+      
+        $agent = $this->getUser();
+        $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
+      
+        $formations = $this->repoFormation->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
+       
+        if (count($formations) > 0) {
+            $firstFormation = $formations[0];
+        }else{
+            $firstFormation = null;
+        }
+        
         // On vérifie d'abord si la session avec la clé 'secteurId' est générée
         $sessionSecteurId =  $this->session->get('secteurId');
         if (!$sessionSecteurId) {
             return $this->redirectToRoute('agent_home');
         }
-
-        $formations = $this->repoFormation->AgentfindBySecteur($secteur);
-        $formations = $paginator->paginate(
-            $formations,
-            $request->query->getInt('page', 1),
-            5
-        );
 
         $contacts = $this->repoContact->findBy(['secteur' => $secteur]);
         $contacts = $paginator->paginate(
@@ -89,11 +107,16 @@ class AgentAccountController extends AbstractController
             $request->query->getInt('page', 1),
             5
         );
-        
+
+
         return $this->render('user_category/agent/dashboard_secteur.html.twig', [
             'secteur' => $secteur,
             'formations' => $formations,
-            'contacts' => $contacts
+            'firstFormation' => $firstFormation,
+            'contacts' => $contacts,
+            'CategorieFormation' => CategorieFormation::class,
+            'nbrAllMyContacts' => count($this->repoContact->findAll()),
+            'repoRelationFormationCategorie' => $this->repoRelationFormationCategorie
         ]);
     }
 }

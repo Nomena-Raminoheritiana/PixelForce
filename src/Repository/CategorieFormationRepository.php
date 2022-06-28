@@ -71,7 +71,25 @@ class CategorieFormationRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
+    
+    
+    public function getNextCategory($categoryId)
+    {
+        $qb = $this->createQueryBuilder('cf')
+            ->select('cf')
+    
+            ->where('cf.id > :categoryId')
+            ->setParameter(':categoryId', $categoryId)
+    
+            ->orderBy('cf.id', 'ASC')
+    
+            ->setFirstResult(0)
+            ->setMaxResults(1)
+        ;
+    
+        $result = $qb->getQuery()->getOneOrNullResult();
+        return $result;
+    }
 
 //    /**
 //     * @return CategorieFormation[] Returns an array of CategorieFormation objects
