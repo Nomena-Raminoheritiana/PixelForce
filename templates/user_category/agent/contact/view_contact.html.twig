@@ -76,6 +76,11 @@
 											<span>{{ contact.information.typeLogement ? contact.information.typeLogement.nom : 'pas d\'information disponible' }}</span>
 										</li>
 									</ul>
+									{% if is_granted('ROLE_AGENT') %}
+										<div class="text-center">
+											<a href="{{ path('agent_contact_info_edit', {id:contact.information.id}) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Modifier</a>
+										</div>
+									{% endif %}
 								</div>
 							</div>
 						</div>
