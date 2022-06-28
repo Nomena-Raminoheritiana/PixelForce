@@ -84,6 +84,7 @@ class CategorieFormationAgentService
             $oldCategory = end($categories);
             $formations = $this->repoFormation->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $oldCategory, true);
 
+            // dd($formations, $oldCategory);
             // Lorsque il n'y a plus de formations dans l'ancien catégorie, on traite la catégorie suivante
             if (empty($formations)) {
                 $currentCategory = $this->repoCategorieFomation->getNextCategory($oldCategory->getId());

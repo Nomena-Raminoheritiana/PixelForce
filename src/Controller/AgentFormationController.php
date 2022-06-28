@@ -87,7 +87,7 @@ class AgentFormationController extends AbstractController
         $agent = $this->getUser();
         $secteur_id = $session->get('secteurId');
         $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
-        
+        $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
         
         if($secteur) {
                         // dd($request->query->get('q'));
@@ -95,8 +95,7 @@ class AgentFormationController extends AbstractController
                 $formations = $this->formationRepository->searchForAgent($criteres, $secteur);
             } else {
                 // $formations = $secteur ? $this->formationRepository->AgentfindBySecteur($secteur) : [];
-                $formations = $secteur ? $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, null, false) : [];
-
+                $formations = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
             }
 
             $formations = $this->paginator->paginate(
@@ -105,18 +104,15 @@ class AgentFormationController extends AbstractController
                 5
             );
 
-            
             $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
             $formationsInCategory = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
             if (count($formationsInCategory) > 0) {
                 $firstFormation = $formationsInCategory[0];
             }else{
                 $firstFormation = null;
-            }
-            $contacts = $this->repoContact->findBy(['secteur' => $secteur]);
-            
+            }            
 
-
+            // dd($formationsInCategory);
             return $this->render('formation/video/agent_formation_list.html.twig', [
                 'formations' => $formations,
                 'criteres' => $criteres,
@@ -171,9 +167,9 @@ class AgentFormationController extends AbstractController
         }
 
         $this->mailerService->sendMailAfterDoneFormation($agent, $coach, $formation);
-        $this->addFlash('success', 'Vous venez de terminer la formation : '.$formation->getTitre());
+        $this->addFlash('success', '<h2 class="text-secondary text-center"> 🎉 Félicitations! Vous venez de terminer la formation : '.$formation->getTitre().' 🎉</h2>');
         
-        if ($_GET['path'] === 'fromDashboard') {
+        if (isset($_GET['path'] ) and $_GET['path'] === 'fromDashboard') {
             // On redirige l'utilisateur vers le dashbord lorsqu'il a cliquer le bouton 'J'ai terminé la formation' depuis le dashboard
             $secteur_id = $this->sessionInterface->get('secteurId');
             return $this->redirectToRoute('agent_dashboard_secteur', ['id' => $secteur_id]);
