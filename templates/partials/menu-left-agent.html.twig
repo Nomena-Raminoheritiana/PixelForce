@@ -6,7 +6,7 @@
                     <a class="d-flex align-items-center" {% if agentSecteur and agentSecteur.statut == true %}href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id})}}"{% endif %}  ><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">{{ secteur.nom }}</span></a>
                 </li>
         {% endfor %}
-    {% endif %}
+    {% endif %}bra
 {% else %}
     {% if app.session.get('secteurId') %}
         <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('agent_dashboard_secteur', {id:app.session.get('secteurId')}) }}"><i class="fa fa-dashboard"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Tableau de bord</span></a></li>

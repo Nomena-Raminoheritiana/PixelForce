@@ -59,8 +59,28 @@
 										<li class="mb-75">
 											<span class="fw-bolder me-25">Adresse:</span>
 											<span>{{ contact.information.address }}</span>
+											<ul>
+												<li><span class="text-decoration-underline">rue :</span> {{ contact.information.rue }} {{ contact.information.numero }}</li>
+												<li>
+													<span class="text-decoration-underline me-25">Code postal:</span>
+													<span>{{ contact.information.codePostal }}</span>
+												</li>
+												<li>
+													<span class="text-decoration-underline me-25">Ville:</span>
+													<span>{{ contact.information.ville }}</span>
+												</li>
+											</ul>
+										</li>
+										<li class="mb-75">
+											<span class="fw-bolder me-25">Type de logement:</span>
+											<span>{{ contact.information.typeLogement ? contact.information.typeLogement.nom : 'pas d\'information disponible' }}</span>
 										</li>
 									</ul>
+									{% if is_granted('ROLE_AGENT') %}
+										<div class="text-center">
+											<a href="{{ path('agent_contact_info_edit', {id:contact.information.id}) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Modifier</a>
+										</div>
+									{% endif %}
 								</div>
 							</div>
 						</div>
@@ -72,12 +92,30 @@
 						<p><span class="fw-bolder">Prénom</span>: {{ info.lastname }}</p>
 						<p><span class="fw-bolder">Email</span>:  {{ info.email }}</p>
 						<p><span class="fw-bolder">Téléphone</span>:  {{ info.phone }}</p> #}
+
+						<h3 class="text-primary">Tags</h3>
+						<div>
+							{% for tag in tags %}
+								<div class="row px-3 mt-2">
+									<div class="col-2 bg-white py-2 border border-end-0">
+										<div class="caret rounded-circle bg-{{ tag.couleur }}"></div>
+									</div>
+									<div class="col-10 bg-white border border-start-0 py-2">
+										{{ tag.libelle|capitalize }}
+									</div>
+								</div>
+							{% else %}
+								<div class="bg-white border p-2 text-center">
+									Aucun tag disponible
+								</div>
+							{% endfor %}
+						</div>
 					</div>
 					<div class="col-8">
 						<h3 class="text-primary">Note</h3>
 						{{ form_start(formNote) }}
 						{{ form_row(formNote.note) }}
-						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>
+{#						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>#}
 						{{ form_end(formNote) }}
 					</div>
 				</div>

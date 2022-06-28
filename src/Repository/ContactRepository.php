@@ -28,7 +28,7 @@ class ContactRepository extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(Contact $entity, bool $flush = true): void
+    public function add(Contact &$entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
         if ($flush) {
@@ -152,6 +152,12 @@ class ContactRepository extends ServiceEntityRepository
             $query = $query
                 ->andwhere('c.created_at <= :dateInscriptionMax')
                 ->setParameter('dateInscriptionMax', $search->getDateInscriptionMax());
+        }
+
+        if ($search->getTag()) {
+            $query = $query->join('c.tags','tgs')
+                            ->andWhere('tgs = :tag')
+                ->setParameter('tag', $search->getTag());
         }
 
         if (isset($_GET['ordre'])) {

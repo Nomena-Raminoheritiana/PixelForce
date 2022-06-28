@@ -43,12 +43,15 @@
                 <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.adresse)}}
                 </div>
-                <div class="col-12 col-sm-3 col-md-3">
+                <div class="col-12 col-sm-1 col-md-1">
                     <select class="form-select" name="ordre">
                         <option value="ASC"selected>Ordre</option>
                         <option value="ASC">ASC</option>
                         <option value="DESC">DESC</option>
                     </select>
+                </div>
+                <div class=" col-12 col-sm-2 col-md-2">
+                    {{form_row(searchForm.tag)}}
                 </div>
                 <div class="col-6">
                     <label for="dateInscriptionMin" class="form-label">Date d'enregistrement à partir de</label>
@@ -88,6 +91,7 @@
 						<th scope="col">Email</th>
 						<th scope="col">Téléphone</th>
 						<th scope="col">Adresse</th>
+						<th scope="col">Tags</th>
 						<th scope="col">ACTION</th>
 					</tr>
 				</thead>
@@ -99,6 +103,13 @@
                             <td>{{ information.email }}</td>
                             <td>{{ information.phone }}</td>
                             <td>{{ information.address }}</td>
+                            <td>
+                                {% set tags = information.contact.tags.toArray %}
+                                {% for tag in tags %}
+                                    <div class="caret mb-2 rounded-3 w-100 bg-{{ tag.couleur }}"></div>
+                                {% endfor %}
+
+                            </td>
                             <td >
                                 <a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>

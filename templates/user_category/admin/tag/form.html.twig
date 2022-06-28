@@ -1,0 +1,34 @@
+{% extends 'base_admin.html.twig' %}
+{% block title %}
+   tag - formulaire
+{% endblock %}
+{% block body %}
+    <div class="container my-5">
+        <div class="content-body-form">
+            <a href="{{ path('admin_tag_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+            <h1 class="text-center fw-bold">{{ app.request.attributes.get('_route') == 'admin_tag_add' ? 'Ajouter un tag' : 'Modifier le tag' }}</h1>
+            {{ form_start(form) }}
+                {{ form_row(form.libelle) }}
+                {{ form_row(form.description) }}
+                <div class="d-none">{{ form_row(form.couleur) }}</div>
+                {% set couleursValue = ['primary','success','info','danger','secondary','warning'] %}
+                <p>Choisissez la couleur</p>
+                <div class="row">
+                    {% for key,couleur in couleursValue %}
+                        <div class="col-12 col-md-2">
+                            <div class="caret-lg tag-lg bg-{{ couleur }}" data-value="{{ couleur }}"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('tag')}}
+{% endblock %}

@@ -15,6 +15,7 @@ use App\Manager\EntityManager;
 use App\Repository\ContactInformationRepository;
 use App\Repository\ContactRepository;
 use App\Repository\SecteurRepository;
+use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Services\ContactService;
 use App\Services\ExcelService;
@@ -42,8 +43,12 @@ class AgentContactController extends AbstractController
     protected $session;
     protected $repoSecteur;
     protected $entityManager;
+    /**
+     * @var TagRepository
+     */
+    private $tagRepository;
 
-    public function __construct(UserRepository $repoUser, ContactRepository $repoContact, ContactInformationRepository $repoContactInfo, SessionInterface $session, SecteurRepository $repoSecteur, EntityManager $entityManager)
+    public function __construct(TagRepository $tagRepository,UserRepository $repoUser, ContactRepository $repoContact, ContactInformationRepository $repoContactInfo, SessionInterface $session, SecteurRepository $repoSecteur, EntityManager $entityManager)
     {
         $this->repoUser = $repoUser;
         $this->repoContact = $repoContact;
@@ -51,6 +56,7 @@ class AgentContactController extends AbstractController
         $this->session = $session;
         $this->repoSecteur = $repoSecteur;
         $this->entityManager = $entityManager;
+        $this->tagRepository = $tagRepository;
     }
 
     /**
@@ -114,10 +120,12 @@ class AgentContactController extends AbstractController
 
         }
 
+        $tags = $contact->getTags()->toArray();
 
         return $this->render('user_category/agent/contact/view_contact.html.twig', [
             'contact' => $contact,
-            'formNote' => $formNote->createView()
+            'formNote' => $formNote->createView(),
+            'tags' => $tags
         ]);
     }
 
@@ -280,7 +288,6 @@ class AgentContactController extends AbstractController
         $contact = new Contact();
         $contactInfo = new ContactInformation();
         $formContact = $this->createForm(ContactInformationType::class, $contactInfo);
-       
         $formContact->handleRequest($request);
         if ($formContact->isSubmitted() && $formContact->isValid()) {
             $secteurId = $this->session->get('secteurId');
@@ -294,16 +301,29 @@ class AgentContactController extends AbstractController
             $contact->setAgent($this->getUser());
             $contact->setStatus(0);
             $contact->setSecteur($secteur);
+            if(isset($request->request->get('contact_information')['note'])) {
+                $contact->setNote($request->request->get('contact_information')['note']);
+            }
             $this->repoContact->add($contact);
+            $tags_id = $request->request->get('tags');
+            foreach($tags_id = $tags_id ?? [] as $tag_id) {
+                $tag = $this->tagRepository->findOneBy(['id' => $tag_id]);
+                $contact->addTag($tag);
+            }
+            $this->entityManager->save($contact);
+
 
             $this->addFlash('success', "Ajout du client avec succès");
             return $this->redirectToRoute('agent_contact_list');    
         }
 
+        $tags = $this->tagRepository->findAll();
         return $this->render('user_category/agent/contact/add_contact.html.twig', [
             'formContact' => $formContact->createView(),
             'button' => 'Enregistrer',
-            'btn_class' =>  'success'
+            'btn_class' =>  'success',
+            'tags' => $tags,
+            'tags_selectionner' => []
         ]);    
     }
 
@@ -314,21 +334,36 @@ class AgentContactController extends AbstractController
     public function agent_contact_info_edit(Request $request, ContactInformation $contactInformation)
     {
         $formContact = $this->createForm(ContactInformationType::class, $contactInformation);
-       
+        $contact = $contactInformation->getContact();
         $formContact->handleRequest($request);
         if ($formContact->isSubmitted() && $formContact->isValid()) {
-
             $this->repoContactInfo->add($contactInformation);
+            $tags_id = $request->request->get('tags');
+            $contact->clearTags();
+            foreach($tags_id = $tags_id ?? [] as $tag_id) {
+                $tag = $this->tagRepository->findOneBy(['id' => $tag_id]);
+                $contact->addTag($tag);
+            }
+            if(isset($request->request->get('contact_information')['note'])) {
+                $contact->setNote($request->request->get('contact_information')['note']);
+            }
+            $this->entityManager->save($contact);
 
             $this->addFlash('success', "Modification du client avec succès");
             return $this->redirectToRoute('agent_contact_list');    
         }
 
+        $tags = $this->tagRepository->findAll();
+        $tags_selectionner = $contact->getTagIds();
+
         return $this->render('user_category/agent/contact/add_contact.html.twig', [
             'formContact' => $formContact->createView(),
             'button' => 'Modifier',
             'btn_class' =>  'success',
-            'label' => 'Modification'
+            'label' => 'Modification',
+            'tags' => $tags,
+            'tags_selectionner' => $tags_selectionner,
+            'contact' => $contact
         ]);    
     }
 

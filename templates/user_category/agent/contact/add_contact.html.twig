@@ -30,11 +30,41 @@
 						{{ form_row(formContact.typeLogement) }}
 						{{ form_row(formContact.compositionFoyer) }}
 						{{ form_row(formContact.nbrPersonne) }}
-						{{ form_row(formContact.commentaire) }}
+						{{ form_row(formContact.note) }}
+						<div>
+							<div class="form-label mb-2">Choisir le ou les tags</div>
+							<div class="row">
+								{% for tag in tags %}
+									<div class="col-3 mb-2">
+										<div class="border p-3">
+											<div class="row">
+												<div class="col-10"></div>
+												<div class="col-2"></div>
+											</div>
+											<div class="row">
+												<div class="col-10">
+													<h4>{{ tag.libelle|capitalize }}</h4>
+												</div>
+												<div class="col-2">
+													<div class="caret rounded-circle bg-{{ tag.couleur }}"></div>
+												</div>
+											</div>
+											<hr>
+											<p>{{ tag.description }}</p>
+											<input type="checkbox" {{ tag.id in tags_selectionner ? 'checked' : '' }} name="tags[]" value="{{ tag.id }}" />
+										</div>
+									</div>
+
+								{% else %}
+									<p class="text-center">Pas de tags diponibles</p>
+								{% endfor %}
+							</div>
+						</div>
 					
 						<div class="row">
-							<div class="col-md-12 text-end"><button class="btn btn-{{btn_class}}" style="margin-bottom: 81px;">{{ button|default('Suivant') }}</button></div>
+							<div class="col-md-12 text-end"><button type="submit" class="btn btn-{{btn_class}}" style="margin-bottom: 81px;">{{ button|default('Suivant') }}</button></div>
 						</div>
+
 					{{ form_end(formContact) }}
 				</div>
 			{% else %}

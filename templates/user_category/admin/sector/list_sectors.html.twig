@@ -20,6 +20,18 @@
                 </div>
             {% endfor %}
         </div>
+        {{ form_start(sectorSearchForm) }}
+        <div class="row">
+            <div class="col-12 col-md-3">{{ form_row(sectorSearchForm.nom) }}</div>
+            <div class="col-12 col-md-3">{{ form_row(sectorSearchForm.description) }}</div>
+            <div class="col-12 col-md-3">{{ form_row(sectorSearchForm.etat) }}</div>
+            <div class="col-12 col-md-3">
+                <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
+            </div>
+        </div>
+        {{ form_end(sectorSearchForm) }}
+
+        <hr>
 
         <!-- Liste secteurs -->
         <div class="row mb-3">
@@ -79,6 +91,9 @@
 
 				</tbody>
 			</table>
+            <div class="pagination d-flex justify-content-center">
+                {{ knp_pagination_render(sectors)}}
+            </div>
 		</div>
     </div>
 {% endblock %}

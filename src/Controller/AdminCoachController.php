@@ -60,7 +60,7 @@ class AdminCoachController extends AbstractController
     public function admin_coach_list(Request $request, PaginatorInterface $paginator)
     {
         $search = new UserSearch();
-        $searchForm = $this->createForm(UserSearchType::class, $search);
+        $searchForm = $this->createForm(UserSearchType::class, $search)->remove('tag');
         $searchForm->handleRequest($request);
         
         $coachs = $paginator->paginate(

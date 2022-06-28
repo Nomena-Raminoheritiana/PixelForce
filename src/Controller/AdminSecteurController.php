@@ -4,8 +4,10 @@
 namespace App\Controller;
 
 use App\Entity\CoachSecteur;
+use App\Entity\SearchEntity\SecteurSearch;
 use App\Entity\Secteur;
 use App\Entity\User;
+use App\Form\SecteurSearchType;
 use App\Form\SecteurType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
@@ -49,12 +51,20 @@ class AdminSecteurController extends AbstractController
      * @Route("/admin/secteur/liste", name="admin_sector_list")
      */
     public function admin_sector_list(Request $request, PaginatorInterface $paginator)
-    {        
-        $sectors = $this->repoSecteur->findAll();
+    {
+        $secteurSearch = new SecteurSearch();
+        $sectorFormSearch = $this->createForm(SecteurSearchType::class, $secteurSearch);
+        $sectorFormSearch->handleRequest($request);
+        $sectors = $paginator->paginate(
+            $this->repoSecteur->filter($secteurSearch),
+            $request->query->getInt('page', 1),
+            20
+        );
 
         return $this->render('user_category/admin/sector/list_sectors.html.twig', [
             'sectors' => $sectors,
-            'repoCoachSecteur' => $this->repoCoachSecteur
+            'repoCoachSecteur' => $this->repoCoachSecteur,
+            'sectorSearchForm' => $sectorFormSearch->createView()
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\Secteur;
+use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -68,6 +69,13 @@ class UserSearchType extends AbstractType
                     'Activé' => 1,
                     'Banni' => -1
                 ]
+            ])
+
+            ->add('tag', EntityType::class, [
+                'class' => Tag::class,
+                'required' => false,
+                'label' => false,
+                'choice_label' => 'libelle'
             ])
         ;
     }

@@ -64,10 +64,16 @@ class Contact
      */
     private $note;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Tag::class, mappedBy="contacts", fetch="EAGER")
+     */
+    private $tags;
+
     public function __construct()
     {
         $this->client = new ArrayCollection();
         $this->created_at = new \DateTime();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,6 +179,50 @@ class Contact
     public function setNote(?string $note): self
     {
         $this->note = $note;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function getTagIds(): array
+    {
+        $ids = [];
+        foreach($this->tags->toArray() as $tag) {
+            array_push($ids, $tag->getId());
+        }
+        return $ids;
+    }
+
+    public function clearTags()
+    {
+        foreach($this->tags->toArray() as $tag) {
+            $this->removeTag($tag);
+        }
+        return $this;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+            $tag->addContact($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeContact($this);
+        }
 
         return $this;
     }

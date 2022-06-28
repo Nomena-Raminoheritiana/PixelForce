@@ -159,8 +159,20 @@ a{
 
 /** caret **/
 .caret {
-    width:30px !important;
+    width:30px;
     height: 30px !important;
+}
+
+.caret-lg {
+    width : 150px !important;
+    height: 150px !important
+}
+
+.caret-lg:hover {
+    border : 5px dashed black
+}
+.caret-lg.active {
+    border : 5px solid black
 }
 
 /** data table setting */
