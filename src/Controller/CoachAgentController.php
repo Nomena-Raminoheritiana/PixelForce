@@ -68,6 +68,7 @@ class CoachAgentController extends AbstractController
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)
             ->remove('secteur')
+            ->remove('tag')
             ->remove('active');
         $searchForm->handleRequest($request);
         $agents = $paginator->paginate(

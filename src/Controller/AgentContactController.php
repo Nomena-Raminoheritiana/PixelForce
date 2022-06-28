@@ -301,6 +301,9 @@ class AgentContactController extends AbstractController
             $contact->setAgent($this->getUser());
             $contact->setStatus(0);
             $contact->setSecteur($secteur);
+            if(isset($request->request->get('contact_information')['note'])) {
+                $contact->setNote($request->request->get('contact_information')['note']);
+            }
             $this->repoContact->add($contact);
             $tags_id = $request->request->get('tags');
             foreach($tags_id = $tags_id ?? [] as $tag_id) {
@@ -341,6 +344,9 @@ class AgentContactController extends AbstractController
                 $tag = $this->tagRepository->findOneBy(['id' => $tag_id]);
                 $contact->addTag($tag);
             }
+            if(isset($request->request->get('contact_information')['note'])) {
+                $contact->setNote($request->request->get('contact_information')['note']);
+            }
             $this->entityManager->save($contact);
 
             $this->addFlash('success', "Modification du client avec succès");
@@ -356,7 +362,8 @@ class AgentContactController extends AbstractController
             'btn_class' =>  'success',
             'label' => 'Modification',
             'tags' => $tags,
-            'tags_selectionner' => $tags_selectionner
+            'tags_selectionner' => $tags_selectionner,
+            'contact' => $contact
         ]);    
     }
 

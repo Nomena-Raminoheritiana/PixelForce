@@ -24,7 +24,8 @@ class TagType extends AbstractType
                 'label' => 'Description',
                 'attr' => [
                     'placeholder' => 'Ajouter une déscription à ce libellé'
-                ]
+                ],
+                'required' => false,
             ])
             ->add('couleur')
         ;

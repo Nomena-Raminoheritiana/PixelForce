@@ -43,6 +43,8 @@ class UserSearch {
 
     private $active;
 
+    private $tag;
+
     /**
      * Get the value of prenom
      *
@@ -228,6 +230,26 @@ class UserSearch {
         $this->active = $active;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @param mixed $tag
+     * @return UserSearch
+     */
+    public function setTag($tag)
+    {
+        $this->tag = $tag;
+        return $this;
+    }
+
+
 
 
 }

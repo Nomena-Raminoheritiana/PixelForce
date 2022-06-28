@@ -59,6 +59,21 @@
 										<li class="mb-75">
 											<span class="fw-bolder me-25">Adresse:</span>
 											<span>{{ contact.information.address }}</span>
+											<ul>
+												<li><span class="text-decoration-underline">rue :</span> {{ contact.information.rue }} {{ contact.information.numero }}</li>
+												<li>
+													<span class="text-decoration-underline me-25">Code postal:</span>
+													<span>{{ contact.information.codePostal }}</span>
+												</li>
+												<li>
+													<span class="text-decoration-underline me-25">Ville:</span>
+													<span>{{ contact.information.ville }}</span>
+												</li>
+											</ul>
+										</li>
+										<li class="mb-75">
+											<span class="fw-bolder me-25">Type de logement:</span>
+											<span>{{ contact.information.typeLogement ? contact.information.typeLogement.nom : 'pas d\'information disponible' }}</span>
 										</li>
 									</ul>
 								</div>
@@ -95,7 +110,7 @@
 						<h3 class="text-primary">Note</h3>
 						{{ form_start(formNote) }}
 						{{ form_row(formNote.note) }}
-						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>
+{#						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>#}
 						{{ form_end(formNote) }}
 					</div>
 				</div>

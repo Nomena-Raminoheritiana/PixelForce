@@ -78,11 +78,6 @@ class ContactInformation
     private $nbrPersonne;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $commentaire;
-
-    /**
      * @ORM\ManyToOne(targetEntity=TypeLogement::class)
      */
     private $typeLogement;
@@ -242,18 +237,6 @@ class ContactInformation
     public function setNbrPersonne(?int $nbrPersonne): self
     {
         $this->nbrPersonne = $nbrPersonne;
-
-        return $this;
-    }
-
-    public function getCommentaire(): ?string
-    {
-        return $this->commentaire;
-    }
-
-    public function setCommentaire(?string $commentaire): self
-    {
-        $this->commentaire = $commentaire;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\ContactInformation;
 use App\Entity\TypeLogement;
 use App\Repository\TypeLogementRepository;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -23,6 +24,8 @@ class ContactInformationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $contactInformation = $builder->getData();
+        $contact = $contactInformation->getContact();
         $typeLogementList = $this->typeLogementRepository->findAll();
         $builder
             ->add('firstname', TextType::class, [
@@ -96,9 +99,14 @@ class ContactInformationType extends AbstractType
                 'label' => 'Nombre de personne',
                 'required' => false
             ])
-            ->add('commentaire', TextareaType::class, [
-                'label' => 'Commentaire',
-                'required' => false
+            ->add('note', CKEditorType::class, [
+                'required' => false,
+                'label' => 'Note',
+                'mapped' => false,
+                'data' => $contact ? $contact->getNote() : '',
+                'config' => [
+                    'toolbar' => 'note_contact_toolbar'
+                ]
             ])
         ;
     }

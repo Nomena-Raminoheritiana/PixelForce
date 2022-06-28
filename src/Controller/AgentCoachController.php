@@ -58,6 +58,7 @@ class AgentCoachController extends AbstractController
         $secteur = $this->secteurRepository->findOneBy(['id' => $this->session->get('secteurId')]);
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)->remove('secteur')
+                            ->remove('tag')
                             ->remove('dateInscriptionMin')
                             ->remove('dateInscriptionMax');
         $searchForm->handleRequest($request);

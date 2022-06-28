@@ -67,7 +67,7 @@ class AdminAgentController extends AbstractController
     public function admin_agent_list(Request $request, PaginatorInterface $paginator)
     {
         $search = new UserSearch();
-        $searchForm = $this->createForm(UserSearchType::class, $search);
+        $searchForm = $this->createForm(UserSearchType::class, $search)->remove('tag');
         $searchForm->handleRequest($request);
         
         $agents = $paginator->paginate(
