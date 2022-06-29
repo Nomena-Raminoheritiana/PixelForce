@@ -95,7 +95,7 @@ class AgentFormationController extends AbstractController
                 $formations = $this->formationRepository->searchForAgent($criteres, $secteur);
             } else {
                 // $formations = $secteur ? $this->formationRepository->AgentfindBySecteur($secteur) : [];
-                $formations = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
+                $formations = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, false);
             }
 
             $formations = $this->paginator->paginate(
