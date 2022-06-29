@@ -161,6 +161,7 @@ a{
 .caret {
     width:30px;
     height: 30px !important;
+    transition : all 250ms;
 }
 
 .caret-lg {
@@ -173,6 +174,14 @@ a{
 }
 .caret-lg.active {
     border : 5px solid black
+}
+.caret.caret-shadow{
+    box-shadow: 5px 5px 5px #aaa;
+}
+.caret.caret-hoverable:hover{
+    
+    cursor: pointer;
+    transform: translateY(-5px);
 }
 
 /** data table setting */
@@ -191,3 +200,4 @@ table.dataTable thead>tr>th.sorting:before, table.dataTable thead>tr>th.sorting:
 .table-th-notSortable::before, .table-th-notSortable::after {
     content:'' !important;
 }
+

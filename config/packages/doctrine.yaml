@@ -18,6 +18,10 @@ doctrine:
         dql:
             string_functions:
                 group_concat: App\DoctrineExtensions\GroupConcat
+            datetime_functions:
+                DAY: DoctrineExtensions\Query\Mysql\Day
+                MONTH: DoctrineExtensions\Query\Mysql\Month
+                YEAR: DoctrineExtensions\Query\Mysql\Year
 
 when@test:
     doctrine:

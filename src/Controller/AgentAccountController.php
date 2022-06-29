@@ -21,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\CalendarEventRepository;
 
 class AgentAccountController extends AbstractController
 {
@@ -34,7 +35,7 @@ class AgentAccountController extends AbstractController
     protected $repoRelationFormationCategorie;
     protected $categorieFormationAgentService;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService)
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
@@ -45,6 +46,7 @@ class AgentAccountController extends AbstractController
         $this->repoCatFormation = $repoCatFormation;
         $this->repoRelationFormationCategorie = $repoRelationFormationCategorie;
         $this->categorieFormationAgentService = $categorieFormationAgentService;
+        $this->calendarEventRepository = $calendarEventRepository;
     }
 
     /**
@@ -108,6 +110,10 @@ class AgentAccountController extends AbstractController
             5
         );
 
+        // Calendar upcoming events :
+        $upcomingEvents = $this->calendarEventRepository->findUpcomingEvents($agent);
+        $eventsOfTheDay = $this->calendarEventRepository->findEventsOfTheDay($agent);
+
 
         return $this->render('user_category/agent/dashboard_secteur.html.twig', [
             'secteur' => $secteur,
@@ -116,7 +122,9 @@ class AgentAccountController extends AbstractController
             'contacts' => $contacts,
             'CategorieFormation' => CategorieFormation::class,
             'nbrAllMyContacts' => count($this->repoContact->findAll()),
-            'repoRelationFormationCategorie' => $this->repoRelationFormationCategorie
+            'repoRelationFormationCategorie' => $this->repoRelationFormationCategorie,
+            'upcomingEvents'=> $upcomingEvents,
+            'eventsOfTheDay'=> $eventsOfTheDay
         ]);
     }
 }

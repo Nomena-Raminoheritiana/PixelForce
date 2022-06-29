@@ -208,5 +208,14 @@ class CalendarController extends AbstractController
         return new JsonResponse($event);
     }
     
+
+    /**
+     * @Route("/api/upcoming_events", name="calendar_api_upcoming_event")
+     */
+    public function findUpcomingEvents(){
+        $user = $this->getUser();
+        $events = $this->calendarEventRepository->findUpcomingEvents($user);
+        return new JsonResponse($events);
+    }
     
 }

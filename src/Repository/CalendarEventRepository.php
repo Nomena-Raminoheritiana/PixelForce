@@ -38,7 +38,39 @@ class CalendarEventRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+   /**
+    * @return CalendarEvent[] Returns an array of CalendarEvent objects
+    */
+   public function findUpcomingEvents($user): array
+   {
+       return $this->createQueryBuilder('c')
+            -> andWhere('c.user = :user')
+           ->andWhere('c.start >= current_date()')
+           ->andWhere('MONTH(c.start) = MONTH(current_date())')
+           ->andWhere('DAY(c.start) != DAY(current_date())')
+           ->setParameter('user', $user)
+           ->orderBy('c.start', 'ASC')
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
+   /**
+    * @return CalendarEvent[] Returns an array of CalendarEvent objects
+    */
+    public function findEventsOfTheDay($user): array
+    {
+        return $this->createQueryBuilder('c')
+             -> andWhere('c.user = :user')
+            ->andWhere('MONTH(c.start) = MONTH(current_date())')
+            ->andWhere('DAY(c.start) = DAY(current_date())')
+            ->andWhere('YEAR(c.start) = YEAR(current_date())')
+            ->setParameter('user', $user)
+            ->orderBy('c.start', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 //    /**
 //     * @return CalendarEvent[] Returns an array of CalendarEvent objects
 //     */
