@@ -9,11 +9,6 @@
 {% endblock %}
 
 {% block body %}
-    {# <h1>Mon Agenda</h1> #}
-    {% if lienCalendly != null %}
-        {# <div class="calendly-inline-widget" id="calendar" style="min-width:320px;height:700px;" data-auto-load="false" data-lien-calendly="{{lienCalendly}}"></div> #}
-
-
         <!-- BEGIN: Content-->
         <div class="content-body calendar-wrapper">
             <!-- Full calendar start -->
@@ -104,11 +99,6 @@
                                             {% for calendarEventLabel in calendarEventLabelList %}
                                             <option data-label="{{calendarEventLabel.color}}" value="{{calendarEventLabel.id}}">{{calendarEventLabel.name}}</option>
                                             {% endfor %}
-                                            {# <option data-label="primary" value="Business" selected>Business</option>
-                                            <option data-label="danger" value="Personal">Personnel</option>
-                                            <option data-label="warning" value="Family">Famille</option>
-                                            <option data-label="success" value="Holiday">Vacances</option>
-                                            <option data-label="info" value="ETC">Etc</option> #}
                                         </select>
                                     </div>
                                     <div class="mb-1 position-relative">
@@ -162,42 +152,22 @@
                 <!--/ Calendar Add/Update/Delete event modal-->
             </section>
             <!-- Full calendar end -->
-
+            <!-- Configuration du calendrier -->
+            <div class="alert alert-secondary calendar-config-container">
+                {% if lienCalendly == null %}
+                    <div>Votre agenda n'est rattaché à aucun compte <a href="https://calendly.com/">Calendly</a>.</div>
+                {% endif %}
+                {% if lienCalendly != null %}
+                    <div>Votre agenda est rattaché à <a href="{{ lienCalendly }}">{{lienCalendly}}</a></div>
+                {% endif %}
+                <a href="{{path('calendar_config')}}" class="btn btn-primary">Configurer votre agenda</a>
+            </div>
+            
+            <!-- Configuration du calendrier -->
         </div>
         <!-- END: Content-->
 
-    {% endif %}
-    {% if lienCalendly == null %}
-    <div class="agenda-configuration">
-        {{ form_start(form, {'attr': {'class': 'agenda-configuration-form'}}) }}
-        <div class="agenda-configuration__title-wrapper">
-            <h3 class="agenda-configuration__title">Configurez  <br>votre <span class="agenda-configuration__title-value">agenda</span></h3>
-            <div class="agenda-configuration__img-wrapper">
-                <i class="agenda-configuration__img" data-feather="calendar"></i>
-            </div>
-        </div>
-        <div class="agenda-configuration__steps">
-            <div class="agenda-configuration__step">
-                <h4 class="agenda-configuration__step_title">Etape n°1 :</h4>
-                <p>Pour pouvoir consulter votre agenda dans la plateforme de PixelForce, vous devez avoir un Compte <a href="https://calendly.com/">Calendly</a>.</p>
-            </div>
-            <div class="agenda-configuration__step">
-                <h4 class="agenda-configuration__step_title">Etape n°2 :</h4>
-                <p>Renseignez le lien de votre agenda (https://calendly.com/xxx-xxx) dans le champ ci-dessous :</p>
-                {{form_widget(form.lienCalendly, {'attr': {'class': 'agenda-configuration__step_input'}})}}
-                {{form_errors(form.lienCalendly)}}
-            </div>
-            <div class="agenda-configuration__step">
-                <h4 class="agenda-configuration__step_title">Etape n°3 :</h4>
-                 
-                <p>Enregistrez les informations et profitez de Calendly</p>
-                <button type="submit" class="btn btn-primary agenda-configuration__step_btn">Enregistrer les informations <i data-feather="save"></i></button>
-               
-            </div>
-        </div>
-        {{ form_end(form) }}
-    </div>
-    {% endif %}
+        
 
 {% endblock %}
 

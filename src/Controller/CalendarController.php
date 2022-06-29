@@ -70,7 +70,6 @@ class CalendarController extends AbstractController
     {
         $error = null;
         $user = $this->getUser();
-        // $user->setLienCalendly("https://calendly.com/kevin-andrianasolo-lala");
 
         $lienCalendly = $user->getLienCalendly();
 
@@ -94,6 +93,36 @@ class CalendarController extends AbstractController
             'userId' => $user->getId(),
 
             'calendarEventLabelList'=>$calendarEventLabelList
+        ]);
+    }
+
+    /**
+     * @Route("/config", name="calendar_config")
+     */
+    public function config(Request $request)
+    {
+        $error = null;
+        $user = $this->getUser();
+        // $user->setLienCalendly("https://calendly.com/kevin-andrianasolo-lala");
+
+        $lienCalendly = $user->getLienCalendly();
+
+        $form = $this->createForm(CalendlyType::class);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $user->setLienCalendly($data['lienCalendly']);
+
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            return $this->redirectToRoute('calendar_index');
+        }
+        if($lienCalendly!=null) $form->get('lienCalendly')->setData($lienCalendly);
+        return $this->render('calendar/calendar-config.html.twig', [
+            'lienCalendly' => $lienCalendly,
+            'form' => $form->createView(),
+            'error' => $error
         ]);
     }
 
