@@ -46,9 +46,10 @@ class CategorieFormationSearchType extends AbstractType
                 'label' => false,
                 'placeholder' => 'STATUT',
                 'choices' => [
-                    'valide' => 1,
-                    'supprimé' => -1
-                ]
+                    'Activé' => 1,
+                    'Supprimé' => -1
+                ],
+                'data' => 1
             ])
             
             ->add('ordre', EntityType::class, [

@@ -64,7 +64,7 @@ class SecteurRepository extends ServiceEntityRepository
             $this->entityManager->delete($coachSecteur);
         }
         
-        // (2) => Et enfin on supprime l'utilisateur en question
+        // (2) => Et enfin on supprime le secteur en question
         $this->entityManager->delete($sector);
     }
 
@@ -108,6 +108,13 @@ class SecteurRepository extends ServiceEntityRepository
     public function filter(\App\Entity\SearchEntity\SecteurSearch $secteurSearch)
     {
         $queryBuilder = $this->createQueryBuilder('s');
+
+        if (empty($_GET)) {
+            $queryBuilder
+                ->andWhere('s.active=:active')
+                ->setParameter('active', 1);
+        }
+
         if(!is_null($secteurSearch->getNom())) {
             $queryBuilder = $queryBuilder->andWhere('s.nom = :nom')
             ->setParameter('nom', $secteurSearch->getNom());
@@ -123,7 +130,10 @@ class SecteurRepository extends ServiceEntityRepository
                 $queryBuilder =  $queryBuilder->andWhere('s.active = :active')
                     ->orWhere('s.active is null')
                     ->setParameter('active', 1);
-            } else {
+            }elseif($secteurSearch->getEtat() === 0) {
+                $queryBuilder =  $queryBuilder->andWhere('s.active = :active')
+                    ->setParameter('active', 0);
+            }else {
                 $queryBuilder =  $queryBuilder->andWhere('s.active = :active')
                     ->setParameter('active', -1);
             }

@@ -45,6 +45,12 @@ class CategorieFormationRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('cf');
 
+        if (empty($_GET)) {
+            $query
+                ->andWhere('cf.statut=:statut')
+                ->setParameter('statut', 1);
+        }
+
         if ($search->getNom()) {
             $query = $query
                 ->andwhere('cf.nom LIKE :prenom')

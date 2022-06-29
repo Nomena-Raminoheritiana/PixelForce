@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\SearchEntity\SecteurSearch;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -34,8 +35,9 @@ class SecteurSearchType extends AbstractType
                 'choices' => [
                     'Tous' => null,
                     'Activé' => 1,
-                    'Non validé' => -1
-                ]
+                    'Supprimé' => -1
+                ],
+                'data' => 1
             ])
         ;
     }
