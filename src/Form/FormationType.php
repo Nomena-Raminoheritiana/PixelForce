@@ -25,7 +25,7 @@ class FormationType extends AbstractType
                 'required' => true,
             ])
             ->add('description_deblocage', TextareaType::class, [
-                'required' => true,
+                'required' => false,
                 'label' => 'Description déblocage'
             ])
             ->add('contenu', CKEditorType::class, [
