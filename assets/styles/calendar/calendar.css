@@ -76,3 +76,8 @@
     background-color: var(--label-color);
     
 }
+.calendar-wrapper .calendar-config-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

@@ -32,3 +32,7 @@
 # suprimer l cache
 ```php bin/console c:c```
 
+# Calendar Fixtures :
+```php bin/console doctrine:fixtures:load --group=calendar_event_label --append```
+```php bin/console doctrine:fixtures:load --group=calendar_event --append```
+
