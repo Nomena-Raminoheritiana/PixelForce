@@ -262,7 +262,7 @@
                                                     <td>
                                                         {% set tags = information.contact.tags.toArray %}
                                                         {% for tag in tags %}
-                                                            <div class="caret caret-shadow caret-hoverable rounded-3 d-inline-block bg-{{ tag.couleur }}"></div>
+                                                            <div class="caret caret-shadow caret-hoverable rounded-3 d-inline-block bg-{{ tag.couleur }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="{{ tag.libelle }}"></div>
                                                         {% endfor %}
                                                     </td>
 
