@@ -12,6 +12,9 @@
 	<div class="container my-5">
 		{{ form_start(formCat) }}
 		{{ form_row(formCat.nom) }}
+		{% if formCat.ordreCatFormation is defined %}
+		{{ form_row(formCat.ordreCatFormation) }}
+		{% endif %}
 		{{ form_row(formCat.description) }}
 		<button type="submit" class="btn btn-success">{{ button|default('Ajouter')}}</button>
 		{{ form_end(formCat) }}
