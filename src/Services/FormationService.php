@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Manager\EntityManager;
 use App\Manager\ObjectManager;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\FormationRepository;
 
 class FormationService
 {
@@ -23,10 +24,14 @@ class FormationService
      */
     private $entityManager;
 
-    public function __construct(ObjectManager $objectManager, EntityManager $entityManager)
+    /** @var FormationRepository $repoFormation */
+    protected $repoFormation;
+
+    public function __construct(ObjectManager $objectManager, EntityManager $entityManager, FormationRepository $repoFormation)
     {
         $this->objectManager = $objectManager;
         $this->entityManager = $entityManager;
+        $this->repoFormation = $repoFormation;
     }
 
     public function affecterAgent(Formation $formation, User $agent, $onlyPersist = false)
@@ -59,5 +64,25 @@ class FormationService
     public function deleteMedia()
     {
 
+    }
+
+    /**
+     * Permet de récupérer les catégories dans les formations d'un coach
+     *
+     * @param User $coach
+     */
+    public function getCoachCategoriesInFormation(User $coach)
+    {
+        $formations = [];
+        $categories = [];
+        $formationsCoach = $this->repoFormation->findBy(['coach'=> $coach]);
+        foreach ($formationsCoach as $formation) {
+            if ($formation->getCategorieFormation()) {
+                $categories[] = $formation->getCategorieFormation();
+            }
+        }
+        $categories = array_unique($categories, SORT_REGULAR);
+        
+        return $categories;
     }
 }

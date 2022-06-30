@@ -107,6 +107,8 @@ class CoachFormationController extends AbstractController
      */
    public function coach_formation_list(Request $request)
    {
+        $coach = $this->getUser();
+        
        $secteur = $this->getUser()->getSecteurByCoach();
        if($secteur_id = $request->query->get('secteur')) {
            $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
@@ -116,11 +118,14 @@ class CoachFormationController extends AbstractController
        } else {
            $formations = $secteur ? $this->formationRepository->findBySecteur($secteur) : [];
        }
+
        $formations = $this->paginator->paginate(
            $formations,
            $request->query->getInt('page', 1),
-           5
+           20
        );
+        
+        $allCategoriesOfCoach = $this->formationService->getCoachCategoriesInFormation($coach);
 
        $agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
        $agent = $agent && in_array($secteur->getId(), $agent->getSecteursIdsByAgent()) ? $agent : null;
@@ -129,7 +134,8 @@ class CoachFormationController extends AbstractController
            'criteres' => $criteres,
            'agent' => $agent,
            'secteur' => $secteur,
-           'categories' => $this->repoCatFormation->findBy(['statut' => 1])
+           'categories' => $this->repoCatFormation->findBy(['statut' => 1]),
+           'allCategoriesOfCoach' => $allCategoriesOfCoach
        ]);
    }
 
