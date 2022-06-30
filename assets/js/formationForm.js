@@ -326,14 +326,14 @@ function validationFormulaire(callback)
         rules : {
             'formation[titre]' : "required",
             'formation[description]' : "required",
-            'formation[description_deblocage]' : "required",
+            'formation[categorieFormation]' : "required",
             'formation[contenu]' : "required",
         },
         // in 'messages' user have to specify message as per rules
         messages : {
             'formation[titre]' : "<i class='fa fa-warning'></i> Veuillez entrer une titre",
             'formation[description]' : "<i class='fa fa-warning'></i> La description est obligatoire",
-            'formation[description_deblocage]' : "<i class='fa fa-warning'></i> Las description pour le déblocage est obligatoire",
+            'formation[categorieFormation]' : "<i class='fa fa-warning'></i> La catégorie est obligatoire",
             'formation[contenu]' : '<i class=\'fa fa-warning\'></i> Veuillez entrer le contenu de la formation'
         },
         submitHandler: function() {

@@ -56,12 +56,16 @@ class AdminCategorieFormationController extends AbstractController
         $category = new CategorieFormation();
         $formCat = $this->createForm(CategorieFormationType::class, $category);
         
-        
         $formCat->handleRequest($request);
         if ($formCat->isSubmitted() && $formCat->isValid()) {
-            $lastOrderCat = $this->repoCatFormation->findBy([],['id'=>'DESC'],1,0);
-            $lastOrderCat = $lastOrderCat[0]->getOrdreCatFormation() + 1;
-            $category->setOrdreCatFormation($lastOrderCat);
+            $categories = $this->repoCatFormation->findAll();
+            if(count($categories) === 0){
+                $category->setOrdreCatFormation(1);
+            }else{
+                $lastOrderCat = $this->repoCatFormation->findBy([],['id'=>'DESC'],1,0);
+                $newOrderCat = $lastOrderCat[0]->getOrdreCatFormation() + 1;
+                $category->setOrdreCatFormation($newOrderCat);
+            }
             $this->entityManager->save($category);
             $this->addFlash('success', "Catégorie ajoutée avec succès");
             return $this->redirectToRoute('admin_formation_categorie_list');    

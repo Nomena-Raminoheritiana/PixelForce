@@ -255,7 +255,7 @@ class AgentContactController extends AbstractController
     public function agent_contact_import_export_mobile(): Response
     {
         return $this->render('user_category/agent/contact/list_contacts_mobile.html.twig', [
-            'google_client_id' => $_ENV['OAUTH_GOOGLE_ID'],
+            'google_client_id' => $_ENV['GOOGLE_CLIENT_ID'],
             'google_api_key' => $_ENV['GOOGLE_API_KEY'],
             
         ]);
