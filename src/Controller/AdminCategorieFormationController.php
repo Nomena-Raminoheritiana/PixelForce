@@ -32,7 +32,8 @@ class AdminCategorieFormationController extends AbstractController
     public function admin_formation_categorie_list(Request $request, PaginatorInterface $paginator): Response
     {
         $search = new CategorieFormationSearch();
-        $searchForm = $this->createForm(CategorieFormationSearchType::class, $search)->remove('description');
+        $searchForm = $this->createForm(CategorieFormationSearchType::class, $search)
+            ->remove('ordre');
         $searchForm->handleRequest($request);
         
         $categories = $paginator->paginate(
