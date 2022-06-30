@@ -123,7 +123,7 @@ class CategorieFormationAgentService
             }
         }else{
             $categoriesInDB = $this->repoCategorieFomation->findBy(['statut' => 1], ['ordreCatFormation' => 'ASC']);
-            $currentCategory = $categoriesInDB[0];
+            $currentCategory = isset($categoriesInDB[0]) ? $categoriesInDB[0] : null;
         }
       
         return $currentCategory;
