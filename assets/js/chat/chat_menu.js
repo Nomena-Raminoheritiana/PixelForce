@@ -11,7 +11,7 @@ $( async function() {
       // charger les canals
       loaderOn(chatSingleCanal[0], true);
       getSingleCanal().then(function(singleCanals) {
-            chatSingleCanal.html(menuComponent.getSingleCanal(singleCanals))
+            chatSingleCanal.html(menuComponent.getSingleCanal(singleCanals));
             loaderOff(chatSingleCanal[0]);
       });
 

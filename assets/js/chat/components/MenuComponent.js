@@ -33,9 +33,11 @@ export class MenuComponent {
         const current_user_id = parseInt($('#current-user-id').text());
         const membres = canalMessage.membres;
         let avatar = '/user/avatar/';
+        let nomCanal = '';
         membres.forEach(function(user){
            if(user.id !== current_user_id) {
-               avatar += user.id
+               avatar += user.id;
+               nomCanal = user.nom+' '+user.prenom;
            }
         });
         const lastMessageClass = !canalMessage.isSeen? 'col-7' : 'col-9';
@@ -47,7 +49,7 @@ export class MenuComponent {
             '             <img src="'+avatar+'" '+onerror+' alt="hugenerd" width="50" height="50" class="rounded-circle">\n' +
             '          </div>\n' +
             '          <div class="'+lastMessageClass+' ps-2">\n' +
-            '              <span>'+canalMessage.nom+'</span><br>\n' +
+            '              <span>'+nomCanal+'</span><br>\n' +
             '              <p class="text-muted fs-12 line-height-13 pb-3 mb-0 border-bottom">\n' +
             '              '+lastMessage+
             '              </p>\n' +
