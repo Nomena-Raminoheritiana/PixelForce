@@ -25,24 +25,17 @@
         <div class="search-form">
             {{form_start(searchForm)}}
             <div class="row text-center">
-                <div class="col-12 col-sm-3 col-md-2">
+                <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.prenom)}}
                 </div>
-                <div class="col-12 col-sm-6 col-md-2">
+                <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.email)}}
                 </div>
-				<div class="col-12 col-sm-3 col-md-2">
+				<div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.telephone)}}
                 </div>
                 <div class="col-12 col-sm-3 col-md-3">
                     {{form_row(searchForm.adresse)}}
-                </div>
-                <div class="col-12 col-sm-3 col-md-3">
-                    <select class="form-select" name="ordre">
-                        <option value="ASC"selected>Ordre</option>
-                        <option value="ASC">ASC</option>
-                        <option value="DESC">DESC</option>
-                    </select>
                 </div>
                 <div class="col-6">
                     <label for="dateInscriptionMin" class="form-label">Date d'enregistrement à partir de</label>

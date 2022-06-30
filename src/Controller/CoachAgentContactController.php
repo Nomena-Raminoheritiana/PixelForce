@@ -55,6 +55,8 @@ class CoachAgentContactController extends AbstractController
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)
             ->remove('secteur')
+            ->remove('tag')
+            ->remove('active')
             ->add('adresse', TextType::class, [
                 'required' => false,
                 'label' => false,
