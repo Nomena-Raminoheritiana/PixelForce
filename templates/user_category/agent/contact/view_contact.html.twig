@@ -6,6 +6,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/contact.style.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -28,9 +29,39 @@
 			
 			<section class="app-user-view-account">
 				<div class="row">
-					<div class="col-4">
-						<h3 class="text-primary">Information</h3>
-						<div class="card">
+					<div class="col-8">
+						<div class="contact-card">
+							<div class="contact-card__name-container">
+								
+								<h1 class="contact-card__name">{{ contact.information.fullName }}</h1>
+								{% if is_granted('ROLE_AGENT') %}
+									<a href="{{ path('agent_contact_info_edit', {id:contact.information.id}) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Modifier</a>
+								{% endif %}
+							</div>
+							<div class="contact-card__infos-container">
+								<div class="contact-card__info-item">
+									<i class="fa-solid fa-envelope"></i>
+									<span>{{ contact.information.email }}</span>
+								</div>
+								{% if contact.information.phone %}
+								<div class="contact-card__info-item">
+									<i class="fa-solid fa-phone"></i>
+									<span> {{ contact.information.phone }}</span>
+								</div>
+								{% endif %}
+								<div class="contact-card__info-item">
+									<i class="fa-solid fa-location-dot"></i>
+									<span>{{ contact.information.address }} ({{ contact.information.codePostal }})</span>
+								</div>
+								{% if contact.information.typeLogement %}
+								<div class="contact-card__info-item">
+									<i class="fa-solid fa-house-chimney"></i>
+									<span> {{ contact.information.typeLogement.nom }}</span>
+								</div>
+								{% endif %}
+							</div>
+						</div>
+						{# <div class="card">
 							<div class="card-body">
 								<div class="user-avatar-section">
 									<div class="d-flex align-items-center flex-column">
@@ -83,7 +114,9 @@
 									{% endif %}
 								</div>
 							</div>
-						</div>
+						</div> #}
+
+
 						<!-- /User Card -->
 
 
@@ -93,30 +126,43 @@
 						<p><span class="fw-bolder">Email</span>:  {{ info.email }}</p>
 						<p><span class="fw-bolder">Téléphone</span>:  {{ info.phone }}</p> #}
 
-						<h3 class="text-primary">Tags</h3>
-						<div>
+						
+						<div class="tags-wrapper">
+							<h3 class="tags-title">Etiquettes :</h3>
 							{% for tag in tags %}
 								<div class="row px-3 mt-2">
-									<div class="col-2 bg-white py-2 border border-end-0">
-										<div class="caret rounded-circle bg-{{ tag.couleur }}"></div>
+									<div class="col-1 bg-white py-2 border border-end-0 text-center">
+										<div class="caret caret-shadow caret-hoverable rounded-3 d-inline-block bg-{{ tag.couleur }}"></div>
 									</div>
-									<div class="col-10 bg-white border border-start-0 py-2">
+									<div class="col-11 bg-white border border-start-0 py-2 d-flex align-items-center">
 										{{ tag.libelle|capitalize }}
 									</div>
 								</div>
 							{% else %}
 								<div class="bg-white border p-2 text-center">
-									Aucun tag disponible
+									Aucune étiquette disponible.
 								</div>
 							{% endfor %}
 						</div>
 					</div>
-					<div class="col-8">
-						<h3 class="text-primary">Note</h3>
+					<div class="col-4">
+						<div class="note">
+							<div class="note-header">
+								Notes
+							</div>
+							<div class="note-content">
+								{% if contact.note != null %}
+									{{contact.note| raw }}
+								{% else %}
+									<div class="note-blank-alert">Aucune note pour ce contact</div>
+								{% endif %}
+							</div>
+						</div>
+						{# <h3 class="text-primary">Note</h3>
 						{{ form_start(formNote) }}
 						{{ form_row(formNote.note) }}
-{#						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>#}
-						{{ form_end(formNote) }}
+						<button class="btn btn-success mt-3" >Enregistrer note <i class="fa-solid fa-floppy-disk ms-2"></i></button>
+						{{ form_end(formNote) }} #}
 					</div>
 				</div>
 			</section>

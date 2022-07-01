@@ -1,0 +1,61 @@
+.contact-card{
+    background-color : #fff;
+    border : 1px solid #eee;
+    border-radius: 10px;
+    padding : 50px 30px;
+    display : grid;
+    grid-template-columns: 40% auto;
+    margin-bottom: 20px;
+}
+.contact-card .contact-card__name-container{
+    border-right : #eee 1px solid;
+}
+.contact-card .contact-card__name{
+    font-weight: bolder;
+    text-transform: uppercase;
+    font-size : 30px;
+    margin-bottom: 20px;
+    
+}
+.contact-card .contact-icon{
+    font-size : 55px;
+    color : #897ff2;
+}
+.contact-card .contact-card__infos-container{
+    padding-left : 20px; 
+}
+.contact-card .contact-card__info-item span{
+    word-break: break-all;
+}
+.contact-card .contact-card__info-item i{
+    color : #897ff2;
+    margin-left: 5px;
+}
+
+.note{
+    background-color : #fff;
+    border : 1px solid #eee;
+    border-radius: 10px; 
+    min-height : calc(100vh - 200px);
+}
+.note .note-header{
+    padding : 20px;
+    background-color: #897ff2;
+    color : #fff;
+    text-transform: uppercase;
+    font-size: 20px;
+    letter-spacing: 2px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+}
+.note .note-content{
+    
+    padding : 20px;
+}
+.tags-wrapper{margin-bottom: 40px;}
+.tags-wrapper .tags-title{
+    color : #897ff2;;
+    letter-spacing: 2px;
+    font-size : 20px;
+}
