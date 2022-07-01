@@ -32,7 +32,8 @@ class AdminCategorieFormationController extends AbstractController
     public function admin_formation_categorie_list(Request $request, PaginatorInterface $paginator): Response
     {
         $search = new CategorieFormationSearch();
-        $searchForm = $this->createForm(CategorieFormationSearchType::class, $search)->remove('description');
+        $searchForm = $this->createForm(CategorieFormationSearchType::class, $search)
+            ->remove('ordre');
         $searchForm->handleRequest($request);
         
         $categories = $paginator->paginate(
@@ -54,7 +55,7 @@ class AdminCategorieFormationController extends AbstractController
     public function admin_formation_categorie_add(Request $request)
     {
         $category = new CategorieFormation();
-        $formCat = $this->createForm(CategorieFormationType::class, $category);
+        $formCat = $this->createForm(CategorieFormationType::class, $category)->remove('ordreCatFormation');
         
         $formCat->handleRequest($request);
         if ($formCat->isSubmitted() && $formCat->isValid()) {

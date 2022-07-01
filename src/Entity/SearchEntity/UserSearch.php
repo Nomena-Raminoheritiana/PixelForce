@@ -41,7 +41,7 @@ class UserSearch {
      */
     private $adresse;
 
-    private $active;
+    private $active = 1;
 
     private $tag;
 

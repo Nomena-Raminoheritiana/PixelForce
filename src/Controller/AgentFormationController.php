@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\CategorieFormationAgent;
 use App\Entity\Formation;
 use App\Manager\EntityManager;
+use App\Repository\CategorieFormationAgentRepository;
 use App\Repository\CategorieFormationRepository;
 use App\Repository\ContactRepository;
 use App\Repository\FormationAgentRepository;
@@ -62,7 +63,10 @@ class AgentFormationController extends AbstractController
     /** @var ContactRepository $repoContact */
     protected $repoContact;
 
-    public function __construct(EntityManager $entityManager, SecteurRepository $secteurRepository, PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository, MailerService $mailerService, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, SessionInterface $sessionInterface, CategorieFormationRepository $repoCatFormation, ContactRepository $repoContact)
+    /** @var CategorieFormationAgentRepository $repoCategorieAgent */
+    protected $repoCategorieAgent;
+
+    public function __construct(EntityManager $entityManager, SecteurRepository $secteurRepository, PaginatorInterface $paginator, FormationRepository $formationRepository, FormationAgentRepository $formationAgentRepository, MailerService $mailerService, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, SessionInterface $sessionInterface, CategorieFormationRepository $repoCatFormation, ContactRepository $repoContact, CategorieFormationAgentRepository $repoCategorieAgent)
     {
         $this->paginator = $paginator;
         $this->formationRepository = $formationRepository;
@@ -75,6 +79,7 @@ class AgentFormationController extends AbstractController
         $this->sessionInterface = $sessionInterface;
         $this->repoCatFormation = $repoCatFormation;
         $this->repoContact = $repoContact;
+        $this->repoCategorieAgent = $repoCategorieAgent;
     }
 
     /**
@@ -85,23 +90,26 @@ class AgentFormationController extends AbstractController
     {
         // todo: miandry anle login agent izay ataon Tsiory mba haazaoana ilay session micontenir anle secteur
         $agent = $this->getUser();
+        $allCategoriesOfAgent = $this->categorieFormationAgentService->getCategoriesFromFormationAgent($agent);
         $secteur_id = $session->get('secteurId');
         $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
         $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
         
+
         if($secteur) {
                         // dd($request->query->get('q'));
             if($criteres = $request->query->get('q')) {
                 $formations = $this->formationRepository->searchForAgent($criteres, $secteur);
             } else {
                 // $formations = $secteur ? $this->formationRepository->AgentfindBySecteur($secteur) : [];
-                $formations = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, false);
+                // $formations = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, false);
+                $formations = $this->formationRepository->findFormationsAgentBySecteurAndCategorie($secteur, $agent, null, false);
             }
 
             $formations = $this->paginator->paginate(
                 $formations,
                 $request->query->getInt('page', 1),
-                5
+                20
             );
 
             $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
@@ -118,6 +126,7 @@ class AgentFormationController extends AbstractController
                 'criteres' => $criteres,
                 'formationAgentRepository' => $this->formationAgentRepository,
                 'categories' => $this->repoCatFormation->findBy(['statut' => 1]),
+                'allCategoriesOfAgent' => $allCategoriesOfAgent,
                 'nbrAllMyContacts' => count($this->repoContact->findAll()),
                 'firstFormation' => $firstFormation
             ]);

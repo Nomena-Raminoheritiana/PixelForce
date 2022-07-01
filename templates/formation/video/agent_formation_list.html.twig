@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}Coach - Liste Formations Video {% endblock %}
+{% block title %}Agent - Liste Formations Video {% endblock %}
 {% block body %}
     <div>
         <div class="row mt-4">
@@ -10,22 +10,14 @@
 
         <form action="" method="get">
             <div class="row">
-                <div class="col-12 col-md-3 mt-4">
+                <div class="col-12 col-md-4 mt-4">
                     <input type="text" name="q[titre]" value="{{ criteres ? criteres.titre }}" class="form-control" placeholder="Titre"/>
                 </div>
-                <div class="col-12 col-md-3 mt-4">
+                <div class="col-12 col-md-4 mt-4">
                     <input type="text" name="q[description]"  value="{{ criteres ? criteres.description }}" class="form-control" placeholder="Déscription"/>
                 </div>
-                <div class="col-12 col-md-3 mt-4">
+                <div class="col-12 col-md-4 mt-4">
                     <input type="text" name="q[auteur]" value="{{ criteres ? criteres.auteur }}" class="form-control" placeholder="Nom de l'auteur"/>
-                </div>
-                <div class="col-12 col-md-3 mt-4">
-                    <select class="form-select" name="q[etat]">
-                        <option value="" selected>Etat</option>
-                        <option value="">Tous</option>
-                        <option value="disponible" {{ criteres and criteres.etat == 'disponible' ? 'selected' : '' }}>Disponible</option>
-                        <option value="bloquee" {{ criteres and criteres.etat == 'brouillon' ? 'selected' : '' }}>Bloquer</option>
-                    </select>
                 </div>
                 <div class="col-12 col-md-4 mt-4">
                     <select class="form-select" name="q[trie]">
@@ -33,6 +25,13 @@
                         <option value="titre" {{ criteres and criteres.trie == 'titre' ? 'selected' : '' }}>Titre</option>
                         <option value="description" {{ criteres and criteres.trie == 'description' ? 'selected' : '' }}>Description</option>
                         <option value="auteur" {{ criteres and criteres.trie == 'auteur' ? 'selected' : '' }}>Auteur</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3 mt-4">
+                    <select class="form-select" name="q[ordre]">
+                        <option value="ASC"selected>Ordre</option>
+                        <option value="ASC" {{ criteres and criteres.ordre == 'ASC' ? 'selected' : '' }}>ASC</option>
+                        <option value="DESC" {{ criteres and criteres.ordre == 'DESC' ? 'selected' : '' }}>DESC</option>
                     </select>
                 </div>
                 <div class="col-12 col-md-4 mt-4">
@@ -43,13 +42,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-12 col-md-3 mt-4">
-                    <select class="form-select" name="q[ordre]">
-                        <option value="ASC"selected>Ordre</option>
-                        <option value="ASC" {{ criteres and criteres.ordre == 'ASC' ? 'selected' : '' }}>ASC</option>
-                        <option value="DESC" {{ criteres and criteres.ordre == 'DESC' ? 'selected' : '' }}>DESC</option>
-                    </select>
-                </div>
+
                 <div class="col-12 col-md-1  mt-4">
                     <button class="btn bg-princ text-white"><i class="fa fa-search"></i></button>
                 </div>
@@ -60,51 +53,45 @@
  
 
             {% set currentCategorie = firstFormation.categorieFormation %}
-                <div class="bg-white border p-4 mt-3">
-                    {% if app.request.query.get('q')  %}
-                        {% if app.request.query.get('q')['categorie']|length > 0 %}
-                            <h1 class="mb-3">{{ app.request.query.get('q')['categorie'] }}</h1>
-                        {% elseif app.request.query.get('q')['titre']|length > 0 %}
-                            <h3 class="text-center">Les formations contenants le titre "*<span class="text-secondary h5">{{app.request.query.get('q')['titre']}}</span>"</h3>
-                        {% endif %}
-                    {% else %}
-                        <h1>{{ currentCategorie.nom }}</h1>
-                    {% endif %}
 
-                    {% for key,formation in formations %}
-                        <hr class="my-5" style="height: 2px;">
-                        <h5 class="text-primary">{{ formation.titre }} {% if formation.brouillon %}<small class="text-danger">[ brouillon ]</small>{% endif %}</h5>
-                        <div class="row mt-3">
-                            <div class="col-12  col-md-10">
-                                <p>{{ formation.description|slice(0, 300) }}</p>
-                                {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
-                                    <div class="alert alert-warning">
-                                        Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-12 col-md-2 text-end">
-                                {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
-                                    
-                                {% else %}
-                                    {% set formationAgentRelation = formationAgentRepository.findOneBy({agent:app.user.id, formation:formation}) %}
-                                    {% set statut = formationAgentRelation ? formationAgentRelation.statut : constant('App\\Entity\\Formation::STATUT_BLOQUEE') %}
-
-                                    {% if statut == constant('App\\Entity\\Formation::STATUT_BLOQUEE') %}
-                                        <button type="button" class="btn btn-sm btn-danger" data-trigger="hover" data-bs-toggle="popover" data-bs-placement="left" title="Information de déblocage" data-bs-content="{{formation.DescriptionDeblocage}}"><i class="fa fa-lock"></i> Formation bloquer</button>
-                                    {% elseif statut == constant('App\\Entity\\Formation::STATUT_DISPONIBLE')%}
-                                        <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i> Fiche formation</a>
-                                    {% elseif statut == constant('App\\Entity\\Formation::STATUT_TERMINER')%}
-                                        <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Formation terminée</a>
+            {% for categorie in allCategoriesOfAgent  %}
+                <div class="bg-white border p-4 my-5">
+                    <h1>{{ categorie.nom }}</h1>
+                    {% for formation in formations %}
+                        {% if formation.categorieFormation ==  categorie %}
+                            <hr class="my-5" style="height: 2px;">
+                            <h5 class="text-primary">{{ formation.titre }} {% if formation.brouillon %}<small class="text-danger">[ brouillon ]</small>{% endif %}</h5>
+                            <div class="row mt-3">
+                                <div class="col-12  col-md-10">
+                                    <p>{{ formation.description|slice(0, 300) }}</p>
+                                    {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                        <div class="alert alert-warning">
+                                            Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
+                                        </div>
                                     {% endif %}
-                                {% endif %}
+                                </div>
+                                <div class="col-12 col-md-2 text-end">
+                                    {% if currentCategorie and formation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                        
+                                    {% else %}
+                                        {% set formationAgentRelation = formationAgentRepository.findOneBy({agent:app.user.id, formation:formation}) %}
+                                        {% set statut = formationAgentRelation ? formationAgentRelation.statut : constant('App\\Entity\\Formation::STATUT_BLOQUEE') %}
+
+                                        {% if statut == constant('App\\Entity\\Formation::STATUT_BLOQUEE') %}
+                                            <button type="button" class="btn btn-sm btn-danger" data-trigger="hover" data-bs-toggle="popover" data-bs-placement="left" title="Information de déblocage" data-bs-content="{{formation.DescriptionDeblocage}}"><i class="fa fa-lock"></i> Formation bloquer</button>
+                                        {% elseif statut == constant('App\\Entity\\Formation::STATUT_DISPONIBLE')%}
+                                            <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-primary btn-sm"><i class="fa fa-chevron-right"></i> Fiche formation</a>
+                                        {% elseif statut == constant('App\\Entity\\Formation::STATUT_TERMINER')%}
+                                            <a href="{{ path('agent_formation_fiche', {id:formation.id}) }}" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Formation terminée</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
+            {% endfor %}
 
-            
-        </div>
         {# display navigation #}
         <div class="navigation">
             {{ knp_pagination_render(formations) }}

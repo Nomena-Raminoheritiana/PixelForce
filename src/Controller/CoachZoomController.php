@@ -51,7 +51,7 @@ class CoachZoomController extends AbstractController
 
         /** @var AgentSecteur $agentSecteur */
         foreach($secteur->getAgentSecteurs()->toArray() as $agentSecteur) {
-            if($agentSecteur->getStatut()) {
+            if($agentSecteur->getStatut() && $agentSecteur->getAgent()->getActive() === 1) {
                 $agents[] = $agentSecteur->getAgent();
             }
 

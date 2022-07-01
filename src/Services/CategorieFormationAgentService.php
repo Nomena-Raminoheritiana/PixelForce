@@ -4,10 +4,13 @@ namespace App\Services;
 
 use App\Entity\CategorieFormation;
 use App\Entity\CategorieFormationAgent;
+use App\Entity\Formation;
+use App\Entity\FormationAgent;
 use App\Entity\Secteur;
 use App\Entity\User;
 use App\Repository\CategorieFormationAgentRepository;
 use App\Repository\CategorieFormationRepository;
+use App\Repository\FormationAgentRepository;
 use App\Repository\FormationRepository;
 
 class CategorieFormationAgentService
@@ -15,12 +18,14 @@ class CategorieFormationAgentService
     protected $repoCategorieFormationAgent;
     protected $repoCategorieFomation;
     protected $repoFormation;
+    protected $repoFormationAgent;
 
-    public function __construct(CategorieFormationAgentRepository $repoCategorieFormationAgent, CategorieFormationRepository $repoCategorieFomation, FormationRepository $repoFormation)
+    public function __construct(CategorieFormationAgentRepository $repoCategorieFormationAgent, CategorieFormationRepository $repoCategorieFomation, FormationRepository $repoFormation, FormationAgentRepository $repoFormationAgent)
     {
         $this->repoCategorieFormationAgent = $repoCategorieFormationAgent;
         $this->repoCategorieFomation = $repoCategorieFomation;
         $this->repoFormation = $repoFormation;
+        $this->repoFormationAgent = $repoFormationAgent;
     }
 
     /**
@@ -70,6 +75,30 @@ class CategorieFormationAgentService
     }
 
     /**
+     * Permet de récupérer toutes les catégories depuis les formations attribuées à l'agent
+     */
+    public function getCategoriesFromFormationAgent($agent)
+    {
+        $formations = [];
+        $categories = [];
+
+        $agentFormations = $this->repoFormationAgent->findBy(['agent' => $agent]);
+        /** @var FormationAgent $agentFormation */
+        foreach ($agentFormations as $agentFormation) {
+            $formations[] = $agentFormation->getFormation();
+        }
+        /** @var Formation $formation */
+        foreach ($formations as $formation) {
+            if ($formation->getCategorieFormation()) {
+                $categories[] = $formation->getCategorieFormation();
+            }
+        }
+        $categories = array_unique($categories, SORT_REGULAR);
+        return $categories;
+    }
+
+
+    /**
      * Permet de capturer la catégorie de formation à traiter pour un agent 
      * (Pour afficher les formations dans le dashboard)
      *
@@ -93,7 +122,8 @@ class CategorieFormationAgentService
                 $currentCategory = $categorieFormationAgent[0]->getCategorieFormation();
             }
         }else{
-            $currentCategory = $this->repoCategorieFomation->findAll()[0];
+            $categoriesInDB = $this->repoCategorieFomation->findBy(['statut' => 1], ['ordreCatFormation' => 'ASC']);
+            $currentCategory = isset($categoriesInDB[0]) ? $categoriesInDB[0] : null;
         }
       
         return $currentCategory;

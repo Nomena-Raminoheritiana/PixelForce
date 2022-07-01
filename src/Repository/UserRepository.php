@@ -265,7 +265,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findCoachBySecteur(UserSearch $search, Secteur $secteur)
     {
-        $query = $this->createQueryBuilder('a');
+        $query = $this->createQueryBuilder('a')
+        ->andWhere('a.active=1');
 
         if ($search->getPrenom()) {
             $query = $query

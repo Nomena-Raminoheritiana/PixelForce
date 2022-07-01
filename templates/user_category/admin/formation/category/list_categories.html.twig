@@ -29,7 +29,7 @@
                     {{form_row(searchForm.nom)}}
                 </div>
 				<div class="col-12 col-sm-6 col-md-3">
-                    {{form_row(searchForm.ordre)}}
+                    {{form_row(searchForm.description)}}
                 </div>
                 <div class="col-12 col-sm-6 col-md-3">
                     {{form_row(searchForm.statut)}}
@@ -56,15 +56,15 @@
                 </div>
             </div>
 		</div>
-        <div class="table-responsive">
-			<table class="table table-striped table-hover text-center">
+        <div class="table-responsive ">
+			<table class="table table-striped table-hover sortable text-center">
 				<thead>
 					<tr>
 						<th scope="col">Nom</th>
 						<th scope="col">Description</th>
 						<th scope="col">Ordre</th>
 						<th scope="col">Statut</th>
-						<th scope="col">ACTION</th>
+						<th scope="col" class="table-th-notSortable">ACTION</th>
 					</tr>
 				</thead>
 				<tbody>

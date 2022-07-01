@@ -60,6 +60,7 @@ class AgentCoachController extends AbstractController
         $searchForm = $this->createForm(UserSearchType::class, $search)->remove('secteur')
                             ->remove('tag')
                             ->remove('dateInscriptionMin')
+                            ->remove('active')
                             ->remove('dateInscriptionMax');
         $searchForm->handleRequest($request);
         $agents = $this->paginator->paginate(

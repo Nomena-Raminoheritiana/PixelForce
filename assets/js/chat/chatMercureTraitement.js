@@ -16,7 +16,6 @@ $(function() {
     eventNewMessage.onmessage = async event => {
         const message = JSON.parse(event.data);
         const canal = message.canal;
-        console.log(canal)
         const user = message.user;
         // si une instance est ouverte
         let jCanal = $('#canal-'+canal.id);

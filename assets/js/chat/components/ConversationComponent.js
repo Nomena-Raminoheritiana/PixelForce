@@ -4,9 +4,17 @@ import {ConversationBaseComponent} from "./ConversationBaseComponent";
 export class ConversationComponent extends ConversationBaseComponent {
     getConversationContainer(canal) {
         let inputCacheUser = '';
+        let nomCanal = '';
+        const current_user_id = parseInt($('#current-user-id').text());
         canal.membres.forEach(function(user){
             inputCacheUser+='<input type="hidden" name="users[]" value="'+Base64.encode(user.id)+'" />\n';
+            if(!canal.isGroup && user.id !== current_user_id) {
+                nomCanal = user.nom+' '+user.prenom;
+            }
         });
+        if(canal.isGroup) {
+            nomCanal = canal.nom
+        }
 
         // début initialisation du vu lorsque l'instance est chargé
         // si le canal est un singleCanal
@@ -21,7 +29,7 @@ export class ConversationComponent extends ConversationBaseComponent {
             '        <div class="row">\n' +
             '            <div class="col-8 d-flex">\n' +
             '                <div class="my-auto">\n' +
-            '                    <b class="ms-2 ">'+canal.nom+' <i class="fa-brands fa-facebook-messenger"></i></b>\n' +
+            '                    <b class="ms-2 ">'+nomCanal+' <i class="fa-brands fa-facebook-messenger"></i></b>\n' +
             '                </div>\n' +
             '            </div>\n' +
             '            <div class="col-4 text-end">\n' +

@@ -34,6 +34,7 @@ class AgentAccountController extends AbstractController
     protected $repoCatFormation;
     protected $repoRelationFormationCategorie;
     protected $categorieFormationAgentService;
+    private $calendarEventRepository;
 
     public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository)
     {
