@@ -90,7 +90,8 @@ class UserFixtures extends Fixture
                  'nom' => 'agent0'.$i,
                  'prenom' => 'agent0'.$i,
                  'dateNaissance' => new \DateTime(),
-                 'adresse' => 'lot agent0'.$i
+                 'adresse' => 'lot agent0'.$i,
+                 'active' => 1
              ]);
             
              $rand_key = array_rand($secteurIds, 1);           

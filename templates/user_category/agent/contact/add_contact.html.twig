@@ -15,10 +15,8 @@
 				<div class="form-add-contact">
 					{{ form_start(formContact) }}
 						<div class="row">
-							<div class="col-md-6">
-								{{ form_row(formContact.firstname) }}
-							</div>
 							<div class="col-md-6">{{ form_row(formContact.lastname) }}</div>
+							<div class="col-md-6">{{ form_row(formContact.firstname) }}</div>
 						</div>
 						{{ form_row(formContact.email) }}
 						{{ form_row(formContact.phone) }}

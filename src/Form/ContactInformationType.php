@@ -29,15 +29,15 @@ class ContactInformationType extends AbstractType
         $typeLogementList = $this->typeLogementRepository->findAll();
         $builder
             ->add('firstname', TextType::class, [
-                'label' => 'Nom',
-                'attr' => [
-                    'placeholder' => 'Entrer le nom du client'
-                ]
-            ])
-            ->add('lastname', TextType::class, [
                 'label' => 'Prénom',
                 'attr' => [
                     'placeholder' => 'Entrer le prénom du client'
+                ]
+            ])
+            ->add('lastname', TextType::class, [
+                'label' => 'Nom',
+                'attr' => [
+                    'placeholder' => 'Entrer le nom du client'
                 ]
             ])
             ->add('email', TextType::class, [

@@ -46,12 +46,12 @@ class ContactService
         // On vérifie si le nom dans le contact n'est pas séparé par nom et prénom,
         // Si dans le cas contraire, on prend tout de suite le nom complet
         if (isset($contactApi['names'][0]['familyName'])) {
-            $informationEntity->setFirstname($contactApi['names'][0]['familyName']);
+            $informationEntity->setLastname($contactApi['names'][0]['familyName']);
         }elseif (isset($contactApi['names'][0]['displayName'])){
-            $informationEntity->setFirstname($contactApi['names'][0]['displayName']);
+            $informationEntity->setLastname($contactApi['names'][0]['displayName']);
         }
         if (isset($contactApi['names'][0]['givenName'])) {
-            $informationEntity->setLastname($contactApi['names'][0]['givenName']);
+            $informationEntity->setFirstname($contactApi['names'][0]['givenName']);
         }
 
         // EMAIL
