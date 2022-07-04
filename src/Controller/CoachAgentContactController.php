@@ -107,10 +107,12 @@ class CoachAgentContactController extends AbstractController
             return $this->redirectToRoute('coach_agent_contact_view', ['id' => $contact->getId()]);
 
         }
+        $tags = $contact->getTags()->toArray();
 
         return $this->render('user_category/coach/contact/view_contact.html.twig', [
             'contact' => $contact,
-            'formNote' => $formNote->createView()
+            'formNote' => $formNote->createView(),
+            'tags' => $tags
         ]);
     }
 

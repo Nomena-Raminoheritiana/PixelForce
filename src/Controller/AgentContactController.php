@@ -349,7 +349,7 @@ class AgentContactController extends AbstractController
             }
             $this->entityManager->save($contact);
 
-            $this->addFlash('success', "Modification du client avec succès");
+            $this->addFlash('success', "Modification du contact avec succès");
             return $this->redirectToRoute('agent_contact_list');    
         }
 
