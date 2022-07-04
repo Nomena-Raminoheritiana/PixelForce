@@ -314,7 +314,7 @@ class AgentContactController extends AbstractController
 
 
             $this->addFlash('success', "Ajout du client avec succès");
-            return $this->redirectToRoute('agent_contact_list');    
+            return $this->redirectToRoute('agent_contact_view', ['id' => $contact->getId()]);
         }
 
         $tags = $this->tagRepository->findAll();
@@ -350,7 +350,7 @@ class AgentContactController extends AbstractController
             $this->entityManager->save($contact);
 
             $this->addFlash('success', "Modification du client avec succès");
-            return $this->redirectToRoute('agent_contact_list');    
+            return $this->redirectToRoute('agent_contact_view', ['id' => $contact->getId()]);
         }
 
         $tags = $this->tagRepository->findAll();
