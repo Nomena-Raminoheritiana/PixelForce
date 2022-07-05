@@ -58,7 +58,7 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	{{ encore_entry_script_tags('ImportExportContact')}}
 	<script async defer src="https://apis.google.com/js/api.js"></script>
     <script async defer src="https://accounts.google.com/gsi/client"></script>
+	{{ encore_entry_script_tags('ImportExportContact')}}
 {% endblock %}
