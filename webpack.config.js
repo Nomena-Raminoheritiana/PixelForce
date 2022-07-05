@@ -42,7 +42,7 @@ Encore
     .addEntry('ckeditorForm', './assets/js/ckeditorForm.js')
     .addEntry('validationSecteur', './assets/js/validationSecteur.js')
     .addEntry('calendarJS', './assets/js/calendar/calendar.js')
-    .addEntry('impExpContact', './assets/js/ImportExportContact.js')
+    .addEntry('ImportExportContact', './assets/js/ImportExportContact.js')
     .addEntry('tag', './assets/js/tag.js')
 
     
