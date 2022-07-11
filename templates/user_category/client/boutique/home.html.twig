@@ -1,0 +1,57 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Page d'accueil
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mt-3">Bienvenue sur PixelForce</h1>
+        {# <h4 class="text-center mb-3" style="padding: 0 100px">Voici tous les secteurs disponibles sur la plateforme PixelForce. Vous pouvez accéder au secteur qui vous est attribué.</h4> #}
+
+        <div class="block-list-card-secteur mt-5">
+            <div class="row">
+                {% for agentSecteur in agentSecteurs %}
+                    <div class="col-4 mb-3">                      
+                        <div style="min-height: 140px;" class="card-secteur bg-primary p-3">
+
+                            <h2 class="text-white text-center">{{ agentSecteur.secteur.nom }}</h2>
+                            <div class="secteur-info d-none text-center">
+                                <h5 class="text-white secteur-description">{{ agentSecteur.secteur.description }}</h5>
+                            </div>
+                            
+
+                            <div class="button-block text-center mt-5">
+                                <a href="#" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+        $(function() {
+            $( ".card-secteur" ).each(function( index ) {
+                $(this).mouseover(function(){
+                    $(this).css("box-shadow", "12px 12px 2px 1px rgba(0, 0, 0, .2)");
+                    $(this).find('.secteur-info').removeClass('d-none');
+                });
+              
+                $(this).mouseout(function(){
+                    $(this).find('.secteur-info').addClass('d-none');
+                    $(this).css("box-shadow", "none");
+                });
+            });
+        })
+    </script>
+{% endblock %}

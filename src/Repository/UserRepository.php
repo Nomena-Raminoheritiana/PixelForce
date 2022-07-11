@@ -311,4 +311,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult()
             ;
     }
+
+    public function findAgentByToken($token): ?User
+    {
+        $result = $this->createQueryBuilder('u')
+            ->andWhere('u.active > 0')
+            ->andWhere("sha1(concat(u.email, concat('-', u.id))) = :token")
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        
+        if($result && in_array('ROLE_AGENT', $result->getRoles())){
+            return $result;
+        }
+        return null;
+    }
 }

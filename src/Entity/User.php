@@ -1062,4 +1062,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this->getCoachSecteurs()[0]->getSecteur();
     }
+
+    public function getAgentToken()
+    {
+        return sha1($this->getEmail().'-'.$this->getId());
+    }
 }
