@@ -88,6 +88,11 @@
                     {{form_errors(form.nom)}}
                 </div>
                 <div class="my-form-widget">
+                    {{form_label(form.categorie)}}
+                    {{form_widget(form.categorie)}}
+                    {{form_errors(form.categorie)}}
+                </div>
+                <div class="my-form-widget">
                     {{form_label(form.description)}}
                     {{form_widget(form.description)}}
                     {{form_errors(form.description)}}
@@ -129,7 +134,7 @@
         <div class="block__header mb-1" >
             <h1 class="block__title">Liste des produits :</h1>
             <div class="fab-btn-wrap">
-                <a  href="/admin/product/new" class="btn btn-primary btn--rounded fab-btn"><i data-feather="plus"></i>Nouveau produit</a>
+                <a  href="{{path('admin_product_new')}}" class="btn btn-primary btn--rounded fab-btn"><i data-feather="plus"></i>Nouveau produit</a>
             </div>
         </div>
         {% if productList|length ==0 %}
@@ -146,6 +151,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Nom</th>
+                        <th>Catégorie</th>
                         <th>Description</th>
                         <th>Prix</th>
                         <th>Image</th>
@@ -159,6 +165,7 @@
                     <tr>
                         <td>{{product.id}}</td>
                         <td>{{product.nom}}</td>
+                        <td>{{product.categorie.nom}}</td>
                         <td>{{product.description | raw}}</td>
                         <td>{{product.prix}}</td>
                         <td>
@@ -173,9 +180,9 @@
                             </a>
                         </td>
                         <td class="col-action col-action--remove">
-                            <button type="button" onclick="deleteProduct({{product.id}})">
-                                <i data-feather="trash"></i>
-                            </button>
+                            <a href="{{path('admin_product_delete', {'id': product.id})}}">
+                                 <i data-feather="trash"></i>
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -201,7 +208,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">        
-        function deleteProduct($id){
+        {# function deleteProduct($id){
             let confirmed = confirm("Voulez-vous vraiment continuer ?");
             console.log($id);
             if(confirmed){
@@ -224,7 +231,7 @@
                 });  
             }
             
-        }
+        } #}
 
          $(document).ready(function () {
             $('#exportBtn').click(function (e){
@@ -232,8 +239,7 @@
                 let page = {{page}};
                 let dataType = $(form).find('input[name="typeData"]:checked').val();
                 let fileType = $(form).find('input[name="typeFile"]:checked').val();
-                let href = "{{path('admin_product_export')}}?{{queryString | raw}}&page="+page+"&dat
-                aType="+dataType+"&fileType="+fileType;
+                let href = "{{path('admin_product_export')}}?{{queryString | raw}}&page="+page+"&dataType="+dataType+"&fileType="+fileType;
                 $(this).attr('href', href);
             });
          });

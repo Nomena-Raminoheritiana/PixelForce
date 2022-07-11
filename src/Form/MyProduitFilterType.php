@@ -2,8 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Categorie;
 use App\Entity\Produit;
-
+use App\Repository\CategorieRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,9 +18,13 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MyProduitFilterType extends AbstractType
 {
-    
+    private $categorieRepository;
+    public function __construct(CategorieRepository $categorieRepository){
+        $this->categorieRepository = $categorieRepository;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $categoryList = $this->categorieRepository->getValidCategories();
         $builder
         ->add('nom', TextType::class, [
             "label" => "Nom",
@@ -29,6 +34,15 @@ class MyProduitFilterType extends AbstractType
         ->add('description', TextType::class, [
             "label" => "Description",
             "trim" => true,
+            "required" => false
+        ])
+        ->add('categorie', EntityType::class, [
+            "label" => "Catégorie",
+            'class'=> Categorie::class,
+            'choices' => $categoryList,
+            'choice_label' => function(?Categorie $category) {
+                return $category ? strtoupper($category->getNom()) : '';
+            },
             "required" => false
         ])
         ->add('prixMin', TextType::class, [

@@ -47,9 +47,11 @@ class ProduitControllerCoach extends AbstractController
     public function index(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
         $error = null;
+        $user = (object)$this->getUser();
         $page = $request->query->get('page', 1);
         $limit = 5;
         $criteria = [
+            ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
             ['prop' => 'description', 'op' => 'LIKE'],
             ['prop' => 'prixMin', 'op' => '>=', "col" => "prix"],
             ['prop' => 'prixMax', 'op' => '<=', "col" => "prix"],
@@ -69,10 +71,13 @@ class ProduitControllerCoach extends AbstractController
             ->createQueryBuilder()
             ->select('p')
             ->from(Produit::class, 'p')
+            ->join('p.categorie', 'c')
+            ->join('p.secteur', 's')
         ;  
 
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
-        $query->where($where["where"]);
+        $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $user->getUniqueCoachSecteur()->getId();
         $searchService->setAllParameters($query, $where["params"]);
         $searchService->addOrderBy($query, $filter, ['sort' => 'p.id', 'direction' => 'asc']);
 
@@ -88,40 +93,11 @@ class ProduitControllerCoach extends AbstractController
             'error' => $error,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'page' => $page,
-            'queryString' => GenericUtil::getQueryString("my_produit_filter", $filter)
+            'queryString' => $request->getQueryString()
         ]);
 
     }
-    /*public function index(Request $request, PaginatorInterface $paginator): Response
-    {
-        $error = null;
-        $limit = 5;
-        $page = $request->query->getInt('page', 1);
-        $product = new Produit();
-        $form = $this->createForm(ProduitFilterType::class, $product, [
-            'method' => 'GET',
-        ]);
-        $form->handleRequest($request);
-        $options = [];
-        $options['prixMin'] = $form->get('prixMin')->getData();
-        $options['prixMax'] = $form->get('prixMax')->getData();
-        $options['orderBy'] = $form->get('orderBy')->getData();
-        $options['order'] = $form->get('order')->getData();
-        
-        $query = $this->produitRepository->getSearchQuery($product, $options);  
-        $productList = $paginator->paginate(
-            $query,
-            $page,
-            $limit
-        );
-        return $this->render('admin/product/product_list.html.twig', [
-            'productList' => $productList,
-            'form' => $form->createView(),
-            'error' => $error,
-            'filesDirectory' => $this->getParameter('files_directory_relative')
-        ]);
-    }*/
-
+    
 
     /**
      * @Route("/export", name="admin_product_export")
@@ -208,7 +184,8 @@ class ProduitControllerCoach extends AbstractController
                     $photo = $this->fileHandler->upload($imageFile, "images\products");
                     $product->setPhoto($photo);
                 }
-
+                $product->setStatut(1);
+                $product->setSecteur($product->getCategorie()->getSecteur());
                 $this->entityManager->persist($product);
                 $this->entityManager->flush();
 
@@ -218,7 +195,7 @@ class ProduitControllerCoach extends AbstractController
             }
         }
 
-        return $this->render('admin/product/product_form.html.twig',[
+        return $this->render('user_category/coach/product/product_form.html.twig',[
             'form' => $form->createView(),
             'error' => $error,
             'isEdit' => $isEdit,
@@ -232,7 +209,7 @@ class ProduitControllerCoach extends AbstractController
      */
     public function fiche(Produit $product): Response
     {
-        return $this->render('admin/product/product_fiche.html.twig',[
+        return $this->render('user_category/coach/product/product_fiche.html.twig',[
             'product' => $product,
             'filesDirectory' => $this->getParameter('files_directory_relative')
         ]);
@@ -241,18 +218,10 @@ class ProduitControllerCoach extends AbstractController
     /**
      * @Route("/edit/{id}", name="admin_product_edit")
      */
-    public function edit(Request $request, int $id): Response
+    public function edit(Request $request, Produit $product): Response
     {
         $isEdit = true;
         $error = null;
-        $product = $this->produitRepository->find($id);
-        if($product == null)  {
-            $product = new Produit();
-            $error = "Le produit n°".$id." n'existe pas, l'action suivante va créer un nouveau produit une fois validée.";
-            $isEdit = false;
-        }
-
-
         $form = $this->createForm(ProduitFormType::class, $product);
         $form->handleRequest($request);
 
@@ -276,7 +245,7 @@ class ProduitControllerCoach extends AbstractController
             }
         }
 
-        return $this->render('admin/product/product_form.html.twig',[
+        return $this->render('user_category/coach/product/product_form.html.twig',[
             'form' => $form->createView(),
             'error' => $error,
             'isEdit' => $isEdit,
@@ -286,43 +255,27 @@ class ProduitControllerCoach extends AbstractController
     }
 
     /**
-     * @Route("/delete/{id}", name="admin_product_delete", methods={"DELETE"})
+     * @Route("/delete/{id}", name="admin_product_delete")
      */
-    public function delete(int $id): JsonResponse
+    public function delete(Produit $product): Response
     {
         try{
-            $product = $this->produitRepository->find($id);
-            $this->produitRepository->remove($product);
-            $this->entityManager->flush();
-
-            return new JsonResponse(array('id' => $id));
-        } catch(Exception $ex){
-            return new JsonResponse(array('message' => $ex->getMessage()), 500);
-        }
-    }
-
-     /**
-     * @Route("/deleteNormal/{id}", name="admin_product_delete_normal")
-     */
-    public function deleteNormal(int $id): Response
-    {
-        try{
-            $product = $this->produitRepository->find($id);
-            $this->produitRepository->remove($product);
+            $product->setStatut(0);
             $this->entityManager->flush();
             $this->addFlash('success', 'Produit supprimé');
-            return $this->redirectToRoute('admin_product_list');
         } catch(Exception $ex){
             $this->addFlash('error', $ex->getMessage());
-            return $this->redirectToRoute('admin_product_fiche', ['id' => $id]);
         }
+        return $this->redirectToRoute('admin_product_list');
     }
 
+    
     /**
      * @Route("/popup", name="admin_product_popup")
      */
     public function popup(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
+        $user = (object)$this->getUser();
         $opener = $request->query->get('opener', '');
         $popup = $request->query->get('popup', '');
         $mapPopup = PopupUtil::getMapPopup($opener, $popup);
@@ -330,6 +283,7 @@ class ProduitControllerCoach extends AbstractController
         $page = $request->query->get('page', 1);
         $limit = 5;
         $criteria = [
+            ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
             ['prop' => 'nom', 'op' => 'LIKE']
         ];
 
@@ -346,10 +300,13 @@ class ProduitControllerCoach extends AbstractController
             ->createQueryBuilder()
             ->select('p')
             ->from(Produit::class, 'p')
+            ->join('p.categorie', 'c')
+            ->join('p.secteur', 's')
         ;  
 
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
-        $query->where($where["where"]);
+        $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $user->getUniqueCoachSecteur()->getId();
         $searchService->setAllParameters($query, $where["params"]);
         $searchService->addOrderBy($query, $filter, ['sort' => 'p.nom', 'direction' => 'asc']);
 
@@ -359,7 +316,7 @@ class ProduitControllerCoach extends AbstractController
             $limit
         );
 
-        return $this->render('admin/product/product_popup.html.twig', [
+        return $this->render('user_category/coach/product/product_popup.html.twig', [
             'productList' => $orderList,
             'form' => $form->createView(),
             'mapPopup' => $mapPopup,

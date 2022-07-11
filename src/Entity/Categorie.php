@@ -38,6 +38,12 @@ class Categorie implements JsonSerializable
      */
     private $statut;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $secteur;
+
     public function __construct() {
         $this->produits = new ArrayCollection();
     }
@@ -85,6 +91,18 @@ class Categorie implements JsonSerializable
     public function setStatut(int $statut): self
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }
