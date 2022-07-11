@@ -1,0 +1,39 @@
+
+.my-form{
+	gap : 10px;
+	padding-bottom: 20px;
+	max-width: 600px;
+	margin : 0 auto;
+}
+.my-form .my-form-widget{
+	margin-bottom: 10px;
+}
+.my-form textarea.form-control{
+	min-height : 200px;
+}
+.my-form .btn-wrap{
+	display : flex;
+	justify-content: flex-end;
+}
+
+.my-form input[type="date"]{
+    margin-bottom: 5px;
+}
+
+.meeting-fiche{
+    margin : 20px auto;
+    width: 50%;
+    min-width : 400px;
+}
+.meeting-fiche .note-row{
+    height: 200px;
+    overflow: auto;
+}
+.meeting-fiche-controls{
+    margin-top : 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap : 10px;
+    flex-wrap: nowrap;
+}
