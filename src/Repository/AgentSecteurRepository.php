@@ -45,6 +45,18 @@ class AgentSecteurRepository extends ServiceEntityRepository
         }
     }
 
+    public function findValidByAgent($agentId)
+    {
+        return $this->createQueryBuilder('a')
+            ->join('a.agent', 'ag')
+            ->andWhere('ag.id = :agentId')
+            ->andWhere('a.statut = true')
+            ->setParameter('agentId', $agentId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return AgentSecteur[] Returns an array of AgentSecteur objects
     //  */
