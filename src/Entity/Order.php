@@ -71,6 +71,18 @@ class Order
      */
     private $chargeId;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $agent;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $secteur;
+
     public function __construct()
     {
         $this->orderProducts = new ArrayCollection();
@@ -186,6 +198,30 @@ class Order
     public function setChargeId(?string $chargeId): self
     {
         $this->chargeId = $chargeId;
+
+        return $this;
+    }
+
+    public function getAgent(): ?User
+    {
+        return $this->agent;
+    }
+
+    public function setAgent(?User $agent): self
+    {
+        $this->agent = $agent;
+
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }

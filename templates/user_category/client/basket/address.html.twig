@@ -4,7 +4,7 @@
 
 
 {% block content_basket %} 
-<div id="step-address" class="content active dstepper-block" role="tabpanel" aria-labelledby="step-address-trigger">
+<div id="step-address" class="content client active dstepper-block" role="tabpanel" aria-labelledby="step-address-trigger">
     
     {{ form_start(form, {'attr': {'class': 'list-view product-checkout'}}) }}
     {# <form id="checkout-address" class="list-view product-checkout"> #}
@@ -111,7 +111,8 @@
 {% endblock %}
 
 
-{% block page_js %}
+{% block javascripts %}
+    {{ parent() }}
     <script type="text/javascript">  
         let addressSearchDOM = document.getElementById("address_search");
         let addressesDOM = document.getElementById("addresses");

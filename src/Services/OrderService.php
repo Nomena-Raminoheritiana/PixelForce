@@ -1,10 +1,13 @@
 <?php
 namespace App\Services;
 
+use App\Entity\BasketItem;
 use App\Entity\Mouvement;
 use App\Entity\Order;
 use App\Entity\OrderAddress;
 use App\Entity\OrderProduct;
+use App\Entity\Secteur;
+use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Repository\ProduitRepository;
 use DateTime;
@@ -62,10 +65,11 @@ class OrderService
         $this->session->remove('orderAddress');
     }
 
-    public function saveOrder(string $stripeToken): ?Order{
+    public function saveOrder(string $stripeToken, User $agent, Secteur $secteur): ?Order{
         try{
+            $groupKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteur->getId());
             $user = $this->tokenStorage->getToken()->getUser();
-            $basket = $this->basketService->getBasket();
+            $basket = $this->basketService->getBasket($groupKey);
             if(count($basket) == 0) 
                 throw new Exception("Le panier est vide");
 
@@ -80,9 +84,12 @@ class OrderService
             $order->setAddress($address);
             $order->setOrderDate(new DateTime());
             $order->setStatus(Order::CREATED);
-            $order->setAmount($this->basketService->getTotalCost()); 
+            $order->setAgent($agent);
+            $order->setSecteur($secteur);
+            $order->setAmount(0);
             $this->entityManager->persist($order);
 
+            $amount = 0;
             foreach($basket as $basketItem){
                 $product = $this->produitRepository->find($basketItem->getProduit()->getId());
 
@@ -94,8 +101,11 @@ class OrderService
                 $this->entityManager->persist($orderProduct);
 
                 $this->stockService->faireSortie($product, $basketItem->getQuantity(), $order->getOrderDate());
-                
+                $amount += $product->getPrix() * $basketItem->getQuantity();
             }
+            $order->setAmount($amount); 
+            
+
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 
@@ -105,7 +115,7 @@ class OrderService
 
             $order->setChargeId($chargeId);        
             $this->entityManager->flush();
-            $this->basketService->removeBasket();
+            $this->basketService->removeBasket($groupKey);
             $this->removeAddress();
             return $order;
         } finally {

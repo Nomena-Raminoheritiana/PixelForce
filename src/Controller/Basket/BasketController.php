@@ -17,6 +17,7 @@ use App\Form\ProduitFormType;
 use App\Form\ProduitFilterType;
 
 use App\Repository\ProduitRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Services\FileHandler;
@@ -99,26 +100,32 @@ class BasketController extends AbstractController
 
             try{
                 $this->orderService->setAddress($orderAddress);
-                return $this->redirectToRoute('client_order_payment');
+                return $this->redirectToRoute('client_order_payment', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
 
         }
 
-        return $this->render('client/basket/address.html.twig',[
+        return $this->render('user_category/client/basket/address.html.twig',[
             'form' => $form->createView(),
-            'error' => $error
+            'error' => $error,
+            'agent' => $agent,
+            'token' => $token
         ]);
     }
 
     /**
      * @Route("/payment", name="client_order_payment")
      */
-    public function payment(Request $request, FormFactoryInterface $formFactory): Response
+    public function payment($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository): Response
     {
+        
         if(!$this->orderService->getAddress())
             return $this->redirectToRoute('client_order_address');
+
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
 
         $error = null;
         $form = $formFactory
@@ -132,8 +139,9 @@ class BasketController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $token =  $form->get('token')->getData();
-                $order = $this->orderService->saveOrder($token);
+                $secteur = $secteurRepository->find($secteurId);
+                $stripeToken =  $form->get('token')->getData();
+                $order = $this->orderService->saveOrder($stripeToken, $agent, $secteur);
                 return $this->redirectToRoute('client_order_details', ['id' => $order->getId()]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
@@ -141,10 +149,12 @@ class BasketController extends AbstractController
 
         }
 
-        return $this->render('client/basket/payment.html.twig',[
+        return $this->render('user_category/client/basket/payment.html.twig',[
             'stripe_public_key' => $this->getParameter('stripe_public_key'),
             'form' => $form->createView(),
-            'error' => $error
+            'error' => $error,
+            'agent' => $agent,
+            'token' => $token
         ]);
     }
 
