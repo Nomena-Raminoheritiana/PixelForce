@@ -25,8 +25,8 @@ class BoutiqueController extends AbstractController
     {
         $agent = $this->userRepository->findAgentByToken($token);
         $agentSecteurs = $agentSecteurRepository->findValidByAgent($agent->getId());
-        return $this->render('boutique/index.html.twig', [
-            'controller_name' => 'BoutiqueController',
+        return $this->render('user_category/client/boutique/home.html.twig', [
+            'agentSecteurs' => $agentSecteurs
         ]);
     }
 }

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_client.html.twig' %}
 
 {% block title %}
 	Page d'accueil
@@ -17,7 +17,7 @@
             <div class="row">
                 {% for agentSecteur in agentSecteurs %}
                     <div class="col-4 mb-3">                      
-                        <div style="min-height: 140px;" class="card-secteur bg-rimary p-3">
+                        <div style="min-height: 140px;" class="card-secteur bg-primary p-3">
 
                             <h2 class="text-white text-center">{{ agentSecteur.secteur.nom }}</h2>
                             <div class="secteur-info d-none text-center">

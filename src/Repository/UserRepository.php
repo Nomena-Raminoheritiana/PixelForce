@@ -316,7 +316,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $result = $this->createQueryBuilder('u')
             ->andWhere('u.active > 0')
-            ->andWhere("sha1(concat(u.email, concat('-', u.id))) = sha1(:token)")
+            ->andWhere("sha1(concat(u.email, concat('-', u.id))) = :token")
             ->setParameter('token', $token)
             ->getQuery()
             ->getOneOrNullResult()
