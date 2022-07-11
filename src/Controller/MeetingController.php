@@ -120,4 +120,53 @@ class MeetingController extends AbstractController
             'meeting' => $meeting
         ]);
     }
+
+    /**
+     * @Route("/api/cancel/{meetingId}", name="meeting_api_cancel")
+     */
+    public function cancelMeeting(Request $request, int $meetingId): JsonResponse
+    {
+        try{
+            $meetingState = $this->meetingStateRepository->findOneBy(["name"=>"Annulé"]);
+            $meeting = $this->meetingRepository->find($meetingId);
+            $meeting->setMeetingState($meetingState);
+            $this->entityManager->persist($meeting);
+            $this->entityManager->flush();
+            return new JsonResponse(array('id' => $meetingId));
+        } catch(Exception $ex){
+            return new JsonResponse(array('message' => $ex->getMessage()), 500);
+        }
+    }
+    /**
+     * @Route("/api/report/{meetingId}", name="meeting_api_report")
+     */
+    public function reportMeeting(Request $request, int $meetingId): JsonResponse
+    {
+        try{
+            $meetingState = $this->meetingStateRepository->findOneBy(["name"=>"Annulé"]);
+            $meeting = $this->meetingRepository->find($meetingId);
+            $meeting->setMeetingState($meetingState);
+            $this->entityManager->persist($meeting);
+            $this->entityManager->flush();
+            return new JsonResponse(array('id' => $meetingId));
+        } catch(Exception $ex){
+            return new JsonResponse(array('message' => $ex->getMessage()), 500);
+        }
+    }
+    /**
+     * @Route("/api/end/{meetingId}", name="meeting_api_end")
+     */
+    public function endMeeting(Request $request, int $meetingId): JsonResponse
+    {
+        try{
+            $meetingState = $this->meetingStateRepository->findOneBy(["name"=>"Terminé"]);
+            $meeting = $this->meetingRepository->find($meetingId);
+            $meeting->setMeetingState($meetingState);
+            $this->entityManager->persist($meeting);
+            $this->entityManager->flush();
+            return new JsonResponse(array('id' => $meetingId));
+        } catch(Exception $ex){
+            return new JsonResponse(array('message' => $ex->getMessage()), 500);
+        }
+    }
 }

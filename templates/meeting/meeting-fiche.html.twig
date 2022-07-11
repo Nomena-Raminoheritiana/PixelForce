@@ -43,10 +43,10 @@
             
         </table>
         <div class="meeting-fiche-controls">
-            <button class="btn btn-outline-danger" type="button">Annuler le rendez-vous</button>
-            <button class="btn btn-outline-secondary" type="button">Rendez-vous après 48h</button>
+            <button class="btn btn-outline-danger" type="button" onclick="cancelMeeting({{meeting.id}})">Annuler le rendez-vous</button>
+            <button class="btn btn-outline-secondary" type="button" onclick="reportMeeting({{meeting.id}})">Rendez-vous après 48h</button>
 
-            <button class="btn btn-primary" type="button">Marquer comme terminé</button>
+            <button class="btn btn-primary" type="button"  onclick="endMeeting({{meeting.id}})">Marquer comme terminé</button>
 
         </div>
     </div>
@@ -59,4 +59,60 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>
+    <script type="text/javascript">
+        function cancelMeeting(id){
+            let request = $.ajax({  
+                url:        '/meeting/api/cancel/'+id,  
+                type:       'POST',   
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json"
+            });  
+            request.done(function(data) {
+                console.log(data);
+                location.reload();
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                let errMessage = jqXHR.responseJSON.detail;
+                console.log(jqXHR);
+                alert("Erreur: "+errMessage);
+            });
+        }
+        function reportMeeting(id){
+            let request = $.ajax({  
+                url:        '/meeting/api/report/'+id,  
+                type:       'POST',   
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json"
+            });  
+            request.done(function(data) {
+                console.log(data);
+                location.reload();
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                let errMessage = jqXHR.responseJSON.detail;
+                console.log(jqXHR);
+                alert("Erreur: "+errMessage);
+            });
+        }
+        function endMeeting(id){
+            let request = $.ajax({  
+                url:        '/meeting/api/end/'+id,  
+                type:       'POST',   
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json"
+            });  
+            request.done(function(data) {
+                console.log(data);
+                location.reload();
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                let errMessage = jqXHR.responseJSON.detail;
+                console.log(jqXHR);
+                alert("Erreur: "+errMessage);
+            });
+        }
+    </script>
 {% endblock %}
