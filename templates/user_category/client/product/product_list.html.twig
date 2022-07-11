@@ -155,15 +155,19 @@
                                         <h4 class="item-price">{{product.prix}}€</h4>
                                     </div>
                                 </div>
+                                {% if is_granted('ROLE_CLIENT') %}
                                 <a href="#" class="btn btn-light btn-wishlist">
                                     <i data-feather="heart"></i>
                                     <span>Favoris</span>
                                 </a>
+                                {% endif %}
                                 {% if product.produitQteStock != null and product.produitQteStock.qteStock > 0 %}
+                                {% if is_granted('ROLE_CLIENT') %}
                                 <a href="#" class="btn btn-primary btn-cart" onclick="addToBasket({{product.id}})">
                                     <i data-feather="shopping-cart"></i>
                                     <span class="add-to-cart">Ajouter au panier</span>
                                 </a>
+                                {% endif %}
                                 {% else %}
                                 <a href="#" class="btn btn-secondary btn-cart disabled"  >
                                     <span class="add-to-cart">Rupture de stock</span>

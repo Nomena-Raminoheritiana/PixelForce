@@ -232,6 +232,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $meetingGuests;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private $clientAgent;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -321,6 +326,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             case self::ROLE_AGENT: return 'Agent'; break;
             case self::ROLE_COACH: return 'Coach'; break;
             case self::ROLE_ADMINISTRATEUR: return 'Administrateur'; break;
+            case self::ROLE_CLIENT: return 'Client'; break;
         }
     }
 
@@ -1066,5 +1072,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAgentToken()
     {
         return sha1($this->getId());
+    }
+
+    public function getClientAgent(): ?self
+    {
+        return $this->clientAgent;
+    }
+
+    public function setClientAgent(?self $clientAgent): self
+    {
+        $this->clientAgent = $clientAgent;
+
+        return $this;
     }
 }

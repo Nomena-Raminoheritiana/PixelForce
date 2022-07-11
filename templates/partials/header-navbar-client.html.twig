@@ -212,7 +212,7 @@
             </li>
             {% else %}
             <li class="nav-item">
-                <a href="#" class="btn btn-success"><i class="fa-solid fa-sign-in"></i> Se connecter </a>
+                <a href="{{path('app_login')}}?agentToken={{agent.agentToken}}" class="btn btn-success"><i class="fa-solid fa-sign-in"></i> Se connecter </a>
             </li>
             {% endif %}
         </ul>
