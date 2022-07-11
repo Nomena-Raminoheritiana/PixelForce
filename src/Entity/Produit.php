@@ -57,6 +57,11 @@ class Produit implements JsonSerializable
      */
     private $categorie;
 
+    /**
+     * @ORM\OneToOne(targetEntity=ProduitQteStock::class, mappedBy="produit")
+     */
+    private $produitQteStock;
+
 
     public function getId(): ?int
     {
@@ -161,5 +166,28 @@ class Produit implements JsonSerializable
         $this->categorie = $categorie;
 
         return $this;
+    }
+
+    public function getProduitQteStock(): ?ProduitQteStock
+    {
+        return $this->produitQteStock;
+    }
+
+    public function setProduitQteStock(ProduitQteStock $produitQteStock): self
+    {
+        // set the owning side of the relation if necessary
+        if ($produitQteStock->getProduit() !== $this) {
+            $produitQteStock->setProduit($this);
+        }
+
+        $this->produitQteStock = $produitQteStock;
+
+        return $this;
+    }
+
+    public function checkQty(float $qty){
+        if($qty > $this->getProduitQteStock()->getQteStock()){
+            throw new Exception("Stock insuffisant pour le produit <<".$this->getNom().">>, Quantité restante: ".$this->getProduitQteStock()->getQteStock());
+        }
     }
 }

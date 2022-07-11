@@ -1,0 +1,1 @@
+drop table if exists produit_qte_stock;
