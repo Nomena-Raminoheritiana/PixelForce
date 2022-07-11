@@ -142,7 +142,7 @@ class BasketController extends AbstractController
                 $secteur = $secteurRepository->find($secteurId);
                 $stripeToken =  $form->get('token')->getData();
                 $order = $this->orderService->saveOrder($stripeToken, $agent, $secteur);
-                return $this->redirectToRoute('client_order_details', ['id' => $order->getId()]);
+                return $this->redirectToRoute('client_order_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
