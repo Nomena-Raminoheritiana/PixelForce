@@ -43,10 +43,10 @@
             
         </table>
         <div class="meeting-fiche-controls">
-            <button class="btn btn-outline-danger" type="button" onclick="cancelMeeting({{meeting.id}})">Annuler le rendez-vous</button>
-            <button class="btn btn-outline-secondary" type="button" onclick="reportMeeting({{meeting.id}})">Rendez-vous après 48h</button>
+            {% if meeting.meetingState.name != "Annulé" %}<button class="btn btn-outline-danger" type="button" onclick="cancelMeeting({{meeting.id}})">Annuler le rendez-vous</button>{% endif %}
+            {# <button class="btn btn-outline-secondary" type="button" onclick="reportMeeting({{meeting.id}})">Rendez-vous après 48h</button> #}
 
-            <button class="btn btn-primary" type="button"  onclick="endMeeting({{meeting.id}})">Marquer comme terminé</button>
+            {% if meeting.meetingState.name != "Terminé" %}<button class="btn btn-primary" type="button"  onclick="endMeeting({{meeting.id}})">Marquer comme terminé</button>{% endif %}
 
         </div>
     </div>

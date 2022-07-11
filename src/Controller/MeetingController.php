@@ -122,7 +122,7 @@ class MeetingController extends AbstractController
     }
 
     /**
-     * @Route("/api/cancel/{meetingId}", name="meeting_api_cancel")
+     * @Route("/api/cancel/{meetingId}", name="meeting_api_cancel", methods={"POST"})
      */
     public function cancelMeeting(Request $request, int $meetingId): JsonResponse
     {
@@ -138,7 +138,7 @@ class MeetingController extends AbstractController
         }
     }
     /**
-     * @Route("/api/report/{meetingId}", name="meeting_api_report")
+     * @Route("/api/report/{meetingId}", name="meeting_api_report", methods={"POST"})
      */
     public function reportMeeting(Request $request, int $meetingId): JsonResponse
     {
@@ -154,7 +154,7 @@ class MeetingController extends AbstractController
         }
     }
     /**
-     * @Route("/api/end/{meetingId}", name="meeting_api_end")
+     * @Route("/api/end/{meetingId}", name="meeting_api_end", methods={"POST"})
      */
     public function endMeeting(Request $request, int $meetingId): JsonResponse
     {
