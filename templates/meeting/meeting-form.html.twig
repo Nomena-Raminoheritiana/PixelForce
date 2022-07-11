@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/meeting/meeting.style.css') }}">
+{% endblock %}
+
+{% block body %}
+    <h1>Prendre un rendez-vous avec {{userToMeet.email}}</h1>
+{% endblock %}
+
+{% block title %}
+    Rendez-vous
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>
+{% endblock %}

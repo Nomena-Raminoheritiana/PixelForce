@@ -41,7 +41,6 @@ Encore
     .addEntry('formationForm', './assets/js/formationForm.js')
     .addEntry('ckeditorForm', './assets/js/ckeditorForm.js')
     .addEntry('validationSecteur', './assets/js/validationSecteur.js')
-    .addEntry('calendarJS', './assets/js/calendar/calendar.js')
     .addEntry('ImportExportContact', './assets/js/ImportExportContact.js')
     .addEntry('tag', './assets/js/tag.js')
 
@@ -74,9 +73,7 @@ Encore
 
 
     .addStyleEntry('base', './assets/styles/base.css')
-    .addStyleEntry('chat', './assets/styles/chat/chat.css')
-    .addStyleEntry('calendarCSS', './assets/styles/calendar/calendar.css')
-    
+    .addStyleEntry('chat', './assets/styles/chat/chat.css')    
 
     // Vuexy: Theme CSS
     .addStyleEntry('vuexy_bootstrap', './assets/styles/vuexy/bootstrap.css')

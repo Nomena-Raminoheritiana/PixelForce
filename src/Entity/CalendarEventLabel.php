@@ -6,8 +6,10 @@ use App\Repository\CalendarEventLabelRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass=CalendarEventLabelRepository::class)
+ * @UniqueEntity(fields="value", message="Calendar event label is already taken.")
  */
 class CalendarEventLabel implements JsonSerializable
 {
@@ -25,6 +27,7 @@ class CalendarEventLabel implements JsonSerializable
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
      */
     private $value;
 

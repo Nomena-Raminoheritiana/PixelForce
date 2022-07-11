@@ -5,7 +5,7 @@
     
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vuexy/vendors/css/calendars/fullcalendar.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/vuexy/css/pages/app-calendar.css') }}">
-    {{ encore_entry_link_tags('calendarCSS') }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/calendar/calendar.style.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -167,8 +167,6 @@
         </div>
         <!-- END: Content-->
 
-        
-
 {% endblock %}
 
 {% block title %}
@@ -176,7 +174,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('calendarJS') }}
+    <script src="{{ asset('assets/templates/calendar/calendar.js') }}"></script>
     <script src="{{ asset('assets/vuexy/js/scripts/pages/app-calendar-events.js') }}"></script>
     <script src="{{ asset('assets/vuexy/js/scripts/pages/app-calendar.js') }}"></script>
     

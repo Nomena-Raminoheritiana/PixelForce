@@ -220,6 +220,8 @@ document.addEventListener('DOMContentLoaded', function () {
     calendarEvent.extendedProps= {
       calendar: calendarEvent.calendarEventLabel.value
     };
+    calendarEvent.backgroundColor = calendarEvent.calendarEventLabel.color;
+    calendarEvent.borderColor = calendarEvent.calendarEventLabel.color;
   }
   // --------------------------------------------------------------------------------------------------
   // AXIOS: fetchEvents
@@ -233,17 +235,16 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'GET',
         success: function (result) {
           
-
           for(let i=0; i<result.length; i++){
             normalizeEvent(result[i]);
           }
-          
-          console.log(result);
 
           // Get requested calendars as Array
           var calendars = selectedCalendars();
+          console.log(calendars);
+          console.log(result);
           let selectedEvents = result.filter(function (event) {
-            return calendars.includes(event.extendedProps.calendar.toLowerCase());
+            return calendars.includes(event.extendedProps.calendar);
           });
           console.log(selectedEvents);
           successCallback(selectedEvents);
@@ -276,15 +277,15 @@ document.addEventListener('DOMContentLoaded', function () {
     direction: direction,
     initialDate: new Date(),
     navLinks: true, // can click day/week names to navigate views
-    eventClassNames: function ({ event: calendarEvent }) {
-      let colorName = calendarsColor[calendarEvent._def.extendedProps.calendar.toLowerCase()];
-      if(!colorName) colorName = "info";
+    // eventClassNames: function ({ event: calendarEvent }) {
+    //   let colorName = calendarsColor[calendarEvent._def.extendedProps.calendar.toLowerCase()];
+    //   if(!colorName) colorName = "info";
 
-      return [
-        // Background Color
-        'bg-light-' + colorName
-      ];
-    },
+    //   return [
+    //     // Background Color
+    //     'bg-light-' + colorName
+    //   ];
+    // },
     dateClick: function (info) {
       var date = moment(info.date).format('YYYY-MM-DD');
       resetValues();

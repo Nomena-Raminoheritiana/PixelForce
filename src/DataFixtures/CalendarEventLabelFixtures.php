@@ -19,29 +19,34 @@ class CalendarEventLabelFixtures extends Fixture implements FixtureGroupInterfac
 
         $calendarEventLabelArray = [];
         $calendarEventLabelArray[0] = (new CalendarEventLabel())
-                                        ->setName('Business')
-                                        ->setValue('business')
-                                        ->setColor('#7367f0');
+                                        ->setName('Rendez-vous')
+                                        ->setValue('meeting')
+                                        ->setColor('rgba(255, 0, 0, 0.3)');
 
         $calendarEventLabelArray[1] = (new CalendarEventLabel())
                                         ->setName('Personnel')
                                         ->setValue('personal')
-                                        ->setColor('#ea5455');
+                                        ->setColor('rgba(0, 255, 0, 0.3)');
 
         $calendarEventLabelArray[2] = (new CalendarEventLabel())
                                         ->setName('Famille')
                                         ->setValue('family')
-                                        ->setColor('#ff9f43');
+                                        ->setColor('rgba(0, 0, 255, 0.3)');
 
         $calendarEventLabelArray[3] = (new CalendarEventLabel())
                                         ->setName('Vacances')
                                         ->setValue('holiday')
-                                        ->setColor('#28c76f');
+                                        ->setColor('rgba(255, 255, 0, 0.3)');
 
         $calendarEventLabelArray[4] = (new CalendarEventLabel())
+                                        ->setName('Business')
+                                        ->setValue('business')
+                                        ->setColor('rgba(0, 255, 255, 0.3)');
+
+        $calendarEventLabelArray[5] = (new CalendarEventLabel())
                                         ->setName('Autre')
                                         ->setValue('etc')
-                                        ->setColor('#00cfe8');
+                                        ->setColor('rgba(0, 0, 0, 0.3)');
 
                                         
         $manager->persist($calendarEventLabelArray[0]);
@@ -49,6 +54,8 @@ class CalendarEventLabelFixtures extends Fixture implements FixtureGroupInterfac
         $manager->persist($calendarEventLabelArray[2]);
         $manager->persist($calendarEventLabelArray[3]);
         $manager->persist($calendarEventLabelArray[4]);
+        $manager->persist($calendarEventLabelArray[5]);
+
 
         $manager->flush();
     }

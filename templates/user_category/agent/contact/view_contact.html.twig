@@ -6,7 +6,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-	<link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/contact.style.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/contact/contact.style.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -37,6 +37,7 @@
 								{% if is_granted('ROLE_AGENT') %}
 									<a href="{{ path('agent_contact_info_edit', {id:contact.information.id}) }}" class="btn btn-primary"><i class="fa fa-edit"></i> Modifier</a>
 								{% endif %}
+								<div><a href="{{ path('meeting_form', {id:contact.information.id}) }}" class="btn rounded-3 btn-outline-primary mt-3"><i class="fa fa-calendar-check"></i> Prendre rendez-vous</a></div>
 							</div>
 							<div class="contact-card__infos-container">
 								<div class="contact-card__info-item">
