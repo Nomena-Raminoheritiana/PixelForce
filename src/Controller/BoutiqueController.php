@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Secteur;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -14,10 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class BoutiqueController extends AbstractController
 {
     private $userRepository;
-    public function __construct(UserRepository $userRepository)
+    private $session;
+    public function __construct(UserRepository $userRepository, SessionInterface $session)
     {
         $this->userRepository = $userRepository;
+        $this->session = $session;
     }
+
     /**
      * @Route("/", name="boutique_home")
      */
@@ -26,7 +31,17 @@ class BoutiqueController extends AbstractController
         $agent = $this->userRepository->findAgentByToken($token);
         $agentSecteurs = $agentSecteurRepository->findValidByAgent($agent->getId());
         return $this->render('user_category/client/boutique/home.html.twig', [
-            'agentSecteurs' => $agentSecteurs
+            'agentSecteurs' => $agentSecteurs,
+            'agent' => $agent,
+            'token' => $token
         ]);
+    }
+
+    /**
+     * @Route("/secteur/{id}", name="boutique_secteur")
+     */
+    public function secteur($token, Secteur $secteur)
+    {
+        var_dump('ok');
     }
 }

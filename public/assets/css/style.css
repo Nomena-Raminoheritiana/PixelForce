@@ -324,3 +324,11 @@ a, a:hover{
 .my-custom-card{
 	z-index: 6000 !important;
 }
+
+.header-navbar.client{
+	left: 0 !important;
+}
+
+.content.client{
+	margin-left: 0 !important;
+}
