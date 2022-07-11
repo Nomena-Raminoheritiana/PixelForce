@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -922,7 +923,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->coachSecteurs[] = $coachSecteur;
             $coachSecteur->setCoach($this);
         }
-
         return $this;
     }
 
@@ -1040,5 +1040,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getUniqueCoachSecteur(): ?Secteur
+    {
+        if(count($this->getCoachSecteurs()) == 0) {
+            throw new Exception("Pas de secteur");
+        }
+        return $this->getCoachSecteurs()[0]->getSecteur();
     }
 }

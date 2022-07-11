@@ -43,6 +43,12 @@ class CategorieRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')->getQuery();
     }
 
+    public function getValidCategories() {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.statut != 0')
+            ->getQuery()
+            ->getResult(); 
+    }
 //    /**
 //     * @return Categorie[] Returns an array of Categorie objects
 //     */

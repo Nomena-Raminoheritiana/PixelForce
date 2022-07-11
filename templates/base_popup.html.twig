@@ -22,7 +22,7 @@
         
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/animations.css')}}">
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
-        <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/pages/app-invoice.css')}}">
+    
 
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
@@ -42,42 +42,30 @@
         {% endblock %}
 
     </head>
-    <body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
-        <!-- Navbar -->
-        {% include '/partials/header-navbar.html.twig' %}
 
-        <!-- Sidebar -->
-        {% include '/partials/left-sidebar.html.twig' %}
-
-        <!-- Content -->
-        <div class="app-content content ">
+    <body >       
+        <!-- BEGIN: Content-->
+        {% block content %}
+        <div class="app-content content popup-content">
             <div class="content-overlay"></div>
             <div class="header-navbar-shadow"></div>
             <div class="content-wrapper container-xxl p-0">
                 <div class="content-header row">
+                {% block content_header %} 
+                {% endblock %}
                 </div>
                 <div class="content-body">
-                    {# Affichage des messages flash #}
-                    {% for label, messages in app.flashes %}
-                        {% for message in messages %}
-                            <div id="msgFlash" class="alert alert-{{ label }} msgFlash mb-2 mt-4 mb-4">
-                                {{ message | raw }}
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-
-                    {# Body component #}
-                    {% block body %} {% endblock %}
+                {% block body %} 
+                {% endblock %}
                 </div>
             </div>
         </div>
+        {% endblock %}
+        <!-- END: Content-->
 
-        <!-- Overlay -->
         <div class="sidenav-overlay"></div>
-        <div class="drag-target"></div> 
+        <div class="drag-target"></div>
 
-        {% include 'live/video/liveVideoRapide.html.twig' %}
-        {% include 'live/chat/mini_menu_chat.html.twig'  %}
         
         {% block javascripts %}
             <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
@@ -117,10 +105,9 @@
             <script src="{{ asset('assets/vuexy/vendors/js/pickers/flatpickr/flatpickr.min.js') }}" defer></script>
 
 
-            
-
-            
-
         {% endblock %}
+
+            
+
     </body>
 </html>

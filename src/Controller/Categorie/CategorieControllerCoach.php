@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Categorie;
+use App\Entity\User;
 use App\Form\CategorieFormType;
 use App\Form\CategorieFilterType;
 
@@ -37,6 +38,7 @@ class CategorieControllerCoach extends AbstractController
     public function index(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
         $error = null;
+        $user = (object)$this->getUser();
         $page = $request->query->get('page', 1);
         $limit = 5;
         $criteria = [
@@ -57,10 +59,12 @@ class CategorieControllerCoach extends AbstractController
             ->createQueryBuilder()
             ->select('c')
             ->from(Categorie::class, 'c')
+            ->join('c.secteur', 's');
         ;  
 
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'c'));   
-        $query->where($where["where"]." and c.statut != 0 ");
+        $query->where($where["where"]." and c.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $user->getUniqueCoachSecteur()->getId();
         $searchService->setAllParameters($query, $where["params"]);
         $searchService->addOrderBy($query, $filter, ['sort' => 'c.nom', 'direction' => 'asc']);
 
@@ -93,6 +97,8 @@ class CategorieControllerCoach extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
+                $user = (object)$this->getUser();
+                $category->setSecteur($user->getUniqueCoachSecteur());
                 $category->setStatut(1);
                 $this->entityManager->persist($category);
                 $this->entityManager->flush();
