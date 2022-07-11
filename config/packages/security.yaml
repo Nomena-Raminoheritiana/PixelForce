@@ -45,6 +45,7 @@ security:
             - { path: ^/user/addClient, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/forgetPassword.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/inscription.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { path: ^/client, roles: ROLE_CLIENT }
             # - { path: ^/*, roles: IS_AUTHENTICATED_REMEMBERED }
         # - { path: ^/profile, roles: ROLE_USER }
 

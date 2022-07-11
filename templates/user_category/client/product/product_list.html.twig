@@ -37,6 +37,13 @@
             </div>
                 <div class="content-body">
                 <div class="block block--bordered block--rounded">
+                        {% for label, message in app.flashes %}
+                            <div class="alert alert-{{label}} p-3 text-center" role="alert">
+                                <div class="alert-body">
+                                    {{message}}
+                                </div>
+                            </div>
+                        {% endfor %}
                         <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
                         <div class="filter-wrap">
                             {% if error %}
@@ -163,7 +170,7 @@
                                 {% endif %}
                                 {% if product.produitQteStock != null and product.produitQteStock.qteStock > 0 %}
                                 {% if is_granted('ROLE_CLIENT') %}
-                                <a href="#" class="btn btn-primary btn-cart" onclick="addToBasket({{product.id}})">
+                                <a href="{{path('client_basket_add_normal', {'token': token, 'id': product.id})}}" class="btn btn-primary btn-cart" >
                                     <i data-feather="shopping-cart"></i>
                                     <span class="add-to-cart">Ajouter au panier</span>
                                 </a>
@@ -196,31 +203,5 @@
 
 {% endblock %}
 
-{% block javascripts %}
-    <script type="text/javascript">        
-        function addToBasket(productId, quantity = 1){
-            console.log(productId);
-            let request = $.ajax({  
-                url:        '/client/basket/add',  
-                type:       'POST', 
-                data : JSON.stringify({productId:productId, quantity:quantity}),  
-                contentType: 'application/json; charset=utf-8',
-                dataType: "json"
-            });  
-            request.done(function(data) {
-                // your success code here
-                 console.log(data);
-                 alert("Produit ajouté au panier.");
-            });
 
-            request.fail(function(jqXHR, textStatus) {
-                // your failure code here
-                let errMessage = jqXHR.responseJSON.message;
-                console.log(errMessage);
-                alert("Erreur: "+errMessage);
-            });
-            
-        }
-    </script>
-{% endblock %}
 
