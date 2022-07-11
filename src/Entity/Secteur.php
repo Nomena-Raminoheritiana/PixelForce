@@ -65,6 +65,11 @@ class Secteur
      */
     private $active;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Produit::class, mappedBy="secteur")
+     */
+    private $produits;
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
@@ -72,6 +77,7 @@ class Secteur
         $this->formations = new ArrayCollection();
         $this->contacts_agent = new ArrayCollection();
         $this->liveChatVideos = new ArrayCollection();
+        $this->produits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -285,6 +291,36 @@ class Secteur
     public function setActive(?int $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Produit>
+     */
+    public function getProduits(): Collection
+    {
+        return $this->produits;
+    }
+
+    public function addProduit(Produit $produit): self
+    {
+        if (!$this->produits->contains($produit)) {
+            $this->produits[] = $produit;
+            $produit->setSecteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduit(Produit $produit): self
+    {
+        if ($this->produits->removeElement($produit)) {
+            // set the owning side to null (unless already changed)
+            if ($produit->getSecteur() === $this) {
+                $produit->setSecteur(null);
+            }
+        }
 
         return $this;
     }

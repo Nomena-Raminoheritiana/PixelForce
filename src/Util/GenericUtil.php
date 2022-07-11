@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Helpers;
+namespace App\Util;
 
 use ReflectionException;
 use ReflectionMethod;
@@ -15,6 +15,27 @@ class GenericUtil{
             $name .= strtoupper(substr($part, 0, 1)).substr($part, 1);
         }
         return $name;
+    }
+
+    public static function getQueryString($prefix, $data){
+        if($data === null) return "";
+        if(gettype($data) == "array"){
+            $result = "";
+            $i = 0;
+            foreach($data as $key => $value){
+                $qs = GenericUtil::getQueryString($prefix."[".$key."]", $value);
+                if($qs != "") {
+                    if($i > 0) $result .= "&";
+                    $result .= $qs;
+                    $i++;
+                } 
+                
+            }
+            return $result;
+        } else {
+            return $prefix."=".$data;
+        }
+        
     }
 
     

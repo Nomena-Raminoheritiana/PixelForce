@@ -1,0 +1,326 @@
+/*================================================================================
+	Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
+	Version: 2.0
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+a, a:hover{
+	color : unset;
+	text-decoration: none;
+}
+/**
+* Blocks :
+*/
+.block{
+	background-color: #fff;
+	padding : 20px;
+	margin-bottom: 10px;
+	position : relative;
+}
+.block--rounded{
+	border-radius: 10px;
+}
+.block--bordered{
+	box-shadow: 0 4px 24px 0 rgb(34 41 47 / 10%);
+}
+
+.block__title{
+	font-size: 1.25rem;
+	text-transform: uppercase;
+}
+.block__text{
+	text-transform: uppercase;
+	font-size: 1rem;
+}
+.block__text--center{
+	text-align: center;
+}
+.block .table{
+	margin-bottom: 5px;
+}
+
+.block .fab-btn-wrap .btn--rounded{
+	border-radius: 50px;
+	padding : 7px 15px;
+}
+.block .block__header{
+	
+	margin-top :10px;
+	display : flex;
+	justify-content: space-between;
+}
+.btn{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap : 5px;
+}
+.btn .btn--rounded{
+	border-radius: 50px;
+	padding : 7px 15px;
+}
+.block .block__header .fab-btn{
+
+}
+
+/**
+* Tables :
+*/
+.table .col-action{
+	text-align: center;
+	padding : 0px;
+	opacity : 0.7;
+
+}
+.table .col-action:hover{
+	cursor : pointer;
+	opacity : 1;
+}
+.table .col-action--edit{
+	color : rgb(39, 114, 39);
+}
+.table .col-action--remove, .table .col-action--remove button{
+	color : rgb(172, 45, 45);
+}
+.table .col-action button, .table .col-action a{
+	outline: none;
+    border: none;
+    background-color: unset;
+	width : 100%;
+	height : 100%;
+	padding : 10px;
+}
+
+.filter-form{
+	display : flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: flex-end;
+	gap : 10px;
+	padding-bottom: 20px;
+	
+}
+.filter-form--vertical{
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.filter-form .btn-wrap{
+	display : flex;
+	justify-content: center;
+	align-items: flex-end;
+}
+.filter-form .form-select, .filter-form .my-form-widget{
+	min-width: 250px;
+}
+
+.my-form{
+	gap : 10px;
+	padding-bottom: 20px;
+	max-width: 600px;
+	margin : 0 auto;
+}
+.my-form .my-form-widget{
+	margin-bottom: 10px;
+}
+.my-form textarea.form-control{
+	min-height : 200px;
+}
+.my-form .btn-wrap{
+	display : flex;
+	justify-content: flex-end;
+}
+.my-form .my-form-img-preview{
+	max-height : 100px;
+	border : 1px solid #DDD;
+	border-radius: 10px;
+}
+
+
+
+
+.ecommerce-card .ecommerce-card-img{
+	width : 100%;
+	height: 300px;
+	object-fit: cover;
+}
+.ecommerce-card .item-img{
+	background-color: #fafafa;
+}
+.ecommerce-card .item-img a{
+	width : 100%;
+}
+.app-ecommerce-details .product-img{
+	width : 100%;
+	max-width : 300px;
+	margin : 0 auto;
+}
+/** CUSTOM SCROLLBAR **/
+
+.custom-scrollbar::-webkit-scrollbar {
+	width: 7px;
+	height: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: rgba(209, 209, 209, 0.1);
+	border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background: #919296;
+	border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: #797a80;
+	width : 7px;
+}
+
+@keyframes has-focus{
+	0%{
+		transform : scale(1.01);
+	}
+	50%{
+		transform : scale(0.99);
+	}
+	100%{
+		transform : scale(1);
+	}
+}
+.searchbar-wrap{
+
+	font-family : 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	transition : all 250ms ;
+	position : absolute;
+	top : 10px;
+	z-index: 1000;
+    width: 100%;
+	margin : 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.searchbar-wrap .searchbar-input-wrap{
+	width: 90%;
+	background-color : #fff;
+	display : grid;
+	grid-template-columns :  auto 45px;
+	grid-template-rows : 40px;
+	box-shadow : 0px 0px 5px #BBB;
+	border-radius : 7px;
+}
+.searchbar-wrap .searchbar-input-wrap .icon{
+  width : 20px;
+  height : 20px;
+}
+.searchbar-wrap .searchbar-input-wrap .icon:hover{
+	cursor: pointer;
+}
+.searchbar-wrap .searchbar-input-wrap .icon-wrap{
+	display : flex;
+	justify-content : center;
+	align-items : center;
+	opacity : 0.5;
+}
+.searchbar-wrap .searchbar-input-wrap input{
+	border : none;
+	border-radius : 7px;
+	font-family : 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-size : 13px;
+	padding : 0px 20px;
+	
+}
+.searchbar-wrap .searchbar-input-wrap input:focus{
+	outline : none;
+}
+.searchbar-wrap .searchbar-input-wrap:focus-within{
+	animation : 300ms has-focus ease-in;
+}
+.searchbar-wrap .suggestion-wrap{
+	border-top : 1px #eee solid;
+	padding : 10px;
+	box-shadow : 0px 0px 5px #BBB;
+	border-radius : 7px;
+	margin-top : 5px;
+	width : 90%;
+	z-index : 5;
+	background-color: #fff;
+	max-height: 200px;
+    overflow: auto;
+	min-height : 150px;
+	display : none;
+}
+.searchbar-wrap:focus-within .suggestion-wrap{
+	/*display : block;*/
+}
+
+.searchbar-wrap .suggestion-wrap .suggestion-wrap-title{
+	margin : 0px;
+	font-size : 15px;
+	font-weight : normal;
+	color : #888;
+	padding : 0px 10px;
+	font-style : italic;
+}
+.searchbar-wrap .suggestion-wrap .suggestion{
+	padding : 5px 10px;
+
+	color : #555;
+	font-size : 13px;
+	transition : all 150ms ;
+}
+.searchbar-wrap .suggestion-wrap .suggestion:hover{
+	font-weight: bolder;
+	background-color :#f7f7f7;
+	border-radius : 10px;
+	cursor : pointer;
+}
+.searchbar-wrap .suggestion-wrap .suggestion .match{
+	background-color : #ffe5a2;
+}
+
+.searchbar-wrap .suggestion-wrap .suggestion .suggestion-content{
+
+	font-size : 12px;
+}
+.searchbar-wrap .suggestion-wrap .suggestion .suggestion-description{
+	margin : 0px;
+	color : #AAA;
+	font-size : 11px;
+}
+.searchbar-wrap .suggestion-wrap .suggestion .suggestion-description .key{
+	font-weight : bolder;
+}
+.searchbar-wrap .suggestion-wrap:focus{
+	outline : none;
+	background-color :#f7f7f7;
+	font-weight: bolder;
+	border-radius : 10px;
+}
+.suggestion-wrap.collapsed{
+  height : 0px;
+  padding : 0px !important;
+  overflow : hidden;
+}
+
+.btn-popup{
+	background-color: #efefef;
+	border: 1px solid #d8d6de
+}
+
+.popup-content{
+	padding-top: 10px !important;
+	margin-left: 0 !important;
+}
+
+.my-custom-card{
+	z-index: 6000 !important;
+}
