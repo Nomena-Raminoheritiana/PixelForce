@@ -222,6 +222,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $categorieFormationAgents;
 
+     /**
+     * @ORM\OneToMany(targetEntity="Meeting", mappedBy="user")
+     */
+    private $meetings;
+
+     /**
+     * @ORM\OneToMany(targetEntity="Meeting", mappedBy="userToMeet")
+     */
+    private $meetingGuests;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -239,6 +249,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->agentSecteurs = new ArrayCollection();
         $this->calendarEvents = new ArrayCollection();
         $this->categorieFormationAgents = new ArrayCollection();
+        $this->meetings = new ArrayCollection();
+        $this->meetingGuests = new ArrayCollection();
+
 
     }
 

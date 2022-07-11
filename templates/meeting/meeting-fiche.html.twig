@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/meeting/meeting.style.css') }}">
+{% endblock %}
+
+{% block body %}
+    {% if meeting == null %}
+        <div class="alert alert-danger" role="alert">
+            <div class="alert-body">
+                Rendez-vous indéfini.
+            </div>
+        </div>
+    {% else %}
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Fiche du rendez-vous n° {{meeting.id}} :</h1>
+        <table class="table table-bordered meeting-fiche">
+            <tr>
+                <th>Libellé</th>
+                <td>{{meeting.title}}</td>
+            <tr>
+            <tr>
+                <th>Date de début</th>
+                <td>{{meeting.start | date("d/m/Y H:i")}}</td>
+            <tr>
+            <tr>
+                <th>Date de fin</th>
+                <td>{{meeting.end | date("d/m/Y H:i")}}</td>
+            <tr>
+            <tr>
+                <th>Invité</th>
+                <td><a href="#">{{meeting.userToMeet.email}}</a></td>
+            <tr>
+            <tr>
+                <th>Statut</th>
+                <td><i>{{meeting.meetingState.name}}</i></td>
+            <tr>
+            <tr class="note-row">
+                <th>Note</th>
+                <td>{{meeting.note|raw}}</td>
+            <tr>
+            
+        </table>
+        <div class="meeting-fiche-controls">
+            <button class="btn btn-outline-danger" type="button">Annuler le rendez-vous</button>
+            <button class="btn btn-outline-secondary" type="button">Rendez-vous après 48h</button>
+
+            <button class="btn btn-primary" type="button">Marquer comme terminé</button>
+
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    Rendez-vous
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>
+{% endblock %}

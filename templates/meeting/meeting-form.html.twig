@@ -6,7 +6,50 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Prendre un rendez-vous avec {{userToMeet.email}}</h1>
+    {% if userToMeet == null %}
+        <div class="alert alert-danger" role="alert">
+            <div class="alert-body">
+                Contact indéfini.
+            </div>
+        </div>
+    {% else %}
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Prendre un rendez-vous avec {{userToMeet.email}} :</h1>
+            
+            {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <div class="alert-body">
+                        {{error}}
+                    </div>
+                </div>
+                {% endif %}
+                <div class="my-form-widget">
+                    {{form_label(form.title)}}
+                    {{form_widget(form.title)}}
+                    {{form_errors(form.title)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.start)}}
+                    {{form_widget(form.start)}}
+                    {{form_errors(form.start)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.end)}}
+                    {{form_widget(form.end)}}
+                    {{form_errors(form.end)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.note)}}
+                    {{form_widget(form.note)}}
+                    {{form_errors(form.note)}}
+                </div>
+                <div class="btn-wrap">
+                    <button class="btn btn-primary" type="submit">Prendre rendez-vous</button>
+                </div>
+            {{ form_end(form) }}
+    </div>
+    {% endif %}
 {% endblock %}
 
 {% block title %}

@@ -35,4 +35,7 @@
 # Calendar Fixtures :
 ```php bin/console doctrine:fixtures:load --group=calendar_event_label --append```
 ```php bin/console doctrine:fixtures:load --group=calendar_event --append```
+```php bin/console doctrine:fixtures:load --group=meeting_state --append```
+
+
 
