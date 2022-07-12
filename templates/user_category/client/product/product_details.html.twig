@@ -58,15 +58,25 @@
                                     </p>
                                     <hr />
                                     <div class="d-flex flex-column flex-sm-row pt-1">
-                                        <a href="#" class="btn btn-primary btn-cart me-0 me-sm-1 mb-1 mb-sm-0">
+                                        {% if product.produitQteStock != null and product.produitQteStock.qteStock > 0 %}
+                                        {% if is_granted('ROLE_CLIENT') %}
+                                        <a href="{{path('client_basket_add_normal', {'token': token, 'id': product.id})}}" class="btn btn-primary btn-cart me-0 me-sm-1 mb-1 mb-sm-0">
                                             <i data-feather="shopping-cart" class="me-50"></i>
-                                            <span class="add-to-cart">Add to cart</span>
+                                            <span class="add-to-cart">Ajouter au panier</span>
                                         </a>
+                                        {% endif %}
+                                        {% else %}
+                                        <a href="#" class="btn btn-secondary btn-cart me-0 me-sm-1 mb-1 mb-sm-0 disabled">
+                                            <span class="add-to-cart">Rupture de stock</span>
+                                        </a>
+                                        {% endif %}
+                                        {% if is_granted('ROLE_CLIENT') %}
                                         <a href="#" class="btn btn-outline-secondary btn-wishlist me-0 me-sm-1 mb-1 mb-sm-0">
                                             <i data-feather="heart" class="me-50"></i>
-                                            <span>Wishlist</span>
+                                            <span>Favoris</span>
                                         </a>
-                                        <div class="btn-group dropdown-icon-wrapper btn-share">
+                                        {% endif %}
+                                        {# <div class="btn-group dropdown-icon-wrapper btn-share">
                                             <button type="button" class="btn btn-icon hide-arrow btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i data-feather="share-2"></i>
                                             </button>
@@ -84,7 +94,7 @@
                                                     <i data-feather="instagram"></i>
                                                 </a>
                                             </div>
-                                        </div>
+                                        </div> #}
                                     </div>
                                 </div>
                             </div>
