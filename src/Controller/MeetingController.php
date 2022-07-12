@@ -14,10 +14,12 @@ use App\Repository\CalendarEventLabelRepository;
 
 use App\Entity\Meeting;
 use App\Form\MeetingType;
+use App\Form\MeetingFilterType;
 
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Knp\Component\Pager\PaginatorInterface;
 /**
  * @Route("/meeting")
  */
@@ -118,6 +120,42 @@ class MeetingController extends AbstractController
         
         return $this->render('meeting/meeting-fiche.html.twig', [
             'meeting' => $meeting
+        ]);
+    }
+     /**
+     * @Route("/list", name="meeting_list")
+     */
+    public function meeting_list(Request $request, PaginatorInterface $paginator)
+    {
+        $error = null;
+        $page = $request->query->get('page', 1);
+        $limit = 5;
+        $meeting = new Meeting();
+        $user = $this->getUser();
+        $meeting->setStart(new \Datetime());
+        $meeting->setUser($user);
+        $meeting->setUserToMeet($user);
+
+        $form = $this->createForm(MeetingFilterType::class, $meeting, [
+            'method' => 'GET',
+        ]);
+        $form->handleRequest($request);
+        $options = [];
+        $options['orderBy'] = $form->get('orderBy')->getData();
+        $options['order'] = $form->get('order')->getData();
+        $query = $this->meetingRepository->getSearchQuery($meeting, $options);
+        $meetings = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+        // $meetings = $this->meetingRepository->findAll();
+        
+        return $this->render('meeting/meeting-list.html.twig', [
+            'meetings' => $meetings,
+            'form' => $form->createView(),
+            'error' => $error,
+            'user'=>$user
         ]);
     }
 

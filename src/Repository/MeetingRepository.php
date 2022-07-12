@@ -39,6 +39,41 @@ class MeetingRepository extends ServiceEntityRepository
         }
     }
 
+    public function getSearchQuery($meeting, $options = null){
+        $qb = $this->createQueryBuilder('p');
+        $parameters = [];
+        if($meeting->getTitle()!=null) {
+            $qb->andWhere('LOWER(p.title) LIKE LOWER(:title)');
+            $parameters['title'] = '%'.$meeting->getTitle(). '%';
+        }
+        if($meeting->getStart()!=null) {
+            $qb->andWhere('p.start >= :start');
+            $parameters['start'] = $meeting->getStart();
+        }
+        if($meeting->getEnd()!=null) {
+            $qb->andWhere('p.end <= :end');
+            $parameters['end'] = $meeting->getEnd();
+        }
+        if($meeting->getMeetingState()!=null) {
+            $qb->andWhere('p.meetingState = :meetingState');
+            $parameters['meetingState'] = $meeting->getMeetingState();
+        }
+        if($meeting->getUser()!=null && $meeting->getUserToMeet()!=null) {
+            $qb->andWhere('p.user = :user or p.userToMeet = :userToMeet');
+            $parameters['user'] = $meeting->getUser();
+            $parameters['userToMeet'] = $meeting->getUserToMeet();
+        }
+        if($options != null){
+            if($options['orderBy']!=null && $options['order']!=null) {
+                $qb->orderBy('p.'.$options['orderBy'], $options['order']);
+            } 
+        }
+
+        $qb->setParameters($parameters);
+        return $qb->getQuery();
+
+    }
+
 //    /**
 //     * @return Meeting[] Returns an array of Meeting objects
 //     */

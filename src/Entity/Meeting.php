@@ -29,12 +29,12 @@ class Meeting implements JsonSerializable
     private $note;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $start;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $end;
 
@@ -90,7 +90,7 @@ class Meeting implements JsonSerializable
         return $this->start;
     }
 
-    public function setStart(\DateTimeInterface $start): self
+    public function setStart(?\DateTimeInterface $start): self
     {
         $this->start = $start;
 
@@ -102,7 +102,7 @@ class Meeting implements JsonSerializable
         return $this->end;
     }
 
-    public function setEnd(\DateTimeInterface $end): self
+    public function setEnd(?\DateTimeInterface $end): self
     {
         $this->end = $end;
 

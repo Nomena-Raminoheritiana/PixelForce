@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/meeting/meeting.style.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
+        <div class="filter-wrap">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <div class="alert-body">
+                        {{error}}
+                    </div>
+                </div>
+            {% endif %}
+            {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
+                
+                <div class="my-form-widget">
+                    {{form_label(form.title)}}
+                    {{form_widget(form.title)}}
+                    {{form_errors(form.title)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.start)}}
+                    {{form_widget(form.start)}}
+                    {{form_errors(form.start)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.end)}}
+                    {{form_widget(form.end)}}
+                    {{form_errors(form.end)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.meetingState)}}
+                    {{form_widget(form.meetingState)}}
+                    {{form_errors(form.meetingState)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.orderBy)}}
+                    {{form_widget(form.orderBy)}}
+                    {{form_errors(form.orderBy)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.order)}}
+                    {{form_widget(form.order)}}
+                    {{form_errors(form.order)}}
+                </div>
+                <div class="btn-wrap">
+                    <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+     <div class="block block--bordered block--rounded">
+        <div class="block__header mb-1" >
+            <h1 class="block__title">Liste de mes rendez-vous :</h1>
+            
+        </div>
+        {% if meetings|length ==0 %}
+                <div class="alert alert-primary p-3 text-center" role="alert">
+                    <div class="alert-body">
+                        Aucun rendez-vous.
+                    </div>
+                </div>
+        {% endif %}
+        {% if meetings|length !=0 %}
+        <div class="table-responsive mb-1">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th>Libellé</th>
+                        <th>Invité</th>
+                        <th>Statut</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for meeting in meetings %}
+                    <tr>
+                        <td>{{meeting.id}}</td>
+                        <td>{{meeting.start | date("d/m/Y H:i")}}</td>
+                        <td>{{meeting.end | date("d/m/Y H:i")}}</td>
+                        <td><b>{{meeting.title}}</b></td>
+                        <td>
+                            <i>
+                                <a href="#">
+                                    {{meeting.userToMeet.id == user.id ? meeting.user.email : meeting.userToMeet.email}}
+                                </a>
+                            </i>
+                        </td>
+                        <td>
+                            {% if meeting.meetingState.name == 'Annulé' %}
+                                <span class="text-danger">{{meeting.meetingState.name}}</span>
+                            {% else %}
+                                {{meeting.meetingState.name}}
+                            {% endif %}
+                        </td>
+                        <td class="col-action ">
+                            <a href="{{path('meeting_fiche', {'id': meeting.id})}}">
+                                <i data-feather="eye"></i>
+                            </a>
+                        </td>
+
+                       
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-center scale-up-center">
+            {{ knp_pagination_render(meetings) }}
+        <div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block title %}
+    Rendez-vous
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>
+{% endblock %}
