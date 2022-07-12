@@ -70,6 +70,11 @@ class Secteur
      */
     private $produits;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=TypeSecteur::class)
+     */
+    private $type;
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
@@ -321,6 +326,18 @@ class Secteur
                 $produit->setSecteur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?TypeSecteur
+    {
+        return $this->type;
+    }
+
+    public function setType(?TypeSecteur $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

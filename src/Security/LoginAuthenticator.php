@@ -44,9 +44,21 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         return new Passport(
             new UserBadge($email, function($value) use(&$request) {
                $user = $this->userRepository->findOneBy(['email' => $value]);
-                if($user && $user->getActive() === -1) {
-                    $request->getSession()->getFlashBag()->add('danger', 'Vous n’êtes pas autorisé sur la plateforme Pixelforce');
-                   return null;
+                if($user) {
+                    if($user->getActive() === -1){
+                        $request->getSession()->getFlashBag()->add('danger', 'Vous n’êtes pas autorisé sur la plateforme Pixelforce');
+                        return null;
+                    }
+                    if(in_array(User::ROLE_CLIENT,$user->getRoles())){
+                        $agentToken = $request->get('agentToken');
+                        $agent = $this->userRepository->findAgentByToken($agentToken);
+                        if($user->getClientAgent() && $agent && $user->getClientAgent()->getId() == $agent->getId()){}
+                        else{
+                            $request->getSession()->getFlashBag()->add('danger', "Veuillez vous connectez avec le lien de votre agent");
+                            return null;
+                        }
+                    }
+                    
                 }
                return $user ? $user : $this->userRepository->findOneBy(['username' => $value]);
             }),
@@ -59,10 +71,13 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $user = (object)$token->getUser();
         if(in_array(User::ROLE_ADMINISTRATEUR, $token->getRoleNames())) {
             return new RedirectResponse('/admin/dashboard');
         }else if(in_array(User::ROLE_AGENT, $token->getRoleNames())) { 
             return new RedirectResponse('/agent/accueil'); 
+        } else if(in_array(User::ROLE_CLIENT, $token->getRoleNames())) { 
+            return new RedirectResponse('/boutique/'.$user->getClientAgent()->getAgentToken().'/'); 
         } 
 
         return new RedirectResponse('/dashboard');

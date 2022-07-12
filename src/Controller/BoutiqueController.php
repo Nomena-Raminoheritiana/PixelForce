@@ -64,6 +64,7 @@ class BoutiqueController extends AbstractController
      */
     public function secteur($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
+        $this->session->set('secteurId', $secteur->getId());
         $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);

@@ -84,6 +84,7 @@ class StockService
         $mouv->setProduit($produit);
         $mouv->setSortie($qte);
         $mouv->setEntree(0);
+        $mouv->setStatut(1);
         $this->entityManager->persist($mouv);
         return $mouv;
     }

@@ -24,6 +24,13 @@
         <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css')}}">
         <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/pages/app-invoice.css')}}">
         <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/pages/app-ecommerce.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{asset('app-assets/vendors/css/forms/wizard/bs-stepper.min.css')}}">
+
+        <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/plugins/forms/form-wizard.css')}}">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
@@ -78,17 +85,17 @@
         {% include 'live/chat/mini_menu_chat.html.twig'  %} #}
         
         {% block javascripts %}
-            <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            {# <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="chat-newMessage-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_MESSAGE_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="chat-vu-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_VU_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="chat-userTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json" id="chat-userStopTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_STOP_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
-            <script type="application/json"  id="current-user-id">{{ app.user.id }}</script>
-            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
-            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-            <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-            <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script>
+            <script type="application/json"  id="current-user-id">{{ app.user.id }}</script> #}
+            {# <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script> #}
+            {# <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script> #}
+            {# <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script> #}
+            {# <script src='https://meet.jit.si/external_api.js' id='meet-live-video'></script> #}
             <script src="{{ asset('assets/vuexy/vendors/js/vendors.min.js') }}" ></script>
             <script src="{{ asset('assets/vuexy/vendors/js/extensions/toastr.min.js') }}"></script>
 
@@ -113,7 +120,9 @@
             <script src="{{ asset('assets/vuexy/vendors/js/forms/select/select2.full.min.js') }}" defer></script>
             <script src="{{ asset('assets/vuexy/vendors/js/forms/validation/jquery.validate.min.js') }}" defer></script>
             <script src="{{ asset('assets/vuexy/vendors/js/pickers/flatpickr/flatpickr.min.js') }}" defer></script>
-
+            
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
 
             
 
