@@ -18,7 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity({"email","username"},  message="La valeur existe déjà")
+ * @UniqueEntity("username", message="Nom d'utilisateur déjà utilisé")
+ * @UniqueEntity("email", message="Adresse email déjà utilisé")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -236,6 +237,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToOne(targetEntity=User::class)
      */
     private $clientAgent;
+
+    private $plainPassword;
 
     public function __construct()
     {
@@ -1082,6 +1085,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setClientAgent(?self $clientAgent): self
     {
         $this->clientAgent = $clientAgent;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of plainPassword
+     */ 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */ 
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
