@@ -54,7 +54,7 @@
 					<tr>
 						<th scope="col">Nom</th>
 						<th scope="col">Description</th>
-						{# <th scope="col">Coach</th> #}
+						<th scope="col">Type</th>
                         <th scope="col">état secteur</th>
 						<th scope="col" class="table-th-notSortable">ACTION</th>
 					</tr>
@@ -64,6 +64,7 @@
                         <tr>
                             <td>{{ sector.nom }}</td>
                             <td>{{ sector.description|slice(0, 50) }}...</td>
+                            <td>{% if sector.type  %} {{ sector.type.nom }} {% else %} {% endif %}</td>
                             {# <td>
                                 {% set CoachSecteur = repoCoachSecteur.findBy({'secteur' : sector}) %}                                
                                 {% if CoachSecteur|length > 0  and CoachSecteur[0].coach %}
