@@ -1,0 +1,36 @@
+{% extends 'security/login.html.twig' %}
+
+{% block form %}
+    <h5 class="text-center my-4">Validation du compte</h5>
+    <p class="card-text mb-2">Entrer ci-dessous le code de vérification envoyé à votre email pour activer votre compte</p>
+    {% if error %}
+        <div class="alert alert-danger p-3 text-center" role="alert">
+            <div class="alert-body">
+                {{error}}
+            </div>
+        </div>
+    {% endif %}
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-12">
+                {{ form_row(form.verifCode) }}
+            </div>
+        </div>
+        
+        <div class="w-100 text-center mt-2">
+            <button class="btn btn-primary" type="submit">Vérifier</button>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-12">
+                <div class=" text-center">
+                    <a class="btn btn-success w-100 font-weight-bold" href="{{ path('signup_client', {'token': token}) }}">
+                        <i data-feather="chevron-left"></i> Revenir à la page d'inscription
+                    </a>
+                </div>
+            </div>
+        </div>  
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block title %}Inscription agent{% endblock %}
