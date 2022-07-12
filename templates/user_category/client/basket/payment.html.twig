@@ -10,7 +10,7 @@
         <div class="payment-type">
             <div class="card">
                 <div class="card-header flex-column align-items-start">
-                    <h4 class="card-title">Paiement</h4>
+                    <h4 class="card-title display-4 p-3">Paiement de la commande</h4>
                     {# <p class="card-text text-muted mt-25">Be sure to click on correct payment option</p> #}
                 </div>
                 <div class="card-body">
@@ -28,9 +28,9 @@
                         </div>
                     </div>
                     {% endif %}
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <div class="mb-2">
+                    <div class="row pb-3">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="mb-2 p-3">
                                 <label class="form-label" for="card-element">Carte de crédit:</label>
                                 <div id="card-element" class="form-control">
                                     
@@ -38,10 +38,10 @@
                                 <div id="card-errors" class="invalid-feedback d-block"></div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-12"></div>
+                        
                         {{ form_widget(form.token) }}
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-next">Continuer</button>
+                        <div class="col-12 ps-4">
+                            <button type="submit" class="btn btn-primary btn-next">Continuer <i class="fas fa-money-bill ms-2"></i></button>
                         </div>
                     </div>
                     {# <div class="customer-cvv mt-1 row row-cols-lg-auto">

@@ -137,6 +137,8 @@ class CalendarController extends AbstractController
         return new JsonResponse($events);
     }
 
+    
+
     /**
      * @Route("/api/add_event", name="calendar_api_add_event", methods={"POST"})
      */

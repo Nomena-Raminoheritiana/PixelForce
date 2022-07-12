@@ -11,10 +11,10 @@
         <!-- Checkout Customer Address Left starts -->
         <div class="card">
             <div class="card-header flex-column align-items-start">
-                <h4 class="card-title">Adresse de livraison</h4>
+                <h4 class="card-title display-4 p-3">Adresse de livraison</h4>
                 {# <p class="card-text text-muted mt-25">Be sure to check "Deliver to this address" when you have finished</p> #}
             </div>
-            <div class="card-body">
+            <div class="card-body pt-3">
                 {% if error %}
                 <div class="alert alert-danger" role="alert">
                     <div class="alert-body">
@@ -61,7 +61,7 @@
                     </div>
                     
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary btn-next delivery-address">Enregistrer et commander</button>
+                        <button type="submit" class="btn btn-primary btn-next delivery-address mt-3">Enregistrer et commander<i class="fa fa-shopping-cart ms-2"></i></button>
                     </div>
                 </div>
             </div>
@@ -73,16 +73,16 @@
             <div id="map_canvas" class="map" style="height:350px" ></div>
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title" id="current_position">Position indéfini</h4>
+                    <h4 class="card-title display-5 p-2" id="current_position">Position indéfini</h4>
                 </div>
-                <div class="card-body actions">
-                    <p class="card-text mb-0">Latitude : <span id="latitude">0</span></p>
-                    <p class="card-text mb-0">Longitude : <span id="longitude">0</span></p>
+                <div class="card-body actions p-3">
+                    <p class="card-text mb-0"><i>Latitude : <span id="latitude">0</span></i></p>
+                    <p class="card-text mb-0"><i>Longitude : <span id="longitude">0</span></i></p>
                     {# <p class="card-text mb-0">9447 Glen Eagles Drive</p>
                     
                     <p class="card-text">202-555-0140</p> #}
                     <button type="button" class="btn btn-primary w-100 btn-next delivery-address mt-2" onclick="findMyLocation()">
-                       Trouver ma position
+                       Trouver ma position <i class="fas fa-map-pin ms-2"></i>
                     </button>
                 </div>
             </div>
@@ -136,7 +136,7 @@
 		window.onload = async () => {  
             map = L.map('map_canvas', { zoomControl: false });
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: 'Pixen\'shop &copy;',
+				attribution: 'Pixel Force &copy;',
 				minZoom: 1,
 				maxZoom: 20,
 			}).addTo(map);

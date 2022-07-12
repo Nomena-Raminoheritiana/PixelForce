@@ -91,7 +91,8 @@ class MeetingController extends AbstractController
                  $this->entityManager->persist($event);
                  $this->entityManager->flush();
 
-
+                 // Get the secteur of the agent :
+                 
 
                  $this->entityManager->commit();
 

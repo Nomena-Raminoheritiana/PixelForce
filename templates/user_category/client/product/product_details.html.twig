@@ -11,7 +11,7 @@
 
 {% block body %}  
     <!-- BEGIN: Content-->
-    <div class="app-content content client ecommerce-application">
+    <div class="app-content content client ecommerce-application pt-5">
         <div class="content-overlay"></div>
         <div class="header-navbar-shadow"></div>
         <div class="content-wrapper container-xxl p-0">
@@ -19,14 +19,14 @@
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h2 class="content-header-title float-start mb-0">Product Details</h2>
+                            {# <h2 class="content-header-title float-start mb-0">Détail du produit</h2> #}
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="index.html">Home</a>
+                                    <li class="breadcrumb-item"><a href="index.html">Accueil</a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#">eCommerce</a>
+                                    <li class="breadcrumb-item"><a href="#">Ma boutique en ligne</a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="app-ecommerce-shop.html">Shop</a>
+                                    <li class="breadcrumb-item"><a href="app-ecommerce-shop.html">Liste des produits</a>
                                     </li>
                                     <li class="breadcrumb-item active">Details
                                     </li>
@@ -54,7 +54,7 @@
                                         <h4 class="item-price me-1">{{product.prix | number_format(2, ',', ' ')}}€</h4>
                                     </div>
                                     <p class="card-text">
-                                        {{product.description}}
+                                        {{product.description|raw}}
                                     </p>
                                     <hr />
                                     <div class="d-flex flex-column flex-sm-row pt-1">
