@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Produit;
 use App\Entity\ProduitDD;
+use App\Form\DemandeDevisFilterType;
 use App\Form\DemandeDevisFormType;
 use App\Form\MyProductFilter;
 use App\Form\MyProduitFilterType;
@@ -56,62 +57,63 @@ class DemandeDevisControllerClient extends AbstractController
         $this->userRepository = $userRepository;
     }
 
-//    /**
-//      * @Route("/", name="admin_product_list")
-//      */
-//     public function index(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
-//     {
-//         $error = null;
-//         $user = (object)$this->getUser();
-//         $page = $request->query->get('page', 1);
-//         $limit = 5;
-//         $criteria = [
-//             ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
-//             ['prop' => 'description', 'op' => 'LIKE'],
-//             ['prop' => 'prixMin', 'op' => '>=', "col" => "prix"],
-//             ['prop' => 'prixMax', 'op' => '<=', "col" => "prix"],
-//             ['prop' => 'nom', 'op' => 'LIKE']
-//         ];
+   /**
+     * @Route("/", name="client_demandedevis_list")
+     */
+    public function index($token, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $page = $request->query->get('page', 1);
+        $limit = 5;
+        $criteria = [
+            ['prop' => 'status'],
+            ['prop' => 'nomProduit', 'col' => 'nom', 'op' => 'LIKE', 'alias' => 'p'],
+            ['prop' => 'dateMin', 'col' => 'dateDemande', 'op' => '>='],
+            ['prop' => 'dateMax', 'col' => 'dateDemande', 'op' => '<='],
+            ['prop' => 'user', 'col' => 'id', 'alias' => 'c']
+        ];
 
-//         $filter = [];
+        $filter = [];
 
-//         $form = $this->createForm(MyProduitFilterType::class, $filter, [
-//             'method' => 'GET'
-//         ]);
+        $form = $this->createForm(DemandeDevisFilterType::class, $filter, [
+            'method' => 'GET',
+        ]);
+        $form->handleRequest($request);
+        $filter = $form->getData();
+        $filter["user"] = ((object)$this->getUser())->getId();
 
-//         $form->handleRequest($request);
-//         $filter = $form->getData();
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('d')
+            ->from(DemandeDevis::class, 'd')
+            ->join('d.client', 'c')
+            ->join('d.agent', 'a')
+            ->join('d.secteur', 's')
+            ->join('d.produit', 'p')
+        ;  
 
-//         $query = $this->entityManager
-//             ->createQueryBuilder()
-//             ->select('p')
-//             ->from(Produit::class, 'p')
-//             ->join('p.categorie', 'c')
-//             ->join('p.secteur', 's')
-//         ;  
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'd'));   
+        $query->where($where["where"]." and a.id = :agentId and s.id = :secteurId ");
+        $where["params"]["agentId"] = $agent->getId();
+        $where["params"]["secteurId"] = $secteurId;
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'd.dateDemande', 'direction' => 'desc']);
 
-//         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
-//         $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
-//         $where["params"]["secteurId"] = $user->getUniqueCoachSecteur()->getId();
-//         $searchService->setAllParameters($query, $where["params"]);
-//         $searchService->addOrderBy($query, $filter, ['sort' => 'p.id', 'direction' => 'asc']);
+        $ddList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
 
-//         $productList = $paginator->paginate(
-//             $query,
-//             $page,
-//             $limit
-//         );
+        return $this->render('user_category/client/dd/demandedevis/demandedevis_list.html.twig', [
+            'ddList' => $ddList,
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent
+        ]);
 
-//         return $this->render('user_category/coach/product/product_list.html.twig', [
-//             'productList' => $productList,
-//             'form' => $form->createView(),
-//             'error' => $error,
-//             'filesDirectory' => $this->getParameter('files_directory_relative'),
-//             'page' => $page,
-//             'queryString' => $request->getQueryString()
-//         ]);
-
-//     }
+    }
     
 
     /**
@@ -145,7 +147,8 @@ class DemandeDevisControllerClient extends AbstractController
                 $this->entityManager->persist($dd);
                 $this->entityManager->flush();
 
-                return $this->redirectToRoute('client_demandedevis_fiche', ['token' => $token, 'id' => $dd->getId()]);
+                return $this->redirectToRoute('client_demandedevis_list', ['token' => $token]);
+                // return $this->redirectToRoute('client_demandedevis_fiche', ['token' => $token, 'id' => $dd->getId()]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
