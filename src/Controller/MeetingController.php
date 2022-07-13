@@ -8,6 +8,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
 use App\Repository\MeetingStateRepository;
 use App\Repository\MeetingRepository;
+use App\Repository\AgentSecteurRepository;
+use App\Repository\CoachSecteurRepository;
+use App\Repository\SecteurRepository;
+
+
 
 use App\Repository\CalendarEventLabelRepository;
 
@@ -29,19 +34,25 @@ class MeetingController extends AbstractController
     private $userRepository;
     private $meetingStateRepository;
     private $meetingRepository;
-
     private $calendarEventLabelRepository;
+    private $agentSecteurRepository;
+    private $coachSecteurRepository;
+    private $secteurRepository;
 
 
-    public function __construct(EntityManagerInterface $entityManager,UserRepository $userRepository, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository){
+
+
+    public function __construct(EntityManagerInterface $entityManager,UserRepository $userRepository, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository, AgentSecteurRepository $agentSecteurRepository, CoachSecteurRepository $coachSecteurRepository, SecteurRepository $secteurRepository){
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->meetingStateRepository = $meetingStateRepository;
         $this->meetingRepository = $meetingRepository;
-
         $this->calendarEventLabelRepository = $calendarEventLabelRepository;
+        $this->agentSecteurRepository = $agentSecteurRepository;
+        $this->coachSecteurRepository = $coachSecteurRepository;
+        $this->secteurRepository = $secteurRepository;
 
-
+        
     }
     /**
      * @Route("/form/{id}", name="meeting_form")
@@ -91,9 +102,22 @@ class MeetingController extends AbstractController
                  $this->entityManager->persist($event);
                  $this->entityManager->flush();
 
-                 // Get the secteur of the agent :
-                 
+                 // Get the secteur and coachs of the agent,and insert an  event for them :
+                $secteursAgent = $this->agentSecteurRepository->findBy(["agent"=>$this->getUser()]);
+                for($i=0;$i<count($secteursAgent); $i++){
+                    $secteur = $secteursAgent[$i]->getSecteur();
+                    $coachs = $this->coachSecteurRepository->findBy(["secteur"=>$secteur]);
+                    for($iCoach=0;$iCoach<count($coachs); $iCoach++){
+                        if($coachs[$iCoach]->getCoach()->getId() == $userToMeet->getId()) continue;
 
+                        $coach = $coachs[$iCoach]->getCoach();
+                        $event = $meeting->toCalendarEvent();
+                        $event->setCalendarEventLabel($meetingCalendarEventLabel);
+                        $event->setUser($coach);
+                        $this->entityManager->persist($event);
+                        $this->entityManager->flush();
+                    }
+                }
                  $this->entityManager->commit();
 
                 return $this->redirectToRoute('agent_contact_list');

@@ -47,11 +47,11 @@ class MeetingRepository extends ServiceEntityRepository
             $parameters['title'] = '%'.$meeting->getTitle(). '%';
         }
         if($meeting->getStart()!=null) {
-            $qb->andWhere('p.start >= :start');
+            $qb->andWhere("DATE(p.start) >= DATE(:start)");
             $parameters['start'] = $meeting->getStart();
         }
         if($meeting->getEnd()!=null) {
-            $qb->andWhere('p.end <= :end');
+            $qb->andWhere("DATE(p.end) <= DATE(:end)");
             $parameters['end'] = $meeting->getEnd();
         }
         if($meeting->getMeetingState()!=null) {

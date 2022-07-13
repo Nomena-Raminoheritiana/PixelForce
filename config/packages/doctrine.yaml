@@ -23,6 +23,8 @@ doctrine:
                 DAY: DoctrineExtensions\Query\Mysql\Day
                 MONTH: DoctrineExtensions\Query\Mysql\Month
                 YEAR: DoctrineExtensions\Query\Mysql\Year
+                DATE: DoctrineExtensions\Query\Mysql\Date
+
 
 when@test:
     doctrine:
