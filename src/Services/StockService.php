@@ -76,8 +76,9 @@ class StockService
         }
     }
 
-    public function faireSortie(Produit $produit, float $qte, DateTime $date = new DateTime()): ?Mouvement
+    public function faireSortie(Produit $produit, float $qte, $date = null): ?Mouvement
     {
+        if(!$date) $date = new DateTime();
         $produit->checkQty($qte);
         $mouv = new Mouvement();
         $mouv->setDateMouvement($date);
