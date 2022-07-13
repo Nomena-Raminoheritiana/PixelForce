@@ -35,7 +35,7 @@
                 </div>
 
             </div>
-                <div class="content-body pb-4" style="display : grid;grid-template-columns: 2.5fr 0.5fr;column-gap: 2rem;">
+                <div class="content-body pb-4" style="display : grid;grid-template-columns: 2fr 1fr;column-gap: 2rem;">
                     
                     <div class="products">
                         <!-- E-commerce Content Section Starts -->
@@ -77,50 +77,42 @@
                                 </div>
                         {% endif %}
                         {% if productList|length !=0 %}
-                        <section id="ecommerce-products" class="grid-view" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <section id="ecommerce-products" class="grid-view" style="grid-template-columns: 1fr 1fr;">
                             {% for product in productList %}
                             <div class="card ecommerce-card">
                                 <div class="item-img text-center">
-                                    <a href="{{path('client_product_details', {'id': product.id, 'token': token})}}">
+                                    <a href="{{path('client_productdd_details', {'id': product.id, 'token': token})}}">
                                     <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" /></a>
                                 </div>
                                 <div class="card-body">
-                                    <div class="item-wrapper">
+                                    {# <div class="item-wrapper">
                                         <div>
                                             <h6 class="item-price">{{product.prix | number_format(2, ',', ' ')}}€</h6>
                                         </div>
-                                    </div>
+                                    </div> #}
                                     <h6 class="item-name">
-                                        <a class="text-body" href="{{path('client_product_details', {'id': product.id, 'token': token})}}">{{product.nom}}</a>
+                                        <a class="text-body" href="{{path('client_productdd_details', {'id': product.id, 'token': token})}}">{{product.nom}}</a>
                                     </h6>
                                     <p class="card-text item-description">
                                         {{product.description|raw}}
                                     </p>
                                 </div>
                                 <div class="item-options text-center">
-                                    <div class="item-wrapper">
+                                    {# <div class="item-wrapper">
                                         <div class="item-cost">
                                             <h4 class="item-price">{{product.prix}}€</h4>
                                         </div>
-                                    </div>
+                                    </div> #}
                                     {% if is_granted('ROLE_CLIENT') %}
                                     <a href="#" class="btn btn-light btn-wishlist">
                                         <i data-feather="heart"></i>
                                         <span>Favoris</span>
                                     </a>
-                                    {% endif %}
-                                    {% if product.produitQteStock != null and product.produitQteStock.qteStock > 0 %}
-                                    {% if is_granted('ROLE_CLIENT') %}
-                                    <a href="{{path('client_basket_add_normal', {'token': token, 'id': product.id})}}" class="btn btn-primary btn-cart" >
-                                        <i data-feather="shopping-cart"></i>
-                                        <span class="add-to-cart">Ajouter au panier</span>
+                                    <a href="{{path('client_demandedevis_new', {'token': token, 'id': product.id})}}" class="btn btn-primary btn-cart" >
+                                        <span class="add-to-cart">Demandez votre devis</span>
                                     </a>
                                     {% endif %}
-                                    {% else %}
-                                    <a href="#" class="btn btn-secondary btn-cart disabled"  >
-                                        <span class="add-to-cart">Rupture de stock</span>
-                                    </a>
-                                    {% endif %}
+                                    
                                 </div>
                             </div>
                             {% endfor %}
@@ -170,16 +162,6 @@
                                     {{form_label(form.categorie)}}
                                     {{form_widget(form.categorie)}}
                                     {{form_errors(form.categorie)}}
-                                </div>
-                                <div class="my-form-widget">
-                                    {{form_label(form.prixMin)}}
-                                    {{form_widget(form.prixMin)}}
-                                    {{form_errors(form.prixMin)}}
-                                </div>
-                                <div class="my-form-widget">
-                                    {{form_label(form.prixMax)}}
-                                    {{form_widget(form.prixMax)}}
-                                    {{form_errors(form.prixMax)}}
                                 </div>
                                 <div class="my-form-widget">
                                     {{form_label(form.sort)}}

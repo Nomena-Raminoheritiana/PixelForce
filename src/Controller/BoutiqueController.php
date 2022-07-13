@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Produit;
+use App\Entity\ProduitDD;
 use App\Entity\Secteur;
+use App\Form\MyProduitDDFilterType;
 use App\Form\MyProduitFilterType;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\ProduitRepository;
@@ -57,7 +59,61 @@ class BoutiqueController extends AbstractController
     
  
     
-   
+   /**
+     * @Route("/secteurdd/{id}", name="boutique_secteurdd")
+     */
+    public function secteurdd($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    {
+        $this->session->set('secteurId', $secteur->getId());
+        $agent = $this->userRepository->findAgentByToken($token);
+        $error = null;
+        $page = $request->query->get('page', 1);
+        $limit = 5;
+        $criteria = [
+            ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
+            ['prop' => 'description', 'op' => 'LIKE'],
+            ['prop' => 'nom', 'op' => 'LIKE']
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(MyProduitDDFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('p')
+            ->from(ProduitDD::class, 'p')
+            ->join('p.categorie', 'c')
+            ->join('p.secteur', 's')
+        ;  
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
+        $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $secteur->getId();
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'p.id', 'direction' => 'asc']);
+
+        $productList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        return $this->render('user_category/client/dd/product/product_list.html.twig', [
+            'productList' => $productList,
+            'form' => $form->createView(),
+            'error' => $error,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+
+    }
 
    /**
      * @Route("/secteur/{id}", name="boutique_secteur")
@@ -124,6 +180,20 @@ class BoutiqueController extends AbstractController
     {
         $agent = $this->userRepository->findAgentByToken($token);
         return $this->render('user_category/client/product/product_details.html.twig',[
+            'product' => $product,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+    }
+
+    /**
+     * @Route("/productdd/{id}", name="client_productdd_details")
+     */
+    public function detailsdd($token, ProduitDD $product): Response
+    {
+        $agent = $this->userRepository->findAgentByToken($token);
+        return $this->render('user_category/client/dd/product/product_details.html.twig',[
             'product' => $product,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'agent' => $agent,

@@ -1,0 +1,97 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Demande de devis
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block body %}  
+    <!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">{{produit.nom}}</h2>
+                            {# <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="index.html">Accueil</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="#">Ma boutique en ligne</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="app-ecommerce-shop.html">Liste des produits</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Details
+                                    </li>
+                                </ol>
+                            </div> #}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-body">
+                <!-- app e-commerce details start -->
+                <section class="app-ecommerce-details">
+                    <div class="block block--bordered block--rounded">
+                        <h1 class="block__text block__text--center mt-2" >Demande de devis :</h1>
+                            
+                        {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
+                            {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                <div class="alert-body">
+                                    {{error}}
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="my-form-widget">
+                                {{form_label(form.nom)}}
+                                {{form_widget(form.nom)}}
+                                {{form_errors(form.nom)}}
+                            </div>
+                            <div class="my-form-widget">
+                                {{form_label(form.prenom)}}
+                                {{form_widget(form.prenom)}}
+                                {{form_errors(form.prenom)}}
+                            </div>
+                            <div class="my-form-widget">
+                                {{form_label(form.email)}}
+                                {{form_widget(form.email)}}
+                                {{form_errors(form.email)}}
+                            </div>
+                            <div class="my-form-widget">
+                                {{form_label(form.telephone)}}
+                                {{form_widget(form.telephone)}}
+                                {{form_errors(form.telephone)}}
+                            </div>
+                            <div class="my-form-widget">
+                                {{form_label(form.description)}}
+                                {{form_widget(form.description)}}
+                                {{form_errors(form.description)}}
+                            </div>
+                            
+                            
+                            <div class="btn-wrap">
+                                <button class="btn btn-primary" type="submit">{{ isEdit ? 'Enregistrer les modifications' : 'Envoyer' }}<i data-feather="send"></i></button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                    
+                </section>
+                <!-- app e-commerce details end -->
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+{% endblock %}
+
+

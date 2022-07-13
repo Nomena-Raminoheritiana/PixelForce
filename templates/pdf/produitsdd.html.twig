@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Liste des produits</title>
+        <style>
+            .text-right{
+                text-align: right;
+            }
+            body{
+                padding : 12px;
+            }
+            h1{
+                font-family : 'Segoe UI';
+                margin : 0px;
+                margin-bottom: 10px;
+                color : #61071a;
+                font-weight : normal;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                text-align: center;
+            }
+            table{
+                margin : 0 auto;
+                font-size: 16px;
+            }
+            table, td, th{
+                border : none;
+            }
+            table td, table th{
+                padding : 5px;
+                border : 1px solid #eee;
+                font-family : 'Segoe UI';
+            }
+            table th{
+                background-color: #61071a;
+                color : #fff;
+                font-weight : normal;
+                text-transform: uppercase;
+            }
+        </style>
+        
+    </head>
+    
+    <body>
+        <h1>Liste des produits</h1>
+        <br/><br/>
+        <table border="1">
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Catégorie</th>
+            </tr>
+            {% for product in productList %}            
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.nom }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.categorie.nom }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
