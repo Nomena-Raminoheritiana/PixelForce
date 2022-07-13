@@ -22,6 +22,11 @@ class MeetingSearch {
     private $endDate;
 
     /**
+     * @var string|null
+     */
+    private $status;
+
+    /**
      * Get the value of title
      *
      * @return  string|null
@@ -89,6 +94,30 @@ class MeetingSearch {
     public function setEndDate($endDate)
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of status
+     *
+     * @return  string|null
+     */ 
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set the value of status
+     *
+     * @param  string|null  $status
+     *
+     * @return  self
+     */ 
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }

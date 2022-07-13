@@ -107,6 +107,12 @@ class MeetingRepository extends ServiceEntityRepository
                 ->andwhere('m.end <= :endDate')
                 ->setParameter('endDate', $search->getEndDate());
         }
+        if ($search->getStatus()) {
+            $query = $query
+                ->join('m.meetingState', 'ms')
+                ->andwhere('ms.name LIKE :status')
+                ->setParameter('status', $search->getStatus());
+        }
 
         return $query->getQuery()
             ->getResult()

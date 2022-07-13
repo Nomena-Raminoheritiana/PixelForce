@@ -14,21 +14,21 @@
         <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
         <div class="filter-wrap">
             <!-- Formulaire de recherche -->
-            {# <div class="search-form">
+            <div class="search-form">
                 {{form_start(searchForm)}}
                 <div class="row text-center">
                     <div class="col-12 col-sm-6 col-md-6">
                         {{form_row(searchForm.title)}}
                     </div>
                     <div class="col-12 col-sm-6 col-md-6">
-                        {{form_row(searchForm.title)}}
+                        {{form_row(searchForm.status)}}
                     </div>
                     <div class="col-6">
-                        <label for="dateInscriptionMin" class="form-label">Date d'enregistrement à partir de</label>
+                        <label for="dateInscriptionMin" class="form-label">Date debut</label>
                         {{form_widget(searchForm.startDate)}}
                     </div>
                     <div class="col-6">
-                        <label for="dateInscriptionMax" class="form-label">Date d'enregistrement jusqu'à</label>
+                        <label for="dateInscriptionMax" class="form-label">Date fin</label>
                         {{form_widget(searchForm.endDate)}}
                     </div>
                     <div class="col-12 col-sm-12 col-md-12 mt-3">
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 {{form_end(searchForm)}}
-            </div> #}
+            </div>
         </div>
     </div>
      <div class="block block--bordered block--rounded">

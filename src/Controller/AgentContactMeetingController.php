@@ -159,6 +159,7 @@ class AgentContactMeetingController extends AbstractController
         $agent = $this->getUser();
         $search = new MeetingSearch();
         $searchForm = $this->createForm(MeetingSearchType::class, $search);
+        $searchForm->handleRequest($request);
         $meetings = $paginator->paginate(
             $this->meetingRepository->findMeetingByUser($search, $agent),
             $request->query->getInt('page', 1),

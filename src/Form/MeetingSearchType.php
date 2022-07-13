@@ -2,7 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\MeetingState;
 use App\Entity\SearchEntity\MeetingSearch;
+use App\Repository\MeetingStateRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -12,6 +15,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MeetingSearchType extends AbstractType
 {
+    protected $repoMeetingState;
+
+    public function __construct(MeetingStateRepository $repoMeetingState)
+    {
+        $this->repoMeetingState = $repoMeetingState;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -24,25 +34,33 @@ class MeetingSearchType extends AbstractType
             ])
             ->add('startDate', DateType::class, [
                 'required' => false,
-                'label' => 'Date d\'inscription à partir de',
+                'label' => 'Date début',
                 'widget' => 'single_text',
             ])
             ->add('endDate', DateType::class, [
                 'required' => false,
-                'label' => 'Date d\'inscription jusqu\'à',
+                'label' => 'Date fin',
                 'widget' => 'single_text',
             ])
-            // ->add('statut', ChoiceType::class, [
-            //     'required' => false,
-            //     'label' => false,
-            //     'choices' => [
-            //         'Tous' => null,
-            //         'Activé' => 1,
-            //         'Banni' => -1
-            //     ]
-            // ])
+            ->add('status', ChoiceType::class, [
+                'required' => false,
+                'placeholder' => 'Status',
+                'label' => false,
+                'choices' => $this->getMeetingState()
+            ])
         ;
     }
+
+    private function getMeetingState()
+    {
+        $choices = $this->repoMeetingState->findAll();
+        $output = [];
+        foreach ($choices as $k => $v) {
+            $output[$v->getName()] = $v->getName();
+        }
+        return $output;
+    }
+
 
     public function configureOptions(OptionsResolver $resolver)
     {

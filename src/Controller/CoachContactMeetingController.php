@@ -63,6 +63,7 @@ class CoachContactMeetingController extends AbstractController
         $coach = $this->getUser();
         $search = new MeetingSearch();
         $searchForm = $this->createForm(MeetingSearchType::class, $search);
+        $searchForm->handleRequest($request);
         $meetings = $paginator->paginate(
             $this->meetingRepository->findMeetingByUser($search, $coach),
             $request->query->getInt('page', 1),
@@ -71,7 +72,7 @@ class CoachContactMeetingController extends AbstractController
         
         return $this->render('user_category/coach/meeting/meeting-list.html.twig', [
             'meetings' => $meetings,
-            'searchForm' => $searchForm
+            'searchForm' => $searchForm->createView()
         ]);
     }
 }
