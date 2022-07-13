@@ -44,10 +44,19 @@ a, a:hover{
 .block .table{
 	margin-bottom: 5px;
 }
-
+.block .fab-btn-wrap .btn{
+	display : flex;
+	align-items: center;
+	justify-content: center;
+}
 .block .fab-btn-wrap .btn--rounded{
 	border-radius: 50px;
 	padding : 7px 15px;
+}
+.block .btn{
+	display : flex;
+	align-items: center;
+	justify-content: center;
 }
 .block .block__header{
 	
