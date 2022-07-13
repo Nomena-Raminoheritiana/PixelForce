@@ -145,7 +145,7 @@ class DemandeDevisControllerClient extends AbstractController
                 $this->entityManager->persist($dd);
                 $this->entityManager->flush();
 
-                return $this->redirectToRoute('boutique_secteurdd');
+                return $this->redirectToRoute('client_demandedevis_fiche', ['token' => $token, 'id' => $dd->getId()]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
@@ -162,16 +162,22 @@ class DemandeDevisControllerClient extends AbstractController
         ]);
     }
 
-    // /**
-    //  * @Route("/{id}/fiche", name="admin_product_fiche")
-    //  */
-    // public function fiche(Produit $product): Response
-    // {
-    //     return $this->render('user_category/coach/product/product_fiche.html.twig',[
-    //         'product' => $product,
-    //         'filesDirectory' => $this->getParameter('files_directory_relative')
-    //     ]);
-    // }
+    /**
+     * @Route("/{id}/fiche", name="client_demandedevis_fiche")
+     */
+    public function fiche($token, DemandeDevis $dd): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $this->secteurRepository->find($secteurId);
+        $agent = $this->userRepository->findAgentByToken($token);
+        return $this->render('user_category/client/dd/demandedevis/demandedevis_details.html.twig',[
+            'dd' => $dd,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'error' => null,
+            'token' => $token
+        ]);
+    }
 
     
 
