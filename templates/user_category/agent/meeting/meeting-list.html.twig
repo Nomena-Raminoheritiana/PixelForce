@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Rendez-vous
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/meeting/meeting.style.css') }}">
@@ -9,49 +13,30 @@
 <div class="block block--bordered block--rounded">
         <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
         <div class="filter-wrap">
-            {% if error %}
-                <div class="alert alert-danger" role="alert">
-                    <div class="alert-body">
-                        {{error}}
+            <!-- Formulaire de recherche -->
+            {# <div class="search-form">
+                {{form_start(searchForm)}}
+                <div class="row text-center">
+                    <div class="col-12 col-sm-6 col-md-6">
+                        {{form_row(searchForm.title)}}
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-6">
+                        {{form_row(searchForm.title)}}
+                    </div>
+                    <div class="col-6">
+                        <label for="dateInscriptionMin" class="form-label">Date d'enregistrement à partir de</label>
+                        {{form_widget(searchForm.startDate)}}
+                    </div>
+                    <div class="col-6">
+                        <label for="dateInscriptionMax" class="form-label">Date d'enregistrement jusqu'à</label>
+                        {{form_widget(searchForm.endDate)}}
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 mt-3">
+                        <button class="btn btn-primary "><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
                     </div>
                 </div>
-            {% endif %}
-            {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
-                
-                <div class="my-form-widget">
-                    {{form_label(form.title)}}
-                    {{form_widget(form.title)}}
-                    {{form_errors(form.title)}}
-                </div>
-                <div class="my-form-widget">
-                    {{form_label(form.start)}}
-                    {{form_widget(form.start)}}
-                    {{form_errors(form.start)}}
-                </div>
-                <div class="my-form-widget">
-                    {{form_label(form.end)}}
-                    {{form_widget(form.end)}}
-                    {{form_errors(form.end)}}
-                </div>
-                <div class="my-form-widget">
-                    {{form_label(form.meetingState)}}
-                    {{form_widget(form.meetingState)}}
-                    {{form_errors(form.meetingState)}}
-                </div>
-                <div class="my-form-widget">
-                    {{form_label(form.orderBy)}}
-                    {{form_widget(form.orderBy)}}
-                    {{form_errors(form.orderBy)}}
-                </div>
-                <div class="my-form-widget">
-                    {{form_label(form.order)}}
-                    {{form_widget(form.order)}}
-                    {{form_errors(form.order)}}
-                </div>
-                <div class="btn-wrap">
-                    <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
-                </div>
-            {{ form_end(form) }}
+                {{form_end(searchForm)}}
+            </div> #}
         </div>
     </div>
      <div class="block block--bordered block--rounded">
@@ -76,6 +61,8 @@
                         <th>Date de fin</th>
                         <th>Libellé</th>
                         <th>Invité</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
                         <th>Statut</th>
                         <th></th>
                     </tr>
@@ -87,13 +74,9 @@
                         <td>{{meeting.start | date("d/m/Y H:i")}}</td>
                         <td>{{meeting.end | date("d/m/Y H:i")}}</td>
                         <td><b>{{meeting.title}}</b></td>
-                        <td>
-                            <i>
-                                <a href="#">
-                                    {{meeting.userToMeet.id == user.id ? meeting.user.email : meeting.userToMeet.email}}
-                                </a>
-                            </i>
-                        </td>
+                        <td> <a href="{{ path('agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.lastname }} {{ meeting.userToMeet.information.firstname }}</a> </td>
+                        <td> <a href="{{ path('agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.phone|default('-') }} {{ meeting.userToMeet.information.firstname }}</a> </td>
+                        <td> <a href="{{ path('agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.email|default('-') }} {{ meeting.userToMeet.information.firstname }}</a> </td>
                         <td>
                             {% if meeting.meetingState.name == 'Annulé' %}
                                 <span class="text-danger">{{meeting.meetingState.name}}</span>
@@ -102,7 +85,7 @@
                             {% endif %}
                         </td>
                         <td class="col-action ">
-                            <a href="{{path('meeting_fiche', {'id': meeting.id})}}">
+                            <a href="{{path('agent_contact_meeting_fiche', {'id': meeting.id})}}">
                                 <i data-feather="eye"></i>
                             </a>
                         </td>
@@ -120,9 +103,6 @@
     </div>
 {% endblock %}
 
-{% block title %}
-    Rendez-vous
-{% endblock %}
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>

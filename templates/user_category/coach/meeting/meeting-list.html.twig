@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Rendez-vous
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/meeting/meeting.style.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
+        <div class="filter-wrap">
+          
+        </div>
+    </div>
+     <div class="block block--bordered block--rounded">
+        <div class="block__header mb-1" >
+            <h1 class="block__title">Liste de mes rendez-vous :</h1>
+            
+        </div>
+        {% if meetings|length ==0 %}
+                <div class="alert alert-primary p-3 text-center" role="alert">
+                    <div class="alert-body">
+                        Aucun rendez-vous.
+                    </div>
+                </div>
+        {% endif %}
+        {% if meetings|length !=0 %}
+        <div class="table-responsive mb-1">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th>Libellé</th>
+                        <th>Invité</th>
+                        <th>Téléphone</th>
+                        <th>Email</th>
+                        <th>Statut</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for meeting in meetings %}
+                    <tr>
+                        <td>{{meeting.id}}</td>
+                        <td>{{meeting.start | date("d/m/Y H:i")}}</td>
+                        <td>{{meeting.end | date("d/m/Y H:i")}}</td>
+                        <td><b>{{meeting.title}}</b></td>
+                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.lastname }} {{ meeting.userToMeet.information.firstname }}</a> </td>
+                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.phone|default('-') }} {{ meeting.userToMeet.information.firstname }}</a> </td>
+                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.email|default('-') }} {{ meeting.userToMeet.information.firstname }}</a> </td>
+                        <td>
+                            {% if meeting.meetingState.name == 'Annulé' %}
+                                <span class="text-danger">{{meeting.meetingState.name}}</span>
+                            {% else %}
+                                {{meeting.meetingState.name}}
+                            {% endif %}
+                        </td>
+                        <td class="col-action ">
+                            <a href="{{path('coach_contact_meeting_fiche', {'id': meeting.id})}}">
+                                <i data-feather="eye"></i>
+                            </a>
+                        </td>
+
+                       
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-center scale-up-center">
+            {{ knp_pagination_render(meetings) }}
+        <div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>
+{% endblock %}

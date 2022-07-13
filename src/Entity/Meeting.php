@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\CalendarEventRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass=CalendarEventRepository::class)
  */
@@ -30,11 +32,13 @@ class Meeting implements JsonSerializable
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\GreaterThan("today", message="La date de début doit être ultérieure à la date d'aujourd'hui !")
      */
     private $start;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\GreaterThan(propertyPath="start", message="La date de fin doit être plus éloignée que la date de début !")
      */
     private $end;
 
@@ -44,17 +48,18 @@ class Meeting implements JsonSerializable
      */
     private $user;
 
-     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="meetingGuests")
-     * @ORM\JoinColumn(name="user_to_meet_id", referencedColumnName="id")
-     */
-    private $userToMeet;
 
      /**
      * @ORM\ManyToOne(targetEntity="MeetingState", inversedBy="meetings")
      * @ORM\JoinColumn(name="meeting_state_id", referencedColumnName="id")
      */
     private $meetingState;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="meetings")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $userToMeet;
 
     public function getId(): ?int
     {
@@ -121,17 +126,6 @@ class Meeting implements JsonSerializable
         return $this;
     }
 
-    public function getUserToMeet(): ?User
-    {
-        return $this->userToMeet;
-    }
-
-    public function setUserToMeet(User $user): self
-    {
-        $this->userToMeet = $user;
-
-        return $this;
-    }
 
     public function getMeetingState(): ?MeetingState
     {
@@ -158,5 +152,17 @@ class Meeting implements JsonSerializable
         $event->setAllDay(false);
         $event->setUrl("/meeting/fiche/".$this->getId());
         return $event;
+    }
+
+    public function getUserToMeet(): ?Contact
+    {
+        return $this->userToMeet;
+    }
+
+    public function setUserToMeet(?Contact $userToMeet): self
+    {
+        $this->userToMeet = $userToMeet;
+
+        return $this;
     }
 }

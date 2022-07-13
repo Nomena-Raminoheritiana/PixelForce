@@ -3,6 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Meeting;
+use App\Entity\SearchEntity\MeetingSearch;
+use App\Entity\User;
+use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -72,6 +75,42 @@ class MeetingRepository extends ServiceEntityRepository
         $qb->setParameters($parameters);
         return $qb->getQuery();
 
+    }
+
+    /**
+     * @param MeetingSearch $search
+     * @return Query
+     */
+    public function findMeetingByUser(MeetingSearch $search, User $user)
+    {
+        $query = $this->createQueryBuilder('m');
+        $query = $query
+            ->andwhere('m.user = :user')
+            ->setParameter('user', $user)
+        ;
+
+        if ($search->getTitle()) {
+            $query = $query
+                ->andwhere('m.title LIKE :title')
+                ->setParameter('title', '%'.$search->getTitle().'%');
+        }
+        if ($search->getStartDate()) {
+            $query = $query
+                ->andwhere('m.start >= :startDate')
+                ->setParameter('startDate', $search->getStartDate());
+        }
+        if ($search->getEndDate()) {
+            // On ajoute +1day, car la requête ne prend que la date en dessous de la date recherchée
+            $search->getEndDate()->add(new DateInterval('P1D'));
+
+            $query = $query
+                ->andwhere('m.end <= :endDate')
+                ->setParameter('endDate', $search->getEndDate());
+        }
+
+        return $query->getQuery()
+            ->getResult()
+        ;
     }
 
 //    /**

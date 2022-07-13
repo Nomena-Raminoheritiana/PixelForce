@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Contact;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
@@ -18,69 +19,73 @@ use App\Repository\CalendarEventLabelRepository;
 
 
 use App\Entity\Meeting;
+use App\Entity\SearchEntity\MeetingSearch;
 use App\Form\MeetingType;
 use App\Form\MeetingFilterType;
-
+use App\Form\MeetingSearchType;
+use App\Repository\ContactRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Knp\Component\Pager\PaginatorInterface;
-/**
- * @Route("/meeting")
- */
-class MeetingController extends AbstractController
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
+class AgentContactMeetingController extends AbstractController
 {
     private $entityManager;
-    private $userRepository;
     private $meetingStateRepository;
     private $meetingRepository;
-    private $calendarEventLabelRepository;
-    private $agentSecteurRepository;
+    private $calendarEventLabelRepository;    
+    private $contactRepository;
     private $coachSecteurRepository;
     private $secteurRepository;
+    private $session;
 
-
-
-
-    public function __construct(EntityManagerInterface $entityManager,UserRepository $userRepository, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository, AgentSecteurRepository $agentSecteurRepository, CoachSecteurRepository $coachSecteurRepository, SecteurRepository $secteurRepository){
-        $this->userRepository = $userRepository;
+    public function __construct(EntityManagerInterface $entityManager, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository, ContactRepository $contactRepository, CoachSecteurRepository $coachSecteurRepository, SecteurRepository $secteurRepository, SessionInterface $session)
+    {
         $this->entityManager = $entityManager;
         $this->meetingStateRepository = $meetingStateRepository;
         $this->meetingRepository = $meetingRepository;
         $this->calendarEventLabelRepository = $calendarEventLabelRepository;
-        $this->agentSecteurRepository = $agentSecteurRepository;
+        $this->contactRepository = $contactRepository;
         $this->coachSecteurRepository = $coachSecteurRepository;
         $this->secteurRepository = $secteurRepository;
-
-        
+        $this->session = $session;
     }
+
     /**
-     * @Route("/form/{id}", name="meeting_form")
+     * @Route("/agent/contact/{id}/meeting/make", name="agent_contact_meeting_make")
      */
-    public function meet($id, Request $request)
+    public function agent_contact_meeting_make($id, Request $request)
     {
-        $userToMeet = $this->userRepository->find($id);
+        /** @var Contact $userToMeet */
+        $userToMeet = $this->contactRepository->find($id);
+        $agent = $this->getUser();
         $error = null;
         $meeting = new Meeting();
         $meeting->setStart(new \Datetime());
         $meeting->setEnd(new \Datetime());
         $form = $this->createForm(MeetingType::class, $meeting);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $meetingTitle = $form->getData()->getTitle();
+            $secteurId = $this->session->get('secteurId');
+            $secteur = $this->secteurRepository->find($secteurId);
+            $coachSecteur = $this->coachSecteurRepository->findBy(['secteur' => $secteur]);
+            $coach = $coachSecteur[0]->getCoach();
+           
             try{
-                $this->entityManager->beginTransaction();
-                $this->entityManager->getConnection()->setAutoCommit(false);
-                
                 if($userToMeet == null) throw new \Exception('User to meet invalid');
+                
                 // Get "En attente" meeting state
                 $defaultMeetingState = $this->meetingStateRepository->find(1);
                 if($defaultMeetingState != null) $meeting->setMeetingState($defaultMeetingState);
 
-                if($meeting->getEnd() < $meeting->getStart()) throw new \Exception("La date de fin doit être une date ultérieure à celle de la date de début.");
-                $meeting->setUser($this->getUser());
+                $meeting->setTitle($meetingTitle);
+                $meeting->setUser($agent);
                 $meeting->setUserToMeet($userToMeet);
-
                 $this->entityManager->persist($meeting);
                 $this->entityManager->flush();
 
@@ -88,38 +93,36 @@ class MeetingController extends AbstractController
                 $meetingCalendarEventLabel = $this->calendarEventLabelRepository->findOneBy(["value"=>"meeting"]);
                 if($meetingCalendarEventLabel == null) throw new \Exception('Calendar event "meeting" is missing in the database.');
 
-                // Insert calendarEvent for the current user
+                // Insert calendarEvent for the current user (Agent)
                 $event = $meeting->toCalendarEvent();
                 $event->setCalendarEventLabel($meetingCalendarEventLabel);
                 $event->setUser($meeting->getUser());
                 $this->entityManager->persist($event);
                 $this->entityManager->flush();
 
-                 // Insert calendarEvent for the userToMeet
-                 $event = $meeting->toCalendarEvent();
-                 $event->setCalendarEventLabel($meetingCalendarEventLabel);
-                 $event->setUser($meeting->getUserToMeet());
-                 $this->entityManager->persist($event);
-                 $this->entityManager->flush();
 
-                 // Get the secteur and coachs of the agent,and insert an  event for them :
-                $secteursAgent = $this->agentSecteurRepository->findBy(["agent"=>$this->getUser()]);
-                for($i=0;$i<count($secteursAgent); $i++){
-                    $secteur = $secteursAgent[$i]->getSecteur();
-                    $coachs = $this->coachSecteurRepository->findBy(["secteur"=>$secteur]);
-                    for($iCoach=0;$iCoach<count($coachs); $iCoach++){
-                        if($coachs[$iCoach]->getCoach()->getId() == $userToMeet->getId()) continue;
+                // Insert calendarEvent for the coach of Agent (Coach)
+                $meetingCoach = new Meeting();
+                $meetingCoach->setTitle($meetingTitle);
+                $meetingCoach->setUser($coach);
+                $meetingCoach->setUserToMeet($userToMeet);
+                $meetingCoach->setMeetingState($defaultMeetingState);
+                $meetingCoach->setStart(new \Datetime());
+                $meetingCoach->setEnd(new \Datetime());
+                $this->entityManager->persist($meetingCoach);
+                $this->entityManager->flush();
 
-                        $coach = $coachs[$iCoach]->getCoach();
-                        $event = $meeting->toCalendarEvent();
-                        $event->setCalendarEventLabel($meetingCalendarEventLabel);
-                        $event->setUser($coach);
-                        $this->entityManager->persist($event);
-                        $this->entityManager->flush();
-                    }
-                }
-                 $this->entityManager->commit();
-
+                $event = $meeting->toCalendarEvent();
+                $event->setCalendarEventLabel($meetingCalendarEventLabel);
+                $event->setUser($coach);
+                $this->entityManager->persist($event);
+                $this->entityManager->flush();
+                    
+                $this->addFlash(
+                   'success',
+                   'Rendez-vous programmé, veuillez aussi visualiser votre agenda'
+                );
+             
                 return $this->redirectToRoute('agent_contact_list');
             } catch(\Exception $ex){
                 $error = $ex->getMessage();
@@ -129,7 +132,7 @@ class MeetingController extends AbstractController
             }
         }
 
-        return $this->render('meeting/meeting-form.html.twig', [
+        return $this->render('user_category/agent/meeting/meeting-form.html.twig', [
             'userToMeet' => $userToMeet,
             'form' => $form->createView(),
             'error' => $error
@@ -137,50 +140,34 @@ class MeetingController extends AbstractController
     }
 
     /**
-     * @Route("/fiche/{id}", name="meeting_fiche")
+     * @Route("/agent/contact/meeting/{id}/fiche", name="agent_contact_meeting_fiche")
      */
-    public function meeting_fiche($id)
+    public function agent_contact_meeting_fiche($id)
     {
         $meeting = $this->meetingRepository->find($id);
         
-        return $this->render('meeting/meeting-fiche.html.twig', [
+        return $this->render('user_category/agent/meeting/meeting-fiche.html.twig', [
             'meeting' => $meeting
         ]);
     }
-     /**
-     * @Route("/list", name="meeting_list")
-     */
-    public function meeting_list(Request $request, PaginatorInterface $paginator)
-    {
-        $error = null;
-        $page = $request->query->get('page', 1);
-        $limit = 5;
-        $meeting = new Meeting();
-        $user = $this->getUser();
-        $meeting->setStart(new \Datetime());
-        $meeting->setUser($user);
-        $meeting->setUserToMeet($user);
 
-        $form = $this->createForm(MeetingFilterType::class, $meeting, [
-            'method' => 'GET',
-        ]);
-        $form->handleRequest($request);
-        $options = [];
-        $options['orderBy'] = $form->get('orderBy')->getData();
-        $options['order'] = $form->get('order')->getData();
-        $query = $this->meetingRepository->getSearchQuery($meeting, $options);
+     /**
+     * @Route("/agent/contact/meeting/list", name="agent_contact_meeting_list")
+     */
+    public function agent_contact_meeting_list(Request $request, PaginatorInterface $paginator)
+    {
+        $agent = $this->getUser();
+        $search = new MeetingSearch();
+        $searchForm = $this->createForm(MeetingSearchType::class, $search);
         $meetings = $paginator->paginate(
-            $query,
-            $page,
-            $limit
+            $this->meetingRepository->findMeetingByUser($search, $agent),
+            $request->query->getInt('page', 1),
+            20
         );
-        // $meetings = $this->meetingRepository->findAll();
         
-        return $this->render('meeting/meeting-list.html.twig', [
+        return $this->render('user_category/agent/meeting/meeting-list.html.twig', [
             'meetings' => $meetings,
-            'form' => $form->createView(),
-            'error' => $error,
-            'user'=>$user
+            'searchForm' => $searchForm->createView()
         ]);
     }
 

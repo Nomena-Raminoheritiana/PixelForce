@@ -69,11 +69,17 @@ class Contact
      */
     private $tags;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Meeting::class, mappedBy="userToMeet", orphanRemoval=true)
+     */
+    private $meetings;
+
     public function __construct()
     {
         $this->client = new ArrayCollection();
         $this->created_at = new \DateTime();
         $this->tags = new ArrayCollection();
+        $this->meetings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -222,6 +228,36 @@ class Contact
     {
         if ($this->tags->removeElement($tag)) {
             $tag->removeContact($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Meeting>
+     */
+    public function getMeetings(): Collection
+    {
+        return $this->meetings;
+    }
+
+    public function addMeeting(Meeting $meeting): self
+    {
+        if (!$this->meetings->contains($meeting)) {
+            $this->meetings[] = $meeting;
+            $meeting->setUserToMeet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeeting(Meeting $meeting): self
+    {
+        if ($this->meetings->removeElement($meeting)) {
+            // set the owning side to null (unless already changed)
+            if ($meeting->getUserToMeet() === $this) {
+                $meeting->setUserToMeet(null);
+            }
         }
 
         return $this;
