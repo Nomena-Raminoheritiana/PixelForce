@@ -3,6 +3,7 @@
 <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('coach_formation_list') }}"><i data-feather="eye"></i><span class="menu-title text-truncate" data-i18n="Feather">Formations</span></a></li>
 <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('coach_agent_list') }}"><i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="User">Mes Agents</span></a>
 <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('coach_zoom_list') }}"><i data-feather="video"></i><span class="menu-title text-truncate" data-i18n="User">Réunions</span></a>
+{% if app.user.uniqueCoachSecteur.type.id == 1 %}
 <li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="briefcase"></i><span class="menu-title text-truncate" data-i18n="Components">Catalogue</span></a>
 <ul class="menu-content">
     <li><a class="d-flex align-items-center" href="{{path('admin_category_list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Catégories</span></a>
@@ -15,6 +16,16 @@
     </li>
 </ul>
 </li>
+{% else %}
+<li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="briefcase"></i><span class="menu-title text-truncate" data-i18n="Components">Catalogue</span></a>
+<ul class="menu-content">
+    <li><a class="d-flex align-items-center" href="{{path('admin_categorydd_list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Catégories</span></a>
+    </li>
+    <li><a class="d-flex align-items-center" href="{{path('admin_productdd_list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Produits</span></a>
+    </li>
+</ul>
+</li>
+{% endif %}
 <li class=" nav-item"><a class="d-flex align-items-center" href="{{path('calendar_index')}}"><i data-feather="calendar"></i><span class="menu-title text-truncate" data-i18n="Calendar">Mon Agenda</span></a></li>
 <li class=" nav-item"><a class="d-flex align-items-center" href="{{path('meeting_list')}}"><i data-feather="coffee"></i><span class="menu-title text-truncate" data-i18n="Meetings">Mes rendez-vous</span></a></li>
 
