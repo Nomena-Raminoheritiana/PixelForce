@@ -31,3 +31,7 @@ services:
     App\Services\FileHandler:
         arguments:
             $filesDirectory: '%files_directory%'
+
+    App\Services\DocumentService:
+        arguments:
+            $filesDirectory: '%files_directory%'        

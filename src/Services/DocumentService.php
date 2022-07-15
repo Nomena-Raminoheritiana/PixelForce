@@ -14,6 +14,7 @@ use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use setasign\Fpdi\Fpdi;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -24,9 +25,11 @@ class DocumentService
     private $entityManager;
     private $documentRepository;
     private $mailer;
+    private $filesDirectory;
     
 
     public function __construct(
+        $filesDirectory,
         EntityManagerInterface $entityManager, 
         DocumentRepository $documentRepository, 
         Swift_Mailer $mailer,
@@ -35,6 +38,7 @@ class DocumentService
         $this->entityManager = $entityManager;
         $this->documentRepository = $documentRepository;
         $this->mailer = $mailer;
+        $this->filesDirectory = $filesDirectory;
     }
 
     public function sendDocument(DocumentRecipient $rec)
@@ -56,32 +60,25 @@ class DocumentService
         $this->mailer->send($message); 
     }
 
-    public function validateAccount(User $user, $verifCode)
-    {
+    public function signDocument(DocumentRecipient $rec, $signature){
+        try{
+            $pdf = new Fpdi();
+            $pageCount = $pdf->setSourceFile($this->filesDirectory.'/'.$rec->getDocument()->getFile());
 
-        $accountValidation = $this->accountValidationRepository->getValidAccountValidation($user->getEmail(), $verifCode);
-        if($accountValidation == null) 
-            throw new Exception("Code de vérification invalide");
-
-        $errors = $this->validator->validate($user);
-        if(count($errors) > 0){
-            throw new Exception($errors->get(0)->getMessage());
-        }    
-
-        $accountValidation->setStatus(0);
-        
-        $this->entityManager->persist($user);
-        $this->entityManager->persist($accountValidation);
-        $this->entityManager->flush();
-    }
-
-
-    public function generateRandomNDigits(int $n){
-        $code = "";
-        for($i=0; $i<$n; $i++){
-            $code .= rand(0, 9);
+            for($i=1; $i<=$pageCount; $i++){
+                $pdf->AddPage();
+                $tplId = $pdf->importPage($i);
+                $pdf->useTemplate($tplId);
+            }
+            $pdf->Image($signature, 110, 240, 120);
+            $filename = 'docs/signed/doc-'.$rec->getId().'.pdf';
+            $pdf->Output($this->filesDirectory.'/'.$filename, 'F');  
+            $rec->setSignedFile($filename);
+            $rec->setDateSigned(new DateTime());
+            $this->entityManager->flush(); 
+        } finally{
+            $this->entityManager->clear();
         }
-        return $code;
     }
 
 }

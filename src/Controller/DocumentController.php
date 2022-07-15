@@ -7,6 +7,7 @@ use App\Entity\DocumentRecipient;
 use App\Form\DocumentFilterType;
 use App\Form\DocumentFormType;
 use App\Form\DocumentRecipientFormType;
+use App\Repository\DocumentRecipientRepository;
 use App\Repository\DocumentRepository;
 use App\Services\DocumentService;
 use App\Services\FileHandler;
@@ -17,8 +18,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -130,12 +133,31 @@ class DocumentController extends AbstractController
     /**
      * @Route("/{id}/fiche", name="do_document_fiche")
      */
-    public function fiche(Document $document): Response
+    public function fiche(Document $document, DocumentRecipientRepository $documentRecipientRepository): Response
     {
+        $recList = $documentRecipientRepository->findValidByDocument($document->getId()); 
         return $this->render('user_category/do/document/document_fiche.html.twig',[
             'document' => $document,
+            'recList' => $recList,
             'filesDirectory' => $this->getParameter('files_directory_relative')
         ]);
+    }
+
+    /**
+     * @Route("/{id}/view", name="do_document_view")
+     */
+    public function view(DocumentRecipient $rec): Response
+    {
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".
+            $rec->getSignedFile()
+        );
+        $response->headers->set('Content-Type', 'appication/pdf');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_INLINE,
+            'doc.pdf'
+        );
+        return $response;
     }
 
     /**

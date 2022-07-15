@@ -61,6 +61,7 @@
                         
                     </div>
                     <!-- Header ends -->
+                        
                 </div>
 
                 {# <hr class="invoice-spacing" /> #}
@@ -143,8 +144,6 @@
                 </div> #}
                 <!-- Invoice Description ends -->
 
-                <hr class="invoice-spacing" />
-
                 <!-- Invoice Note starts -->
                 <div class="card-body invoice-padding pt-0">
                     <div class="row">
@@ -166,7 +165,58 @@
                     </div>
                 </div>
                 <!-- Invoice Note ends -->
+
+                <div class="card-body invoice-padding pb-0">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="py-1">Nom du destinataire</th>
+                                    <th class="py-1">Email du destinataire</th>
+                                    <th class="py-1">Signé</th>
+                                    <th class="py-1">Payé</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rec in recList %}
+                                {# <tr class="border-bottom"></tr> #}
+                                <tr>
+                                    {# <td class="py-1">
+                                        <p class="card-text fw-bold mb-25">Native App Development</p>
+                                        <p class="card-text text-nowrap">
+                                            Developed a full stack native app using React Native, Bootstrap & Python
+                                        </p>
+                                    </td> #}
+                                    <td class="py-1">
+                                        <span class="fw-bold">{{rec.prenom}} {{rec.nom}}</span>
+                                    </td>
+                                    <td class="py-1">
+                                        <span class="fw-bold">{{rec.email}}</span>
+                                    </td>
+                                    <td class="py-1">
+                                        <span class="fw-bold">{{rec.dateSigned ? 'Oui' : 'Non'}}</span>
+                                    </td>
+                                    <td class="py-1">
+                                        <span class="fw-bold">{{rec.paid ? 'Oui' : 'Non'}}</span>
+                                    </td>
+                                    <td class="py-1 col-action col-action--edit">
+                                        {% if rec.dateSigned %}
+                                        <a href="{{path('do_document_view', {'id': rec.id})}}">
+                                            <i data-feather="eye"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>    
+                </div>
             </div>
+
+
         </div>
         <!-- /Invoice -->
 

@@ -31,7 +31,7 @@ class PdfTestController extends AbstractController
         $tplId = $pdf->importPage(3);
         $pdf->useTemplate($tplId);
         $pdf->Image("signature.png", 0, 0, 50);
-
+        
         $pdf->Output();   
 
         /* return $this->render('pdf_test/index.html.twig', [

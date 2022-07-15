@@ -39,6 +39,31 @@ class DocumentRecipientRepository extends ServiceEntityRepository
         }
     }
 
+    public function findRecipientByToken($token): ?DocumentRecipient
+    {
+        $result = $this->createQueryBuilder('r')
+            ->where('( r.statut != 0 ) and lower(sha1(r.id)) = lower(:token)')
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        return $result;
+                
+    }
+
+    public function findValidByDocument($documentId)
+    {
+        $result = $this->createQueryBuilder('r')
+            ->join('r.document', 'd')
+            ->where('( r.statut != 0 ) and d.id = :documentId')
+            ->setParameter('documentId', $documentId)
+            ->getQuery()
+            ->getResult()
+        ;
+        return $result;
+                
+    }
+
 //    /**
 //     * @return DocumentRecipient[] Returns an array of DocumentRecipient objects
 //     */
