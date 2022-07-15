@@ -33,6 +33,14 @@
                 <td><a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{meeting.userToMeet.information.lastname}} {{meeting.userToMeet.information.firstname}}</a></td>
             <tr>
             <tr>
+                <th>Téléphone</th>
+                <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.phone|default('-') }}</a> </td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.email|default('-') }}</a> </td>
+            </tr>
+            <tr>
                 <th>Statut</th>
                 <td><i>{{meeting.meetingState.name}}</i></td>
             <tr>

@@ -75,8 +75,8 @@
                         <td>{{meeting.end | date("d/m/Y H:i")}}</td>
                         <td><b>{{meeting.title}}</b></td>
                         <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.lastname }} {{ meeting.userToMeet.information.firstname }}</a> </td>
-                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.phone|default('-') }} {{ meeting.userToMeet.information.firstname }}</a> </td>
-                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.email|default('-') }} {{ meeting.userToMeet.information.firstname }}</a> </td>
+                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.phone|default('-') }}</a> </td>
+                        <td> <a href="{{ path('coach_agent_contact_view', { id: meeting.userToMeet.information.contact.id }) }}">{{ meeting.userToMeet.information.email|default('-') }}</a> </td>
                         <td>
                             {% if meeting.meetingState.name == 'Annulé' %}
                                 <span class="text-danger">{{meeting.meetingState.name}}</span>
