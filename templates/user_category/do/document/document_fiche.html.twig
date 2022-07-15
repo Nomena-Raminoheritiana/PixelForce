@@ -49,6 +49,12 @@
                                 <p class="invoice-date-title">Message:</p>
                                 <p class="card-text">{{document.message | raw}}</p>
                             </div>
+                            {% if document.amount %}
+                            <div class="invoice-date-wrapper">
+                                <p class="invoice-date-title">Montant:</p>
+                                <p class="card-text">{{document.amount | number_format(2, ',', ' ')}} €</p>
+                            </div>
+                            {% endif %}
                             <div class="invoice-date-wrapper">
                                 <p class="invoice-date-title">Date:</p>
                                 <p class="card-text">{{document.dateCreation | date('d/m/Y H:i')}}</p>

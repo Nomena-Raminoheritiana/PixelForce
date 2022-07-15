@@ -41,7 +41,7 @@ class DocumentFormType extends AbstractType
                     //'uiColor' => '#7367f0',
 
 
-                )))
+                )))   
             ->add('file', FileType::class, [
                 "label" => "Fichier",
                 'mapped' => false,
@@ -56,6 +56,14 @@ class DocumentFormType extends AbstractType
                         ],
                         'mimeTypesMessage' => 'Sélectionner un fichier PDF valide',
                     ])
+                ]
+            ])
+            ->add('amount', TextType::class, [
+                "label" => "Montant à payer",
+                "trim" => true,
+                "required" => true,
+                "constraints" => [
+                    new NotBlank(["message" => "Montant à payer obligatoire"])
                 ]
             ])
         ;
