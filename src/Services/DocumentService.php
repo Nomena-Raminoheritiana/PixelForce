@@ -27,6 +27,7 @@ class DocumentService
     private $mailer;
     private $filesDirectory;
     private $baseUrl;
+    private $stripeService;
     
 
     public function __construct(
@@ -35,6 +36,7 @@ class DocumentService
         EntityManagerInterface $entityManager, 
         DocumentRepository $documentRepository, 
         Swift_Mailer $mailer,
+        StripeService $stripeService
         )
     {
         $this->entityManager = $entityManager;
@@ -42,6 +44,7 @@ class DocumentService
         $this->mailer = $mailer;
         $this->filesDirectory = $filesDirectory;
         $this->baseUrl = $baseUrl;
+        $this->stripeService = $stripeService;
     }
 
     public function sendDocument(DocumentRecipient $rec)
@@ -80,6 +83,22 @@ class DocumentService
             $rec->setDateSigned(new DateTime());
             $this->entityManager->flush(); 
         } finally{
+            $this->entityManager->clear();
+        }
+    }
+
+    public function pay(string $stripeToken, DocumentRecipient $rec){
+        try{
+            $chargeId = $this->stripeService
+                ->createCharge(
+                    $stripeToken, 
+                    $rec->getDocument()->getAmount(), [
+                        'description' => 'Paiement apres signature document'
+                    ]);
+
+            $rec->setPaid(true);        
+            $this->entityManager->flush();
+        } finally {
             $this->entityManager->clear();
         }
     }

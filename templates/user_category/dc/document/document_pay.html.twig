@@ -1,0 +1,141 @@
+{% extends 'base_client_dc.html.twig' %}
+
+{% block title %}
+	Payer
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %} 
+    
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Montant total dû: {{rec.document.amount | number_format(2, ',', ' ')}} €</h1>
+            
+            {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'document_pay_form'}}) }}
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <div class="alert-body">
+                        {{error}}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="my-form-widget">
+                    {{form_label(form.nom)}}
+                    {{form_widget(form.nom)}}
+                    {{form_errors(form.nom)}}
+                </div>
+                <div class="my-form-widget">
+                    <label for="document_pay_form_carte" class="form-label">Numéro de carte</label>
+                    <div id="document_pay_form_carte" class="form-control">
+                    </div>
+                    <div id="document_pay_form_carte_error" class="invalid-feedback d-block"></div> 
+                </div>
+                <div class="my-form-widget">
+                    <label for="document_pay_form_dateExpiration" class="form-label">Date d'expiration</label>
+                    <div id="document_pay_form_dateExpiration" class="form-control">
+                    </div>
+                    <div id="document_pay_form_dateExpiration_error" class="invalid-feedback d-block"></div> 
+                </div>
+
+                <div class="my-form-widget">
+                    <label for="document_pay_form_codeSecurite" class="form-label">Code de sécurité</label>
+                    <div id="document_pay_form_codeSecurite" class="form-control">
+                    </div>
+                    <div id="document_pay_form_codeSecurite_error" class="invalid-feedback d-block"></div> 
+                </div>
+
+                <div class="my-form-widget">
+                    {{form_label(form.codePostal)}}
+                    {{form_widget(form.codePostal)}}
+                    {{form_errors(form.codePostal)}}
+                </div>
+                {{form_widget(form.token)}}
+                <div class="btn-wrap">
+                    <button class="btn btn-primary" type="submit"><i data-feather="send"></i>Payer</button>
+                </div>
+            {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var form = document.getElementById('document_pay_form');
+        var stripe = Stripe('{{ stripe_public_key }}');
+        var elements = stripe.elements();
+
+        var cardNumberElement = document.getElementById('document_pay_form_carte');
+        var cardNumberErrorElement = document.getElementById('document_pay_form_carte_error');
+        var cardNumber = elements.create('cardNumber');
+        
+        cardNumber.mount('#document_pay_form_carte');
+        cardNumber.addEventListener('change', function(event) {
+            if (event.error) {
+            cardNumberErrorElement.textContent = event.error.message;
+            cardNumberElement.classList.add('is-invalid');
+            } else {
+            cardNumberErrorElement.textContent = '';
+            cardNumberElement.classList.remove('is-invalid');
+            }
+        });
+
+        var cardExpiryElement = document.getElementById('document_pay_form_dateExpiration');
+        var cardExpiryErrorElement = document.getElementById('document_pay_form_dateExpiration_error');
+        var cardExpiry = elements.create('cardExpiry');
+        
+        cardExpiry.mount('#document_pay_form_dateExpiration');
+        cardExpiry.addEventListener('change', function(event) {
+            if (event.error) {
+            cardExpiryErrorElement.textContent = event.error.message;
+            cardExpiryElement.classList.add('is-invalid');
+            } else {
+            cardExpiryErrorElement.textContent = '';
+            cardExpiryElement.classList.remove('is-invalid');
+            }
+        });
+
+
+        var cardCvcElement = document.getElementById('document_pay_form_codeSecurite');
+        var cardCvcErrorElement = document.getElementById('document_pay_form_codeSecurite_error');
+        var cardCvc = elements.create('cardCvc');
+        
+        cardCvc.mount('#document_pay_form_codeSecurite');
+        cardCvc.addEventListener('change', function(event) {
+            if (event.error) {
+            cardCvcErrorElement.textContent = event.error.message;
+            cardCvcElement.classList.add('is-invalid');
+            } else {
+            cardCvcErrorElement.textContent = '';
+            cardCvcElement.classList.remove('is-invalid');
+            }
+        });
+        
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            var options = {
+                address_zip: document.getElementById('{{ form.children.codePostal.vars.id }}').value
+            };
+            stripe.createToken(cardNumber, options).then(function(result) {
+                if (result.error) {
+                    alert(result.error.message);
+                } else {
+                    document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
+                    form.submit();
+                }
+            });
+        }); 
+        
+        
+    });
+  
+ 
+  
+</script>
+{% endblock %}
+

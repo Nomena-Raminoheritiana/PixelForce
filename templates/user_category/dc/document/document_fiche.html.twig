@@ -151,7 +151,7 @@
                                             {% if not rec.dateSigned %}
                                             <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_sign', {'token': token})}}">Signer le document</a>
                                             {% elseif not rec.paid %}
-                                            <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_sign', {'token': token})}}">Payer</a>
+                                            <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_pay', {'token': token})}}">Payer</a>
                                             {% endif %}
                                         
                                         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\DocumentPayFormType;
 use App\Form\SignDocumentType;
 use App\Repository\DocumentRecipientRepository;
 use App\Services\DocumentService;
@@ -95,6 +96,36 @@ class DocumentClientController extends AbstractController
             'error' => $error,
             'token' => $token,
             'filesDirectory' => $filesDirectory
+        ]);
+    }
+
+    /**
+     * @Route("/pay", name="dc_document_pay")
+     */
+    public function pay($token, Request $request): Response
+    {
+        $error = null;
+        $rec = $this->documentRecipientRepository->findRecipientByToken($token);
+        $form = $this->createForm(DocumentPayFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $stripeToken = $form->get('token')->getData();
+                $this->documentService->pay($stripeToken, $rec);
+                $this->addFlash('success', 'Paiement éffectué');
+                return $this->redirectToRoute('dc_document_fiche', ['token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+            }
+        }
+
+        return $this->render('user_category/dc/document/document_pay.html.twig',[
+            'stripe_public_key' => $this->getParameter('stripe_public_key'),
+            'rec' => $rec,
+            'form' => $form->createView(),
+            'error' => $error,
+            'token' => $token
         ]);
     }
 }
