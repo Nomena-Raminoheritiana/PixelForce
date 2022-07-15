@@ -70,6 +70,8 @@
                     {% include 'partials/menu-left-admin.html.twig' %}
                 {% elseif role == constant('App\\Entity\\User::ROLE_AGENT') %}
                     {% include 'partials/menu-left-agent.html.twig' %}
+                {% elseif role == constant('App\\Entity\\User::ROLE_DOCUMENT_OWNER') %}
+                    {% include 'partials/menu-left-document-owner.html.twig' %}        
                 {% endif %}
             {% endif %}
 

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Formulaire Document
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %} 
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Formulaire Document :</h1>
+            
+            {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <div class="alert-body">
+                        {{error}}
+                    </div>
+                </div>
+                {% endif %}
+                <div class="my-form-widget">
+                    {{form_label(form.nom)}}
+                    {{form_widget(form.nom)}}
+                    {{form_errors(form.nom)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.message)}}
+                    {{form_widget(form.message)}}
+                    {{form_errors(form.message)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.file)}}
+                    {{form_widget(form.file)}}
+                    {{form_errors(form.file)}}
+                </div>
+                
+                <div class="btn-wrap">
+                    <button class="btn btn-primary" type="submit"><i data-feather="save"></i>{{ isEdit ? 'Enregistrer les modifications' : 'Créer' }}</button>
+                </div>
+            {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('assets/templates/admin/product/product_form.js')}}"></script>
+
+{% endblock %}
+
