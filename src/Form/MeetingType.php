@@ -34,6 +34,7 @@ class MeetingType extends AbstractType
                 'widget' => 'single_text',
                 // 'date_widget' => 'single_text',
                 // 'time_widget' => 'single_text',
+                'attr' => ['class' => 'datetime-local'],
                 "required" => false,
                 "constraints" => [
                     new NotBlank(["message" => "Date de début obligatoire"])
@@ -45,6 +46,7 @@ class MeetingType extends AbstractType
                 // 'date_widget' => 'single_text',
                 // 'time_widget' => 'single_text',
                 "required" => false,
+                'attr' => ['class' => 'datetime-local'],
                 "constraints" => [
                     new NotBlank(["message" => "Date de fin obligatoire"])
                 ]
