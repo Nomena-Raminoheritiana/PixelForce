@@ -26,10 +26,12 @@ class DocumentService
     private $documentRepository;
     private $mailer;
     private $filesDirectory;
+    private $baseUrl;
     
 
     public function __construct(
         $filesDirectory,
+        $baseUrl,
         EntityManagerInterface $entityManager, 
         DocumentRepository $documentRepository, 
         Swift_Mailer $mailer,
@@ -39,6 +41,7 @@ class DocumentService
         $this->documentRepository = $documentRepository;
         $this->mailer = $mailer;
         $this->filesDirectory = $filesDirectory;
+        $this->baseUrl = $baseUrl;
     }
 
     public function sendDocument(DocumentRecipient $rec)
@@ -51,7 +54,7 @@ class DocumentService
         $this->entityManager->persist($rec);
         $this->entityManager->flush();
 
-        $link = sha1($rec->getId());
+        $link = $this->baseUrl.'/dc/'.sha1($rec->getId());
         $message = (new Swift_Message())
             ->setFrom('noreply.pixenshop@yahoo.com', "PixelForce")
             ->setTo($rec->getEmail())
