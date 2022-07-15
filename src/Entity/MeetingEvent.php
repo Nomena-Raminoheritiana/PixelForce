@@ -38,23 +38,23 @@ class MeetingEvent implements JsonSerializable
     }
 
 
-    public function getMeeting(): ?string
+    public function getMeeting(): ?Meeting
     {
         return $this->meeting;
     }
 
-    public function setMeeting(string $meeting): self
+    public function setMeeting(Meeting $meeting): self
     {
         $this->meeting = $meeting;
 
         return $this;
     }
-    public function getCalendarEvent(): ?string
+    public function getCalendarEvent(): ?CalendarEvent
     {
         return $this->calendarEvent;
     }
 
-    public function setCalendarEvent(string $calendarEvent): self
+    public function setCalendarEvent(CalendarEvent $calendarEvent): self
     {
         $this->calendarEvent = $calendarEvent;
 

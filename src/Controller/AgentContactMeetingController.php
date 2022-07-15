@@ -90,13 +90,13 @@ class AgentContactMeetingController extends AbstractController
                 $this->entityManager->beginTransaction();
 
                 $meetingCoach = $meeting->clone($coach);
-                $this->meetingService->saveMeeting($this->entityManager, $meeting, $agent, $userToMeet);
-                $this->meetingService->saveMeeting($this->entityManager, $meetingCoach, $coach, $userToMeet);
-                $this->meetingService->saveMeetingEvent($this->entityManager, $meeting, $agent, $meetingCalendarEventLabel);
-                $this->meetingService->saveMeetingEvent($this->entityManager, $meetingCoach, $coach, $meetingCalendarEventLabel);
+                $this->meetingService->saveMeeting($meeting, $agent, $userToMeet);
+                $this->meetingService->saveMeeting($meetingCoach, $coach, $userToMeet);
+                $this->meetingService->saveMeetingEvent($meeting, $agent, $meetingCalendarEventLabel);
+                $this->meetingService->saveMeetingEvent($meetingCoach, $coach, $meetingCalendarEventLabel);
 
                 $this->entityManager->commit();
-                
+
                 // // Get "En attente" meeting state
                 // $defaultMeetingState = $this->meetingStateRepository->find(1);
                 // if($defaultMeetingState != null) $meeting->setMeetingState($defaultMeetingState);

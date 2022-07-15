@@ -3,6 +3,8 @@
 
 namespace App\Services;
 use App\Entity\Meeting;
+use App\Entity\MeetingEvent;
+
 use App\Entity\User;
 use App\Entity\Contact;
 
@@ -33,7 +35,7 @@ class MeetingService
         $this->calendarEventLabelRepository = $calendarEventLabelRepository;
     }
 
-    public function saveMeeting(EntityManagerInterface $entityManager, Meeting $meeting, User $user, Contact $userToMeet, $meetingState = null){
+    public function saveMeeting(Meeting $meeting, User $user, Contact $userToMeet, $meetingState = null){
         if($meetingState == null) $meetingState = $this->meetingStateRepository->find(1); // En attente par défaut
         $meeting->setMeetingState($meetingState);
         $meeting->setUser($user);
@@ -41,9 +43,10 @@ class MeetingService
         $this->entityManager->persist($meeting);
         $this->entityManager->flush();
 
-
+        
+        
     }
-    public function saveMeetingEvent(EntityManagerInterface $entityManager, Meeting $meeting, User $user, $meetingCalendarEventLabel = null){
+    public function saveMeetingEvent(Meeting $meeting, User $user, $meetingCalendarEventLabel = null){
         if($meetingCalendarEventLabel == null) $meetingCalendarEventLabel = $this->calendarEventLabelRepository->findOneBy(["value"=>"meeting"]);
         if($meetingCalendarEventLabel == null) throw new \Exception('Calendar event "meeting" is missing in the database.');
 
@@ -51,6 +54,12 @@ class MeetingService
         $event->setCalendarEventLabel($meetingCalendarEventLabel);
         $event->setUser($user);
         $this->entityManager->persist($event);
+        $this->entityManager->flush();
+
+        $meeting_event = new MeetingEvent();
+        $meeting_event->setMeeting($meeting);
+        $meeting_event->setCalendarEvent($event);
+        $this->entityManager->persist($meeting_event);
         $this->entityManager->flush();
     }
 }
