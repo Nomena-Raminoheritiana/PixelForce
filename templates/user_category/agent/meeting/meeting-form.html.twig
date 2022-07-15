@@ -14,7 +14,7 @@
         </div>
     {% else %}
     <div class="block block--bordered block--rounded">
-        <h1 class="block__text block__text--center mt-2 h2" >Prendre un rendez-vous avec "{{userToMeet.information.email|default(userToMeet.information.firstname)}}" :</h1>
+        <h1 class="block__text block__text--center mt-2 h6 text-center" style="max-width:500px; margin : 0 auto;">Prendre un rendez-vous avec "{{userToMeet.information.email|default(userToMeet.information.firstname)}}" :</h1>
             
             {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
                 {% if error %}
@@ -62,4 +62,13 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('assets/templates/meeting/meeting.js') }}"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.datetime-local').flatpickr({
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+        });
+
+    </script>
 {% endblock %}
