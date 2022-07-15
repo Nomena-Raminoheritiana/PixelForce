@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Document;
+use App\Entity\DocumentRecipient;
 use App\Form\DocumentFilterType;
 use App\Form\DocumentFormType;
+use App\Form\DocumentRecipientFormType;
 use App\Repository\DocumentRepository;
+use App\Services\DocumentService;
 use App\Services\FileHandler;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
@@ -26,11 +29,13 @@ class DocumentController extends AbstractController
     private $entityManager;
     private $documentRepository;
     private $fileHandler;
+    private $documentService;
 
-    public function __construct(EntityManagerInterface $entityManager, DocumentRepository $documentRepository, FileHandler $fileHandler){
+    public function __construct(EntityManagerInterface $entityManager, DocumentRepository $documentRepository, FileHandler $fileHandler, DocumentService $documentService){
         $this->entityManager = $entityManager;
         $this->documentRepository = $documentRepository;
         $this->fileHandler = $fileHandler;
+        $this->documentService = $documentService;
     }
 
     /**
@@ -118,6 +123,49 @@ class DocumentController extends AbstractController
             'form' => $form->createView(),
             'error' => $error,
             'isEdit' => $isEdit,
+            'filesDirectory' => $this->getParameter('files_directory_relative')
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/fiche", name="do_document_fiche")
+     */
+    public function fiche(Document $document): Response
+    {
+        return $this->render('user_category/do/document/document_fiche.html.twig',[
+            'document' => $document,
+            'filesDirectory' => $this->getParameter('files_directory_relative')
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/send", name="do_document_send")
+     */
+    public function send(Document $document, Request $request): Response
+    {
+        $isEdit = false;
+        $error = null;
+        $rec = new DocumentRecipient();
+        $form = $this->createForm(DocumentRecipientFormType::class, $rec);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $rec->setDocument($document);
+                $this->documentService->sendDocument($rec);
+                $this->entityManager->persist($rec);
+                $this->entityManager->flush();
+
+                return $this->redirectToRoute('do_document_fiche', ['id' => $document->getId()]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+            }
+        }
+
+        return $this->render('user_category/do/document/document_send.html.twig',[
+            'form' => $form->createView(),
+            'error' => $error,
+            'document' => $document,
             'filesDirectory' => $this->getParameter('files_directory_relative')
         ]);
     }
