@@ -43,22 +43,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script  src="https://cdnjs.cloudflare.com/ajax/libs/jSignature/2.1.3/jSignature.min.noconflict.js"></script>
-    <script type="text/javascript">
-        
-        $(document).ready(function () { 
-            var $sigdiv = $("#signature").jSignature({'UndoButton':true});
-            $('.btn-clear').click(function (){
-                $sigdiv.jSignature('clear');
-            });
-            $('.btn-save').click(async function (){
-                var data = $sigdiv.jSignature('getData', 'default');
-                $('#sign_document_signature').val(data);
-                $('#sign_document').submit();
-            });
-            
-        });
-        
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jSignature/2.1.3/jSignature.min.noconflict.js" defer></script>
+    <script src="{{asset('assets/templates/dc/document/document_sign.js')}}" defer></script>
 {% endblock %}
 
