@@ -147,14 +147,13 @@ class UserController extends AbstractController
     public function UserAvatar(User $user)
     {
         $file = $this->directoryManagement->getMediaFolder_UserAvatars().DIRECTORY_SEPARATOR.$user->getPhoto();
-        if(file_exists($file)) {
+        if(is_file($file)) {
             return new BinaryFileResponse($file);
         }
 
-        return $this->json([
-            'error' => true,
-            'message' => 'file not found'
-        ]);
+        $file = $this->directoryManagement->getPublicDir().DIRECTORY_SEPARATOR.'assets/vuexy/images/portrait/small/avatar-s-11.jpg';
+
+        return new BinaryFileResponse($file);
     }
 
     /**

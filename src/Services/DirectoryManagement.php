@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Manager\EntityManager;
 use Cocur\Slugify\Slugify;
+use Doctrine\Inflector\Rules\English\Inflectible;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -26,6 +27,11 @@ class DirectoryManagement
     public function getProjectDir(): string
     {
         return $this->project_dir;
+    }
+
+    public function getPublicDir(): string
+    {
+        return $this->project_dir.DIRECTORY_SEPARATOR.'public';
     }
 
     public function getMediaFolder()
