@@ -1,0 +1,52 @@
+{% extends 'security/login.html.twig' %}
+
+{% block title %}Inscription agent{% endblock %}
+
+{% block form %}
+    
+        <h5 class="my-4">Paiement</h5>
+
+        {% if app.request.get('stripe_checkout') == 'successfully' %}
+            <div class="text-center alert alert-success">
+                Paiement efféctué avec success ! <br>
+                <a href="{{ path('app_login') }}">Lien connexion </a>
+            </div>
+        {% elseif app.request.get('stripe_checkout') == 'error_different_agent_id' %}
+            <div class="text-center alert alert-success">
+                Veuillez reprocéder au paiment car le navigateur a perdu votre session ou vous pouvez aussi vous connecter sur PixelForce pour poursuivre le paiment
+                Mais avant de poursuivre, vueillez verifier votre solde bancaire
+            </div>
+        {% endif %}
+        
+        
+        {% if app.request.get('stripe_checkout') and app.request.get('stripe_checkout') == 'successfully' %}
+        {% else %}
+            <form  method="post" id="single-payment-form">
+                <div id="card-errors" role="alert"></div>
+                <div id="card-elements"></div>
+
+                <div class="w-100 text-center">
+                    <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span>Essayer ({{priceTrialAccount}} €)</span></button>
+                </div>
+            </form>
+        {% endif %}
+        
+
+    	<input type="hidden" id="sessionAgentId" value="{{ sessionAgentId }}">
+    	<input type="hidden" id="stripe_stripeToken" value="{{ stripe_publishable_key }}">
+		<input type="hidden" id="stripe_clientSecret" value="{{ stripeIntentSecret }}">
+		<input type="hidden" id="stripe_url_stripeCheckout" value="{{ path('agent_register_payment_execute') }}">
+		<input type="hidden" id="stripe_urlSuccessTransaction" value="{{ path('agent_register_payment_intent') }}">
+		<input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_register_payment_intent') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if stripeIntentSecret == '' %}
+    {% else %}
+        <script src="https://js.stripe.com/v3/"></script>     
+        {{ encore_entry_script_tags('StripeAgentRegistration') }}
+    {% endif %}
+    
+    
+{% endblock %}

@@ -43,6 +43,7 @@ Encore
     .addEntry('validationSecteur', './assets/js/validationSecteur.js')
     .addEntry('ImportExportContact', './assets/js/ImportExportContact.js')
     .addEntry('tag', './assets/js/tag.js')
+    .addEntry('StripeAgentRegistration', './assets/js/stripe/stripe-agent-registration.js')
 
     
     // Vuexy: Vendor JS

@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\AgentSecteur;
 use App\Entity\CategorieFormation;
 use App\Entity\Secteur;
+use App\Manager\StripeManager;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\CategorieFormationRepository;
 use App\Repository\ContactRepository;
@@ -22,21 +23,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CalendarEventRepository;
+use App\Services\StripeService;
 
 class AgentAccountController extends AbstractController
 {
-    protected $repoSecteur;
-    protected $repoAgentSecteur;
-    protected $repoFormation;
-    protected $session;
-    protected $repoContact;
-    protected $repoFormationAgent;
-    protected $repoCatFormation;
-    protected $repoRelationFormationCategorie;
-    protected $categorieFormationAgentService;
+    private $repoSecteur;
+    private $repoAgentSecteur;
+    private $repoFormation;
+    private $session;
+    private $repoContact;
+    private $repoFormationAgent;
+    private $repoCatFormation;
+    private $repoRelationFormationCategorie;
+    private $categorieFormationAgentService;
     private $calendarEventRepository;
+    private $stripeService;
+    private $stripeManager;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository)
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository, StripeService $stripeService, StripeManager $stripeManager)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
@@ -48,6 +52,8 @@ class AgentAccountController extends AbstractController
         $this->repoRelationFormationCategorie = $repoRelationFormationCategorie;
         $this->categorieFormationAgentService = $categorieFormationAgentService;
         $this->calendarEventRepository = $calendarEventRepository;
+        $this->stripeService = $stripeService;
+        $this->stripeManager = $stripeManager;
     }
 
     /**
@@ -57,14 +63,36 @@ class AgentAccountController extends AbstractController
      */
     public function agent_home(AgentSecteurService $agentSecteurService)
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        $expiredAccount = '';
+
         $this->session->remove('secteurId');
 
         $allSecteurs = $this->repoSecteur->findAllActive();
+
+        if (empty($user->getStripeData())) {
+            $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
+            $priceTrialAccount = 10.0;
+            $stripeIntentSecret = $this->stripeService->intentSecret($priceTrialAccount);
+            $expiredAccount = true;
+        }else{
+            $stripe_publishable_key = '';
+            $priceTrialAccount = 0.0;
+            $stripeIntentSecret = '';
+            $expiredAccount = false;
+        }
+
         return $this->render('user_category/agent/home_agent.html.twig', [
             'allSecteurs' => $allSecteurs,
             'repoAgentSecteur' => $this->repoAgentSecteur,
             'agent' => $this->getUser(),
-            'agentSecteurService' => $agentSecteurService
+            'agentSecteurService' => $agentSecteurService,
+            'sessionAgentId' => $user->getId(),
+            'stripeIntentSecret' => $stripeIntentSecret,
+            'stripe_publishable_key' => $stripe_publishable_key,
+            'priceTrialAccount' => $priceTrialAccount,
+            'expiredAccount' => $expiredAccount
         ]);
     }
 
@@ -127,5 +155,22 @@ class AgentAccountController extends AbstractController
             'upcomingEvents'=> $upcomingEvents,
             'eventsOfTheDay'=> $eventsOfTheDay
         ]);
+    }
+
+    /**
+     * @Route("/agent/account/trial/payement/execute", name="agent_account_trial_payment_execute")
+     */
+    public function agent_account_trial_payment_execute(Request $request)
+    {
+        $user = $this->getUser();
+
+        if ($request->getMethod() === "POST") {
+            $this->stripeManager->persistPayment($user, $_POST);
+        }
+
+        return $this->json(
+            ['stripe_checkout' => 'successfully'], 
+            200
+        );
     }
 }

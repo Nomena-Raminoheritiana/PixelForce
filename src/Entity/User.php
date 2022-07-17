@@ -240,6 +240,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private $plainPassword;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $stripe_data = [];
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -1105,6 +1110,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getStripeData(): ?array
+    {
+        return $this->stripe_data;
+    }
+
+    public function setStripeData(?array $stripe_data): self
+    {
+        $this->stripe_data = $stripe_data;
 
         return $this;
     }

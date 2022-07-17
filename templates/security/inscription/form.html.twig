@@ -1,5 +1,7 @@
 {% extends 'security/login.html.twig' %}
 
+{% block title %}Inscription agent{% endblock %}
+
 {% block form %}
     <h5 class="text-center my-4">Inscription</h5>
     {{ form_start(form) }}
@@ -41,9 +43,7 @@
         {{ form_row(form.username) }}
         {{ form_row(form.password) }}
         <div class="w-100 text-center">
-            <button class="btn btn-primary" type="submit">Enregistrer</button>
+            <button class="btn btn-primary" type="submit">Accéder au paiement <i class="fa-solid fa-angles-right"></i></button>
         </div>
     {{ form_end(form) }}
 {% endblock %}
-
-{% block title %}Inscription agent{% endblock %}
