@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CalendarEventRepository;
+use App\Repository\MeetingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass=CalendarEventRepository::class)
+ * @ORM\Entity(repositoryClass=MeetingRepository::class)
  */
 class Meeting implements JsonSerializable
 {
@@ -83,7 +83,7 @@ class Meeting implements JsonSerializable
         return $this->note;
     }
 
-    public function setNote(string $note): self
+    public function setNote(?string $note): self
     {
         $this->note = $note;
 
@@ -132,7 +132,7 @@ class Meeting implements JsonSerializable
         return $this->meetingState;
     }
 
-    public function setMeetingState(MeetingState $meetingState): self
+    public function setMeetingState(?MeetingState $meetingState): self
     {
         $this->meetingState = $meetingState;
 
@@ -152,6 +152,18 @@ class Meeting implements JsonSerializable
         $event->setAllDay(false);
         $event->setUrl("/meeting/fiche/".$this->getId());
         return $event;
+    }
+    public function clone(User $user = null): ?Meeting
+    {
+        $meeting = new Meeting();
+        $meeting->setTitle($this->getTitle());
+        $meeting->setNote($this->getNote());
+        $meeting->setStart($this->getStart());
+        $meeting->setEnd($this->getEnd());
+        $meeting->setUserToMeet($this->getUserToMeet());
+        if($user == null)$meeting->setUser($this->getUser());
+        else $meeting->setUser($user);
+        return $meeting;
     }
 
     public function getUserToMeet(): ?Contact

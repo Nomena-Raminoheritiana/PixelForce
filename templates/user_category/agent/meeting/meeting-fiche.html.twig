@@ -42,7 +42,14 @@
             </tr>
             <tr>
                 <th>Statut</th>
-                <td><i>{{meeting.meetingState.name}}</i></td>
+                <td>
+                    <i>{% if meeting.meetingState.name == 'Annulé' %}
+                            <span class="text-danger">{{meeting.meetingState.name}}</span>
+                        {% else %}
+                            {{meeting.meetingState.name}}
+                        {% endif %}
+                    </i>
+                </td>
             <tr>
             <tr class="note-row">
                 <th>Note</th>
@@ -51,10 +58,10 @@
             
         </table>
         <div class="meeting-fiche-controls">
-            {% if meeting.meetingState.name != "Annulé" %}<button class="btn btn-outline-danger" type="button" onclick="cancelMeeting({{meeting.id}})">Annuler le rendez-vous</button>{% endif %}
+            {% if meeting.meetingState.name == "En attente" %}<button class="btn btn-outline-danger" type="button" onclick="cancelMeeting({{meeting.id}})">Annuler le rendez-vous</button>{% endif %}
             {# <button class="btn btn-outline-secondary" type="button" onclick="reportMeeting({{meeting.id}})">Rendez-vous après 48h</button> #}
 
-            {% if meeting.meetingState.name != "Terminé" %}<button class="btn btn-primary" type="button"  onclick="endMeeting({{meeting.id}})">Marquer comme terminé</button>{% endif %}
+            {% if meeting.meetingState.name == "En attente" %}<button class="btn btn-primary" type="button"  onclick="endMeeting({{meeting.id}})">Marquer comme terminé</button>{% endif %}
 
         </div>
     </div>

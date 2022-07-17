@@ -19,6 +19,8 @@ use App\Repository\CalendarEventLabelRepository;
 
 
 use App\Entity\Meeting;
+use App\Services\MeetingService;
+
 use App\Entity\SearchEntity\MeetingSearch;
 use App\Form\MeetingType;
 use App\Form\MeetingFilterType;
@@ -41,8 +43,10 @@ class AgentContactMeetingController extends AbstractController
     private $coachSecteurRepository;
     private $secteurRepository;
     private $session;
+    private $meetingService;
 
-    public function __construct(EntityManagerInterface $entityManager, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository, ContactRepository $contactRepository, CoachSecteurRepository $coachSecteurRepository, SecteurRepository $secteurRepository, SessionInterface $session)
+
+    public function __construct(EntityManagerInterface $entityManager, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository, ContactRepository $contactRepository, CoachSecteurRepository $coachSecteurRepository, SecteurRepository $secteurRepository, SessionInterface $session, MeetingService $meetingService)
     {
         $this->entityManager = $entityManager;
         $this->meetingStateRepository = $meetingStateRepository;
@@ -52,6 +56,8 @@ class AgentContactMeetingController extends AbstractController
         $this->coachSecteurRepository = $coachSecteurRepository;
         $this->secteurRepository = $secteurRepository;
         $this->session = $session;
+        $this->meetingService = $meetingService;
+
     }
 
     /**
@@ -78,46 +84,56 @@ class AgentContactMeetingController extends AbstractController
            
             try{
                 if($userToMeet == null) throw new \Exception('User to meet invalid');
-                
-                // Get "En attente" meeting state
-                $defaultMeetingState = $this->meetingStateRepository->find(1);
-                if($defaultMeetingState != null) $meeting->setMeetingState($defaultMeetingState);
-
-                $meeting->setTitle($meetingTitle);
-                $meeting->setUser($agent);
-                $meeting->setUserToMeet($userToMeet);
-                $this->entityManager->persist($meeting);
-                $this->entityManager->flush();
-
-                
                 $meetingCalendarEventLabel = $this->calendarEventLabelRepository->findOneBy(["value"=>"meeting"]);
                 if($meetingCalendarEventLabel == null) throw new \Exception('Calendar event "meeting" is missing in the database.');
+                
+                $this->entityManager->beginTransaction();
 
-                // Insert calendarEvent for the current user (Agent)
-                $event = $meeting->toCalendarEvent();
-                $event->setCalendarEventLabel($meetingCalendarEventLabel);
-                $event->setUser($meeting->getUser());
-                $this->entityManager->persist($event);
-                $this->entityManager->flush();
+                $meetingCoach = $meeting->clone($coach);
+                $this->meetingService->saveMeeting($meeting, $agent, $userToMeet);
+                $this->meetingService->saveMeeting($meetingCoach, $coach, $userToMeet);
+                $this->meetingService->saveMeetingEvent($meeting, $agent, $meetingCalendarEventLabel);
+                $this->meetingService->saveMeetingEvent($meetingCoach, $coach, $meetingCalendarEventLabel);
+
+                $this->entityManager->commit();
+
+                // // Get "En attente" meeting state
+                // $defaultMeetingState = $this->meetingStateRepository->find(1);
+                // if($defaultMeetingState != null) $meeting->setMeetingState($defaultMeetingState);
+
+                // $meeting->setTitle($meetingTitle);
+                // $meeting->setUser($agent);
+                // $meeting->setUserToMeet($userToMeet);
+                // $this->entityManager->persist($meeting);
+                // $this->entityManager->flush();
+
+                
+
+                // // Insert calendarEvent for the current user (Agent)
+                // $event = $meeting->toCalendarEvent();
+                // $event->setCalendarEventLabel($meetingCalendarEventLabel);
+                // $event->setUser($meeting->getUser());
+                // $this->entityManager->persist($event);
+                // $this->entityManager->flush();
 
 
-                // Insert calendarEvent for the coach of Agent (Coach)
-                $meetingCoach = new Meeting();
-                $meetingCoach->setTitle($meetingTitle);
-                $meetingCoach->setUser($coach);
-                $meetingCoach->setUserToMeet($userToMeet);
-                $meetingCoach->setMeetingState($defaultMeetingState);
-                $meetingCoach->setStart(new \Datetime());
-                $meetingCoach->setEnd(new \Datetime());
-                $this->entityManager->persist($meetingCoach);
-                $this->entityManager->flush();
+                // // Insert calendarEvent for the coach of Agent (Coach)
+                // $meetingCoach = new Meeting();
+                // $meetingCoach->setTitle($meetingTitle);
+                // $meetingCoach->setUser($coach);
+                // $meetingCoach->setUserToMeet($userToMeet);
+                // $meetingCoach->setMeetingState($defaultMeetingState);
+                // $meetingCoach->setStart(new \Datetime());
+                // $meetingCoach->setEnd(new \Datetime());
+                // $this->entityManager->persist($meetingCoach);
+                // $this->entityManager->flush();
 
-                $event = $meeting->toCalendarEvent();
-                $event->setCalendarEventLabel($meetingCalendarEventLabel);
-                $event->setUser($coach);
-                $this->entityManager->persist($event);
-                $this->entityManager->flush();
-                    
+                // $event = $meeting->toCalendarEvent();
+                // $event->setCalendarEventLabel($meetingCalendarEventLabel);
+                // $event->setUser($coach);
+                // $this->entityManager->persist($event);
+                // $this->entityManager->flush();
+                
                 $this->addFlash(
                    'success',
                    'Rendez-vous programmé, veuillez aussi visualiser votre agenda'
@@ -173,7 +189,7 @@ class AgentContactMeetingController extends AbstractController
     }
 
     /**
-     * @Route("/api/cancel/{meetingId}", name="meeting_api_cancel", methods={"POST"})
+     * @Route("/meeting/api/cancel/{meetingId}", name="meeting_api_cancel", methods={"POST"})
      */
     public function cancelMeeting(Request $request, int $meetingId): JsonResponse
     {
@@ -189,7 +205,7 @@ class AgentContactMeetingController extends AbstractController
         }
     }
     /**
-     * @Route("/api/report/{meetingId}", name="meeting_api_report", methods={"POST"})
+     * @Route("/meeting/api/report/{meetingId}", name="meeting_api_report", methods={"POST"})
      */
     public function reportMeeting(Request $request, int $meetingId): JsonResponse
     {
@@ -205,7 +221,7 @@ class AgentContactMeetingController extends AbstractController
         }
     }
     /**
-     * @Route("/api/end/{meetingId}", name="meeting_api_end", methods={"POST"})
+     * @Route("/meeting/api/end/{meetingId}", name="meeting_api_end", methods={"POST"})
      */
     public function endMeeting(Request $request, int $meetingId): JsonResponse
     {

@@ -64,13 +64,16 @@ window.colors = {
       $html.removeClass('loading').addClass('loaded');
     }, 1200);
 
-    $.app.menu.init(compactMenu);
+   if($.app) {
+     $.app.menu.init(compactMenu);
+   }
+
 
     // Navigation configurations
     var config = {
       speed: 300 // set speed to expand / collapse menu
     };
-    if ($.app.nav.initialized === false) {
+    if ($.app && $.app.nav.initialized === false) {
       $.app.nav.init(config);
     }
 

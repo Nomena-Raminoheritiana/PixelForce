@@ -132,48 +132,56 @@ $(function() {
     });
 
     // detecter s'il y a un appel entrant
-    const urlDetectionAppel = JSON.parse(document.getElementById("live-call-topic").textContent);
-    const eventDetectionAppelSource = new EventSource(urlDetectionAppel);
-    eventDetectionAppelSource.onmessage = async event => {
-        const data = JSON.parse(event.data);
-        // puis on récupère toute les appels entrants
-        const response = await axios.get(Routing.generate('agent_zoom_rejoindreReunion', {code: data.code}))
-        if(typeof response.data != 'object'  && live_en_cours === false) {
-            // afficher le modal
-            if($('#ModalJoinCall').length>0) {
-                $('#ModalJoinCall').replaceWith(response.data);
-            } else {
-                $('body').append(response.data);
-            }
-            if(typeof modalJoinCall != 'object') {
-                modalJoinCall = new Modal($('#ModalJoinCall')[0], { keyboard: false});
-                modalJoinCall.show();
-            } else {
+    const elementUrl = document.getElementById("live-call-topic");
+    if(elementUrl) {
+        const urlDetectionAppel = JSON.parse(elementUrl.textContent);
+        const eventDetectionAppelSource = new EventSource(urlDetectionAppel);
+        eventDetectionAppelSource.onmessage = async event => {
+            const data = JSON.parse(event.data);
+            // puis on récupère toute les appels entrants
+            const response = await axios.get(Routing.generate('agent_zoom_rejoindreReunion', {code: data.code}))
+            if(typeof response.data != 'object'  && live_en_cours === false) {
+                // afficher le modal
+                if($('#ModalJoinCall').length>0) {
+                    $('#ModalJoinCall').replaceWith(response.data);
+                } else {
+                    $('body').append(response.data);
+                }
+                if(typeof modalJoinCall != 'object') {
+                    modalJoinCall = new Modal($('#ModalJoinCall')[0], { keyboard: false});
+                    modalJoinCall.show();
+                } else {
+                    modalJoinCall.hide();
+                    modalJoinCall = new Modal($('#ModalJoinCall')[0], { keyboard: false});
+                    modalJoinCall.show();
+                }
+            } else if(typeof modalJoinCall == 'object') {
                 modalJoinCall.hide();
-                modalJoinCall = new Modal($('#ModalJoinCall')[0], { keyboard: false});
-                modalJoinCall.show();
+                modalJoinCall = '';
             }
-        } else if(typeof modalJoinCall == 'object') {
-            modalJoinCall.hide();
-            modalJoinCall = '';
         }
     }
 
+
     // detecter un refus d'un live
-    const urlRefus = JSON.parse(document.getElementById("live-refus-topic").textContent);
-    const evenRefusSource = new EventSource(urlRefus);
-    evenRefusSource.onmessage = async event => {
-       const data = JSON.parse(event.data);
-       const alertRefu = $('#model-alert');
-       const alertRefuClone = alertRefu.clone();
-       const id = 'data-'+data.user.id;
-       alertRefuClone.attr('id',id);
-       alertRefuClone.removeClass('d-none').addClass(' mb-1');
-       alertRefuClone.find('.nom-participant').html(data.user.nom+' '+data.user.prenom);
-       $('#modal-live-Video-Rapide').find('.alert-absolute').append(alertRefuClone);
-       $('[id="'+id+'"]').addClass('show');
-        $('[id="'+id+'"]').find('.call-rapel').attr('data-user-id', data.user.id);
-    };
+    const elementUrlRefus = document.getElementById("live-refus-topic");
+    if(elementUrlRefus) {
+        const urlRefus = JSON.parse(elementUrlRefus.textContent);
+        const evenRefusSource = new EventSource(urlRefus);
+        evenRefusSource.onmessage = async event => {
+            const data = JSON.parse(event.data);
+            const alertRefu = $('#model-alert');
+            const alertRefuClone = alertRefu.clone();
+            const id = 'data-'+data.user.id;
+            alertRefuClone.attr('id',id);
+            alertRefuClone.removeClass('d-none').addClass(' mb-1');
+            alertRefuClone.find('.nom-participant').html(data.user.nom+' '+data.user.prenom);
+            $('#modal-live-Video-Rapide').find('.alert-absolute').append(alertRefuClone);
+            $('[id="'+id+'"]').addClass('show');
+            $('[id="'+id+'"]').find('.call-rapel').attr('data-user-id', data.user.id);
+        };
+    }
+
 
     $(this).on('hide.bs.modal','#ModalJoinCall', async function(e) {
         if(refuserCall) {

@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CalendarEventRepository;
+use App\Repository\MeetingStateRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
- * @ORM\Entity(repositoryClass=CalendarEventRepository::class)
+ * @ORM\Entity(repositoryClass=MeetingStateRepository::class)
  * @UniqueEntity(fields="name", message="Meeting state name is already taken.")
  */
 class MeetingState implements JsonSerializable
