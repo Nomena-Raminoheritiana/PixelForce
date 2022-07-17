@@ -53,7 +53,7 @@
         {% endif %}
         {% if meetings|length !=0 %}
         <div class="table-responsive mb-1">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover sortable">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -64,7 +64,7 @@
                         <th>Téléphone</th>
                         <th>Email</th>
                         <th>Statut</th>
-                        <th></th>
+                        <th class="table-th-notSortable"></th>
                     </tr>
                 </thead>
                 <tbody>
