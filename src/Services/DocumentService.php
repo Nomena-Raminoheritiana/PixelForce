@@ -79,8 +79,11 @@ class DocumentService
                 $pdf->AddPage();
                 $tplId = $pdf->importPage($i);
                 $pdf->useTemplate($tplId);
+                if($i == 4){
+                    $pdf->Image($signature, 0, 180, 120);
+                }
             }
-            $pdf->Image($signature, 110, 240, 120);
+            
             $filename = 'docs/signed/doc-'.$rec->getId().'.pdf';
             $pdf->Output($this->filesDirectory.'/'.$filename, 'F');  
             $rec->setSignedFile($filename);
