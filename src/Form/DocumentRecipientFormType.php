@@ -32,7 +32,7 @@ class DocumentRecipientFormType extends AbstractType
             ->add('nom', TextType::class, [
                 "label" => "Nom",
                 "trim" => true,
-                "required" => false,
+                "required" => true,
                 "constraints" => [
                     new NotBlank(["message" => "Nom obligatoire"])
                 ]
@@ -49,6 +49,14 @@ class DocumentRecipientFormType extends AbstractType
                 'invalid_message' => 'Adresse email invalide',
                 "constraints" => [
                     new NotBlank(["message" => "Adresse email obligatoire"])
+                ]
+            ])
+            ->add("conseiller", TextType::class, [
+                "label" => "Nom du conseiller",
+                "trim" => true,
+                "required" => true,
+                "constraints" => [
+                    new NotBlank(["message" => "Nom du conseiller obligatoire"])
                 ]
             ])
         ;

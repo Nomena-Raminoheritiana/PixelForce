@@ -57,7 +57,7 @@ class DocumentFormType extends AbstractType
                 ]
             ])
             ->add('amount', TextType::class, [
-                "label" => "Montant à payer",
+                "label" => "Montant à payer (TTC - TVA 20%)",
                 "trim" => true,
                 "required" => true,
                 "constraints" => [
