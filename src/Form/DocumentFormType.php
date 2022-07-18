@@ -39,8 +39,6 @@ class DocumentFormType extends AbstractType
                 'config' => array(
                     'uiColor' => '#ffffff',
                     //'uiColor' => '#7367f0',
-
-
                 )))   
             ->add('file', FileType::class, [
                 "label" => "Fichier",
