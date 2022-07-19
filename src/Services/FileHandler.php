@@ -46,6 +46,27 @@ class FileHandler
         return $filePath;
     }
 
+    public function uploadTmp(UploadedFile $file, $dir = "", $salt = "0")
+    {
+        $filesystem = new Filesystem();
+        $info = pathinfo($file->getClientOriginalName());
+
+        $fileName = $salt.'_'.strtotime("now").'.'.$info['extension'];
+        // $fileName = $file->getClientOriginalName();
+        $path =Path::join($this->getFilesDirectory(), $dir);
+        $filePath = Path::join($dir, $fileName);
+        try {
+            if(!$filesystem->exists($path))$filesystem->mkdir($path);
+            $file->move($path, $fileName);
+        } catch (FileException $e) {
+            // ... handle exception if something happens during file upload
+            throw $e;
+        }catch (IOExceptionInterface $e) {
+            throw $e;
+        }
+        return $filePath;
+    }
+
     public function getFilesDirectory()
     {
         return $this->filesDirectory;

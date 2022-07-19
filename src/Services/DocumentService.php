@@ -22,6 +22,7 @@ use Swift_Image;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment as Twig_Environment;
+use mikehaertl\pdftk\Pdf;
 
 class DocumentService 
 {
@@ -83,8 +84,14 @@ class DocumentService
 
     public function signDocument(DocumentRecipient $rec, $signature){
         try{
+            if($rec->getSignedFile() == null) throw new \Exception("Vous devez importer le document déjà rempli avant de signer le document.");
+            $source = $this->filesDirectory.'/'.$rec->getSignedFile();
+            
+            // Flatten form datas of pdf :
+            $this->flattenDocument($source, $source, null);
+
             $pdf = new Fpdi();
-            $pageCount = $pdf->setSourceFile($this->filesDirectory.'/'.$rec->getDocument()->getFile());
+            $pageCount = $pdf->setSourceFile($source);
 
             for($i=1; $i<=$pageCount; $i++){
                 $pdf->AddPage();
@@ -95,9 +102,7 @@ class DocumentService
                 }
             }
             
-            $filename = 'docs/signed/doc-'.$rec->getId().'.pdf';
-            $pdf->Output($this->filesDirectory.'/'.$filename, 'F');  
-            $rec->setSignedFile($filename);
+            $pdf->Output($source, 'F');
             $rec->setDateSigned(new DateTime());
             $this->entityManager->flush(); 
         } finally{
@@ -105,18 +110,21 @@ class DocumentService
         }
     }
 
-    public function editDocument(DocumentRecipient $rec){
-        $fields = array(
-            'Adresse 2' => 'Adresse lesy ty a',
-            // 'N� Client 9' => 'Hoaiza elah',
-        );
-        // $fields = [];
-        $pdf = new \FPDM($this->filesDirectory.'/contracts/test_o.pdf');
-        $filename = 'docs/signed/test-'.$rec->getId().'.pdf';
-        $pdf->useCheckboxParser = true; // Checkbox parsing is ignored (default FPDM behaviour) unless enabled with this setting
-        $pdf->Load($fields, false); // second parameter: false if field values are in ISO-8859-1, true if UTF-8
-        $pdf->Merge();
-        $pdf->Output();
+    public function flattenDocument($inputFilepath, $outputFilepath, $datas = null){
+        // if inputFilepath = outputFilepath , the file will be replaced by the new one
+        $pdf = new Pdf($inputFilepath);
+        if($datas != null){
+            $pdf->fillForm($datas);
+        }
+        $result = $pdf->allow('AllFeatures')      // Change permissions
+            ->needAppearances()
+            ->flatten()
+            ->saveAs($outputFilepath);
+        // Always check for errors
+        if ($result === false) {
+            $error = $pdf->getError();
+            throw new \Exception($error);
+        }
     }
 
     public function pay(string $stripeToken, DocumentRecipient $rec){

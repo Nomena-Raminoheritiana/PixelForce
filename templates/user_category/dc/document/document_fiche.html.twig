@@ -126,7 +126,9 @@
                                             </ul> #}
                                             <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('dc_document_view', {'token': token})}}">Voir le document</a>
                                             {# <a role="button" class="mt-2 btn btn-secondary w-100 btn-next place-order" href="{{path('dc_document_edit', {'token': token})}}">Modifier le document</a> #}
-                                            {% if not rec.dateSigned %}
+                                            {% if rec.dateSigned == null and rec.signedFile == null %}
+                                            <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_upload', {'token': token})}}">Importer le document</a>
+                                            {% elseif rec.dateSigned == null and rec.signedFile != null %}
                                             <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_sign', {'token': token})}}">Signer le document</a>
                                             {% elseif not rec.paid %}
                                             <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_pay', {'token': token})}}">Payer</a>

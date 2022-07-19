@@ -43,7 +43,7 @@ heroku login -i
 heroku git:remote -a pixel-force
 git push heroku main
 
-# PDF CONTRACTS : Must download PDF toolkit pdftk
+# PDF CONTRACTS : Must download PDF toolkit pdftk => composer require mikehaertl/php-pdftk
 
 pdftk test.pdf output test_o.pdf `to correct FDF format`
 pdftk test.pdf generate_fdf `to extract data fields from pdf forms`

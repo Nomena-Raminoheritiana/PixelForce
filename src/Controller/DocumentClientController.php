@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Document;
+use App\Entity\DocumentRecipient;
+use App\Form\DocumentFilterType;
+use App\Form\DocumentClientFormType;
 use App\Form\DocumentPayFormType;
 use App\Form\SignDocumentType;
 use App\Repository\DocumentRecipientRepository;
@@ -15,7 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
+use DateTime;
 /**
  * @Route("/dc/{token}")
  */
@@ -55,7 +60,7 @@ class DocumentClientController extends AbstractController
         $rec = $this->documentRecipientRepository->findRecipientByToken($token);
         $response = new BinaryFileResponse(
             $this->getParameter('files_directory_relative')."/".(
-            $rec->getDateSigned() ?
+            $rec->getSignedFile() ?
             $rec->getSignedFile() : $rec->getDocument()->getFile()
             )
         );
@@ -100,20 +105,37 @@ class DocumentClientController extends AbstractController
     }
 
     /**
-     * @Route("/edit", name="dc_document_edit")
+     * @Route("/upload", name="dc_document_upload")
      */
-    public function edit($token, Request $request): Response
+    public function upload($token,Request $request): Response
     {
-        $filesDirectory = $this->getParameter('files_directory_relative');
-        $error = null;
         $rec = $this->documentRecipientRepository->findRecipientByToken($token);
-        // $this->documentService->editDocument($rec);
+        $error = null;
+        $doc = new Document();
+        $form = $this->createForm(DocumentClientFormType::class, $doc);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        return $this->render('user_category/dc/document/document_base.html.twig',[
-            'rec' => $rec,
+            try{
+                $file = $form->get('file')->getData();
+                $filename = $this->fileHandler->uploadTmp($file, "contracts", $token);
+                $rec->setSignedFile($filename);
+                // $rec->setDateSigned(new DateTime());
+                $this->entityManager->flush(); 
+
+                $this->addFlash('success', 'Document importé');
+
+                return $this->redirectToRoute('dc_document_sign', ['token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+            }
+        }
+
+        return $this->render('user_category/dc/document/document_upload.html.twig',[
+            'form' => $form->createView(),
             'error' => $error,
             'token' => $token,
-            'filesDirectory' => $filesDirectory
+            'filesDirectory' => $this->getParameter('files_directory_relative')
         ]);
     }
 
