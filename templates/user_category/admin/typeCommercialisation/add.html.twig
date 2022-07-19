@@ -1,0 +1,13 @@
+{% extends 'base_admin.html.twig' %}
+{% block title %}
+    admin - add - type de commercialisation
+{% endblock %}
+{% block body %}
+    <div class="container my-5">
+        <div class="content-body-form">
+            <a href="{{ path('admin_typeCommercialisation_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
+            <h1 class="text-start fw-bold my-3">Ajout type de commercialisation</h1>
+            {% include 'user_category/admin/typeCommercialisation/_form.html.twig' with {form:form} %}
+        </div>
+    </div>
+{% endblock %}
