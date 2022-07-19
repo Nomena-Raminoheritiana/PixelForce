@@ -1,4 +1,4 @@
-{% extends 'base_client_dc.html.twig' %}
+{% extends 'user_category/dc/document/document_base.html.twig' %}
 
 {% block title %}
 	Payer
@@ -8,9 +8,10 @@
     {{ parent() }}
 {% endblock %}
 
-{% block body %} 
+{% set active = 'payment' %}
+{% block content_document %} 
     
-    <div class="block block--bordered block--rounded">
+    <div class="block block--rounded">
         <h1 class="block__text block__text--center mt-2" >Montant total dû: {{rec.document.amount | number_format(2, ',', ' ')}} €</h1>
             
             {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'document_pay_form'}}) }}

@@ -1,0 +1,74 @@
+{% extends 'base_client_dc.html.twig' %}
+
+{% block title %}
+	Document
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+    </style>
+{% endblock %}
+
+
+
+{% block body %}
+<!-- BEGIN: Content-->
+    <div class="content-body mt-3 pb-5">
+        <div class="bs-stepper checkout-tab-steps">
+            <!-- Wizard starts -->
+            <div class="bs-stepper-header">
+                <div class="step {% if active == 'infos' %} active {% endif %}" data-target="#step-infos" role="tab" id="step-infos-trigger">
+                    <button type="button" class="step-trigger">
+                        <span class="bs-stepper-box">
+                            <i data-feather="book-open" class="font-medium-3"></i>
+                        </span>
+                        <span class="bs-stepper-label">
+                            <span class="bs-stepper-title">Informations</span>
+                            <span class="bs-stepper-subtitle">Remplir le contrat</span>
+                        </span>
+                    </button>
+                </div>
+                <div class="line">
+                    <i data-feather="chevron-right" class="font-medium-2"></i>
+                </div>
+                <div class="step {% if active == 'signature' %} active {% endif %}" data-target="#step-signature" role="tab" id="step-signature-trigger">
+                    <button type="button" class="step-trigger">
+                        <span class="bs-stepper-box">
+                            <i data-feather="feather" class="font-medium-3"></i>
+                        </span>
+                        <span class="bs-stepper-label">
+                            <span class="bs-stepper-title">Signature numérique</span>
+                            <span class="bs-stepper-subtitle">Signez le document</span>
+                        </span>
+                    </button>
+                </div>
+                <div class="line">
+                    <i data-feather="chevron-right" class="font-medium-2"></i>
+                </div>
+                <div class="step {% if active == 'payment' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                    <button type="button" class="step-trigger">
+                        <span class="bs-stepper-box">
+                            <i data-feather="credit-card" class="font-medium-3"></i>
+                        </span>
+                        <span class="bs-stepper-label">
+                            <span class="bs-stepper-title">Paiement</span>
+                            <span class="bs-stepper-subtitle">Selectionnez votre moyen de paiement</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <!-- Wizard ends -->
+
+            
+            <div class="bs-stepper-content">
+                {% block content_document %} 
+                {% endblock %}
+            </div>
+            
+        </div>
+    </div>
+<!-- END: Content-->
+{% endblock %}
+
+

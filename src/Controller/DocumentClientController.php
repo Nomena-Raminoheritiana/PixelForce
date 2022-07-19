@@ -84,7 +84,7 @@ class DocumentClientController extends AbstractController
                 $photo = $this->fileHandler->saveBase64($signature, $filesDirectory."docs/signatures/signature-".$rec->getId().'.png');
                 $this->documentService->signDocument($rec, $photo);
                 $this->addFlash('success', 'Document signé');
-                return $this->redirectToRoute('dc_document_fiche', ['token' => $token]);
+                return $this->redirectToRoute('dc_document_pay', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
@@ -107,9 +107,9 @@ class DocumentClientController extends AbstractController
         $filesDirectory = $this->getParameter('files_directory_relative');
         $error = null;
         $rec = $this->documentRecipientRepository->findRecipientByToken($token);
-        $this->documentService->editDocument($rec);
+        // $this->documentService->editDocument($rec);
 
-        return $this->render('user_category/dc/document/document_edit.html.twig',[
+        return $this->render('user_category/dc/document/document_base.html.twig',[
             'rec' => $rec,
             'error' => $error,
             'token' => $token,

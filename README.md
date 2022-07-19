@@ -43,5 +43,13 @@ heroku login -i
 heroku git:remote -a pixel-force
 git push heroku main
 
+# PDF CONTRACTS : Must download PDF toolkit pdftk
+
+pdftk test.pdf output test_o.pdf `to correct FDF format`
+pdftk test.pdf generate_fdf `to extract data fields from pdf forms`
+To Persist data form from pdf :
+- Convert PDF to image with https://www.ilovepdf.com/fr/pdf_en_jpg
+- Print PDF - Save a PDF version of it and it will be un modifiable!
+
 
 

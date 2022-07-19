@@ -1,4 +1,4 @@
-{% extends 'base_client_dc.html.twig' %}
+{% extends 'user_category/dc/document/document_base.html.twig' %}
 
 {% block title %}
 	Document
@@ -8,32 +8,9 @@
     {{ parent() }}
 {% endblock %}
 
-{% block body %}
-<!-- BEGIN: Content-->
-    <div class="app-content content client ecommerce-application" style="padding-top :30px;">
-        <div class="content-overlay"></div>
-        <div class="header-navbar-shadow"></div>
-        <div class="content-wrapper container-xxl p-0">
-            <div class="content-header row">
-                <div class="content-header-left col-md-9 col-12 mb-2">
-                    <div class="row breadcrumbs-top">
-                        <div class="col-12">
-                            <h2 class="content-header-title float-start mb-0">Document </h2>
-                            {# <div class="breadcrumb-wrapper">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="index.html">Home</a>
-                                    </li>
-                                    <li class="breadcrumb-item"><a href="#">eCommerce</a>
-                                    </li>
-                                    <li class="breadcrumb-item active">Commande
-                                    </li>
-                                </ol>
-                            </div> #}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="content-body">
+{% set active = 'infos' %}
+{% block content_document %}
+        <div class="content-body ecommerce-application">
                 <div class="bs-stepper checkout-tab-steps">
                     <div class="bs-stepper-content">
                         <div class="content active dstepper-block" role="tabpanel" >
@@ -51,7 +28,7 @@
                                 </div>
                             </div>
                         {% else %}
-                        <div id="place-order" class="list-view product-checkout">
+                        <div id="place-order" class="list-view product-checkout mt-1">
                             <!-- Checkout Place Order Left starts -->
                             <div class="checkout-items">
                                 <div class="card ecommerce-card">
@@ -148,11 +125,14 @@
                                                 </li>
                                             </ul> #}
                                             <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('dc_document_view', {'token': token})}}">Voir le document</a>
+                                            {# <a role="button" class="mt-2 btn btn-secondary w-100 btn-next place-order" href="{{path('dc_document_edit', {'token': token})}}">Modifier le document</a> #}
                                             {% if not rec.dateSigned %}
                                             <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_sign', {'token': token})}}">Signer le document</a>
                                             {% elseif not rec.paid %}
                                             <a role="button" class="mt-2 btn btn-warning w-100 btn-next place-order" href="{{path('dc_document_pay', {'token': token})}}">Payer</a>
                                             {% endif %}
+
+                                            
                                         
                                         </div>
                                     </div>
@@ -169,9 +149,6 @@
                 </div>
                     
             </div>
-        </div>
-    </div>
-    <!-- END: Content-->
 {% endblock %}
 
 
