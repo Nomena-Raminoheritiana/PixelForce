@@ -26,7 +26,7 @@ class ProduitDD implements JsonSerializable
     private $nom;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=800, nullable=true)
      */
     private $description;
 
