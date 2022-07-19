@@ -8,7 +8,7 @@
 
         {% if app.request.get('stripe_checkout') == 'successfully' %}
             <div class="text-center alert alert-success">
-                Paiement efféctué avec success ! <br>
+                Paiement efféctué avec succès ! <br>
                 <a href="{{ path('app_login') }}">Lien connexion </a>
             </div>
         {% elseif app.request.get('stripe_checkout') == 'error_different_agent_id' %}
