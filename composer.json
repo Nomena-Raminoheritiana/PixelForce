@@ -22,6 +22,7 @@
         "gregwar/captcha-bundle": "^2.2",
         "knplabs/knp-paginator-bundle": "^5.8",
         "knplabs/knp-snappy-bundle": "^1.9",
+        "mikehaertl/php-pdftk": "^0.12.1",
         "monolog/monolog": "2.7.0",
         "nucleos/dompdf-bundle": "^3.2",
         "paragonie/halite": "^5.0",
@@ -68,6 +69,7 @@
         "symfony/webapp-meta": "^1.0",
         "symfony/webpack-encore-bundle": "^1.12",
         "symfony/yaml": "5.4.*",
+        "tmw/fpdm": "^2.9",
         "twig/cssinliner-extra": "^3.3",
         "twig/extra-bundle": "^3.3",
         "twig/twig": "^2.12|^3.0"

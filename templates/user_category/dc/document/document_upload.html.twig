@@ -1,0 +1,41 @@
+{% extends 'user_category/dc/document/document_base.html.twig' %}
+
+{% block title %}
+	Document
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% set active = 'infos' %}
+{% block content_document %} 
+    <div class="block block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Importez le contrat déjà rempli :</h1>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <div class="alert-body">
+                {{error}}
+            </div>
+        </div>
+        {% endif %}
+        <div style="max-width:500px; margin: 0 auto;">
+        {{ form_start(form, {'attr': {'id': 'document_upload'}}) }}
+            <div class="my-form-widget">
+                {{form_label(form.file)}}
+                {{form_widget(form.file)}}
+                {{form_errors(form.file)}}
+            </div>
+            <div class="btn-wrap mt-2 d-flex justify-content-end">
+                <button class="btn btn-primary btn-submit" type="submit"><i data-feather="save"></i>Importer</button>
+            </div>
+        {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
