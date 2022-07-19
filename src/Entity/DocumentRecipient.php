@@ -63,6 +63,11 @@ class DocumentRecipient
      */
     private $dateSigned;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $conseiller;
+
 
     public function getId(): ?int
     {
@@ -173,6 +178,18 @@ class DocumentRecipient
     public function setDateSigned(?\DateTimeInterface $dateSigned): self
     {
         $this->dateSigned = $dateSigned;
+
+        return $this;
+    }
+
+    public function getConseiller(): ?string
+    {
+        return $this->conseiller;
+    }
+
+    public function setConseiller(string $conseiller): self
+    {
+        $this->conseiller = $conseiller;
 
         return $this;
     }

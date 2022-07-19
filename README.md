@@ -38,4 +38,10 @@
 ```php bin/console doctrine:fixtures:load --group=meeting_state --append```
 
 
+# Deploy on Heroku :
+heroku login -i
+heroku git:remote -a pixel-force
+git push heroku main
+
+
 
