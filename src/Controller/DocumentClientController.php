@@ -100,6 +100,24 @@ class DocumentClientController extends AbstractController
     }
 
     /**
+     * @Route("/edit", name="dc_document_edit")
+     */
+    public function edit($token, Request $request): Response
+    {
+        $filesDirectory = $this->getParameter('files_directory_relative');
+        $error = null;
+        $rec = $this->documentRecipientRepository->findRecipientByToken($token);
+        $this->documentService->editDocument($rec);
+
+        return $this->render('user_category/dc/document/document_edit.html.twig',[
+            'rec' => $rec,
+            'error' => $error,
+            'token' => $token,
+            'filesDirectory' => $filesDirectory
+        ]);
+    }
+
+    /**
      * @Route("/pay", name="dc_document_pay")
      */
     public function pay($token, Request $request): Response

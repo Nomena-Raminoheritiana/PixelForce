@@ -68,6 +68,7 @@
         "symfony/webapp-meta": "^1.0",
         "symfony/webpack-encore-bundle": "^1.12",
         "symfony/yaml": "5.4.*",
+        "tmw/fpdm": "^2.9",
         "twig/cssinliner-extra": "^3.3",
         "twig/extra-bundle": "^3.3",
         "twig/twig": "^2.12|^3.0"

@@ -95,6 +95,20 @@ class DocumentService
         }
     }
 
+    public function editDocument(DocumentRecipient $rec){
+        $fields = array(
+            'Adresse 2' => 'Adresse lesy ty a',
+            // 'N� Client 9' => 'Hoaiza elah',
+        );
+        // $fields = [];
+        $pdf = new \FPDM($this->filesDirectory.'/contracts/test_o.pdf');
+        $filename = 'docs/signed/test-'.$rec->getId().'.pdf';
+        $pdf->useCheckboxParser = true; // Checkbox parsing is ignored (default FPDM behaviour) unless enabled with this setting
+        $pdf->Load($fields, false); // second parameter: false if field values are in ISO-8859-1, true if UTF-8
+        $pdf->Merge();
+        $pdf->Output();
+    }
+
     public function pay(string $stripeToken, DocumentRecipient $rec){
         try{
             $chargeId = $this->stripeService
