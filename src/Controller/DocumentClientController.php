@@ -131,7 +131,7 @@ class DocumentClientController extends AbstractController
             try{
                 $stripeToken = $form->get('token')->getData();
                 $this->documentService->pay($stripeToken, $rec);
-                $this->addFlash('success', 'Paiement éffectué');
+                $this->addFlash('success', 'Paiement effectué');
                 return $this->redirectToRoute('dc_document_fiche', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();

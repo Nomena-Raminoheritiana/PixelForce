@@ -111,8 +111,8 @@ class SecteurRepository extends ServiceEntityRepository
 
         if (empty($_GET)) {
             $queryBuilder
-                ->andWhere('s.active=:active')
-                ->setParameter('active', 1);
+            ->orWhere('s.active = 1')
+            ->orWhere('s.active is null');
         }
 
         if(!is_null($secteurSearch->getNom())) {

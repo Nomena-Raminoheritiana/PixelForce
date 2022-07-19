@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .indent{
+            text-indent: 40px;
+        }
+
+        .img-block{
+            display:flex; 
+            justify-content:center; 
+            align-items:center; 
+            gap: 50px; 
+            margin-bottom : 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="img-block"><img src="{{logoSecuritas}}" alt="Logo Securitas" style="width : 75px;" /></div>
+    <p>Bonjour Madame, Monsieur, </p>
+    <p class="indent">Nous vous remercions de l’intérêt que vous portez à notre solution de télésurveillance chez Securitas direct.
+    Nous vous prions de bien vouloir suivre ci-joint le lien afin d’accéder au contrat, pour effectuer la signature électronique et valider le paiement. Un installateur se rendra à votre domicile sous les prochaines 72h dès votre souscription.
+    </p>
+    <p><a href='{{link}}'>{{link}}</a></p>
+    <p>Bien cordialement, </p>
+    <p>Votre conseiller: {{conseiller}}</p>
+</body>
+</html>
