@@ -10,11 +10,16 @@
 
 {% block body %}
     <div class="container">
-        <h1 class="text-center mt-3">Bienvenue sur PixelForce</h1>
+        <h1 class="text-center mt-3">Bienvenue sur PixelForce</h1>    
 
-        {% if expiredAccount == false %}
+        {% if app.session.get('enabledContent') == true %}
+            {% if app.request.get('stripe_checkout') == 'successfully' %}
+                <div class="text-center alert alert-success h5">
+                    Paiement efféctué avec success !
+                </div>
+            {% endif %}
+            
             <h4 class="text-center mb-3" style="padding: 0 100px">Voici tous les secteurs disponibles sur la plateforme PixelForce. Vous pouvez accéder au secteur qui vous est attribué.</h4>
-
             <div class="block-list-card-secteur mt-5">
                 <div class="row">
                     {% for secteur in allSecteurs %}
@@ -31,7 +36,7 @@
 
                                 <div class="button-block text-center mt-5">
                                     {% if agentSecteur is null %}
-                                        {# <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a>                  #}
+                                        <!-- <a href="" class="btn btn-primary" disabled><i class="fa-solid fa-location-arrow"></i> Découvrir</a> -->
                                     {% elseif agentSecteur and agentSecteur.statut == true %}
                                         <a href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id}) }}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
                                     {% elseif agentSecteur and agentSecteur.statut == false %}
@@ -47,34 +52,42 @@
             <div class="row mt-3">
                 <div class="col-12 col-md-6 mx-auto">
                     <div class="alert alert-warning text-center">
-                        Votre essaie de 14 jours sur PixelForce est expirée, veuillez procéder au paiement pour reactiver votre compte
-                        <span class="mt-2">...Ou contacter le responsable pour plus d'informations</span>
+                        {% if accountStatus == USER_ACCOUNT_STATUS['UNPAID']  %}
+                            {% set agent_accountStatus = USER_ACCOUNT_STATUS['UNPAID'] %}
+                            Veuillez procéder au paiement pour activer votre compte
+                        {% elseif expiredAccount %}
+                            {% set agent_accountStatus = USER_ACCOUNT_STATUS['EXPIRED'] %}
+                            Votre essaie de 14 jours sur PixelForce est expirée, veuillez procéder au paiement pour reactiver votre compte
+                            <span class="mt-2">...Ou contacter le responsable pour plus d'informations</span>
+                        {% endif %}
                     </div>
                     <form  method="post" id="single-payment-form">
                         <div id="card-errors" role="alert"></div>
                         <div id="card-elements"></div>
         
                         <div class="w-100 text-center">
-                            <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span>Payer ({{priceTrialAccount}} €)</span></button>
+                            <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span>Payer ({{accountPrice}} €)</span> <span class="loader-submit"></span></button>
                         </div>
                     </form>
                 </div>
             </div>
 
           
+            <input type="hidden" id="agent_accountStatus" value="{{ agent_accountStatus }}">
             <input type="hidden" id="sessionAgentId" value="{{ sessionAgentId }}">
             <input type="hidden" id="stripe_stripeToken" value="{{ stripe_publishable_key }}">
             <input type="hidden" id="stripe_clientSecret" value="{{ stripeIntentSecret }}">
             <input type="hidden" id="stripe_url_stripeCheckout" value="{{ path('agent_account_trial_payment_execute') }}">
             <input type="hidden" id="stripe_urlSuccessTransaction" value="{{ path('agent_home') }}">
-		    <input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_home') }}">
+		    <input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_home') }}">     
         {% endif %}
+
     </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {% if expiredAccount == true %}
+    {% if app.session.get('enabledContent')  == false  %}
         <script src="https://js.stripe.com/v3/"></script>     
         {{ encore_entry_script_tags('StripeAgentRegistration') }}
     {% endif %}

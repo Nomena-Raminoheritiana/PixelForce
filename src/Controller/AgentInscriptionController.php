@@ -64,13 +64,13 @@ class AgentInscriptionController extends AbstractController
             $secteur = $secteurRepository->find($request->request->get('inscription_agent')['secteur']['secteur']);
             $agentSecteur->setSecteur($secteur);
             $user->setRoles([ User::ROLE_AGENT ]);
+            $user->setAccountStatus(User::ACCOUNT_STATUS['UNPAID']);
             $this->entityManager->save($user);
             $this->entityManager->save($agentSecteur);
 
             $this->session->set('agentId', $user->getId());
            
-
-            $this->addFlash('success','Votre inscription sur Pixelforce a été effectuée avec succès.');
+            // $this->addFlash('success','Votre inscription sur Pixelforce a été effectuée avec succès.');
             return $this->redirectToRoute('agent_register_payment_intent');
 
         }
@@ -87,7 +87,7 @@ class AgentInscriptionController extends AbstractController
     public function agent_register_payment_intent(Request $request, StripeService $stripeService)
     {
         $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
-        $priceTrialAccount = 10.0;
+        $priceTrialAccount = USER::ACCOUNT_PRICE['TRIAL'];
 
         if ($request->query->get('stripe_checkout') && $request->query->get('stripe_checkout') === 'successfully') {
             // Si la transaction est faite, $stripeIntentSecret être vide ou null
@@ -103,14 +103,15 @@ class AgentInscriptionController extends AbstractController
                 'warning',
                 'Veuillez reprocéder au paiment car le navigateur a perdu votre session ou vous pouvez aussi vous connecter sur PixelForce pour poursuivre le paiment <br> Mais avant de poursuivre, vueillez verifier votre solde bancaire'
             );
-            return $this->redirectToRoute('agent_register_payment_intent');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('security/inscription/agent_register_payment.html.twig', [
             'stripeIntentSecret' => $stripeIntentSecret,
             'stripe_publishable_key' => $stripe_publishable_key,
             'sessionAgentId' => $sessionAgentId,
-            'priceTrialAccount' => $priceTrialAccount
+            'priceTrialAccount' => $priceTrialAccount,
+            'agent_accountStatus' => USER::ACCOUNT_STATUS['UNPAID']
         ]);
     }
 

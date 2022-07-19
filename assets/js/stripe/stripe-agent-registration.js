@@ -1,12 +1,13 @@
 $(function() {
     // Déclaration des variables/constantes
-    
-    var sessionAgentId = $('input#sessionAgentId').val();
+    var agent_accountStatus = $('input#agent_accountStatus').val();
+    var sessionAgentId = $('input#sessionAgentId').val(); // Contenant l'id de l'agent (USER)
     var stripeToken = $('input#stripe_stripeToken').val();
     var clientSecret = $('input#stripe_clientSecret').val();
     const urlStripeCheckout = $('input#stripe_url_stripeCheckout').val();
     const urlSuccessTransaction = $('input#stripe_urlSuccessTransaction').val();
     const stripe_urlErrorTransaction = $('input#stripe_urlErrorTransaction').val();
+    const stripe_defaultButton = $('input#stripe_defaultButton').val();
     
 
     var nameHolder = '';
@@ -51,7 +52,7 @@ $(function() {
     var form = $('#single-payment-form');
     form.on('submit', function(event){
         event.preventDefault();
-        cardButton.html('<div class="spinner-border text-white" role="status"><span class="visually-hidden">Loading...</span></div>');
+        cardButton.find('span.loader-submit').html('<div class="spinner-border text-white" role="status"><span class="visually-hidden">Loading...</span></div>');
         cardButton.attr('disabled', true);
 
 
@@ -70,14 +71,16 @@ $(function() {
             if (result.error) {
                 displayError.addClass('alert alert-danger');
                 displayError.text(result.error.message);
-                cardButton.html('<i class="fa-solid fa-cart-shopping me-1"></i> <span>Essayer (en 14 jours) !</span>');
+                cardButton.find('span.loader-submit').html('')
+                cardButton.find('span.label-button').html(stripe_defaultButton);
                 cardButton.attr('disabled', false);
             }else if('paymentIntent' in result){
                 cardButton.attr('disabled', true);
 
                 var data = {
                     "paymentIntent": result.paymentIntent,
-                    "sessionAgentId": sessionAgentId
+                    "sessionAgentId": sessionAgentId,
+                    "agent_accountStatus": agent_accountStatus
                 };
 
                 $.ajax({
@@ -97,10 +100,10 @@ $(function() {
         })  
     }) 
 
+    //Update Prenom et Email
     $('#inscription_agent_prenom').on('change', function(){
         nameHolder = $('#inscription_agent_prenom').val(); 
     })
-
 
     $('#inscription_agent_email').on('change', function(){
         emailHolder = $('#inscription_agent_email').val(); 

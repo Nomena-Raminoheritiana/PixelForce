@@ -18,7 +18,7 @@ class StripeManager {
  
 
     /**
-     * Permet d'enregistrer dans la base de données les datas obtenus après le paiement
+     * Permet de récupérer les datas obtenus après le paiement
      */
     public function persistPayment(User $user, $stripeParameter)
     {
@@ -36,6 +36,12 @@ class StripeManager {
 
         if ($resource !== null ) {
             $user->setStripeData($resource);
+
+            if ($stripeParameter['agent_accountStatus'] === USER::ACCOUNT_STATUS['UNPAID']) {
+                $user->setAccountStatus(User::ACCOUNT_STATUS['TRIAL']);
+            }elseif($stripeParameter['agent_accountStatus'] === USER::ACCOUNT_STATUS['EXPIRED']  ){
+                $user->setAccountStatus(User::ACCOUNT_STATUS['ACTIVE']);
+            }
 
             $this->em->persist($user);
             $this->em->flush();

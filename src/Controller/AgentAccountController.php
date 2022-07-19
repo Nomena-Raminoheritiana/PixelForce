@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\AgentSecteur;
 use App\Entity\CategorieFormation;
 use App\Entity\Secteur;
+use App\Entity\User;
 use App\Manager\StripeManager;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\CategorieFormationRepository;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CalendarEventRepository;
 use App\Services\StripeService;
+use App\Services\User\AgentService;
 
 class AgentAccountController extends AbstractController
 {
@@ -39,8 +41,9 @@ class AgentAccountController extends AbstractController
     private $calendarEventRepository;
     private $stripeService;
     private $stripeManager;
+    private $agentService;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository, StripeService $stripeService, StripeManager $stripeManager)
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository, StripeService $stripeService, StripeManager $stripeManager, AgentService $agentService)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
@@ -54,6 +57,7 @@ class AgentAccountController extends AbstractController
         $this->calendarEventRepository = $calendarEventRepository;
         $this->stripeService = $stripeService;
         $this->stripeManager = $stripeManager;
+        $this->agentService = $agentService;
     }
 
     /**
@@ -65,22 +69,30 @@ class AgentAccountController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $expiredAccount = '';
-
+        
         $this->session->remove('secteurId');
+        $this->agentService->setSesssionEnabledContent($user);
 
         $allSecteurs = $this->repoSecteur->findAllActive();
 
-        if (empty($user->getStripeData())) {
-            $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
-            $priceTrialAccount = 10.0;
-            $stripeIntentSecret = $this->stripeService->intentSecret($priceTrialAccount);
-            $expiredAccount = true;
-        }else{
+        // On vérifie si le statut de compte de l'utilisateur 
+        $accountStatus = $user->getAccountStatus();
+        $expiredAccount = ($this->agentService->isAccountExpired($user)) ? true : false;
+
+
+        if ($this->agentService->isActivableContent($user)) {
             $stripe_publishable_key = '';
-            $priceTrialAccount = 0.0;
             $stripeIntentSecret = '';
-            $expiredAccount = false;
+            $accountPrice  = 0.0;
+        }else {
+            // Handling account price (Trial or Integral )
+            if ($accountStatus === USER::ACCOUNT_STATUS['UNPAID']) {
+                $accountPrice = USER::ACCOUNT_PRICE['TRIAL'];
+            } elseif ($expiredAccount) {
+                $accountPrice  = USER::ACCOUNT_PRICE['INTEGRAL'];
+            }
+            $stripeIntentSecret = $this->stripeService->intentSecret($accountPrice);
+            $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
         }
 
         return $this->render('user_category/agent/home_agent.html.twig', [
@@ -91,8 +103,10 @@ class AgentAccountController extends AbstractController
             'sessionAgentId' => $user->getId(),
             'stripeIntentSecret' => $stripeIntentSecret,
             'stripe_publishable_key' => $stripe_publishable_key,
-            'priceTrialAccount' => $priceTrialAccount,
-            'expiredAccount' => $expiredAccount
+            'accountPrice' => $accountPrice,
+            'expiredAccount' => $expiredAccount,
+            'accountStatus' => $accountStatus,
+            'USER_ACCOUNT_STATUS' => USER::ACCOUNT_STATUS
         ]);
     }
 
@@ -116,6 +130,8 @@ class AgentAccountController extends AbstractController
     {
       
         $agent = $this->getUser();
+        $this->agentService->setStartDate($agent);
+
         $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
       
         $formations = $this->repoFormation->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
@@ -126,9 +142,10 @@ class AgentAccountController extends AbstractController
             $firstFormation = null;
         }
         
-        // On vérifie d'abord si la session avec la clé 'secteurId' est générée
+        // On vérifie d'abord si la session avec la clé 'secteurId' est générée ou les contenus sont activés
         $sessionSecteurId =  $this->session->get('secteurId');
-        if (!$sessionSecteurId) {
+        $sessionAccountStatus =  $this->agentService->isActivableContent($agent);
+        if (!$sessionSecteurId || !$sessionAccountStatus) {
             return $this->redirectToRoute('agent_home');
         }
 

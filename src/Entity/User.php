@@ -38,6 +38,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
       self::ROLE_CLIENT => self::ROLE_CLIENT,
       self::ROLE_DOCUMENT_OWNER => self::ROLE_DOCUMENT_OWNER,
     ];
+    
+
+    /**
+     *  Clés disponibles :
+     *  - UNPAID : l'user n'a pas encore procédé au paiement
+     *  - TRIAL : Statut éssaie (14 jours) 
+     *  - ACTIVE : Statut après 2ème paiement (Qui n'est plus TRIAL)
+     * 
+     *  - EXPIRED : "Qui nous sert seulement de teste ! " - Statut lorsque le compte a dépassé un tel délai (14jrs ou autres...)
+     */
+    const ACCOUNT_STATUS = [
+        'UNPAID' => 'Impaye',
+        'TRIAL' => 'Essai',
+        'ACTIVE' => 'Actif',
+        'EXPIRED' => 'Expiré'
+    ];
+
+    /**
+     *  Clés disponibles :
+     *  - TRIAL 
+     *  - INTEGRAL
+     */
+    const ACCOUNT_PRICE = [
+        'TRIAL' => 1.0,
+        'INTEGRAL' => 50.0
+    ];
+
+    const EXPIRY_DATE = 14;
 
     /**
      * @ORM\Id
@@ -246,6 +274,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="array", nullable=true)
      */
     private $stripe_data = [];
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $accountStatus;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $accountStartDate;
 
     public function __construct()
     {
@@ -1126,6 +1164,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStripeData(?array $stripe_data): self
     {
         $this->stripe_data = $stripe_data;
+
+        return $this;
+    }
+
+    public function getAccountStatus(): ?string
+    {
+        return $this->accountStatus;
+    }
+
+    public function setAccountStatus(?string $accountStatus): self
+    {
+        $this->accountStatus = $accountStatus;
+
+        return $this;
+    }
+
+    public function getAccountStartDate(): ?\DateTimeInterface
+    {
+        return $this->accountStartDate;
+    }
+
+    public function setAccountStartDate(?\DateTimeInterface $accountStartDate): self
+    {
+        $this->accountStartDate = $accountStartDate;
 
         return $this;
     }

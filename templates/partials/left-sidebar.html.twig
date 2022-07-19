@@ -43,17 +43,22 @@
             {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
 
             {% if currentPath == '/agent/accueil' %}
-                {% if allSecteurs is defined %}
-                    {% for secteur in allSecteurs %}
-                        {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
-                            <li class=" nav-item">
-                                <a role="button" data-toggle="tooltip" data-placement="right" title="{{ agentSecteur and agentSecteur.statut == true ? 'Aller vers' : 'Lien non disponible' }}" class="d-flex align-items-center" {% if agentSecteur and agentSecteur.statut == true %}href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id})}}"{% endif %}  ><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">{{ secteur.nom }}</span></a>
-                            </li>
-                    {% endfor %}
+                {% if app.session.get('enabledContent') == true %} {# Traité depuis le route_name => agent_home / Après login #} 
+                    {% if allSecteurs is defined %}
+                        {% for secteur in allSecteurs %}
+                            {% set agentSecteur = repoAgentSecteur.findOneBy({'secteur' : secteur, 'agent' : agent}) %}
+                                <li class=" nav-item">
+                                    <a role="button" data-toggle="tooltip" data-placement="right" title="{{ agentSecteur and agentSecteur.statut == true ? 'Aller vers' : 'Lien non disponible' }}" class="d-flex align-items-center" {% if agentSecteur and agentSecteur.statut == true %}href="{{ path('agent_generate_sessionSecteur_before_redirect_to_route_dahsboard', {id: secteur.id})}}"{% endif %}  ><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">{{ secteur.nom }}</span></a>
+                                </li>
+                            
+                        {% endfor %}
+                    {% endif %}
+                    <li class=" nav-item">
+                        <a role="button" data-toggle="tooltip" data-placement="right" class="d-flex align-items-center" href="{{ path('boutique_home', {token: app.user.agentToken})}}"><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">Ma boutique en ligne</span></a>
+                    </li>
+                {% else %}
+                    {# Contenus masqués  #}
                 {% endif %}
-                <li class=" nav-item">
-                    <a role="button" data-toggle="tooltip" data-placement="right" class="d-flex align-items-center" href="{{ path('boutique_home', {token: app.user.agentToken})}}"><i class="fa-solid fa-cube"></i><span class="menu-title text-truncate" data-i18n="Email">Ma boutique en ligne</span></a>
-                </li>
             {% else %}
                 {# <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('app_dashboard') }}"><i data-feather="home"></i><span class="menu-title text-truncate" data-i18n="Dashboards">Dashboards</span><span class="badge badge-light-warning rounded-pill ms-auto me-1">2</span></a>
                     <ul class="menu-content">
