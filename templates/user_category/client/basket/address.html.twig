@@ -140,6 +140,10 @@
 				minZoom: 1,
 				maxZoom: 20,
 			}).addTo(map);
+            map.on('click', function (e){
+                setPostion({x: e.latlng.lng, y: e.latlng.lat, label: ""});
+            });
+
             findMyLocation();
         };
         
@@ -205,6 +209,10 @@
         function setCurrentLocation(i){
             let address = addresses[i];
             console.log("Current location is : "+ address.label);
+            setPostion(address, true);
+        }
+
+        function setPostion(address, setView = false){
             currentPositionDOM.innerHTML = address.label;
             latitudeDOM.innerHTML = address.y;
             longitudeDOM.innerHTML = address.x;
@@ -213,7 +221,7 @@
             orderAddressLongitudeInput.value = address.x;
 
             addMarker([address.y, address.x]);
-            map.setView([address.y, address.x], 7);
+            if(setView) map.setView([address.y, address.x], 7);
             hideAddressesDOM();
         }
 
