@@ -6,6 +6,14 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        .img-product{
+            height: 150px;
+            width: auto;
+        }
+
+    </style>
+
 {% endblock %}
 
 {% block body %} 
@@ -154,7 +162,7 @@
                         <th>Catégorie</th>
                         <th>Description</th>
                         <th>Prix</th>
-                        <th>Image</th>
+                        <th class="text-center">Image</th>
                         <th></th>
                         <th></th>
 
@@ -168,9 +176,9 @@
                         <td>{{product.categorie.nom}}</td>
                         <td>{{product.description | raw}}</td>
                         <td>{{product.prix}}</td>
-                        <td>
+                        <td class="text-center">
                             {% if product.photo != null %}
-                                <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
+                                <img class="img-fluid card-img-top ecommerce-card-img img-product" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
                             {% endif %}
                         </td>
 
