@@ -22,9 +22,9 @@
                             {# <h2 class="content-header-title float-start mb-0">Shop</h2> #}
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="index.html">Accueil</a>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_home', {'token': token})}}">Accueil</a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#">Ma boutique en ligne</a>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteurdd', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
                                     </li>
                                     <li class="breadcrumb-item active">Liste des produits
                                     </li>
