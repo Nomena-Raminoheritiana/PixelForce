@@ -120,6 +120,7 @@ class AgentAccountController extends AbstractController
     public function agent_generate_sessionSecteur_before_redirect_to_route_dahsboard(Secteur $secteur)
     {
         $this->session->set('secteurId', $secteur->getId());
+        $this->session->set('typeSecteurId', $secteur->getType()->getId());
         return $this->redirectToRoute('agent_dashboard_secteur', ['id' => $secteur->getId()]);
     }
 
