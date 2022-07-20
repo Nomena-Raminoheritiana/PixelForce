@@ -116,7 +116,9 @@ class DocumentController extends AbstractController
                 $this->entityManager->persist($doc);
                 $this->entityManager->flush();
 
-                return $this->redirectToRoute('do_document_list');
+                return $this->redirectToRoute('do_document_fiche', [
+                    'id' => $doc->getId()
+                ]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }

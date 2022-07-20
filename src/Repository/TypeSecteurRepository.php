@@ -63,4 +63,8 @@ class TypeSecteurRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getAll()
+    {
+        return $this->createQueryBuilder('t')->getQuery();
+    }
 }
