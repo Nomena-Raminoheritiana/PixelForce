@@ -21,11 +21,13 @@
                             <h2 class="content-header-title float-start mb-0">Commande</h2>
                             <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="index.html">Home</a>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_home', {'token': token})}}">Accueil</a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#">eCommerce</a>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteur', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Commande
+                                    <li class="breadcrumb-item"><a href="{{path('client_order_list', {'token': token})}}">Liste des commandes</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Détails
                                     </li>
                                 </ol>
                             </div>
