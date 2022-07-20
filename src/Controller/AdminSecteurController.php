@@ -91,6 +91,7 @@ class AdminSecteurController extends AbstractController
 
         $formSecteur->handleRequest($request);
         if ($formSecteur->isSubmitted() && $formSecteur->isValid()) {
+            $sector->setActive(1);
             $this->entityManager->save($sector);
             
             // $coachId = $request->request->get('secteur')['coach'];

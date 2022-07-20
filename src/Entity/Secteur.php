@@ -83,6 +83,7 @@ class Secteur
         $this->contacts_agent = new ArrayCollection();
         $this->liveChatVideos = new ArrayCollection();
         $this->produits = new ArrayCollection();
+        $this->active = 1;
     }
 
     public function getId(): ?int

@@ -32,12 +32,11 @@ class SecteurSearchType extends AbstractType
             ->add('etat', ChoiceType::class, [
                 'required' => false,
                 'label' => false,
+                'placeholder' => 'Tous',
                 'choices' => [
-                    'Tous' => null,
                     'Activé' => 1,
                     'Supprimé' => -1
-                ],
-                'data' => 1
+                ]
             ])
         ;
     }

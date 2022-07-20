@@ -12,12 +12,15 @@ class SecteurFixtures extends Fixture
     {
         $security = (new Secteur())
             ->setNom('securité')
+            ->setActive(1)
             ->setDescription('description secteur Sécurité');
         $digital = (new Secteur())
             ->setNom('digital')
+            ->setActive(1)
             ->setDescription('description secteur Digital');
         $immobilier = (new Secteur())
             ->setNom('immobilier')
+            ->setActive(1)
             ->setDescription('description secteur Immobilier');
 
         $manager->persist($security);
