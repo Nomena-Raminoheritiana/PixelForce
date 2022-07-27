@@ -75,7 +75,7 @@ class AgentAccountController extends AbstractController
 
         $allSecteurs = $this->repoSecteur->findAllActive();
 
-        // On vérifie si le statut de compte de l'utilisateur 
+        // On vérifie le statut de compte de l'utilisateur 
         $accountStatus = $user->getAccountStatus();
         $expiredAccount = ($this->agentService->isAccountExpired($user)) ? true : false;
 
