@@ -69,6 +69,7 @@ class BoutiqueController extends AbstractController
     public function secteurdd($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
         $this->session->set('secteurId', $secteur->getId());
+        $this->session->set('typeSecteurId', $secteur->getType()->getId());
         $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);
@@ -126,6 +127,7 @@ class BoutiqueController extends AbstractController
     public function secteur($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService, ProduitFavoriRepository $produitFavoriRepository): Response
     {
         $this->session->set('secteurId', $secteur->getId());
+        $this->session->set('typeSecteurId', $secteur->getType()->getId());
         $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);
