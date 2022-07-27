@@ -62,6 +62,7 @@ class Produit implements JsonSerializable
      */
     private $produitQteStock;
 
+    private $estFavori;
 
     public function getId(): ?int
     {
@@ -189,5 +190,27 @@ class Produit implements JsonSerializable
         if($qty > $this->getProduitQteStock()->getQteStock()){
             throw new Exception("Stock insuffisant pour le produit <<".$this->getNom().">>, Quantité restante: ".$this->getProduitQteStock()->getQteStock());
         }
+    }
+
+    
+
+    /**
+     * Get the value of estFavori
+     */ 
+    public function getEstFavori()
+    {
+        return $this->estFavori;
+    }
+
+    /**
+     * Set the value of estFavori
+     *
+     * @return  self
+     */ 
+    public function setEstFavori($estFavori)
+    {
+        $this->estFavori = $estFavori;
+
+        return $this;
     }
 }

@@ -4,16 +4,20 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Entity\ProduitDD;
+use App\Entity\ProduitFavori;
 use App\Entity\Secteur;
 use App\Form\MyProduitDDFilterType;
 use App\Form\MyProduitFilterType;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\ProduitFavoriRepository;
 use App\Repository\ProduitRepository;
 use App\Repository\UserRepository;
 use App\Services\FileHandler;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,6 +96,7 @@ class BoutiqueController extends AbstractController
             ->join('p.secteur', 's')
         ;  
 
+
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
         $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
         $where["params"]["secteurId"] = $secteur->getId();
@@ -118,7 +123,7 @@ class BoutiqueController extends AbstractController
    /**
      * @Route("/secteur/{id}", name="boutique_secteur")
      */
-    public function secteur($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    public function secteur($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService, ProduitFavoriRepository $produitFavoriRepository): Response
     {
         $this->session->set('secteurId', $secteur->getId());
         $agent = $this->userRepository->findAgentByToken($token);
@@ -162,6 +167,14 @@ class BoutiqueController extends AbstractController
             $limit
         );
 
+        $user = (object) $this->getUser();
+        if($user){
+            foreach($productList as $p){
+                $produitFavori = $produitFavoriRepository->findProduitFavori($p->getId(), $user->getId());
+                $p->setEstFavori($produitFavori ? true : false);
+            }
+        }
+
         return $this->render('user_category/client/product/product_list.html.twig', [
             'productList' => $productList,
             'form' => $form->createView(),
@@ -176,9 +189,15 @@ class BoutiqueController extends AbstractController
     /**
      * @Route("/product/{id}", name="client_product_details")
      */
-    public function details($token, Produit $product): Response
+    public function details($token, Produit $product, ProduitFavoriRepository $produitFavoriRepository): Response
     {
+
         $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        if($user){
+            $produitFavori = $produitFavoriRepository->findProduitFavori($product->getId(), $user->getId());
+            $product->setEstFavori($produitFavori ? true : false);
+        }
         return $this->render('user_category/client/product/product_details.html.twig',[
             'product' => $product,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
@@ -186,6 +205,40 @@ class BoutiqueController extends AbstractController
             'token' => $token
         ]);
     }
+
+    /**
+     * @Route("/product/{id}/toogleFavori", name="client_product_toogle_favori")
+     */
+    public function toogleFavori($token, Produit $produit, ProduitFavoriRepository $produitFavoriRepository): Response
+    {
+        try{
+            $user = (object)$this->getUser();
+            $produitFavori = $produitFavoriRepository->findProduitFavori($produit->getId(), $user->getId());
+            $message = null;
+            if($produitFavori){
+                $produitFavori->setStatut(0);
+                $message = 'Produit supprimé des favoris';
+            } else {
+                $produitFavori = new ProduitFavori();
+                $produitFavori->setClient($user);
+                $produitFavori->setProduit($produit);
+                $produitFavori->setStatut(1);
+                $produitFavori->setDateFavori(new DateTime());
+                $this->entityManager->persist($produitFavori);
+                $message = 'Produit ajouté aux favoris';
+            }
+            
+            $this->entityManager->flush();
+            $this->addFlash('success', $message);
+        } catch(Exception $ex){
+            $this->entityManager->clear();
+            $this->addFlash('danger', $ex->getMessage());
+            
+        }
+        return $this->redirectToRoute('client_product_details', ['token' => $token, 'id' => $produit->getId()]);
+        
+    }
+
 
     /**
      * @Route("/productdd/{id}", name="client_productdd_details")

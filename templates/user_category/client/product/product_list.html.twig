@@ -104,8 +104,13 @@
                                         </div>
                                     </div>
                                     {% if is_granted('ROLE_CLIENT') %}
-                                    <a href="#" class="btn btn-light btn-wishlist">
-                                        <i data-feather="heart"></i>
+                                    <a href="{{path('client_product_toogle_favori', {'token': token, 'id': product.id})}}" class="btn btn-light btn-wishlist">
+                                        {# <i data-feather="heart"></i> #}
+                                        {% if product.estFavori %}
+                                        <i class="fa-solid fa-heart"></i>
+                                        {% else %}
+                                        <i class="fa-regular fa-heart"></i>
+                                        {% endif %}
                                         <span>Favoris</span>
                                     </a>
                                     {% endif %}
