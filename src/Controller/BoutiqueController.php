@@ -187,6 +187,69 @@ class BoutiqueController extends AbstractController
     }
 
     /**
+     * @Route("/favoris", name="client_produit_favoris")
+     */
+    public function favoris($token, Request $request, PaginatorInterface $paginator, SearchService $searchService, ProduitFavoriRepository $produitFavoriRepository): Response
+    {
+        $user = (object)$this->getUser();
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $error = null;
+        $page = $request->query->get('page', 1);
+        $limit = 5;
+        $criteria = [
+            ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
+            ['prop' => 'description', 'op' => 'LIKE', 'alias' => 'p'],
+            ['prop' => 'prixMin', 'op' => '>=', "col" => "prix", 'alias' => 'p'],
+            ['prop' => 'prixMax', 'op' => '<=', "col" => "prix", 'alias' => 'p'],
+            ['prop' => 'nom', 'op' => 'LIKE', 'alias' => 'p']
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(MyProduitFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('pf')
+            ->from(ProduitFavori::class, 'pf')
+            ->join('pf.produit', 'p')
+            ->join('pf.client', 'u')
+            ->join('p.categorie', 'c')
+            ->join('p.secteur', 's')
+        ;  
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'pf'));   
+        $query->where($where["where"]." and (pf.statut != 0 or pf.statut is NULL) and (p.statut != 0 or p.statut is NULL) and s.id = :secteurId and u.id = :clientId ");
+        $where["params"]["secteurId"] = $secteurId;
+        $where["params"]["clientId"] = $user->getId();
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'pf.dateFavori', 'direction' => 'desc']);
+
+        $productList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+    
+        return $this->render('user_category/client/product/product_favori.html.twig', [
+            'productList' => $productList,
+            'form' => $form->createView(),
+            'error' => $error,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+
+    }
+
+    /**
      * @Route("/product/{id}", name="client_product_details")
      */
     public function details($token, Produit $product, ProduitFavoriRepository $produitFavoriRepository): Response
@@ -235,7 +298,7 @@ class BoutiqueController extends AbstractController
             $this->addFlash('danger', $ex->getMessage());
             
         }
-        return $this->redirectToRoute('client_product_details', ['token' => $token, 'id' => $produit->getId()]);
+        return $this->redirectToRoute('client_produit_favoris', ['token' => $token, 'id' => $produit->getId()]);
         
     }
 
