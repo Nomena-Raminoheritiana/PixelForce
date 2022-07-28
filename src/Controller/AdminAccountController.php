@@ -13,6 +13,6 @@ class AdminAccountController extends AbstractController
      */
     public function admin_dashboard()
     {
-        return $this->redirectToRoute('admin_coach_list');
+        return $this->render('user_category/admin/admin_dashboard.html.twig');
     }
 }
