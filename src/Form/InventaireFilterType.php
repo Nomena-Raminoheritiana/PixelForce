@@ -36,29 +36,32 @@ class InventaireFilterType extends AbstractType
             "widget" => "single_text"
         ])
         ->add('description', TextType::class, [
-            "label" => "Description",
+            "label" => false,
             "required" => false,
-            "trim" => true
+            "trim" => true,
+            "attr" => [
+                "placeholder" => "Description"
+            ]
         ])
         ->add('sort', ChoiceType::class, [
-            "label" => "Trier par",
+            "label" => false,
             'choices'  => [
                 'Date' => "i.dateInventaire",
                 'Description' => "i.description",
             ],
-            "required" => false
+            "required" => false,
+            "placeholder" => "Trier par"
         ])
         ->add('direction', ChoiceType::class, [
-            "label" => "Ordre",
+            "label" => false,
             'choices'  => [
                 'Croissant' => "asc",
                 'Décroissant' => "desc"
             ],
-            "required" => false
+            "required" => false,
+            "placeholder" => "Ordre"
         ])
-        ;
-
-        
+        ;        
     }
 
     public function configureOptions(OptionsResolver $resolver): void

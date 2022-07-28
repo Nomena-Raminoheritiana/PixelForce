@@ -14,13 +14,18 @@ class CategorieFilterType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                "label" => "Nom",
-                "required"=>false
+                "label" => false,
+                "required"=>false,
+                "attr" => [
+                    "placeholder" => "Nom"
+                ]
             ])
             ->add('description', TextType::class, [
-                "label" => "Description",
-                "required"=>false
-            ])
+                "label" => false,
+                "required"=>false,
+                "attr" => [
+                    "placeholder" => "Description"
+                ]            ])
         ;
     }
 

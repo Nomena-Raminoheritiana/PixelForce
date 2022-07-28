@@ -90,43 +90,45 @@
             {% endif %}
             {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
                 
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.nom)}}
                     {{form_widget(form.nom)}}
                     {{form_errors(form.nom)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.categorie)}}
                     {{form_widget(form.categorie)}}
                     {{form_errors(form.categorie)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.description)}}
                     {{form_widget(form.description)}}
                     {{form_errors(form.description)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.prixMin)}}
                     {{form_widget(form.prixMin)}}
                     {{form_errors(form.prixMin)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.prixMax)}}
                     {{form_widget(form.prixMax)}}
                     {{form_errors(form.prixMax)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.sort)}}
                     {{form_widget(form.sort)}}
                     {{form_errors(form.sort)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.direction)}}
                     {{form_widget(form.direction)}}
                     {{form_errors(form.direction)}}
                 </div>
-                <div class="btn-wrap">
-                    <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
+                <div class="my-form-widget me-2">
+                    <div class="btn-wrap">
+                        <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
+                    </div>
                 </div>
             {{ form_end(form) }}
         </div>

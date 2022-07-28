@@ -27,50 +27,65 @@ class MyProduitFilterType extends AbstractType
         $categoryList = $this->categorieRepository->getValidCategories();
         $builder
         ->add('nom', TextType::class, [
-            "label" => "Nom",
+            "label" => false,
             "trim" => true,
-            "required" => false
+            "required" => false,
+            "attr" => [
+                "placeholder" => "Nom"
+            ]
         ])
         ->add('description', TextType::class, [
-            "label" => "Description",
+            "label" => false,
             "trim" => true,
-            "required" => false
+            "required" => false,
+            "attr" => [
+                "placeholder" => "Description"
+            ]
         ])
         ->add('categorie', EntityType::class, [
-            "label" => "Catégorie",
+            "label" => false,
             'class'=> Categorie::class,
             'choices' => $categoryList,
             'choice_label' => function(?Categorie $category) {
                 return $category ? strtoupper($category->getNom()) : '';
             },
-            "required" => false
+            "required" => false,
+            "placeholder" => "Catégorie"
         ])
         ->add('prixMin', TextType::class, [
-            "label" => "Prix mininum",
-            "trim" => true,
-            "required" => false
-        ])
-        ->add('prixMax', TextType::class, [
-            "label" => "Prix maximum",
+            "label" => false,
             "trim" => true,
             "required" => false,
+            "attr" => [
+                "placeholder" => "Prix mininum"
+            ]
+        ])
+        ->add('prixMax', TextType::class, [
+            "label" => false,
+            "trim" => true,
+            "required" => false,
+            "attr" => [
+                "placeholder" => "Prix maximu"
+            ]
         ])
         ->add('sort', ChoiceType::class, [
-            "label" => "Trier par",
+            "label" => false,
             'choices'  => [
                 'Identifiant' => "p.id",
                 'Nom' => "p.nom",
                 'Prix' => "p.prix"
             ],
-            "required" => false
+            "required" => false,
+            "placeholder" => "Trier par"
         ])
         ->add('direction', ChoiceType::class, [
-            "label" => "Ordre",
+            "label" => false,
             'choices'  => [
                 'Croissant' => "asc",
                 'Décroissant' => "desc"
             ],
-            "required" => false
+            "required" => false,
+            "placeholder" => "Ordre"
         ])
         ;
     }

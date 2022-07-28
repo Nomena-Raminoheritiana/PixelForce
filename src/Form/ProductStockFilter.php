@@ -31,47 +31,57 @@ class ProductStockFilter extends AbstractType
         $categoryList = $this->categorieRepository->findAll();
         $builder
         ->add('nom', TextType::class, [
-            "label" => "Nom",
+            "label" => false,
             "required" => false,
-            "trim" => true
+            "trim" => true,
+            "attr" => [
+                "placeholder" => "Nom"
+            ]
         ])
         ->add('categorie', EntityType::class, [
-            "label" => "Catégorie",
+            "label" => false,
             'class'=> Categorie::class,
             'choices' => $categoryList,
             'choice_label' => function(?Categorie $category) {
                 return $category ? strtoupper($category->getNom()) : '';
             },
-            "required" => false
+            "required" => false,
+            "placeholder" => "Catégorie"
         ])
         ->add('qteStockMin', IntegerType::class, [
-            "label" => "Quantité stock min",
+            "label" => false,
             "required" => false,
+            "attr" => [
+                "placeholder" => "Quantité stock min"
+            ]
         ])
         ->add('qteStockMax', IntegerType::class, [
-            "label" => "Quantité stock max",
-            "required" => false
+            "label" => false,
+            "required" => false,
+            "attr" => [
+                "placeholder" => "Quantité stock max"
+            ]
         ])
         ->add('sort', ChoiceType::class, [
-            "label" => "Trier par",
+            "label" => false,
             'choices'  => [
                 'Nom' => "p.nom",
                 'Catégorie' => "c.nom",
                 'Quantité stock' => "s.qteStock"
             ],
-            "required" => false
+            "required" => false,
+            "placeholder" => "Trier par"
         ])
         ->add('direction', ChoiceType::class, [
-            "label" => "Ordre",
+            "label" => false,
             'choices'  => [
                 'Croissant' => "asc",
                 'Décroissant' => "desc"
             ],
-            "required" => false
+            "required" => false,
+            "placeholder" => "Ordre"
         ])
         ;
-
-        
     }
 
     public function configureOptions(OptionsResolver $resolver): void

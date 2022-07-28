@@ -14,41 +14,42 @@
         <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
         <div class="filter-wrap">
             {{ form_start(form, {'attr': {'class': 'filter-form'}}) }}
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.qteStockMin)}}
                     {{form_widget(form.qteStockMin)}}
                     {{form_errors(form.qteStockMin)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.qteStockMax)}}
                     {{form_widget(form.qteStockMax)}}
                     {{form_errors(form.qteStockMax)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.nom)}}
                     {{form_widget(form.nom)}}
                     {{form_errors(form.nom)}}
                 </div>
                 
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.categorie)}}
                     {{form_widget(form.categorie)}}
                     {{form_errors(form.categorie)}}
                 </div>
                 
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.sort)}}
                     {{form_widget(form.sort)}}
                     {{form_errors(form.sort)}}
                 </div>
-                <div class="my-form-widget">
+                <div class="my-form-widget me-2">
                     {{form_label(form.direction)}}
                     {{form_widget(form.direction)}}
                     {{form_errors(form.direction)}}
                 </div>
-
-                <div class="btn-wrap">
-                    <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
+                <div class="my-form-widget me-2">
+                    <div class="btn-wrap">
+                        <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
+                    </div>
                 </div>
             {{ form_end(form) }}
         </div>
