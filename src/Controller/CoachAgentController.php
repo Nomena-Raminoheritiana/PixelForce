@@ -148,7 +148,7 @@ class CoachAgentController extends AbstractController
         ;
         $formUserPassword->handleRequest($request);
         if ($formUserPassword->isSubmitted() && $formUserPassword->isValid()) {
-            
+            $agent->setActive(true);
             $this->userManager->setUserPasword($agent, $request->request->get('inscription_agent')['password']['first'], '', false);
             $this->addFlash('success', 'Les informations sur le nouveau agent ont été bien enregistrées');
             return $this->redirectToRoute('coach_agent_list');    
