@@ -73,7 +73,7 @@ class BoutiqueController extends AbstractController
         $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);
-        $limit = 5;
+        $limit = 6;
         $criteria = [
             ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
             ['prop' => 'description', 'op' => 'LIKE'],
@@ -131,7 +131,7 @@ class BoutiqueController extends AbstractController
         $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);
-        $limit = 5;
+        $limit = 6;
         $criteria = [
             ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
             ['prop' => 'description', 'op' => 'LIKE'],
@@ -198,7 +198,7 @@ class BoutiqueController extends AbstractController
         $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);
-        $limit = 5;
+        $limit = 6;
         $criteria = [
             ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
             ['prop' => 'description', 'op' => 'LIKE', 'alias' => 'p'],
