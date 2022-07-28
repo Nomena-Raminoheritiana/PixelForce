@@ -62,7 +62,7 @@ class AdminCoachController extends AbstractController
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)->remove('tag');
         $searchForm->handleRequest($request);
-        
+        // dd($this->repoUser->findCoachOrAgentQuery($search, User::ROLE_COACH));
         $coachs = $paginator->paginate(
             $this->repoUser->findCoachOrAgentQuery($search, User::ROLE_COACH),
             $request->query->getInt('page', 1),
@@ -105,7 +105,7 @@ class AdminCoachController extends AbstractController
        
         $formUser->handleRequest($request);
         if ($formUser->isSubmitted() && $formUser->isValid()) {
-            $coach->setRoles(["ROLE_COACH"]);
+            $coach->setRoles([USER::ROLE_COACH]);
             $coach->setPassword(base64_encode('_dfdkf12132_1321df'));
             
             $this->entityManager->save($coach);

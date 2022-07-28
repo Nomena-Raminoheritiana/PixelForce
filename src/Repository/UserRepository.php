@@ -128,7 +128,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
 
     /**
-     * Permet de filtrer les utilisateurs par son role
+     * Permet de filtrer les utilisateurs (Coach ou Agent)
      *
      * @param UserSearch $search
      * @param string $role (COACH | AGENT)

@@ -125,13 +125,6 @@
                                 </form>  
                             </td>
                         </tr>
-						
-					{% else %}
-                        <tr>
-                            <td class="text-center" colspan="8">
-                                Aucunes données correspondantes
-                            </td>
-                        </tr>
                     {% endfor %}
 
 				</tbody>
@@ -143,6 +136,9 @@
 		</div>
     </div>
 {% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('datatableJs')}}
 {% endblock %}
+
