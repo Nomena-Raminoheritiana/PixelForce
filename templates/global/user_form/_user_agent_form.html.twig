@@ -43,14 +43,3 @@
     {% endfor %}
 </div>
 {% endif %}
-
-<!-- Connection Information -->
-{% if formUser.password is defined %}
-<div class="block-password-form mt-5">
-    <label for="inscription_agent_username" class="form-label">Pseudo/Email (Utile pour la connexion)</label>
-    {{ form_row(formUser.username, { attr: { placeholder : "Nom ou prénom de l'utilisateur" } }) }}
-    
-    <label for="inscription_agent_password" class="form-label">Mot de passe</label>
-    {{ form_row(formUser.password) }}
-</div>
-{% endif %}

@@ -9,7 +9,9 @@ use App\Entity\Secteur;
 use App\Entity\User;
 use App\Form\InscriptionAgentType;
 use App\Form\MultipleSecteurType;
+use App\Form\ResetPasswordType;
 use App\Form\UserSearchType;
+use App\Form\UserType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
 use App\Repository\AgentSecteurRepository;
@@ -92,29 +94,34 @@ class CoachAgentController extends AbstractController
      */
     public function coach_agent_add(Request $request, SecteurRepository $secteurRepository, AgentSecteurRepository $tset)
     {
-        $user = new User();
+        $agent = new User();
         $coach = $this->getUser();
 
         $agentSecteur = new AgentSecteur();
         $coachAgent = new CoachAgent();
-        $formUser = $this->createForm(InscriptionAgentType::class, $user)->remove('secteur');
+        $formUser = $this->createForm(InscriptionAgentType::class, $agent)
+            ->remove('secteur')
+            ->remove('username')
+            ->remove('password')
+        ;
         $formUser->handleRequest($request);
 
         if($formUser->isSubmitted() && $formUser->isValid()) {
-            $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
-            $agentSecteur->setAgent($user);
+            $agentSecteur->setAgent($agent);
             $agentSecteur->setStatut(1);
             $secteur = $this->repoCoachSecteur->findBy(['coach' => $coach])[0]->getSecteur();
             $agentSecteur->setSecteur($secteur);
-            $user->setRoles([ User::ROLE_AGENT ]);
+            $agent->setRoles([ User::ROLE_AGENT ]);
+            $agent->setPassword(base64_encode('_dfdkf12132_1321df'));
+
             $coachAgent->setCoach($this->getUser());
-            $coachAgent->setAgent($user);
-            $this->entityManager->save($user);
+            $coachAgent->setAgent($agent);
+            $this->entityManager->save($agent);
             $this->entityManager->save($agentSecteur);
             $this->entityManager->save($coachAgent);
 
             $this->addFlash('success', 'Ajout de l\'utilisateur Agent efféctué avec succès');
-            return $this->redirectToRoute('coach_agent_list');
+            return $this->redirectToRoute('coach_agent_password_generate', ['id' => $agent->getId()]);
 
         }
 
@@ -123,6 +130,40 @@ class CoachAgentController extends AbstractController
         ]);
 
     }
+
+
+    /**
+     * @Route("/coach/agent/{id}/password/generate", name="coach_agent_password_generate")
+     */
+    public function coach_agent_password_generate(Request $request, User $agent)
+    {
+        $formUserPassword = $this->createForm(InscriptionAgentType::class)
+            ->remove('secteur')
+            ->remove('nom')
+            ->remove('prenom')
+            ->remove('adresse')
+            ->remove('telephone')
+            ->remove('email')
+            ->remove('codePostal')
+        ;
+        $formUserPassword->handleRequest($request);
+        if ($formUserPassword->isSubmitted() && $formUserPassword->isValid()) {
+            
+            $this->userManager->setUserPasword($agent, $request->request->get('inscription_agent')['password']['first'], '', false);
+            $this->addFlash('success', 'Les informations sur le nouveau agent ont été bien enregistrées');
+            return $this->redirectToRoute('coach_agent_list');    
+        }
+
+        return $this->render('user_category/coach/agent/generate_password_agent.html.twig', [
+            'formUserPassword' => $formUserPassword->createView(),
+            'button' => 'Enregistrer'
+        ]);
+    }
+
+
+
+
+
 
     /**
      * @Route("/coach/agent/{id}/secteur/view", name="coach_agent_view")
