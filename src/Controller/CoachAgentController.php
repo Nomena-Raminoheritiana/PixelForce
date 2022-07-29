@@ -66,7 +66,6 @@ class CoachAgentController extends AbstractController
         /** @var User $coach */
         $coach = $this->getUser();
         $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();
-
         $search = new UserSearch();
         $searchForm = $this->createForm(UserSearchType::class, $search)
             ->remove('secteur')
