@@ -15,7 +15,7 @@ class ExcelService
 
     }
 
-    public function export(array $data, array $fields, array $headers): ?SplFileObject
+    public function export($data, array $fields, array $headers): ?SplFileObject
     {
         $file = new SplFileObject(ExcelService::EXPORT_FILE_NAME, "w");
         $file->fputcsv(ExcelService::to_utf8($headers), ExcelService::SEPARATOR);

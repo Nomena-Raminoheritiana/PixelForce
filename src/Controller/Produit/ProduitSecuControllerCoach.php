@@ -100,6 +100,7 @@ class ProduitSecuControllerCoach extends AbstractController
     public function export(Request $request, PaginatorInterface $paginator, SearchService $searchService, ExcelService $excelService, DompdfWrapperInterface $wrapper)
     {
         $error = null;
+        $user = (object)$this->getUser();
         $page = $request->query->get('page', 1);
         $dataType = $request->query->get('dataType', 0);
         $fileType = $request->query->get('fileType', 0);
@@ -125,10 +126,12 @@ class ProduitSecuControllerCoach extends AbstractController
             ->select('p')
             ->from(ProduitSecu::class, 'p')
             ->join('p.categorie', 'c')
+            ->join('p.secteur', 's')
         ;  
 
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
-        $query->where($where["where"]);
+        $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $user->getUniqueCoachSecteur()->getId();
         $searchService->setAllParameters($query, $where["params"]);
         $searchService->addOrderBy($query, $filter, ['sort' => 'p.id', 'direction' => 'asc']);
 
@@ -151,10 +154,10 @@ class ProduitSecuControllerCoach extends AbstractController
             
             return $this->file($file, "produitsdd-$date.csv");
         } else{
-            $html = $this->renderView('pdf/produitsdd.html.twig', [
+            $html = $this->renderView('pdf/produitssecu.html.twig', [
                 'productList' => $productList
             ]);
-            return $wrapper->getStreamResponse($html, "produitsdd-$date.pdf", ['isRemoteEnabled' => true]);
+            return $wrapper->getStreamResponse($html, "produitssecu-$date.pdf", ['isRemoteEnabled' => true]);
         } 
         
     }

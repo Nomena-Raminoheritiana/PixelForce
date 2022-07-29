@@ -65,7 +65,7 @@ class MyProduitFilterType extends AbstractType
             "trim" => true,
             "required" => false,
             "attr" => [
-                "placeholder" => "Prix maximu"
+                "placeholder" => "Prix maximum"
             ]
         ])
         ->add('sort', ChoiceType::class, [

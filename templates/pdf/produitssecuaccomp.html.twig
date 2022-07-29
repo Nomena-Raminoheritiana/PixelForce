@@ -50,14 +50,14 @@
                 <th>Id</th>
                 <th>Nom</th>
                 <th>Description</th>
-                <th>Catégorie</th>
+                <th>Prix</th>
             </tr>
             {% for product in productList %}            
                 <tr>
                     <td>{{ product.id }}</td>
                     <td>{{ product.nom }}</td>
-                    <td>{{ product.description | raw }}</td>
-                    <td>{{ product.categorie.nom }}</td>
+                    <td>{{ product.description | raw}}</td>
+                    <td>{{product.prix | number_format(2, ',', ' ')}}</td>
                 </tr>
             {% endfor %}
         </table>
