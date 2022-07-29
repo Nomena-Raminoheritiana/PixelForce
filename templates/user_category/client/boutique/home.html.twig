@@ -25,7 +25,7 @@
                             
 
                             <div class="button-block text-center mt-5">
-                                <a href="{% if agentSecteur.secteur.type.id == 1 %}{{path('boutique_secteur', {'token': token, 'id': agentSecteur.secteur.id})}} {% else %} {{path('boutique_secteurdd', {'token': token, 'id': agentSecteur.secteur.id})}} {% endif %}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
+                                <a href="{% if agentSecteur.secteur.type.id == 1 %}{{path('boutique_secteur', {'token': token, 'id': agentSecteur.secteur.id})}} {% elseif agentSecteur.secteur.type.id == 2 %} {{path('boutique_secteurdd', {'token': token, 'id': agentSecteur.secteur.id})}} {% else %} {{path('boutique_secteursecu', {'token': token, 'id': agentSecteur.secteur.id})}} {% endif %}" class="btn btn-success"><i class="fa-solid fa-location-arrow"></i> Accéder </a>
                             </div>
                         </div>
                     </div>

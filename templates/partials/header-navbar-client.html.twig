@@ -45,11 +45,13 @@
                         <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{path('client_basket', {'token': agent.agentToken})}}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mon panier"><i class="ficon" data-feather="shopping-cart"></i></a></li>
                         <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{path('client_order_list', {'token': agent.agentToken})}}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mes commandes"><i class="fa-solid fa-list-check"></i></a></li>
                         {% endif %}
-                    {% else %}
+                    {% elseif typeSecteurId == 2 %}
                     <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{path('boutique_secteurdd', {'token': agent.agentToken, 'id': secteurId})}}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Produits"><i class="fa-solid fa-bag-shopping"></i></a></li>
                         {% if is_granted('ROLE_CLIENT') %}
                         <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{path('client_demandedevis_list', {'token': agent.agentToken})}}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mes demandes de devis"><i class="fa-solid fa-list-check"></i></a></li>
                         {% endif %}
+                    {% else %}  
+                    <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{path('boutique_secteursecu', {'token': agent.agentToken, 'id': secteurId})}}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Produits"><i class="fa-solid fa-bag-shopping"></i></a></li>  
                     {% endif %}
                 {% endif %}
                 {# <li class="nav-item d-none d-lg-block"><a class="nav-link" href="app-chat.html" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat"><i class="ficon" data-feather="message-square"></i></a></li>

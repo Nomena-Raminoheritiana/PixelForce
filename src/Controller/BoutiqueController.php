@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Entity\ProduitDD;
 use App\Entity\ProduitFavori;
+use App\Entity\ProduitSecu;
 use App\Entity\Secteur;
 use App\Form\MyProduitDDFilterType;
 use App\Form\MyProduitFilterType;
+use App\Form\MyProduitSecuFilterType;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\ProduitFavoriRepository;
 use App\Repository\ProduitRepository;
@@ -111,6 +113,64 @@ class BoutiqueController extends AbstractController
         );
 
         return $this->render('user_category/client/dd/product/product_list.html.twig', [
+            'productList' => $productList,
+            'form' => $form->createView(),
+            'error' => $error,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+
+    }
+
+    /**
+     * @Route("/secteursecu/{id}", name="boutique_secteursecu")
+     */
+    public function secteursecu($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    {
+        $this->session->set('secteurId', $secteur->getId());
+        $this->session->set('typeSecteurId', $secteur->getType()->getId());
+        $agent = $this->userRepository->findAgentByToken($token);
+        $error = null;
+        $page = $request->query->get('page', 1);
+        $limit = 6;
+        $criteria = [
+            ['prop' => 'categorie.id', 'col' => 'id', 'alias' => 'c'],
+            ['prop' => 'description', 'op' => 'LIKE'],
+            ['prop' => 'nom', 'op' => 'LIKE']
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(MyProduitSecuFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('p')
+            ->from(ProduitSecu::class, 'p')
+            ->join('p.categorie', 'c')
+            ->join('p.secteur', 's')
+        ;  
+
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
+        $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $secteur->getId();
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'p.id', 'direction' => 'asc']);
+
+        $productList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        return $this->render('user_category/client/secu/product/product_list.html.twig', [
             'productList' => $productList,
             'form' => $form->createView(),
             'error' => $error,
@@ -319,5 +379,18 @@ class BoutiqueController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/productsecu/{id}", name="client_productsecu_details")
+     */
+    public function detailssecu($token, ProduitSecu $product): Response
+    {
+        $agent = $this->userRepository->findAgentByToken($token);
+        return $this->render('user_category/client/secu/product/product_details.html.twig',[
+            'product' => $product,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+    }
     
 }

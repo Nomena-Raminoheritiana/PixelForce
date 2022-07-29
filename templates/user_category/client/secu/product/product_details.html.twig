@@ -1,0 +1,106 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Produit
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block body %}  
+    <!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            {# <h2 class="content-header-title float-start mb-0">Détail du produit</h2> #}
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_home', {'token': token})}}">Accueil</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteursecu', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteursecu', {'token': token, 'id': app.session.get('secteurId')})}}">Liste des produits</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Détails
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-body">
+                <!-- app e-commerce details start -->
+                <section class="app-ecommerce-details">
+                    
+                    <div class="card">
+                        <!-- Product Details starts -->
+                        <div class="card-body">
+                            <div class="row my-2">
+                                <div class="col-12 col-md-5 text-center mb-2 mb-md-0">
+                                    <img src="{{ asset(filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" class="img-fluid product-img" />
+                                </div>
+                                <div class="col-12 col-md-7">
+                                    <h4>{{product.nom}}</h4>
+                                    <p class="card-text">
+                                        {{product.description|raw}}
+                                    </p>
+                                    <hr />
+                                    <div class="d-flex flex-column flex-sm-row pt-1">
+                                        {% if is_granted('ROLE_CLIENT') %}
+                                        {# {{path('client_demandedevis_new', {'token': token, 'id': product.id})}} #}
+                                        <a href="#" class="btn btn-primary btn-cart me-0 me-sm-1 mb-1 mb-sm-0">
+                                            <span class="add-to-cart">Commander</span>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-secondary btn-wishlist me-0 me-sm-1 mb-1 mb-sm-0">
+                                            <i data-feather="heart" class="me-50"></i>
+                                            <span>Favoris</span>
+                                        </a>
+                                        {% endif %}
+                                        
+                                        {# <div class="btn-group dropdown-icon-wrapper btn-share">
+                                            <button type="button" class="btn btn-icon hide-arrow btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i data-feather="share-2"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="facebook"></i>
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="twitter"></i>
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="youtube"></i>
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="instagram"></i>
+                                                </a>
+                                            </div>
+                                        </div> #}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product Details ends -->
+
+
+                    </div>
+                </section>
+                <!-- app e-commerce details end -->
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+{% endblock %}
+
+

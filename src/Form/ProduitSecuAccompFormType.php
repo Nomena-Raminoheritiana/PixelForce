@@ -19,6 +19,7 @@ use FOS\CKEditorBundle\Form\Type\CKEditorType;
 class ProduitSecuAccompFormType extends AbstractType
 {
     
+    
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
