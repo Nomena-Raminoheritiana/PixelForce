@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\TypeAbonnementSecuRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=TypeAbonnementSecuRepository::class)
  */
-class TypeAbonnementSecu
+class TypeAbonnementSecu implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -71,5 +72,11 @@ class TypeAbonnementSecu
         $this->prix = $prix;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }

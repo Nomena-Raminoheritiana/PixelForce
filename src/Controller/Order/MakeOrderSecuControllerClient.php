@@ -88,7 +88,8 @@ class MakeOrderSecuControllerClient extends AbstractController
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'form' => $form->createView(),
             'token' => $token,
-            'agent' => $agent
+            'agent' => $agent,
+            'types' => $types
         ]);
 
     }

@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\CodePromoSecuRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=CodePromoSecuRepository::class)
  */
-class CodePromoSecu
+class CodePromoSecu implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -88,5 +89,11 @@ class CodePromoSecu
         $this->statut = $statut;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }

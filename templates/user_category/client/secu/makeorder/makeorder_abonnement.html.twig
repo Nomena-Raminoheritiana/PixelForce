@@ -70,12 +70,14 @@
                                 </div>
                             </div>
 
-                            <div class="row invisible" id="codePromo">
+                            <div class="row" id="codePromo">
                                 <div class="col-md-6 col-sm-12" >
                                     <div class="mb-2">
                                         {{form_label(form.codePromo)}}
                                         {{form_widget(form.codePromo)}}
                                         {{form_errors(form.codePromo)}}
+                                        <div class="invalid-feedback" id="check-feedback">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -94,13 +96,13 @@
                             </li>
                         </ul> #}
                         <hr />
-                        {# <ul class="list-unstyled">
+                        <ul class="list-unstyled">
                             <li class="price-detail">
-                                <div class="detail-title detail-total">Prix total  :</div>
-                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{totalCost}}">{{totalCost}}€</div>
+                                <div class="detail-title detail-total">Prix :</div>
+                                <div class="detail-amt fw-bolder"><span id="prix">0,00 €</span></div>
                             </li>
                         </ul>
-                        <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                        {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
                     </div>
                 </div>
             </div>
@@ -116,6 +118,8 @@
 {{ parent() }}
 <script>
     
+    let types = {{ types|json_encode() | raw }};
+
     function checkCodePromo(code, success, error, fin){
         let request = $.ajax({  
             url:        "{{path('check_code_promo_secu')}}",  
@@ -137,25 +141,56 @@
     }
 
     $('input[name="abonnement-form[typeAbonnement]"]').change(function (e){
-        if($(this).val() == '2'){
-            $('#codePromo').removeClass('invisible');
-        } else{
-            $('#codePromo').addClass('invisible');
-        }
+        checkSelected();
     });
 
     $('#btn-check-code-promo').click(function (e){
-        let code = $('#abonnement-form_codePromo').val();
-        console.log('code', code);
+        let checkFeedback = $('#check-feedback');
+        let codePromoInput = $('#abonnement-form_codePromo');
+        let code = $(codePromoInput).val().trim();
         $('#check-spinner').removeClass('invisible');
         checkCodePromo(code, function (data){
             console.log(data);
-        }, function (error){
-            console.log(error);
+            $(codePromoInput).removeClass('is-invalid');
+            $(checkFeedback).removeClass('d-block');
+            $(codePromoInput).addClass('is-valid');
+            setPrix(data.codePromo.prix);
+        }, function (error){ 
+            $(checkFeedback).html(error);
+            $(codePromoInput).addClass('is-invalid');
+            $(checkFeedback).addClass('d-block');
+            $(codePromoInput).removeClass('is-valid');
         }, function (){
             $('#check-spinner').addClass('invisible');
         });
     });
+
+    function setPrix(prix){
+        let text = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(prix);
+        $('#prix').html(text);
+    }
+
+    function getType(id){
+        for(let i=0; i<types.length; i++){
+            if(types[i].id == id) return types[i];
+        }
+        return null;
+    }
+
+    function checkSelected(){
+        let val = $('input[name="abonnement-form[typeAbonnement]"]:checked').val();
+        console.log('val', val);
+        let type = getType(val);
+        setPrix(type.prix);
+        if(val == '2'){
+            $('#codePromo').removeClass('invisible');
+        } else{
+            $('#codePromo').addClass('invisible');
+        }
+        console.log('checked');
+    }
+    console.log('here');
+    checkSelected();
 </script>
 {% endblock %}
 
