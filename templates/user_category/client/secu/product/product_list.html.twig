@@ -108,8 +108,8 @@
                                         <i data-feather="heart"></i>
                                         <span>Favoris</span>
                                     </a>
-                                    {# {{path('client_demandedevis_new', {'token': token, 'id': product.id})}} #}
-                                    <a href="#" class="btn btn-primary btn-cart" >
+                                   
+                                    <a href="{{path('client_make_ordersecu_abonnement', {'token': token, 'id': product.id})}}" class="btn btn-primary btn-cart" >
                                         <span class="add-to-cart">Commander</span>
                                     </a>
                                     {% endif %}

@@ -1,0 +1,104 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Faire une commande
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+<!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application   pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            {# <h2 class="content-header-title float-start mb-0">Checkout</h2> #}
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_home', {'token': token})}}">Accueil</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteursecu', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Faire une commande
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <!-- Wizard starts -->
+                    <div class="bs-stepper-header">
+                        <div class="step {% if active == 'abonnement' %} active {% endif %}" data-target="#step-cart" role="tab" id="step-cart-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i data-feather="shopping-cart" class="font-medium-3"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Type d'abonnement</span>
+                                    <span class="bs-stepper-subtitle">Choisissez le type d'abonnement</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line">
+                            <i data-feather="chevron-right" class="font-medium-2"></i>
+                        </div>
+                        <div class="step {% if active == 'add_products' %} active {% endif %}" data-target="#step-address" role="tab" id="step-address-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i data-feather="home" class="font-medium-3"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Produits supplémentaires</span>
+                                    <span class="bs-stepper-subtitle">Ajouter des produits supplémentaires</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line">
+                            <i data-feather="chevron-right" class="font-medium-2"></i>
+                        </div>
+                        <div class="step {% if active == 'payment' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i data-feather="credit-card" class="font-medium-3"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Paiement</span>
+                                    <span class="bs-stepper-subtitle">Selectionnez votre moyen de paiement</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Wizard ends -->
+
+                    
+                    <div class="bs-stepper-content">
+                        <!-- Checkout Place order starts -->
+                        {% block content_makeorder %}
+                        {% endblock %}
+                        <!-- Checkout Customer Address Starts -->
+                        
+                        <!-- Checkout Customer Address Ends -->
+                        <!-- Checkout Payment Starts -->
+                        
+                        <!-- Checkout Payment Ends -->
+                        <!-- </div> -->
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+{% endblock %}
+
+

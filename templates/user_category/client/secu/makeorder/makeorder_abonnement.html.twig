@@ -1,0 +1,161 @@
+{% set active = 'abonnement' %}
+{% extends 'user_category/client/secu/makeorder/base_makeorder.html.twig' %}
+
+
+
+{% block content_makeorder %} 
+<div id="step-cart" class="content active dstepper-block" role="tabpanel" aria-labelledby="step-cart-trigger">
+    
+    <div id="place-order" class="list-view product-checkout">
+        <!-- Checkout Place Order Left starts -->
+        <div class="checkout-items" style="overflow: auto; height: calc(100vh - 300px);">
+            <div class="card ecommerce-card">
+                <div class="item-img">
+                    <a href="{{path('client_productsecu_details', {'token': token, 'id': produit.id})}}">
+                        <img src="{{ asset( filesDirectory ~ produit.photo) }}" alt="Image pour {{produit.nom}}" />
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="item-name">
+                        <h6 class="mb-0"><a href="{{path('client_productsecu_details', {'token': token, 'id': produit.id})}}" class="text-body">{{produit.nom}}</a></h6>
+                    
+                    </div>
+                    {# <span class="text-success mb-1">En stock</span>
+                    <div class="item-quantity">
+                        <span class="quantity-title">Quantité:</span>
+                        <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
+                            <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-down" type="button" onclick="decreaseQuantity({{basketItem.produit.id}})">-</button></span><input type="text" class="quantity-counter form-control" id="quantity-for-product-{{basketItem.produit.id}}" value="{{basketItem.quantity}}"><span class="input-group-btn input-group-append bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-up" type="button" onclick="increaseQuantity({{basketItem.produit.id}})">+</button></span>
+                        </div>
+                    </div>
+                    <span class="text-success">Remise de 20%</span> #}
+                    <span class="delivery-date text-muted"><i><b>Description :</b></i> {{produit.description|raw}}</span>
+                </div>
+                {# <div class="item-options text-center">
+                    <div class="item-wrapper">
+                        <div class="item-cost">
+                            <h4 class="item-price mb-2" id="item-price-for-product-{{basketItem.produit.id}}" data-unit-price="{{basketItem.produit.prix}}">{{basketItem.cost}}€</h4>
+                            <p class="card-text shipping">
+                                <span class="badge rounded-pill badge-light-success">Free Shipping</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-light mt-1 remove-wishlist" onclick="removeBasketItem({{basketItem.produit.id}})">
+                        <i data-feather="x" class="align-middle me-25"></i>
+                        <span>Retirer du panier</span>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-cart move-cart" onclick="updateBasketItem({{basketItem.produit.id}})">
+                        <i data-feather="shopping-cart" class="align-middle me-25"></i>
+                        <span class="text-truncate">Modifier le panier</span>
+                    </button>
+                </div> #}
+            </div>
+            
+        </div>
+        <!-- Checkout Place Order Left ends -->
+
+        <!-- Checkout Place Order Right starts -->
+        <div class="checkout-options" >
+            <div class="card">
+                <div class="card-body">
+                    <label class="section-label form-label mb-3">Choix</label>
+                    <div class="price-details">
+                        {{ form_start(form, {'attr': {}}) }}
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="mb-2">
+                                        {{form_label(form.typeAbonnement)}}
+                                        {{form_widget(form.typeAbonnement)}}
+                                        {{form_errors(form.typeAbonnement)}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row invisible" id="codePromo">
+                                <div class="col-md-6 col-sm-12" >
+                                    <div class="mb-2">
+                                        {{form_label(form.codePromo)}}
+                                        {{form_widget(form.codePromo)}}
+                                        {{form_errors(form.codePromo)}}
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary btn-sm" id="btn-check-code-promo">Vérifier&nbsp;<span class="rotate invisible" id="check-spinner"><i class="fa fa-spinner" aria-hidden="true"></i></span></button>
+                                </div>
+                            </div>    
+                        {{ form_end(form) }}
+                        {# <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
+                            <li class="price-detail">
+                                <div class="detail-title">Prix de livraison</div>
+                                <div class="detail-amt discount-amt text-success">Gratuit</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">Délai de livraison</div>
+                                <div class="detail-amt discount-amt">15 à 20 minute(s)</div>
+                            </li>
+                        </ul> #}
+                        <hr />
+                        {# <ul class="list-unstyled">
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Prix total  :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{totalCost}}">{{totalCost}}€</div>
+                            </li>
+                        </ul>
+                        <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                    </div>
+                </div>
+            </div>
+            <!-- Checkout Place Order Right ends -->
+        </div>
+    </div>
+    <!-- Checkout Place order Ends -->
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    
+    function checkCodePromo(code, success, error, fin){
+        let request = $.ajax({  
+            url:        "{{path('check_code_promo_secu')}}",  
+            type:       'POST', 
+            data : JSON.stringify({code}),  
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json"
+        });  
+        request.done(function(data) {
+            success(data);
+            fin();
+        });
+
+        request.fail(function(jqXHR, textStatus) {
+            let errMessage = jqXHR.responseJSON.message;
+             error(errMessage);
+             fin();
+        });
+    }
+
+    $('input[name="abonnement-form[typeAbonnement]"]').change(function (e){
+        if($(this).val() == '2'){
+            $('#codePromo').removeClass('invisible');
+        } else{
+            $('#codePromo').addClass('invisible');
+        }
+    });
+
+    $('#btn-check-code-promo').click(function (e){
+        let code = $('#abonnement-form_codePromo').val();
+        console.log('code', code);
+        $('#check-spinner').removeClass('invisible');
+        checkCodePromo(code, function (data){
+            console.log(data);
+        }, function (error){
+            console.log(error);
+        }, function (){
+            $('#check-spinner').addClass('invisible');
+        });
+    });
+</script>
+{% endblock %}
+

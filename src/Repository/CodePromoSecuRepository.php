@@ -39,6 +39,16 @@ class CodePromoSecuRepository extends ServiceEntityRepository
         }
     }
 
+    public function findValid(string $code): ?CodePromoSecu
+    {
+        return $this->createQueryBuilder('c')
+           ->where('c.code = :code and c.statut != 0')
+           ->setParameter('code', $code)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+    }
+
 //    /**
 //     * @return CodePromoSecu[] Returns an array of CodePromoSecu objects
 //     */

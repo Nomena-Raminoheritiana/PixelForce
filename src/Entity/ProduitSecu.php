@@ -147,5 +147,9 @@ class ProduitSecu implements JsonSerializable
         return $this;
     }
 
+    public function checkValid(){
+        if($this->getStatut() == 0)
+            throw new Exception("Produit invalide");
+    }
     
 }

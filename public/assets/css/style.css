@@ -350,3 +350,19 @@ a, a:hover{
 	background-color: rgb(221, 215, 215) !important;
 	border-radius: 10px !important;
 }
+
+
+
+.rotate{
+	display: inline-block;
+	animation: rotation 1s infinite linear;
+}
+
+@keyframes rotation {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
