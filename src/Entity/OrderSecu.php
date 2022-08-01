@@ -305,9 +305,7 @@ class OrderSecu implements JsonSerializable
         //$this->checkBasketItem($basketItem);
         $accompsSession = $this->getAccompsSession();
         $index = $this->indexOf($accomp->getProduit()->getId());
-
         if($index!=-1) array_splice($accompsSession, $index, 1);
-
         $accompsSession[] = $accomp;
         $this->setAccompsSession($accompsSession);
     }

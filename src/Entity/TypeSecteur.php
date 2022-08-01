@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\TypeSecteurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=TypeSecteurRepository::class)
  */
-class TypeSecteur
+class TypeSecteur implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -37,5 +38,11 @@ class TypeSecteur
         $this->nom = $nom;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }

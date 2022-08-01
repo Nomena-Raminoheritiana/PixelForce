@@ -258,7 +258,6 @@ class MakeOrderSecuControllerClient extends AbstractController
                 'token' => $token
             ]);
         }
-        
         return $this->render('user_category/client/secu/makeorder/makeorder_accomplist.html.twig', [
             'order' => $order,
             'error' => $error,

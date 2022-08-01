@@ -6,11 +6,12 @@ use App\Repository\SecteurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=SecteurRepository::class)
  */
-class Secteur
+class Secteur implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -341,5 +342,11 @@ class Secteur
         $this->type = $type;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }
