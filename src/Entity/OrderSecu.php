@@ -275,11 +275,9 @@ class OrderSecu implements JsonSerializable
         if($index!=-1){
             $qty = $accompsSession[$index]->getQte() + $accomp->getQte();
             $accomp->setQte($qty);
-            $this->update($accomp);
-        } else{
-            //$this->checkBasketItem($basketItem);
-            $accompsSession[] = $accomp;
-        }
+            array_splice($accompsSession, $index, 1);
+        } 
+        $accompsSession[] = $accomp;
         $this->setAccompsSession($accompsSession);
     }
 
