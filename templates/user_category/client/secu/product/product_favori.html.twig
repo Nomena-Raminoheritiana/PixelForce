@@ -1,7 +1,7 @@
 {% extends 'base_client.html.twig' %}
 
 {% block title %}
-	Liste des produits
+	Liste des produits favoris
 {% endblock %}
 
 {% block stylesheets %}
@@ -26,7 +26,7 @@
                                     </li>
                                     <li class="breadcrumb-item"><a href="{{path('boutique_secteursecu', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Liste des produits
+                                    <li class="breadcrumb-item active">Favoris
                                     </li>
                                 </ol>
                             </div>
@@ -72,17 +72,17 @@
                         {% if productList|length ==0 %}
                                 <div class="alert alert-primary p-3 text-center" role="alert">
                                     <div class="alert-body">
-                                        Aucun produit disponible pour le moment.
+                                        Aucun produit favori pour le moment.
                                     </div>
                                 </div>
                         {% endif %}
                         {% if productList|length !=0 %}
                         <section id="ecommerce-products" class="grid-view" style="grid-template-columns: 1fr 1fr;">
-                            {% for product in productList %}
+                            {% for favori in productList %}
                             <div class="card ecommerce-card">
                                 <div class="item-img text-center">
-                                    <a href="{{path('client_productsecu_details', {'id': product.id, 'token': token})}}">
-                                    <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" /></a>
+                                    <a href="{{path('client_productsecu_details', {'id': favori.produit.id, 'token': token})}}">
+                                    <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ favori.produit.photo) }}" alt="Image pour {{favori.produit.nom}}" /></a>
                                 </div>
                                 <div class="card-body">
                                     {# <div class="item-wrapper">
@@ -91,10 +91,10 @@
                                         </div>
                                     </div> #}
                                     <h6 class="item-name">
-                                        <a class="text-body" href="{{path('client_productsecu_details', {'id': product.id, 'token': token})}}">{{product.nom}}</a>
+                                        <a class="text-body" href="{{path('client_productsecu_details', {'id': favori.produit.id, 'token': token})}}">{{favori.produit.nom}}</a>
                                     </h6>
                                     <p class="card-text item-description">
-                                        {{product.description|raw}}
+                                        {{favori.produit.description|raw}}
                                     </p>
                                 </div>
                                 <div class="item-options text-center">
@@ -103,21 +103,15 @@
                                             <h4 class="item-price">{{product.prix}}€</h4>
                                         </div>
                                     </div> #}
-                                    {% if is_granted('ROLE_CLIENT') %}
-                                    <a href="{{path('client_productsecu_toogle_favori', {'token': token, 'id': product.id})}}" class="btn btn-light btn-wishlist">
+                                    <a href="{{path('client_productsecu_toogle_favori', {'token': token, 'id': favori.produit.id})}}" class="btn btn-light btn-wishlist">
                                         {# <i data-feather="heart"></i> #}
-                                        {% if product.estFavori %}
-                                        <i class="fa-solid fa-heart"></i>
-                                        {% else %}
-                                        <i class="fa-regular fa-heart"></i>
-                                        {% endif %}
-                                        <span>Favoris</span>
+                                        <i class="fa-solid fa-trash"></i>
+                                        <span>Supprimer des Favoris</span>
                                     </a>
                                    
-                                    <a href="{{path('client_make_ordersecu', {'token': token, 'id': product.id})}}" class="btn btn-primary btn-cart" >
+                                    <a href="{{path('client_make_ordersecu', {'token': token, 'id': favori.produit.id})}}" class="btn btn-primary btn-cart" >
                                         <span class="add-to-cart">Commander</span>
                                     </a>
-                                    {% endif %}
                                     
                                 </div>
                             </div>

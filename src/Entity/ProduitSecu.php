@@ -52,6 +52,7 @@ class ProduitSecu implements JsonSerializable
      */
     private $categorie;
 
+    private $estFavori;
 
     public function getId(): ?int
     {
@@ -152,4 +153,24 @@ class ProduitSecu implements JsonSerializable
             throw new Exception("Produit invalide");
     }
     
+
+    /**
+     * Get the value of estFavori
+     */ 
+    public function getEstFavori()
+    {
+        return $this->estFavori;
+    }
+
+    /**
+     * Set the value of estFavori
+     *
+     * @return  self
+     */ 
+    public function setEstFavori($estFavori)
+    {
+        $this->estFavori = $estFavori;
+
+        return $this;
+    }
 }
