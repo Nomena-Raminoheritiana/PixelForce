@@ -6,6 +6,7 @@ use App\Entity\OrderSecu;
 use App\Entity\Secteur;
 use App\Entity\User;
 use App\Repository\CodePromoSecuRepository;
+use App\Repository\OrderSecuRepository;
 use App\Repository\TypeAbonnementSecuRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,16 +16,18 @@ class OrderSecuService
 {
     private $session;
     private $codePromoSecuRepository;
+    private $orderSecuRepository;
     private $entityManager;
     private $stripeService;
     const PREFIX = 'order-secu-';
 
-    public function __construct(SessionInterface $session, CodePromoSecuRepository $codePromoSecuRepository, EntityManagerInterface $entityManager, StripeService $stripeService)
+    public function __construct(SessionInterface $session, CodePromoSecuRepository $codePromoSecuRepository, EntityManagerInterface $entityManager, StripeService $stripeService, OrderSecuRepository $orderSecuRepository)
     {
         $this->session = $session;
         $this->codePromoSecuRepository = $codePromoSecuRepository;
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
+        $this->orderSecuRepository = $orderSecuRepository;
     }
 
     public function setOrderSecu(OrderSecu $order){
@@ -92,5 +95,15 @@ class OrderSecuService
         } finally {
             $this->entityManager->clear();
         }
+    }
+
+    public function changeStatus(int $orderId, int $status)
+    {
+        $order = $this->orderSecuRepository->find($orderId);
+        if(!$order)  {
+            throw new Exception("La commande n°".$orderId." n'existe pas");
+        }
+        $order->setStatut($status);
+        $this->entityManager->flush();
     }
 }

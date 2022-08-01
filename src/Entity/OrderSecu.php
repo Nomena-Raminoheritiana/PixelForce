@@ -17,15 +17,18 @@ class OrderSecu implements JsonSerializable
 {
     public const CREATED = 1;
     public const VALIDATED = 2;
+    public const REJECTED = -1;
 
     public const STATUS = [
-        Order::CREATED => "Créée", 
-        Order::VALIDATED => "Acceptée"
+        OrderSecu::CREATED => "Créée", 
+        OrderSecu::VALIDATED => "Validée",
+        OrderSecu::REJECTED => "Rejetée"
     ];
 
     public const STATUS_DATA_FORM = [
-        "Créée" => Order::CREATED, 
-        "Acceptée" => Order::VALIDATED
+        "Créée" => OrderSecu::CREATED, 
+        "Acceptée" => OrderSecu::VALIDATED,
+        "Rejetée" => OrderSecu::REJECTED
     ];
 
 
@@ -444,7 +447,7 @@ class OrderSecu implements JsonSerializable
 
     public function getStatusStr(): ?string 
     {
-        return Order::STATUS[$this->getStatut()];
+        return OrderSecu::STATUS[$this->getStatut()];
     }
 
 

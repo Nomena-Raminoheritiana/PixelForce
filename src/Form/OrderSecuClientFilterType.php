@@ -32,7 +32,7 @@ class OrderSecuClientFilterType extends AbstractType
             "input_format" => "d/m/Y H:i",
             "widget" => "single_text"
         ])
-        ->add('status', ChoiceType::class, [
+        ->add('statut', ChoiceType::class, [
             "label" => "Statut",
             'choices'  => OrderSecu::STATUS_DATA_FORM,
             "required" => false
