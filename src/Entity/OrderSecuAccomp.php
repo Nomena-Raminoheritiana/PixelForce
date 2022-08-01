@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OrderSecuAccompRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 
@@ -103,5 +104,12 @@ class OrderSecuAccomp implements JsonSerializable
     {
         $vars = get_object_vars($this);
         return $vars;
+    }
+
+    public function refresh(EntityManagerInterface $em){
+        if($this->getProduit()){
+            $this->setProduit($em->getRepository(ProduitSecuAccomp::class)->find($this->getProduit()->getId()));
+        }
+        
     }
 }

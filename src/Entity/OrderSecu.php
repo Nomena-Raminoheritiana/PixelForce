@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\OrderSecuRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 
@@ -13,6 +15,20 @@ use JsonSerializable;
  */
 class OrderSecu implements JsonSerializable
 {
+    public const CREATED = 1;
+    public const VALIDATED = 2;
+
+    // public const STATUS = [
+    //     Order::CREATED => "Créée", 
+    //     Order::VALIDATED => "Acceptée"
+    // ];
+
+    public const STATUS_DATA_FORM = [
+        "Créée" => Order::CREATED, 
+        "Acceptée" => Order::VALIDATED
+    ];
+
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -73,6 +89,34 @@ class OrderSecu implements JsonSerializable
      * @ORM\JoinColumn(nullable=false)
      */
     private $typeInstallation;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $secteur;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $dateCommande;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $installationFrais;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $accompMontant;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $chargeId;
+
+    
 
     public function __construct()
     {
@@ -322,5 +366,79 @@ class OrderSecu implements JsonSerializable
 
     public function getFraisInstallation(){
         return $this->getTypeInstallation() ? $this->getTypeInstallation()->getPrix() : 0;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
+
+        return $this;
+    }
+
+    public function getDateCommande(): ?\DateTimeInterface
+    {
+        return $this->dateCommande;
+    }
+
+    public function setDateCommande(\DateTimeInterface $dateCommande): self
+    {
+        $this->dateCommande = $dateCommande;
+
+        return $this;
+    }
+
+    
+
+    public function refresh(EntityManagerInterface $em){
+        if($this->getProduit()){
+            $this->setProduit($em->getRepository(ProduitSecu::class)->find($this->getProduit()->getId()));
+        }
+        if($this->getTypeAbonnement()){
+            $this->setTypeAbonnement($em->getRepository(TypeAbonnementSecu::class)->find($this->getTypeAbonnement()->getId()));
+        }
+        if($this->getTypeInstallation()){
+            $this->setTypeInstallation($em->getRepository(TypeInstallationSecu::class)->find($this->getTypeInstallation()->getId()));
+        }
+    }
+
+    public function getInstallationFrais(): ?float
+    {
+        return $this->installationFrais;
+    }
+
+    public function setInstallationFrais(float $installationFrais): self
+    {
+        $this->installationFrais = $installationFrais;
+
+        return $this;
+    }
+
+    public function getAccompMontant(): ?float
+    {
+        return $this->accompMontant;
+    }
+
+    public function setAccompMontant(float $accompMontant): self
+    {
+        $this->accompMontant = $accompMontant;
+
+        return $this;
+    }
+
+    public function getChargeId(): ?string
+    {
+        return $this->chargeId;
+    }
+
+    public function setChargeId(string $chargeId): self
+    {
+        $this->chargeId = $chargeId;
+
+        return $this;
     }
 }

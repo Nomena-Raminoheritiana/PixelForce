@@ -1,0 +1,133 @@
+{% set active = 'payment' %}
+{% extends 'user_category/client/secu/makeorder/base_makeorder.html.twig' %}
+
+
+
+{% block content_makeorder %} 
+<div id="step-cart" class="content active dstepper-block" role="tabpanel" aria-labelledby="step-cart-trigger">
+    
+    <div id="place-order" class="list-view product-checkout">
+        <!-- Checkout Place Order Left starts -->
+        {{ form_start(form, {'attr': {class: 'list-view product-checkout', id: form.vars.id}}) }}
+        <div class="payment-type" >
+            <div class="card">
+                <div class="card-header flex-column align-items-start">
+                    <h4 class="card-title display-4 p-3">Paiement de la commande</h4>
+                    {# <p class="card-text text-muted mt-25">Be sure to click on correct payment option</p> #}
+                </div>
+                <div class="card-body">
+                
+                    <div class="row pb-3">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="mb-2 p-3">
+                                <label class="form-label" for="card-element">Carte de crédit:</label>
+                                <div id="card-element" class="form-control">
+                                    
+                                </div>
+                                <div id="card-errors" class="invalid-feedback d-block"></div>
+                            </div>
+                        </div>
+                        
+                        {{ form_widget(form.token) }}
+                        <div class="col-12 ps-4">
+                            <button type="submit" class="btn btn-primary btn-next">Continuer <i class="fas fa-money-bill ms-2"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        {{form_end(form)}}
+        <!-- Checkout Place Order Left ends -->
+
+        <!-- Checkout Place Order Right starts -->
+        <div class="checkout-options" >
+            <div class="card">
+                <div class="card-body">
+                    <label class="section-label form-label mb-3">Détails de la commande</label>
+                    <div class="price-details">
+                        <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
+                            <li class="price-detail">
+                                <div class="detail-title">{{order.typeAbonnement.nom}}</div>
+                                {# <div class="detail-amt discount-amt text-success">Gratuit</div> #}
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">Prix du produit</div>
+                                <div class="detail-amt discount-amt" id="product-cost" data-product-cost="{{order.prixProduit}}">{{order.prixProduit | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">Montant des accompagnements</div>
+                                <div class="detail-amt discount-amt" id="accomp-cost" data-accomp-cost="{{order.montantAccomp}}">{{order.montantAccomp | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail" id="installation">
+                                <div class="detail-title">Frais d'installation</div>
+                                <div class="detail-amt discount-amt" id="installation-cost" data-installation-cost="{{order.fraisInstallation}}">{{order.fraisInstallation | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                        </ul>
+                        <hr />
+                        <ul class="list-unstyled">
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Montant total  :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" >{{(order.prixProduit + order.montantAccomp + order.fraisInstallation ) | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                        </ul>
+                        {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                    </div>
+                </div>
+            </div>
+            <!-- Checkout Place Order Right ends -->
+        </div>
+    </div>
+    <!-- Checkout Place order Ends -->
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    let type = {{ order.typeInstallation|json_encode() | raw }};
+    let installationJQuery = $('#installation');
+    if(type.prix > 0){
+        installationJQuery.show();
+    } else{
+        installationJQuery.hide();
+    }
+    
+
+    var form = document.getElementById('{{ form.vars.id }}');
+    var errors = document.getElementById('card-errors');
+    var cardElement = document.getElementById('card-element');
+    
+    var stripe = Stripe('{{ stripe_public_key }}');
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    
+    card.mount('#card-element');
+    card.addEventListener('change', function(event) {
+        if (event.error) {
+        errors.textContent = event.error.message;
+        cardElement.classList.add('is-invalid');
+        } else {
+        errors.textContent = '';
+        cardElement.classList.remove('is-invalid');
+        }
+    });
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        stripe.createToken(card).then(function(result) {
+        if (result.error) {
+            errors.textContent = result.error.message;
+            form.classList.add('has-error');
+        } else {
+            document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
+            form.submit();
+        }
+        });
+    });
+</script>
+{% endblock %}
+

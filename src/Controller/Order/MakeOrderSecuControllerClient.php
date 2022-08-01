@@ -15,6 +15,7 @@ use App\Entity\Utilisateur;
 use App\Form\MyProduitSecuAccompFilterType;
 use App\Form\OrderClientFilterType;
 use App\Repository\OrderRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\TypeAbonnementSecuRepository;
 use App\Repository\TypeInstallationSecuRepository;
 use App\Repository\UserRepository;
@@ -27,12 +28,14 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * @Route("/client/{token}/makeordersecu")
@@ -65,7 +68,8 @@ class MakeOrderSecuControllerClient extends AbstractController
 
             $agent = $this->userRepository->findAgentByToken($token);
             $user = (object) $this->getUser();
-            $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+            $secteurId = $this->session->get('secteurId');
+            $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
             $order->setSessionKey($sessionKey);
             $this->orderSecuService->setOrderSecu($order);
             return $this->redirectToRoute('client_make_ordersecu_abonnement', [
@@ -85,9 +89,10 @@ class MakeOrderSecuControllerClient extends AbstractController
      */
     public function order($token, Request $request, FormFactoryInterface $formFactory, TypeAbonnementSecuRepository $typeAbonnementSecuRepository): Response
     {
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         $order = $this->orderSecuService->getOrderSecu($sessionKey);
         if(!$order) {
             $this->addFlash('danger', 'Commander un produit');
@@ -130,6 +135,7 @@ class MakeOrderSecuControllerClient extends AbstractController
                 return $this->redirectToRoute('client_produitsecuaccomp_list', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
             }
 
         }
@@ -206,9 +212,10 @@ class MakeOrderSecuControllerClient extends AbstractController
      */
     public function addAcomp($token, ProduitSecuAccomp $product, Request $request): Response
     {
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         $order = $this->orderSecuService->getOrderSecu($sessionKey);
         if(!$order) {
             $this->addFlash('danger', 'Commander un produit');
@@ -239,9 +246,10 @@ class MakeOrderSecuControllerClient extends AbstractController
     {
 
         $error = null;
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         $order = $this->orderSecuService->getOrderSecu($sessionKey);
         if(!$order) {
             $this->addFlash('danger', 'Commander un produit');
@@ -266,9 +274,10 @@ class MakeOrderSecuControllerClient extends AbstractController
      */
     public function updateAcomp($token, ProduitSecuAccomp $product, Request $request)
     {
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         $order = $this->orderSecuService->getOrderSecu($sessionKey);
         if(!$order) {
             $this->addFlash('danger', 'Commander un produit');
@@ -297,9 +306,10 @@ class MakeOrderSecuControllerClient extends AbstractController
      */
     public function removeAcomp($token, int $id, Request $request): Response
     {
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         $order = $this->orderSecuService->getOrderSecu($sessionKey);
         if(!$order) {
             $this->addFlash('danger', 'Commander un produit');
@@ -325,9 +335,10 @@ class MakeOrderSecuControllerClient extends AbstractController
      */
     public function installation($token, Request $request, FormFactoryInterface $formFactory, TypeInstallationSecuRepository $typeInstallationSecuRepository): Response
     {
+        $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         $order = $this->orderSecuService->getOrderSecu($sessionKey);
         if(!$order) {
             $this->addFlash('danger', 'Commander un produit');
@@ -365,9 +376,10 @@ class MakeOrderSecuControllerClient extends AbstractController
 
             try{
                 $this->orderSecuService->setOrderSecu($order);
-                //return $this->redirectToRoute('client_produitsecuaccomp_list', ['token' => $token]);
+                return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
             }
 
         }
@@ -379,6 +391,64 @@ class MakeOrderSecuControllerClient extends AbstractController
             'token' => $token,
             'agent' => $agent,
             'types' => $types
+        ]);
+
+    }
+
+
+    /**
+     * @Route("/payment", name="client_make_ordersecu_payment")
+     */
+    public function payment($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        
+
+        $form = $formFactory
+            ->createNamedBuilder("payment-form")
+            ->add('token', HiddenType::class, [
+                'constraints' => [new NotBlank()],
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $stripeToken =  $form->get('token')->getData();
+                $secteur = $secteurRepository->find($secteurId);
+                $order->setClient($user);
+                $order->setAgent($agent);
+                $order->setSecteur($secteur);
+                $this->orderSecuService->saveOrder($stripeToken, $order);
+                $this->orderSecuService->removeOrderSecu($order->getSessionKey());
+                //return $this->redirectToRoute('client_order_details', ['id' => $order->getId(), 'token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_payment.html.twig', [
+            'stripe_public_key' => $this->getParameter('stripe_public_key'),
+            'order' => $order,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent
         ]);
 
     }

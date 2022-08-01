@@ -3,20 +3,28 @@ namespace App\Services;
 
 use App\Entity\BasketItem;
 use App\Entity\OrderSecu;
+use App\Entity\Secteur;
+use App\Entity\User;
 use App\Repository\CodePromoSecuRepository;
 use App\Repository\TypeAbonnementSecuRepository;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class OrderSecuService
 {
     private $session;
     private $codePromoSecuRepository;
+    private $entityManager;
+    private $stripeService;
     const PREFIX = 'order-secu-';
 
-    public function __construct(SessionInterface $session, CodePromoSecuRepository $codePromoSecuRepository)
+    public function __construct(SessionInterface $session, CodePromoSecuRepository $codePromoSecuRepository, EntityManagerInterface $entityManager, StripeService $stripeService)
     {
         $this->session = $session;
         $this->codePromoSecuRepository = $codePromoSecuRepository;
+        $this->entityManager = $entityManager;
+        $this->stripeService = $stripeService;
     }
 
     public function setOrderSecu(OrderSecu $order){
@@ -34,7 +42,9 @@ class OrderSecuService
         return $order ? $order : new OrderSecu();
     }
 
-
+    public function removeOrderSecu($sessionKey){
+        $this->session->remove(OrderSecuService::PREFIX.$sessionKey);
+    }
 
 
     public function calculerPrixProduit(OrderSecu $order){
@@ -42,6 +52,46 @@ class OrderSecuService
         if($order->getCodePromo()){
             $codePromoSecu = $this->codePromoSecuRepository->findValid($order->getCodePromo());
             if($codePromoSecu) $order->setPrixProduit($codePromoSecu->getPrix());
+        }
+    }
+
+    public function saveOrder(string $stripeToken, OrderSecu $orderSecu): ?OrderSecu{
+        try{
+            $orderSecu->refresh($this->entityManager);
+            $orderSecu->getProduit()->checkValid();
+            $orderSecu->setDateCommande(new DateTime());
+            $orderSecu->setStatut(OrderSecu::CREATED);
+            $orderSecu->setAccompMontant(0);
+            $orderSecu->setInstallationFrais($orderSecu->getFraisInstallation());
+
+            $this->entityManager->persist($orderSecu);
+
+            $montantAccomp = 0;
+            foreach($orderSecu->getAccompsSession() as $accomp){
+                $accomp->refresh($this->entityManager);
+                $accomp->getProduit()->checkValid();
+
+                $accomp->setPrix($accomp->getProduit()->getPrix());
+                $orderSecu->addAccomp($accomp);
+                $this->entityManager->persist($accomp);
+
+                $montantAccomp += $accomp->getProduit()->getPrix() * $accomp->getQte();
+            }
+            $orderSecu->setAccompMontant($montantAccomp); 
+            $total = $orderSecu->getPrixProduit() + $orderSecu->getAccompMontant() + $orderSecu->getInstallationFrais();
+
+            $chargeId = $this->stripeService
+                ->createCharge(
+                    $stripeToken, 
+                    $total, [
+                        'description' => 'Paiement commande'
+                    ]);
+
+            $orderSecu->setChargeId($chargeId);        
+            $this->entityManager->flush();
+            return $orderSecu;
+        } finally {
+            $this->entityManager->clear();
         }
     }
 }

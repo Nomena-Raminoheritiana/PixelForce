@@ -137,6 +137,10 @@ class ProduitSecuAccomp implements JsonSerializable
         return $this;
     }
 
+    public function checkValid(){
+        if($this->getStatut() == 0)
+            throw new Exception("Accompagnement invalide");
+    }
 
     
 }
