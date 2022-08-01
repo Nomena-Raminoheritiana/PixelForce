@@ -11,6 +11,7 @@ use App\Form\AgentSecteurType;
 use App\Form\CoachSecteurType;
 use App\Form\ResetPasswordType;
 use App\Form\SecteurType;
+use App\Form\UserLoginType;
 use App\Form\UserSearchType;
 use App\Form\UserSecteurType;
 use App\Form\UserType;
@@ -189,7 +190,7 @@ class AdminCoachController extends AbstractController
                 return $this->redirectToRoute('admin_coach_list');    
             }
 
-            $this->addFlash('primary', "Secteur choisi avec succès, procédez maintenant à la création de son mot de passe");
+            $this->addFlash('primary', "Secteur choisi avec succès");
             return $this->redirectToRoute('admin_coach_password_generate', ['id' => $coach->getId()]);    
         }
         return $this->render('user_category/admin/coach/relate_secteur.html.twig', [
@@ -204,11 +205,12 @@ class AdminCoachController extends AbstractController
      */
     public function admin_coach_password_generate(Request $request, User $coach)
     {
-        $formUserPassword = $this->createForm(ResetPasswordType::class);
+        $formUserPassword = $this->createForm(UserLoginType::class);
         $formUserPassword->handleRequest($request);
         if ($formUserPassword->isSubmitted() && $formUserPassword->isValid()) {
             $coach->setActive(true);
-            $this->userManager->setUserPasword($coach, $request->request->get('reset_password')['password']['first'], '', false);
+            $coach->setUsername($request->request->get('user_login')['username']);
+            $this->userManager->setUserPasword($coach, $request->request->get('user_login')['password']['first'], '', false);
             $this->addFlash('success', 'Les informations sur le nouveau coach ont été bien enregistrées');
             return $this->redirectToRoute('admin_coach_list');    
         }

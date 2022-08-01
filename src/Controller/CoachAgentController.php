@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Form\InscriptionAgentType;
 use App\Form\MultipleSecteurType;
 use App\Form\ResetPasswordType;
+use App\Form\UserLoginType;
 use App\Form\UserSearchType;
 use App\Form\UserType;
 use App\Manager\EntityManager;
@@ -119,7 +120,7 @@ class CoachAgentController extends AbstractController
             $this->entityManager->save($agentSecteur);
             $this->entityManager->save($coachAgent);
 
-            $this->addFlash('success', 'Ajout de l\'utilisateur Agent efféctué avec succès');
+            $this->addFlash('success', 'Informations enregistrées avec succès');
             return $this->redirectToRoute('coach_agent_password_generate', ['id' => $agent->getId()]);
 
         }
@@ -136,20 +137,13 @@ class CoachAgentController extends AbstractController
      */
     public function coach_agent_password_generate(Request $request, User $agent)
     {
-        $formUserPassword = $this->createForm(InscriptionAgentType::class)
-            ->remove('secteur')
-            ->remove('nom')
-            ->remove('prenom')
-            ->remove('adresse')
-            ->remove('telephone')
-            ->remove('email')
-            ->remove('codePostal')
-        ;
+        $formUserPassword = $this->createForm(UserLoginType::class);
         $formUserPassword->handleRequest($request);
         if ($formUserPassword->isSubmitted() && $formUserPassword->isValid()) {
             $agent->setActive(true);
-            $this->userManager->setUserPasword($agent, $request->request->get('inscription_agent')['password']['first'], '', false);
-            $this->addFlash('success', 'Les informations sur le nouveau agent ont été bien enregistrées');
+            $agent->setUsername($request->request->get('user_login')['username']);
+            $this->userManager->setUserPasword($agent, $request->request->get('user_login')['password']['first'], '', false);
+            $this->addFlash('success', 'Ajout de l\'utilisateur Agent efféctué avec succès');
             return $this->redirectToRoute('coach_agent_list');    
         }
 
