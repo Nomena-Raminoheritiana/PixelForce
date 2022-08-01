@@ -9,7 +9,8 @@
     <div id="place-order" class="list-view product-checkout">
         <!-- Checkout Place Order Left starts -->
         <div class="checkout-items" style="overflow: auto; height: calc(100vh - 300px);">
-            {% for accomp in order.accomps %}
+            {% for accomp in order.accompsSession %}
+            <form action="{{path('client_make_ordersecu_update_accomp', {'token': token, 'id': accomp.produit.id})}}" method="get">
             <div class="card ecommerce-card">
                 <div class="item-img">
                     <a href="#">
@@ -25,7 +26,7 @@
                     <div class="item-quantity">
                         <span class="quantity-title">Quantité:</span>
                         <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
-                            <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-down" type="button" onclick="decreaseQuantity({{accomp.produit.id}})">-</button></span><input type="text" class="quantity-counter form-control" id="quantity-for-product-{{accomp.produit.id}}" value="{{accomp.qte}}"><span class="input-group-btn input-group-append bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-up" type="button" onclick="increaseQuantity({{accomp.produit.id}})">+</button></span>
+                            <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-down" type="button" onclick="decreaseQuantity({{accomp.produit.id}})">-</button></span><input type="text" class="quantity-counter form-control" id="quantity-for-product-{{accomp.produit.id}}" name="qte" value="{{accomp.qte}}"><span class="input-group-btn input-group-append bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-up" type="button" onclick="increaseQuantity({{accomp.produit.id}})">+</button></span>
                         </div>
                     </div>
                     {# <span class="text-success">Remise de 20%</span> #}
@@ -40,16 +41,17 @@
                             </p> #}
                         </div>
                     </div>
-                    <button type="button" class="btn btn-light mt-1 remove-wishlist" >
+                    <a role="button" class="btn btn-light mt-1 remove-wishlist" href="{{path('client_make_ordersecu_remove_accomp', {'token': token, 'id': accomp.produit.id})}}">
                         <i data-feather="x" class="align-middle me-25"></i>
                         <span>Retirer</span>
-                    </button>
-                    <button type="button" class="btn btn-primary btn-cart move-cart" >
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-cart move-cart" >
                         <i data-feather="shopping-cart" class="align-middle me-25"></i>
                         <span class="text-truncate">Modifier</span>
                     </button>
                 </div>
             </div>
+            </form>
             {% endfor %}
             
         </div>

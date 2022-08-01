@@ -66,9 +66,12 @@ class OrderSecu implements JsonSerializable
      */
     private $accomps;
 
+    private $accompsSession;
+
     public function __construct()
     {
         $this->accomps = new ArrayCollection();
+        $this->accompsSession = [];
     }
 
     public function getId(): ?int
@@ -214,21 +217,25 @@ class OrderSecu implements JsonSerializable
 
     //session
     public function add(OrderSecuAccomp $accomp){
+        $accompsSession = $this->getAccompsSession();
         $index = $this->indexOf($accomp->getProduit()->getId());
         if($index!=-1){
-            $qty = $this->getAccomps()->get($index)->getQte() + $accomp->getQte();
+            $qty = $accompsSession[$index]->getQte() + $accomp->getQte();
             $accomp->setQte($qty);
             $this->update($accomp);
         } else{
             //$this->checkBasketItem($basketItem);
-            $this->getAccomps()->add($accomp);
+            $accompsSession[] = $accomp;
         }
+        $this->setAccompsSession($accompsSession);
     }
 
     public function indexOf($productId){
         $index = -1;
-        for($i=0; $i<$this->getAccomps()->count() ; $i++){
-            $accomp = $this->getAccomps()->get($i);
+        $accompsSession = $this->getAccompsSession();
+        for($i=0; $i<count($accompsSession) ; $i++){
+            $accomp = $accompsSession[$i];
+            
             if($accomp->getProduit()->getId()==$productId) {
                 $index = $i;
                 break;
@@ -243,21 +250,26 @@ class OrderSecu implements JsonSerializable
 
     public function update(OrderSecuAccomp $accomp){
         //$this->checkBasketItem($basketItem);
+        $accompsSession = $this->getAccompsSession();
         $index = $this->indexOf($accomp->getProduit()->getId());
-        if($index!=-1)  $this->getAccomps()->remove($index);
 
-        $this->getAccomps()->add($accomp);
+        if($index!=-1) array_splice($accompsSession, $index, 1);
+
+        $accompsSession[] = $accomp;
+        $this->setAccompsSession($accompsSession);
     }
 
     public function remove($productId){
+        $accompsSession = $this->getAccompsSession();
         $index = $this->indexOf($productId);
-        if($index!=-1)  $this->getAccomps()->remove($index);
+        if($index!=-1)  array_splice($accompsSession, $index, 1);
+        $this->setAccompsSession($accompsSession);
     }
 
     public function getMontantAccomp(){
         $montant = 0;
-        for($i=0; $i<$this->getAccomps()->count() ; $i++){
-            $montant += $this->getAccomps()->get($i)->getMontant();
+        for($i=0; $i<count($this->getAccompsSession()) ; $i++){
+            $montant += $this->getAccompsSession()[$i]->getMontant();
         }  
         return $montant;
     }
@@ -266,5 +278,25 @@ class OrderSecu implements JsonSerializable
     {
         $vars = get_object_vars($this);
         return $vars;
+    }
+
+    /**
+     * Get the value of accompsSession
+     */ 
+    public function getAccompsSession()
+    {
+        return $this->accompsSession;
+    }
+
+    /**
+     * Set the value of accompsSession
+     *
+     * @return  self
+     */ 
+    public function setAccompsSession($accompsSession)
+    {
+        $this->accompsSession = $accompsSession;
+
+        return $this;
     }
 }
