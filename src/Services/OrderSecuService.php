@@ -78,12 +78,11 @@ class OrderSecuService
                 $montantAccomp += $accomp->getProduit()->getPrix() * $accomp->getQte();
             }
             $orderSecu->setAccompMontant($montantAccomp); 
-            $total = $orderSecu->getPrixProduit() + $orderSecu->getAccompMontant() + $orderSecu->getInstallationFrais();
 
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 
-                    $total, [
+                    $orderSecu->getTotal(), [
                         'description' => 'Paiement commande'
                     ]);
 

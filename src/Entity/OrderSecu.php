@@ -18,10 +18,10 @@ class OrderSecu implements JsonSerializable
     public const CREATED = 1;
     public const VALIDATED = 2;
 
-    // public const STATUS = [
-    //     Order::CREATED => "Créée", 
-    //     Order::VALIDATED => "Acceptée"
-    // ];
+    public const STATUS = [
+        Order::CREATED => "Créée", 
+        Order::VALIDATED => "Acceptée"
+    ];
 
     public const STATUS_DATA_FORM = [
         "Créée" => Order::CREATED, 
@@ -440,5 +440,15 @@ class OrderSecu implements JsonSerializable
         $this->chargeId = $chargeId;
 
         return $this;
+    }
+
+    public function getStatusStr(): ?string 
+    {
+        return Order::STATUS[$this->getStatut()];
+    }
+
+
+    public function getTotal(){
+        return $this->getPrixProduit() + $this->getAccompMontant() + $this->getInstallationFrais();
     }
 }
