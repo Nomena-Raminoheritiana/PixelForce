@@ -24,14 +24,14 @@ class SecteurChoiceType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $secteurs = $this->secteurRepository->findAll();
+        $secteurs = $this->secteurRepository->findBy(['active' => 1]);
         $builder
            ->add('secteur', EntityType::class, [
                'class' => Secteur::class,
                'choices' => $secteurs,
                'choice_label' => 'nom',
                'expanded' => true,
-               'multiple' => false
+               'multiple' => true
            ]);
     }
 }

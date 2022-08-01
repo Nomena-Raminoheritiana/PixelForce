@@ -52,30 +52,20 @@ class AgentInscriptionController extends AbstractController
     public function inscriptionAgent(Request $request, SecteurRepository $secteurRepository)
     {
         $user = new User();
-        $agentSecteur = new AgentSecteur();
         $form = $this->createForm(InscriptionAgentType::class, $user);
         $form->handleRequest($request);
 
-
         if($form->isSubmitted() && $form->isValid()) {
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
-            $agentSecteur->setAgent($user);
-            $agentSecteur->setStatut(1);
-            $secteur = $secteurRepository->find($request->request->get('inscription_agent')['secteur']['secteur']);
-            $agentSecteur->setSecteur($secteur);
             $user->setRoles([ User::ROLE_AGENT ]);
             $user->setAccountStatus(User::ACCOUNT_STATUS['UNPAID']);
             $this->entityManager->save($user);
-            $this->entityManager->save($agentSecteur);
-
             $this->session->set('agentId', $user->getId());
            
-            // $this->addFlash('success','Votre inscription sur Pixelforce a été effectuée avec succès.');
             return $this->redirectToRoute('agent_register_payment_intent');
-
         }
 
-        return $this->render('security/inscription/form.html.twig', [
+            return $this->render('security/inscription/form.html.twig', [
             'form' => $form->createView()
         ]);
 

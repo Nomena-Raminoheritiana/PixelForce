@@ -234,7 +234,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $coachSecteurs;
 
     /**
-     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent", fetch="EAGER")
+     * @ORM\OneToMany(targetEntity=AgentSecteur::class, mappedBy="agent", fetch="EAGER", cascade={"persist"})
      */
     private $agentSecteurs;
 

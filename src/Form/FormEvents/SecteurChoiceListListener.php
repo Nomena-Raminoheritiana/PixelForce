@@ -60,16 +60,20 @@ class SecteurChoiceListListener implements EventSubscriberInterface
             return;
         }
         try {
-            $secteurValue = $event->getForm()->get('secteur')->getData()['secteur'];
 
-            $userSecteur = (new AgentSecteur())
-                ->setAgent($user)
-                ->setSecteur($secteurValue)
-                ->setStatut(false)
-            ;
+            $secteurFormDatas = $event->getForm()->get('secteur')->getData()['secteur'];
+            foreach ($secteurFormDatas as $value) {
+                $userSecteur = (new AgentSecteur())
+                    ->setAgent($user)
+                    ->setSecteur($value)
+                    ->setStatut(true)
+                    ->setDateValidation(new \DateTime())
+                ;
 
-            // $user->removeAllUserSecteur();
-            // $user->addUserSecteur($userSecteur);
+                // $user->removeAllAgentSecteur();
+                $user->addAgentSecteur($userSecteur);
+            }
+
 
         } catch(OutOfBoundsException $exception)
         {

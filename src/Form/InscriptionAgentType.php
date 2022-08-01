@@ -118,7 +118,8 @@ class InscriptionAgentType extends AbstractType
                     new NotNull([],'champ obligatoire'),
                 ],
                 'mapped' => false
-            ])->addEventSubscriber(new SecteurChoiceListListener())
+            ])
+            ->addEventSubscriber(new SecteurChoiceListListener())
         ;
     }
 }
