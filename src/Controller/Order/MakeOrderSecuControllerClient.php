@@ -6,6 +6,7 @@ use App\Controller\BaseControllerClient;
 use App\Entity\BasketItem;
 use App\Entity\Order;
 use App\Entity\OrderSecu;
+use App\Entity\OrderSecuAccomp;
 use App\Entity\ProduitSecu;
 use App\Entity\ProduitSecuAccomp;
 use App\Entity\TypeAbonnementSecu;
@@ -196,6 +197,65 @@ class MakeOrderSecuControllerClient extends AbstractController
             'token' => $token
         ]);
 
+    }
+    
+    /**
+     * @Route("/accompAdd/{id}", name="client_make_ordersecu_add_accomp")
+     */
+    public function addAcomp($token, ProduitSecuAccomp $product, Request $request): Response
+    {
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        try{
+
+            $accomp = new OrderSecuAccomp();
+            $accomp->setProduit($product);
+            $accomp->setQte(1);
+            $order->add($accomp);
+            return $this->redirectToRoute('client_make_ordersecu_accomplist', ['token' => $token]);
+        } catch(Exception $ex){
+            $this->addFlash('danger', $ex->getMessage());
+            return $this->redirectToRoute('client_produitsecuaccomp_list', ['token' => $token]);
+        }
+    }
+
+    /**
+     * @Route("/accompList", name="client_make_ordersecu_accomplist")
+     */
+    public function accompList($token, Request $request, PaginatorInterface $paginator): Response
+    {
+
+        $error = null;
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_accomplist.html.twig', [
+            'order' => $order,
+            'error' => $error,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
     }
     
 

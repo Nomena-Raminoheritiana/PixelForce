@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use App\Repository\OrderSecuRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=OrderSecuRepository::class)
  */
-class OrderSecu
+class OrderSecu implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -57,6 +60,16 @@ class OrderSecu
     private $client;
 
     private $sessionKey;
+
+    /**
+     * @ORM\OneToMany(targetEntity=OrderSecuAccomp::class, mappedBy="orderSecu")
+     */
+    private $accomps;
+
+    public function __construct()
+    {
+        $this->accomps = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -165,5 +178,93 @@ class OrderSecu
         $this->sessionKey = $sessionKey;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderSecuAccomp>
+     */
+    public function getAccomps(): Collection
+    {
+        return $this->accomps;
+    }
+
+    public function addAccomp(OrderSecuAccomp $accomp): self
+    {
+        if (!$this->accomps->contains($accomp)) {
+            $this->accomps[] = $accomp;
+            $accomp->setOrderSecu($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccomp(OrderSecuAccomp $accomp): self
+    {
+        if ($this->accomps->removeElement($accomp)) {
+            // set the owning side to null (unless already changed)
+            if ($accomp->getOrderSecu() === $this) {
+                $accomp->setOrderSecu(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+    //session
+    public function add(OrderSecuAccomp $accomp){
+        $index = $this->indexOf($accomp->getProduit()->getId());
+        if($index!=-1){
+            $qty = $this->getAccomps()->get($index)->getQte() + $accomp->getQte();
+            $accomp->setQte($qty);
+            $this->update($accomp);
+        } else{
+            //$this->checkBasketItem($basketItem);
+            $this->getAccomps()->add($accomp);
+        }
+    }
+
+    public function indexOf($productId){
+        $index = -1;
+        for($i=0; $i<$this->getAccomps()->count() ; $i++){
+            $accomp = $this->getAccomps()->get($i);
+            if($accomp->getProduit()->getId()==$productId) {
+                $index = $i;
+                break;
+            }
+        }
+        return $index;
+    }
+    
+    // public function checkBasketItem(BasketItem $basketItem){
+    //     $basketItem->getProduit()->checkQty($basketItem->getQuantity());
+    // }
+
+    public function update(OrderSecuAccomp $accomp){
+        //$this->checkBasketItem($basketItem);
+        $index = $this->indexOf($accomp->getProduit()->getId());
+        if($index!=-1)  $this->getAccomps()->remove($index);
+
+        $this->getAccomps()->add($accomp);
+    }
+
+    public function remove($productId){
+        $index = $this->indexOf($productId);
+        if($index!=-1)  $this->getAccomps()->remove($index);
+    }
+
+    public function getMontantAccomp(){
+        $montant = 0;
+        for($i=0; $i<$this->getAccomps()->count() ; $i++){
+            $montant += $this->getAccomps()->get($i)->getMontant();
+        }  
+        return $montant;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }
