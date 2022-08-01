@@ -78,7 +78,7 @@
                         <td class="text-right">{{order.total | number_format(2, ',', ' ') }}</td>
                         <td>{{order.statusStr}}</td>
                         <td class="col-action ">
-                            <a href="{{path('client_order_details', {'id': order.id, 'token': token})}}">
+                            <a href="{{path('client_ordersecu_details', {'id': order.id, 'token': token})}}">
                                 <i data-feather="eye"></i>
                             </a>
                         </td>

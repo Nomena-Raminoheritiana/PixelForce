@@ -432,9 +432,9 @@ class MakeOrderSecuControllerClient extends AbstractController
                 $order->setClient($user);
                 $order->setAgent($agent);
                 $order->setSecteur($secteur);
-                $this->orderSecuService->saveOrder($stripeToken, $order);
+                $order = $this->orderSecuService->saveOrder($stripeToken, $order);
                 $this->orderSecuService->removeOrderSecu($order->getSessionKey());
-                //return $this->redirectToRoute('client_order_details', ['id' => $order->getId(), 'token' => $token]);
+                return $this->redirectToRoute('client_ordersecu_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
                 $this->addFlash('danger', $error);
