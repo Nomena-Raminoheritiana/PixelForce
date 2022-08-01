@@ -65,6 +65,20 @@
                         <div class="line">
                             <i data-feather="chevron-right" class="font-medium-2"></i>
                         </div>
+                        <div class="step {% if active == 'installation' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i data-feather="settings" class="font-medium-3"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Installation</span>
+                                    <span class="bs-stepper-subtitle">Quelle option choisissez-vous ?</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line">
+                            <i data-feather="chevron-right" class="font-medium-2"></i>
+                        </div>
                         <div class="step {% if active == 'payment' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
                             <button type="button" class="step-trigger">
                                 <span class="bs-stepper-box">

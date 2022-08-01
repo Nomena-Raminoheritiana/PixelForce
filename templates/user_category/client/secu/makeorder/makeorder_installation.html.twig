@@ -1,0 +1,136 @@
+{% set active = 'installation' %}
+{% extends 'user_category/client/secu/makeorder/base_makeorder.html.twig' %}
+
+
+
+{% block content_makeorder %} 
+<div id="step-cart" class="content active dstepper-block" role="tabpanel" aria-labelledby="step-cart-trigger">
+    
+    <div id="place-order" class="list-view product-checkout">
+        <!-- Checkout Place Order Left starts -->
+        <div class="checkout-items" >
+            <div class="card">
+                <div class="card-body">
+                {{ form_start(form, {'attr': {}}) }}
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="mb-2">
+                            {{form_label(form.typeInstallation)}}
+                            {{form_widget(form.typeInstallation)}}
+                            {{form_errors(form.typeInstallation)}}
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-next delivery-address mt-3">Enregistrer</button>
+                    </div>
+                </div>    
+
+                {{ form_end(form)}}
+                </div>
+            </div>    
+            
+        </div>
+        <!-- Checkout Place Order Left ends -->
+
+        <!-- Checkout Place Order Right starts -->
+        <div class="checkout-options" >
+            <div class="card">
+                <div class="card-body">
+                    <label class="section-label form-label mb-3">Détails de la commande</label>
+                    <div class="price-details">
+                        <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
+                            <li class="price-detail">
+                                <div class="detail-title">{{order.typeAbonnement.nom}}</div>
+                                {# <div class="detail-amt discount-amt text-success">Gratuit</div> #}
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">Prix du produit</div>
+                                <div class="detail-amt discount-amt" id="product-cost" data-product-cost="{{order.prixProduit}}">{{order.prixProduit | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">Montant des accompagnements</div>
+                                <div class="detail-amt discount-amt" id="accomp-cost" data-accomp-cost="{{order.montantAccomp}}">{{order.montantAccomp | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail" id="installation">
+                                <div class="detail-title">Frais d'installation</div>
+                                <div class="detail-amt discount-amt" id="installation-cost" data-installation-cost="{{order.fraisInstallation}}">{{order.fraisInstallation | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                        </ul>
+                        <hr />
+                        <ul class="list-unstyled">
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Montant total  :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" >{{(order.prixProduit + order.montantAccomp + order.fraisInstallation ) | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                        </ul>
+                        {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                    </div>
+                </div>
+            </div>
+            <!-- Checkout Place Order Right ends -->
+        </div>
+    </div>
+    <!-- Checkout Place order Ends -->
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    let types = {{ types|json_encode() | raw }};
+    console.log(types);
+    let totalCostDOM = document.getElementById(`total-cost`);
+    let productCostDOM = document.getElementById(`product-cost`);
+    let accompCostDOM = document.getElementById(`accomp-cost`);
+    let installationCostDOM = document.getElementById(`installation-cost`);
+    let installationJQuery = $('#installation');
+
+
+    function formatPrice(price){
+        let text = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
+        return text;
+    }
+
+    function getType(id){
+        for(let i=0; i<types.length; i++){
+            if(types[i].id == id) return types[i];
+        }
+        return null;
+    }
+
+    
+    function checkSelected(){
+        let val = $('input[name="installation-form[typeInstallation]"]:checked').val();
+        let type = getType(val);
+        setTypeInstallation(type);
+    }
+
+    function setTypeInstallation(type){
+        installationCostDOM.innerHTML = formatPrice(type.prix);
+        installationCostDOM.dataset.installationCost = type.prix;
+        setTotalCost();
+
+        if(type.prix > 0){
+            installationJQuery.show();
+        } else{
+            installationJQuery.hide();
+        }
+    }
+
+    
+    function setTotalCost(){
+        totalCostDOM.innerHTML = formatPrice(parseFloat(productCostDOM.dataset.productCost) + parseFloat(accompCostDOM.dataset.accompCost) + parseFloat(installationCostDOM.dataset.installationCost));
+    }
+
+    $('input[name="installation-form[typeInstallation]"]').change(function (e){
+        checkSelected();
+    });
+
+    
+    checkSelected();
+
+</script>
+{% endblock %}
+

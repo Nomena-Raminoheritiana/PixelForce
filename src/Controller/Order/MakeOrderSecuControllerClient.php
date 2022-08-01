@@ -10,11 +10,13 @@ use App\Entity\OrderSecuAccomp;
 use App\Entity\ProduitSecu;
 use App\Entity\ProduitSecuAccomp;
 use App\Entity\TypeAbonnementSecu;
+use App\Entity\TypeInstallationSecu;
 use App\Entity\Utilisateur;
 use App\Form\MyProduitSecuAccompFilterType;
 use App\Form\OrderClientFilterType;
 use App\Repository\OrderRepository;
 use App\Repository\TypeAbonnementSecuRepository;
+use App\Repository\TypeInstallationSecuRepository;
 use App\Repository\UserRepository;
 use App\Services\OrderSecuService;
 use App\Services\SearchService;
@@ -317,4 +319,67 @@ class MakeOrderSecuControllerClient extends AbstractController
         return $this->redirectToRoute('client_make_ordersecu_accomplist', ['token' => $token]);
     }
 
+
+    /**
+     * @Route("/installation", name="client_make_ordersecu_installation")
+     */
+    public function installation($token, Request $request, FormFactoryInterface $formFactory, TypeInstallationSecuRepository $typeInstallationSecuRepository): Response
+    {
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        $types = $typeInstallationSecuRepository->findAll();
+        $form = $formFactory
+            ->createNamedBuilder("installation-form", FormType::class, $order)
+            ->add('typeInstallation', EntityType::class, array(
+                'label' => false,
+                'label_attr' => array(
+                    'class' => 'radio'
+                ),
+                'required' => true,
+                'class' => TypeInstallationSecu::class,
+                'choices' => $types,
+                'choice_label' => function(?TypeInstallationSecu $type) {
+                    $text =  $type->getDescription();
+                    if($type->getPrix() > 0){
+                        $text .= ' ( + '.number_format($type->getPrix(), 2, ',', ' ').' €)';
+                    }
+                    return $text;
+                },
+                'expanded' => true,
+                'data' => $types[0]
+            ))
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $this->orderSecuService->setOrderSecu($order);
+                //return $this->redirectToRoute('client_produitsecuaccomp_list', ['token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+            }
+
+        }
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_installation.html.twig', [
+            'order' => $order,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent,
+            'types' => $types
+        ]);
+
+    }
 }

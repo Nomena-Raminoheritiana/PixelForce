@@ -68,6 +68,12 @@ class OrderSecu implements JsonSerializable
 
     private $accompsSession;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=TypeInstallationSecu::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $typeInstallation;
+
     public function __construct()
     {
         $this->accomps = new ArrayCollection();
@@ -298,5 +304,23 @@ class OrderSecu implements JsonSerializable
         $this->accompsSession = $accompsSession;
 
         return $this;
+    }
+
+    public function getTypeInstallation(): ?TypeInstallationSecu
+    {
+        return $this->typeInstallation;
+    }
+
+    public function setTypeInstallation(?TypeInstallationSecu $typeInstallation): self
+    {
+        $this->typeInstallation = $typeInstallation;
+
+        return $this;
+    }
+
+
+
+    public function getFraisInstallation(){
+        return $this->getTypeInstallation() ? $this->getTypeInstallation()->getPrix() : 0;
     }
 }

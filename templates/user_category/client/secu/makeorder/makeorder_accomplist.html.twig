@@ -5,7 +5,12 @@
 
 {% block content_makeorder %} 
 <div id="step-cart" class="content active dstepper-block" role="tabpanel" aria-labelledby="step-cart-trigger">
-    
+    <div class="d-flex justify-content-end align-items-center">
+        <a role="button" class="btn btn-success" href="{{path('client_produitsecuaccomp_list', {'token': token})}}">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            <span class="text-truncate">Ajouter plus d'accompagnement</span>
+        </a>
+    </div>
     <div id="place-order" class="list-view product-checkout">
         <!-- Checkout Place Order Left starts -->
         <div class="checkout-items" style="overflow: auto; height: calc(100vh - 300px);">
@@ -84,7 +89,7 @@
                                 <div class="detail-amt fw-bolder" id="total-cost" >{{(order.prixProduit + order.montantAccomp) | number_format(2, ',', ' ')}} €</div>
                             </li>
                         </ul>
-                        {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                        <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_make_ordersecu_installation', {'token': token})}}">Suivante</a>
                     </div>
                 </div>
             </div>

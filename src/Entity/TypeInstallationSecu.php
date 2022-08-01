@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\TypeInstallationSecuRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=TypeInstallationSecuRepository::class)
  */
-class TypeInstallationSecu
+class TypeInstallationSecu implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -54,5 +55,11 @@ class TypeInstallationSecu
         $this->prix = $prix;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
     }
 }
