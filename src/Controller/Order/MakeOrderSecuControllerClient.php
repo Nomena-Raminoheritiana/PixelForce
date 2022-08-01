@@ -3,14 +3,19 @@
 namespace App\Controller\Order;
 
 use App\Controller\BaseControllerClient;
+use App\Entity\BasketItem;
 use App\Entity\Order;
+use App\Entity\OrderSecu;
 use App\Entity\ProduitSecu;
+use App\Entity\ProduitSecuAccomp;
 use App\Entity\TypeAbonnementSecu;
 use App\Entity\Utilisateur;
+use App\Form\MyProduitSecuAccompFilterType;
 use App\Form\OrderClientFilterType;
 use App\Repository\OrderRepository;
 use App\Repository\TypeAbonnementSecuRepository;
 use App\Repository\UserRepository;
+use App\Services\OrderSecuService;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +23,7 @@ use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,24 +39,64 @@ class MakeOrderSecuControllerClient extends AbstractController
     private $entityManager;
     private $userRepository;
     private $session;
+    private $orderSecuService;
 
-    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, SessionInterface $session)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, SessionInterface $session, OrderSecuService $orderSecuService)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->session = $session;
+        $this->orderSecuService = $orderSecuService;
     }
 
     /**
-     * @Route("/{id}", name="client_make_ordersecu_abonnement")
+     * @Route("/make/{id}", name="client_make_ordersecu")
      */
-    public function index($token, ProduitSecu $produit, Request $request, FormFactoryInterface $formFactory, TypeAbonnementSecuRepository $typeAbonnementSecuRepository): Response
+    public function index($token, ProduitSecu $produit, Request $request): Response
     {
         
+        try{
+            $produit->checkValid();
+            $order = new OrderSecu();
+            $order->setProduit($produit);
+
+            $agent = $this->userRepository->findAgentByToken($token);
+            $user = (object) $this->getUser();
+            $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+            $order->setSessionKey($sessionKey);
+            $this->orderSecuService->setOrderSecu($order);
+            return $this->redirectToRoute('client_make_ordersecu_abonnement', [
+                'token' => $token
+            ]);
+        } catch(Exception $ex){
+            $this->addFlash('danger', $ex->getMessage());
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+    }
+    /**
+     * @Route("/order", name="client_make_ordersecu_abonnement")
+     */
+    public function order($token, Request $request, FormFactoryInterface $formFactory, TypeAbonnementSecuRepository $typeAbonnementSecuRepository): Response
+    {
         $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $user->getId());
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
         $types = $typeAbonnementSecuRepository->findAll();
         $form = $formFactory
-            ->createNamedBuilder("abonnement-form")
+            ->createNamedBuilder("abonnement-form", FormType::class, $order)
             ->add('typeAbonnement', EntityType::class, array(
                 'label' => false,
                 'label_attr' => array(
@@ -76,7 +122,9 @@ class MakeOrderSecuControllerClient extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                
+                $this->orderSecuService->calculerPrixProduit($order);
+                $this->orderSecuService->setOrderSecu($order);
+                return $this->redirectToRoute('client_produitsecuaccomp_list', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
@@ -84,7 +132,7 @@ class MakeOrderSecuControllerClient extends AbstractController
         }
         
         return $this->render('user_category/client/secu/makeorder/makeorder_abonnement.html.twig', [
-            'produit' => $produit,
+            'order' => $order,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'form' => $form->createView(),
             'token' => $token,
@@ -94,6 +142,61 @@ class MakeOrderSecuControllerClient extends AbstractController
 
     }
 
+    /**
+     * @Route("/produitSecuAccomp", name="client_produitsecuaccomp_list")
+     */
+    public function produitSecuAccomp($token, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $error = null;
+        $page = $request->query->get('page', 1);
+        $limit = 6;
+        $criteria = [
+            ['prop' => 'prixMin', 'op' => '>=', "col" => "prix"],
+            ['prop' => 'prixMax', 'op' => '<=', "col" => "prix"],
+            ['prop' => 'description', 'op' => 'LIKE'],
+            ['prop' => 'nom', 'op' => 'LIKE']
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(MyProduitSecuAccompFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('p')
+            ->from(ProduitSecuAccomp::class, 'p')
+            ->join('p.secteur', 's')
+        ;  
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'p'));   
+        $query->where($where["where"]." and p.statut != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $secteurId;
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'p.id', 'direction' => 'asc']);
+
+        $productList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        return $this->render('user_category/client/secu/productaccomp/productaccomp_list.html.twig', [
+            'productList' => $productList,
+            'form' => $form->createView(),
+            'error' => $error,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+
+    }
     
 
 }

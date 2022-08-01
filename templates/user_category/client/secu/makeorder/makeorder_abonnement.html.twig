@@ -11,13 +11,13 @@
         <div class="checkout-items" style="overflow: auto; height: calc(100vh - 300px);">
             <div class="card ecommerce-card">
                 <div class="item-img">
-                    <a href="{{path('client_productsecu_details', {'token': token, 'id': produit.id})}}">
-                        <img src="{{ asset( filesDirectory ~ produit.photo) }}" alt="Image pour {{produit.nom}}" />
+                    <a href="{{path('client_productsecu_details', {'token': token, 'id': order.produit.id})}}">
+                        <img src="{{ asset( filesDirectory ~ order.produit.photo) }}" alt="Image pour {{order.produit.nom}}" />
                     </a>
                 </div>
                 <div class="card-body">
                     <div class="item-name">
-                        <h6 class="mb-0"><a href="{{path('client_productsecu_details', {'token': token, 'id': produit.id})}}" class="text-body">{{produit.nom}}</a></h6>
+                        <h6 class="mb-0"><a href="{{path('client_productsecu_details', {'token': token, 'id': order.produit.id})}}" class="text-body">{{order.produit.nom}}</a></h6>
                     
                     </div>
                     {# <span class="text-success mb-1">En stock</span>
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <span class="text-success">Remise de 20%</span> #}
-                    <span class="delivery-date text-muted"><i><b>Description :</b></i> {{produit.description|raw}}</span>
+                    <span class="delivery-date text-muted"><i><b>Description :</b></i> {{order.produit.description|raw}}</span>
                 </div>
                 {# <div class="item-options text-center">
                     <div class="item-wrapper">
@@ -84,7 +84,7 @@
                                     <button type="button" class="btn btn-primary btn-sm" id="btn-check-code-promo">Vérifier&nbsp;<span class="rotate invisible" id="check-spinner"><i class="fa fa-spinner" aria-hidden="true"></i></span></button>
                                 </div>
                             </div>    
-                        {{ form_end(form) }}
+                        
                         {# <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
                             <li class="price-detail">
                                 <div class="detail-title">Prix de livraison</div>
@@ -102,7 +102,8 @@
                                 <div class="detail-amt fw-bolder"><span id="prix">0,00 €</span></div>
                             </li>
                         </ul>
-                        {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                        <button type="submit" class="btn btn-primary w-100 btn-next place-order">Suivante</button>
+                        {{ form_end(form) }}
                     </div>
                 </div>
             </div>
