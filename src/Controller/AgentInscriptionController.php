@@ -58,6 +58,7 @@ class AgentInscriptionController extends AbstractController
         if($form->isSubmitted() && $form->isValid()) {
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
             $user->setRoles([ User::ROLE_AGENT ]);
+            $user->setActive(1);
             $user->setAccountStatus(User::ACCOUNT_STATUS['UNPAID']);
             $this->entityManager->save($user);
             $this->session->set('agentId', $user->getId());

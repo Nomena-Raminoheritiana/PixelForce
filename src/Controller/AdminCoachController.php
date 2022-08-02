@@ -236,6 +236,20 @@ class AdminCoachController extends AbstractController
         }
         return $this->redirectToRoute('admin_coach_list');    
     }
+
+    /**
+     * @Route("/admin/coach/{id}/reactiver", name="admin_coach_reactiver")
+     */
+    public function admin_coach_reactiver(User $coach, Request $request)
+    {
+
+        $coach->setActive(1);
+        $this->entityManager->save($coach);
+
+        $this->addFlash('success', 'Coach réactiver');
+
+        return $this->redirectToRoute('admin_coach_list');
+    }
     
     
     /**

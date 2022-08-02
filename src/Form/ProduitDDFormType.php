@@ -3,9 +3,11 @@
 namespace App\Form;
 
 use App\Entity\ProduitDD;
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -21,12 +23,21 @@ use FOS\CKEditorBundle\Form\Type\CKEditorType;
 class ProduitDDFormType extends AbstractType
 {
     private $CategorieDDRepository;
-    public function __construct(CategorieDDRepository $CategorieDDRepository){
+    /**
+     * @var Security
+     */
+    private $security;
+
+    public function __construct(CategorieDDRepository $CategorieDDRepository, Security $security){
         $this->CategorieDDRepository = $CategorieDDRepository;
+        $this->security = $security;
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $categoryList = $this->CategorieDDRepository->findAll();
+        /** @var  $user User */
+        $user = $this->security->getUser();
+        $secteur = $user->getSecteurByCoach();
+        $categoryList = $this->CategorieDDRepository->findBy(['secteur' => $secteur]);
         $builder
             ->add('nom', TextType::class, [
                 "label" => "Nom",

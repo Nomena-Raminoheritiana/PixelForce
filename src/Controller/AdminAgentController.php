@@ -173,6 +173,20 @@ class AdminAgentController extends AbstractController
     }
 
     /**
+     * @Route("/admin/agent/{id}/reactiver", name="admin_agent_reactiver")
+     */
+    public function admin_agent_reactiver(User $coach, Request $request)
+    {
+
+        $coach->setActive(1);
+        $this->entityManager->save($coach);
+
+        $this->addFlash('success', 'Agent réactiver');
+
+        return $this->redirectToRoute('admin_agent_list');
+    }
+
+    /**
      * @Route("/admin/agent/secteur/multiple/add", name="admin_agent_secteur_multiple_add")
      * @return Json
      */

@@ -47,7 +47,7 @@
                 </li>
                 <li class="mb-75">
                     <span class="fw-bolder me-25">Statut:</span>
-                    <span class="badge bg-light-success">Active</span>
+                    <span class="badge bg-light-success">{{ user.active == 1 ? 'Active' : 'Banni' }}</span>
                 </li>
 {#                <li class="mb-75">#}
 {#                    <span class="fw-bolder me-25">Role:</span>#}
