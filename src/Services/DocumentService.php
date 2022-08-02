@@ -33,6 +33,20 @@ class DocumentService
     private $baseUrl;
     private $stripeService;
     private $twig;
+    public const FIELDS_SEPA = [
+        ['field' => 'nom_prenom_raison_sociale', 'debut' => 97, 'fin' => 97],
+        ['field' => 'adresse_nom_rue', 'debut' => 98, 'fin' => 98],
+        ['field' => 'ville', 'debut' => 99, 'fin' => 99],
+        ['field' => 'pays', 'debut' => 100, 'fin' => 100],
+        ['field' => 'code_postal', 'debut' => 105, 'fin' => 109],
+        ['field' => 'lieu_signature', 'debut' => 102, 'fin' => 102],
+        ['field' => 'date_signature', 'debut' => 103, 'fin' => 103],
+        ['field' => 'creancier_n_client', 'debut' => 101, 'fin' => 101],
+        ['field' => 'creancier_code_rum', 'debut' => 104, 'fin' => 104],
+        ['field' => 'coordonnees_compte', 'debut' => 110, 'fin' => 136],
+        ['field' => 'code_bic', 'debut' => 137, 'fin' => 147],
+        ['field' => 'paiement', 'debut' => 148, 'fin' => 148],
+    ];
     
 
     public function __construct(
@@ -159,6 +173,18 @@ class DocumentService
         return $metaData; */
     }
 
+    public function getDataSepa($tab){
+        $result = [];
+        for($i=0; $i<count(DocumentService::FIELDS_SEPA); $i++){
+            $field = DocumentService::FIELDS_SEPA[$i];
+            $val = '';
+            for($j=$field['debut']; $j<=$field['fin']; $j++){
+                $val .= $tab[$j]['FieldValue'];
+            }
+            $result[$field['field']] = $val;
+        }
+        return $result;
+    }
 
     public function signContrat($contrat, $output, $signature){
         try{

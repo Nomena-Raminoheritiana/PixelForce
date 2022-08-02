@@ -129,6 +129,11 @@ class OrderSecu implements JsonSerializable
      */
     private $contratSigned;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $sepa = [];
+
     
 
     public function __construct()
@@ -481,6 +486,18 @@ class OrderSecu implements JsonSerializable
     public function setContratSigned(?string $contratSigned): self
     {
         $this->contratSigned = $contratSigned;
+
+        return $this;
+    }
+
+    public function getSepa(): ?array
+    {
+        return $this->sepa;
+    }
+
+    public function setSepa(?array $sepa): self
+    {
+        $this->sepa = $sepa;
 
         return $this;
     }
