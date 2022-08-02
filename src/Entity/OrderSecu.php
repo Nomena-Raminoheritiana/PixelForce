@@ -124,6 +124,11 @@ class OrderSecu implements JsonSerializable
      */
     private $contratRempli;
 
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $contratSigned;
+
     
 
     public function __construct()
@@ -464,6 +469,18 @@ class OrderSecu implements JsonSerializable
     public function setContratRempli(string $contratRempli): self
     {
         $this->contratRempli = $contratRempli;
+
+        return $this;
+    }
+
+    public function getContratSigned(): ?string
+    {
+        return $this->contratSigned;
+    }
+
+    public function setContratSigned(?string $contratSigned): self
+    {
+        $this->contratSigned = $contratSigned;
 
         return $this;
     }

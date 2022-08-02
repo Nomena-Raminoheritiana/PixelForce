@@ -34,6 +34,7 @@
         "sasedev/mpdf-bundle": "^2.0",
         "sensio/framework-extra-bundle": "^6.1",
         "setasign/fpdi": "^2.3",
+        "smalot/pdfparser": "^2.2",
         "stof/doctrine-extensions-bundle": "^1.7",
         "stripe/stripe-php": "^8.10",
         "symfony/apache-pack": "^1.0",

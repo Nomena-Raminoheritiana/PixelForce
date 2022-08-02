@@ -19,6 +19,7 @@ use App\Repository\SecteurRepository;
 use App\Repository\TypeAbonnementSecuRepository;
 use App\Repository\TypeInstallationSecuRepository;
 use App\Repository\UserRepository;
+use App\Services\DocumentService;
 use App\Services\FileHandler;
 use App\Services\OrderSecuService;
 use App\Services\SearchService;
@@ -434,6 +435,59 @@ class MakeOrderSecuControllerClient extends AbstractController
     }
 
     /**
+     * @Route("/signContrat", name="client_make_ordersecu_sign_contrat")
+     */
+    public function signContrat($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository, DocumentService $documentService): Response
+    {
+        $filesDirectory = $this->getParameter('files_directory_relative');
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        $form = $formFactory
+            ->createNamedBuilder("sign-contrat-form", FormType::class)
+            ->add('signature', HiddenType::class, [
+                "label" => "Signature",
+                'mapped' => false,
+                "required" => true
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $signature = $form->get('signature')->getData();
+                $photo = $this->fileHandler->saveBase64($signature, $filesDirectory."secu/signature/".$user->getId()."_".date('Y-m-d-H-i-s').'.png');
+                $documentService->signContrat($order->getContratRempli(), "secu/contrat/signed/".$user->getId()."_".date('Y-m-d-H-i-s').".pdf", $photo);
+                return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_sign_contrat.html.twig', [
+            'order' => $order,
+            'filesDirectory' => $filesDirectory,
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent
+        ]);
+
+    }
+
+    /**
      * @Route("/downloadContrat", name="client_make_ordersecu_download_contrat")
      */
     public function downloadContrat($token, SecteurRepository $secteurRepository): Response
@@ -456,8 +510,9 @@ class MakeOrderSecuControllerClient extends AbstractController
     /**
      * @Route("/uploadContrat", name="client_make_ordersecu_upload_contrat")
      */
-    public function uploadContrat($token, Request $request, FormFactoryInterface $formFactory): Response
+    public function uploadContrat($token, Request $request, FormFactoryInterface $formFactory, DocumentService $documentService): Response
     {
+        $filesDirectory = $this->getParameter('files_directory_relative');
         $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
@@ -499,7 +554,8 @@ class MakeOrderSecuControllerClient extends AbstractController
                 $filename = $this->fileHandler->upload($file, "secu/contrat/rempli/".$user->getId()."/".date('Y-m-d-H-i-s'));
                 $order->setContratRempli($filename);
                 $this->orderSecuService->setOrderSecu($order);
-                return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token]);
+                //var_dump($documentService->getData($filename));
+                return $this->redirectToRoute('client_make_ordersecu_sign_contrat', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
                 $this->addFlash('danger', $error);
@@ -509,7 +565,7 @@ class MakeOrderSecuControllerClient extends AbstractController
         
         return $this->render('user_category/client/secu/makeorder/makeorder_upload_contrat.html.twig', [
             'order' => $order,
-            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'filesDirectory' => $filesDirectory,
             'form' => $form->createView(),
             'token' => $token,
             'agent' => $agent

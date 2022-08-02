@@ -143,4 +143,47 @@ class DocumentService
         }
     }
 
+
+    public function getData($filepath){
+        $pdf = new Pdf( $this->filesDirectory.'/'.$filepath);
+        $result = $pdf->getDataFields();
+        if ($result === false) {
+            $error = $pdf->getError();
+            throw new \Exception($error);
+        }
+
+        return $result->__toArray();
+        /* $parser = new \Smalot\PdfParser\Parser();
+        $pdf = $parser->parseFile($this->filesDirectory.'/'.$filepath);
+        $metaData = $pdf->getDetails();
+        return $metaData; */
+    }
+
+
+    public function signContrat($contrat, $output, $signature){
+        try{
+            $source = $this->filesDirectory.'/'.$contrat;
+            $outputPath = $this->filesDirectory.'/'.$output;
+
+            // Flatten form datas of pdf :
+            $this->flattenDocument($source, $outputPath, null);
+
+            $pdf = new Fpdi();
+            $pageCount = $pdf->setSourceFile($outputPath);
+
+            for($i=1; $i<=$pageCount; $i++){
+                $pdf->AddPage();
+                $tplId = $pdf->importPage($i);
+                $pdf->useTemplate($tplId);
+                if($i == 4){
+                    $pdf->Image($signature, 0, 180, 120);
+                }
+            }
+            
+            $pdf->Output($outputPath, 'F');
+            return $output;
+        } finally{
+            $this->entityManager->clear();
+        }
+    }
 }
