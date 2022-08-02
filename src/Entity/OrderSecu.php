@@ -119,6 +119,11 @@ class OrderSecu implements JsonSerializable
      */
     private $chargeId;
 
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $contratRempli;
+
     
 
     public function __construct()
@@ -449,5 +454,17 @@ class OrderSecu implements JsonSerializable
 
     public function getTotal(){
         return $this->getPrixProduit() + $this->getAccompMontant() + $this->getInstallationFrais();
+    }
+
+    public function getContratRempli(): ?string
+    {
+        return $this->contratRempli;
+    }
+
+    public function setContratRempli(string $contratRempli): self
+    {
+        $this->contratRempli = $contratRempli;
+
+        return $this;
     }
 }

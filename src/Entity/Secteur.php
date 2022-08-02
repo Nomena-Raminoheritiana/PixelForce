@@ -28,6 +28,7 @@ class Secteur implements JsonSerializable
     /**
      * @ORM\Column(type="text", nullable=true)
      */
+    
     private $description;
 
     /**
