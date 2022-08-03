@@ -186,7 +186,7 @@ class AdminAgentController extends AbstractController
             $agent->setActive(-1);
             $this->entityManager->save($agent);
 
-            $this->addFlash( 'danger', 'Agent supprimé');
+            $this->addFlash( 'danger', 'L\'agent a été banni du plateforme avec succès');
         }
         return $this->redirectToRoute('admin_agent_list');    
     }
@@ -200,7 +200,7 @@ class AdminAgentController extends AbstractController
         $coach->setActive(1);
         $this->entityManager->save($coach);
 
-        $this->addFlash('success', 'Le compte de l'agent a été réactivé');
+        $this->addFlash('success', 'Le compte de l\'agent a été réactivé');
 
         return $this->redirectToRoute('admin_agent_list');
     }
