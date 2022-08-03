@@ -76,6 +76,11 @@ class DemandeDevis
      */
     private $produit;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $files = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -209,6 +214,18 @@ class DemandeDevis
     public function setProduit(?ProduitDD $produit): self
     {
         $this->produit = $produit;
+
+        return $this;
+    }
+
+    public function getFiles(): ?array
+    {
+        return $this->files;
+    }
+
+    public function setFiles(?array $files): self
+    {
+        $this->files = $files;
 
         return $this;
     }
