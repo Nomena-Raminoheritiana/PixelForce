@@ -5,11 +5,13 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\AgentSecteur;
+use App\Entity\PlanAgentAccount;
 use App\Form\InscriptionAgentType;
 use App\Manager\EntityManager;
 use App\Manager\StripeManager;
 use App\Manager\UserManager;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\PlanAgentAccountRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Services\StripeService;
@@ -34,15 +36,24 @@ class AgentInscriptionController extends AbstractController
     /** @var SessionInterface $session */
     private $session;
 
-    protected $userRepository;
+    /** @var UserRepository $userRepository */
+    private $userRepository;
 
-    public function __construct(EntityManager $entityManager, UserManager $userManager, StripeManager $stripeManager, SessionInterface $session, UserRepository $userRepository)
+    /** @var AgentSecteurRepository $repoAgentSecteur */
+    private $repoAgentSecteur;
+
+    /** @var PlanAgentAccountRepository $repoPlanAgentAccount */
+    protected $repoPlanAgentAccount;
+
+    public function __construct(EntityManager $entityManager, UserManager $userManager, StripeManager $stripeManager, SessionInterface $session, UserRepository $userRepository, AgentSecteurRepository $repoAgentSecteur, PlanAgentAccountRepository $repoPlanAgentAccount)
     {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->stripeManager = $stripeManager;
         $this->session = $session;
         $this->userRepository = $userRepository;
+        $this->repoAgentSecteur = $repoAgentSecteur;
+        $this->repoPlanAgentAccount = $repoPlanAgentAccount;
     }
 
 
@@ -78,31 +89,40 @@ class AgentInscriptionController extends AbstractController
     public function agent_register_payment_intent(Request $request, StripeService $stripeService)
     {
         $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
-        $priceTrialAccount = USER::ACCOUNT_PRICE['TRIAL'];
 
         if ($request->query->get('stripe_checkout') && $request->query->get('stripe_checkout') === 'successfully') {
-            // Si la transaction est faite, $stripeIntentSecret être vide ou null
+            // Si la transaction est faite, $stripeIntentSecret doit être vide ou null
             $stripeIntentSecret = '';
         }else{
-            $stripeIntentSecret = $stripeService->intentSecret($priceTrialAccount);
-        }
+            /** @var User $agent */
+            $sessionAgentId =  $this->session->get('agentId');
+            if (!$sessionAgentId) {
+                $this->addFlash(
+                   'warning',
+                   'Vous avez été rediriger vers cette page car une erreur s\'est produite !'
+                );
+                return $this->redirectToRoute('app_login');
+            }
 
-        $sessionAgentId =  $this->session->get('agentId');
+            $agent = $this->userRepository->find($sessionAgentId);
+            $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+            $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
+            /** @var PlanAgentAccount */
+            $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
+            $planPrice = $planAgentAccount->getAmount();
+            $stripeIntentSecret = $stripeService->intentSecret($planPrice);
+        }
       
-        if (!$sessionAgentId) {
-            $this->addFlash(
-                'warning',
-                'Veuillez reprocéder au paiment car le navigateur a perdu votre session ou vous pouvez aussi vous connecter sur PixelForce pour poursuivre le paiment <br> Mais avant de poursuivre, vueillez verifier votre solde bancaire'
-            );
-            return $this->redirectToRoute('app_login');
-        }
-
         return $this->render('security/inscription/agent_register_payment.html.twig', [
             'stripeIntentSecret' => $stripeIntentSecret,
             'stripe_publishable_key' => $stripe_publishable_key,
             'sessionAgentId' => $sessionAgentId,
-            'priceTrialAccount' => $priceTrialAccount,
-            'agent_accountStatus' => USER::ACCOUNT_STATUS['UNPAID']
+            'agent_accountStatus' => USER::ACCOUNT_STATUS['UNPAID'],
+            'repoAgentSecteur' => $this->repoAgentSecteur,
+            'repoUser' => $this->userRepository,
+            'plan' => $planAgentAccount,
+            'planPrice' => $planPrice,
+            'planAgentAccountType' => $planAgentAccountType
         ]);
     }
 
@@ -134,5 +154,45 @@ class AgentInscriptionController extends AbstractController
             ['stripe_checkout' => 'successfully'], 
             200
         );
+    }
+
+    
+    /**
+     * @Route("/inscription/agent/stripe/subscription/plan/check", name="agent_stripe_subscription_plan_account_execute")
+     */
+    public function agent_stripe_subscription_plan_account_execute(Request $request)
+    {
+
+        $sessionAgentId =  $this->session->get('agentId');
+
+        /** @var User */
+        $user = $this->userRepository->find($sessionAgentId);
+        
+        $dataPostAjax = $request->getContent();
+        $jsonToArray =  json_decode($dataPostAjax, true);
+        $stripePriceId = $jsonToArray["data"]["stripePriceId"];
+        $paymentMethodId = $jsonToArray["data"]["paymentMethodId"];
+        $stripePriceName = $jsonToArray["data"]["stripePriceName"]; 
+        $planSubscriptionId = $jsonToArray["data"]["planSubscriptionId"]; 
+
+        if ($request->getMethod() === "POST") {
+            $sessionAgentId_Post = intval($jsonToArray["data"]['sessionAgentId']);
+
+            if ($sessionAgentId_Post === $sessionAgentId) {
+                $user = $this->userRepository->find($sessionAgentId_Post);
+                $this->stripeManager->persistAgentSubscriptionPlan($stripePriceId, $paymentMethodId, $stripePriceName, $planSubscriptionId, $user);
+            }else{
+                return $this->json(
+                    [
+                        'stripe_subscription_plan' => 'error',
+                        'cause' => 'different_agentId'
+                    ], 
+                    200
+                );
+            }
+        }
+        return $this->json([
+            'stripe_subscription_plan' => 'successfully'
+        ]);
     }
 }

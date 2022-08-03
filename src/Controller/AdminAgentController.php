@@ -7,6 +7,7 @@ use App\Entity\CoachAgent;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
 use App\Entity\AgentSecteur;
+use App\Entity\PlanAgentAccount;
 use App\Entity\Secteur;
 use App\Form\InscriptionAgentType;
 use App\Form\ResetPasswordType;
@@ -14,6 +15,7 @@ use App\Form\SecteurType;
 use App\Form\UserSearchType;
 use App\Form\AgentSecteurType;
 use App\Form\MultipleSecteurType;
+use App\Form\PlanAgentAccountType;
 use App\Form\UserType;
 use App\Manager\EntityManager;
 use App\Manager\UserManager;
@@ -22,10 +24,17 @@ use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\CoachSecteurRepository;
+use App\Repository\PlanAgentAccountRepository;
 use App\Services\AgentSecteurService;
+use App\Services\StripeService;
+use App\Services\User\AgentService;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,6 +50,9 @@ class AdminAgentController extends AbstractController
     protected $repoSecteur;
     protected $agentSecteurService;
     protected $repoCoachSecteur;
+    protected $stripeService;
+    protected $agentService;
+    protected $repoPlanAgentAccount;
 
     public function __construct(UserRepository $repoUser,
                                 EntityManager $entityManager,
@@ -49,7 +61,11 @@ class AdminAgentController extends AbstractController
                                 AgentSecteurRepository $repoAgentSecteur,
                                 SecteurRepository $repoSecteur,
                                 AgentSecteurService $agentSecteurService,
-                                CoachSecteurRepository $repoCoachSecteur)
+                                CoachSecteurRepository $repoCoachSecteur,
+                                StripeService $stripeService,
+                                AgentService $agentService,
+                                PlanAgentAccountRepository $repoPlanAgentAccount
+    )
     {
         $this->repoUser = $repoUser;
         $this->entityManager = $entityManager;
@@ -59,6 +75,9 @@ class AdminAgentController extends AbstractController
         $this->repoSecteur = $repoSecteur;
         $this->agentSecteurService = $agentSecteurService;
         $this->repoCoachSecteur = $repoCoachSecteur;
+        $this->stripeService = $stripeService;
+        $this->agentService = $agentService;
+        $this->repoPlanAgentAccount = $repoPlanAgentAccount;
     }
 
     /**
@@ -337,4 +356,40 @@ class AdminAgentController extends AbstractController
         $this->addFlash('danger', 'Erreur : '.$user->getNom().' n\'est pas un agent');
         return $this->redirectToRoute('admin_agent_list');
     }
+
+    /**
+     * @Route("/admin/agent/subscription/price/list", name="admin_agent_subscription_price_list")
+     */
+    public function admin_agent_subscription_price_list(): Response
+    {
+        $planAgentAccount = $this->repoPlanAgentAccount->findBy(['status' => 'active']);
+        
+        return $this->render('user_category/admin/agent/subscription/price/list_subscription.html.twig', [
+            'planAgentAccount' => $planAgentAccount
+        ]);
+    }
+
+    /**
+     * @Route("admin/agent/subscription/price/create", name="admin_agent_subscription_price_create_page")
+     */
+    public function admin_agent_subscription_price_create_page(Request $request): Response
+    {
+        $formStripe = $this->createForm(PlanAgentAccountType::class);
+
+        $formStripe->handleRequest($request);
+
+        if ($formStripe->isSubmitted() && $formStripe->isValid()) {
+            $amount = $_POST['plan_agent_account']['amount'];
+            $priceName = $_POST['plan_agent_account']['priceName'];
+            $planDescription = $_POST['plan_agent_account']['planDescription'];
+            $this->agentService->create_PlanAgentAccount($amount, StripeService::INTERVAL_UNIT_MONTH, $priceName, $planDescription);
+            $this->addFlash('success', "Création prix d'abonnement avec succès");
+            return $this->redirectToRoute('admin_agent_list');    
+        }
+
+        return $this->render('user_category/admin/agent/subscription/price/create_price.html.twig', [
+            'formStripe' => $formStripe->createView()
+        ]);
+    }
+
 }

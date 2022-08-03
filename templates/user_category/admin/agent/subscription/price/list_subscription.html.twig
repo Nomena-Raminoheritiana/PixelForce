@@ -1,0 +1,35 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+	Prix d'abonnement
+{% endblock %}
+
+{% block body %}
+
+    {% if planAgentAccount|length <= 0 %}
+        <h2 class="text-center mt-3"><a href="{{ path('admin_agent_subscription_price_create_page') }}"><i class="fa-solid fa-plus"></i> Créer un prix (Abonnement)</a></h2>
+    {% else %}
+        <h2 class="text-center mt-3"><a href="{{ path('admin_agent_subscription_price_create_page') }}"><i class="fa-solid fa-plus"></i> Créer un prix (Abonnement)</a></h2>
+
+        <div class="d-flex justify-content-center mt-5">
+            {% for plan in planAgentAccount %}
+                <div class="card card text-center me-5" style="width: 18rem;">
+                    <div class="p-3">
+                        <img src="{{ asset('assets/img/price.png') }}" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{plan.amount}} €</h5>
+                        <p class="card-text">{{plan.description}}</p>
+                        {# {{plan.stripePriceNma}}
+                        {{plan.stripePriceNma}} #}
+
+                        {# <button type="submit" class="btn btn-primary mt-2"> Créer </button> #}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+{% endblock %}
+
+

@@ -4,17 +4,24 @@ namespace App\Services\User;
 
 use App\Entity\User;
 use App\Manager\EntityManager;
+use App\Manager\StripeManager;
+use App\Services\StripeService;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AgentService
 {
     private $em;
     private $session;
+    private $stripeService;
+    private $stripeManager;
 
-    public function __construct(EntityManager $em, SessionInterface $session)
+    public function __construct(EntityManager $em, SessionInterface $session, StripeService $stripeService, StripeManager $stripeManager)
     {
         $this->em = $em;
         $this->session = $session;
+        $this->stripeService = $stripeService;
+        $this->stripeManager = $stripeManager;
     }
 
 
@@ -118,5 +125,16 @@ class AgentService
             $agent->setAccountStartDate(new \DateTime());
             return $this->em->save($agent);
         }
+    }
+
+    /**
+     * Permet de créer un prix d'abonnement pour un compte Agent 
+     */
+    public function create_PlanAgentAccount($amount, $intervalUnit, $priceName, $planDescription)
+    {
+        $productName = 'Abonnement compte Agent';
+        $productDescription = 'Un produit qui peut avoir plusieurs Price (Différents prix d\'abonnement)';
+        $planParams = $this->stripeService->create_Subscription_ProductAndPrice($amount, $intervalUnit, $productName, $productDescription, $priceName, $planDescription);
+        $this->stripeManager->persistCreationPlanAgentAccount($planParams);
     }
 }
