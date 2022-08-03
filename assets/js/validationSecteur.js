@@ -53,7 +53,7 @@ $(function() {
             },
             success: function(responseAjax){
                 if (responseAjax.validation === 'successfully' ) {
-                    window.location.href = 'your_url';
+                    window.location.reload();
                 }
             },
             error : function(){
@@ -108,7 +108,6 @@ $(function() {
                         <tr>
                             <td></td>
                             <td>${element.nom}</td>
-                            <td>${element.coach}</td>
                             <td>${element.dateValidation}</td>
                             <td><button class="btn  btn-success btn-sm"> Validé</button></td>
                             <td>
