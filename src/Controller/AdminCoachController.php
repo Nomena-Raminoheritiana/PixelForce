@@ -232,7 +232,7 @@ class AdminCoachController extends AbstractController
            $coach->setActive(-1);
            $this->entityManager->save($coach);
 
-            $this->addFlash('danger', 'Coach supprimé');
+            $this->addFlash('danger', 'Le coach a été banni du plateforme');
         }
         return $this->redirectToRoute('admin_coach_list');    
     }
@@ -246,7 +246,7 @@ class AdminCoachController extends AbstractController
         $coach->setActive(1);
         $this->entityManager->save($coach);
 
-        $this->addFlash('success', 'Coach réactiver');
+        $this->addFlash('success', 'Le compte du coach a été réactivé');
 
         return $this->redirectToRoute('admin_coach_list');
     }

@@ -84,7 +84,7 @@ class AdminTagController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete'. $tag->getId(), $request->request->get('_token'))) {
             $this->entityManager->delete($tag);
-            $this->addFlash('danger', 'Coach supprimé');
+            $this->addFlash('danger', 'Le coach a été banni du plateforme');
         }
         return $this->redirectToRoute('admin_tag_list');
     }

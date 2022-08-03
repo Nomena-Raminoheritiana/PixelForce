@@ -128,7 +128,7 @@
                                     <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
                                 </form>
                                 {% elseif agent.active == -1 %}
-                                    <a href="{{ path('admin_agent_reactiver', {'id': agenmidu.id}) }}" class="btn btn-success">
+                                    <a href="{{ path('admin_agent_reactiver', {'id': agent.id}) }}" class="btn btn-success">
                                         <i class="fa-solid fa-sync"></i>
                                     </a>
                                 {% endif %}

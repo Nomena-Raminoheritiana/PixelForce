@@ -24,26 +24,11 @@ class CalendarEventLabelFixtures extends Fixture implements FixtureGroupInterfac
                                         ->setColor('rgba(255, 0, 0, 0.3)');
 
         $calendarEventLabelArray[1] = (new CalendarEventLabel())
-                                        ->setName('Personnel')
-                                        ->setValue('personal')
+                                        ->setName('Formation')
+                                        ->setValue('formation')
                                         ->setColor('rgba(0, 255, 0, 0.3)');
 
         $calendarEventLabelArray[2] = (new CalendarEventLabel())
-                                        ->setName('Famille')
-                                        ->setValue('family')
-                                        ->setColor('rgba(0, 0, 255, 0.3)');
-
-        $calendarEventLabelArray[3] = (new CalendarEventLabel())
-                                        ->setName('Vacances')
-                                        ->setValue('holiday')
-                                        ->setColor('rgba(255, 255, 0, 0.3)');
-
-        $calendarEventLabelArray[4] = (new CalendarEventLabel())
-                                        ->setName('Business')
-                                        ->setValue('business')
-                                        ->setColor('rgba(0, 255, 255, 0.3)');
-
-        $calendarEventLabelArray[5] = (new CalendarEventLabel())
                                         ->setName('Autre')
                                         ->setValue('etc')
                                         ->setColor('rgba(0, 0, 0, 0.3)');
@@ -52,9 +37,6 @@ class CalendarEventLabelFixtures extends Fixture implements FixtureGroupInterfac
         $manager->persist($calendarEventLabelArray[0]);
         $manager->persist($calendarEventLabelArray[1]);
         $manager->persist($calendarEventLabelArray[2]);
-        $manager->persist($calendarEventLabelArray[3]);
-        $manager->persist($calendarEventLabelArray[4]);
-        $manager->persist($calendarEventLabelArray[5]);
 
 
         $manager->flush();

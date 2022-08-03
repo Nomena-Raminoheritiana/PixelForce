@@ -200,7 +200,7 @@ class AdminAgentController extends AbstractController
         $coach->setActive(1);
         $this->entityManager->save($coach);
 
-        $this->addFlash('success', 'Agent réactiver');
+        $this->addFlash('success', 'Le compte de l'agent a été réactivé');
 
         return $this->redirectToRoute('admin_agent_list');
     }
