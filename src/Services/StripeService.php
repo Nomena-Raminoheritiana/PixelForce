@@ -2,18 +2,28 @@
 
 namespace App\Services;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Charge;
 use Stripe\Stripe;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class StripeService 
 {
-    private $params;
-    private $secretKey;
-    public $publishablaKey;
-
     const PRODUCT_ID = [
         'PLAN_COMPTE_AGENT' =>  'prod_planCompteAgent'
+    ];
+
+    /**
+     * Clés disponibles
+     * - ONE_SECTOR
+     * - MANY_SECTOR
+     */
+    const ACCOUNT_SUBSCRIPTION_TYPE = [
+        'ONE_SECTOR' =>  'Un secteur',
+        'MANY_SECTOR' =>  'Plusieurs secteurs'
     ];
 
     /**
@@ -43,14 +53,23 @@ class StripeService
         self::INTERVAL_UNIT_YEAR => self::INTERVAL_UNIT_YEAR
     ];
 
-    public function __construct(ParameterBagInterface $params)
+    private $params;
+    private $secretKey;
+    public $publishablaKey;
+    private $session;
+    private $repoUser;
+    private $em;
+
+    public function __construct(ParameterBagInterface $params, SessionInterface $session, UserRepository $repoUser, EntityManagerInterface $em)
     {
         $this->params = $params;
         Stripe::setApiKey($this->params->get('stripe_secret_key'));
 
         $this->secretKey = $_ENV['STRIPE_SECRET_KEY'];
         $this->publishablaKey = $_ENV['STRIPE_PUBLIC_KEY'];
-
+        $this->session = $session;
+        $this->repoUser = $repoUser;
+        $this->em = $em;
     }
 
     public function createCharge($token, $amount, $params): ?string
@@ -86,6 +105,58 @@ class StripeService
         $intent = $this->paymentIntent($amount);
 
         return $intent['client_secret'] ?? null;
+    }
+
+    public function getPaymentMethods($paymentMethodId)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $payment_method = $stripe->paymentMethods->retrieve(
+            $paymentMethodId
+        );
+
+        return $payment_method;
+    }
+    
+    /**
+     * Permet de créer un client dans Stripe (souvent relié par un abonnement)
+     */
+    public function createCustomer($email, $name, $desciption)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $customer = $stripe->customers->create([
+            'description' => $desciption,
+            'email' => $email,
+            'name' => $name
+        ]);
+
+        return $customer;
+    }
+    
+    public function updateCustomer(string $customerId, $paymentMethodId)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $stripe->customers->update(
+            $customerId, 
+            [
+                'invoice_settings' => [
+                    'default_payment_method' => $paymentMethodId
+                ]
+            ]
+        );
+    }
+
+    public function getCustomer(string $customerId)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $customer = $stripe->customers->retrieve(
+            $customerId,
+            [ ]
+        );
+        return $customer;
     }
 
     /**
@@ -139,8 +210,35 @@ class StripeService
         return $prices;
     }
 
+
     /**
-     * Permet de créer à la fois un Product et un Price 
+     * Permet de créer un abonnement sans fin, mais peut être annulé
+     *
+     * @param [type] $customerId
+     * @param [type] $priceId
+     * @return void
+     */
+    public function createSubscription($customerId, $priceId)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $subscription = $stripe->subscriptions->create([
+            'customer' => $customerId,
+            'items' => [
+                [
+                    'price' => $priceId,
+                    'quantity' => 1,
+                ],
+            ]
+        ]);
+
+        return $subscription;
+    
+    }
+
+
+    /**
+     * Permet de créer à la fois un Product et un Price (Qui conduit à un plan d'abonnement)
      * Un produit qui est à titre de "Abonnement compte Agent"
      */
     public function create_Subscription_ProductAndPrice($amount, $interval_unit, $productName, $productDescription, $priceName, $planDescription)
@@ -209,5 +307,32 @@ class StripeService
         }
 
         return $payement_intent;
+    }
+
+    
+    public function getDatasAfterSubscriptionPlan($priceId, $paymentMethodId, $stripePriceName, User $user)
+    {
+        $paymentMethod = $this->getPaymentMethods($paymentMethodId);
+
+        if ($user->getStripeCustomerId() == null) {
+            $customer = $this->createCustomer($user->getEmail(), $user->getPrenom(), "Client abonnement $stripePriceName");
+            $paymentMethod->attach([ 'customer' => $customer['id'] ]);;
+            $this->updateCustomer($customer['id'], $paymentMethodId);
+                    
+            $user->setStripeCustomerId($customer['id']);
+            $this->em->persist($user);
+            $this->em->flush();
+        }else{
+            $bddCustomerId = $user->getStripeCustomerId();
+            $customer = $this->getCustomer($bddCustomerId);
+        }
+ 
+        $subscription = $this->createSubscription($customer['id'], $priceId);
+                
+        return $subscription;
+    }
+
+    public function getSecretKey(){
+        return $this->secretKey;
     }
 }

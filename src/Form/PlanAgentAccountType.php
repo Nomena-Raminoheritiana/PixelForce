@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Services\StripeService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -21,8 +22,8 @@ class PlanAgentAccountType extends AbstractType
             ])
             ->add('priceName', ChoiceType::class,  [
                 'choices' => [
-                    'Un secteur' => 'Un secteur',
-                    'Plusieurs secteurs' => 'Plusieurs secteurs'
+                    StripeService::ACCOUNT_SUBSCRIPTION_TYPE['ONE_SECTOR'] => StripeService::ACCOUNT_SUBSCRIPTION_TYPE['ONE_SECTOR'],
+                    StripeService::ACCOUNT_SUBSCRIPTION_TYPE['MANY_SECTOR']  => StripeService::ACCOUNT_SUBSCRIPTION_TYPE['MANY_SECTOR'] 
                 ],
                 'placeholder' => 'Type abonnement',
                 'label' => false,

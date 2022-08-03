@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Services\StripeService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -294,6 +295,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $accountStartDate;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SubscriptionPlanAgentAccount::class, mappedBy="user")
+     */
+    private $subscriptionPlanAgentAccounts;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $stripeCustomerId;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -313,6 +324,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->categorieFormationAgents = new ArrayCollection();
         $this->meetings = new ArrayCollection();
         $this->meetingGuests = new ArrayCollection();
+        $this->subscriptionPlanAgentAccounts = new ArrayCollection();
 
 
     }
@@ -999,6 +1011,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $price;
     }
 
+    public function typePlanAccountBySecteurChoice(array $agentSecteurs)
+    {
+        $nbrSector = count($agentSecteurs);
+        if ($nbrSector <= 1) {
+            $type = StripeService::ACCOUNT_SUBSCRIPTION_TYPE['ONE_SECTOR'];
+        } else {
+            $type = StripeService::ACCOUNT_SUBSCRIPTION_TYPE['MANY_SECTOR'];
+        }
+        
+        return $type;
+    }
+
     /**
      * @return Collection<int, CoachSecteur>
      */
@@ -1209,6 +1233,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAccountStartDate(?\DateTimeInterface $accountStartDate): self
     {
         $this->accountStartDate = $accountStartDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SubscriptionPlanAgentAccount>
+     */
+    public function getSubscriptionPlanAgentAccounts(): Collection
+    {
+        return $this->subscriptionPlanAgentAccounts;
+    }
+
+    public function addSubscriptionPlanAgentAccount(SubscriptionPlanAgentAccount $subscriptionPlanAgentAccount): self
+    {
+        if (!$this->subscriptionPlanAgentAccounts->contains($subscriptionPlanAgentAccount)) {
+            $this->subscriptionPlanAgentAccounts[] = $subscriptionPlanAgentAccount;
+            $subscriptionPlanAgentAccount->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscriptionPlanAgentAccount(SubscriptionPlanAgentAccount $subscriptionPlanAgentAccount): self
+    {
+        if ($this->subscriptionPlanAgentAccounts->removeElement($subscriptionPlanAgentAccount)) {
+            // set the owning side to null (unless already changed)
+            if ($subscriptionPlanAgentAccount->getUser() === $this) {
+                $subscriptionPlanAgentAccount->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStripeCustomerId(): ?string
+    {
+        return $this->stripeCustomerId;
+    }
+
+    public function setStripeCustomerId(?string $stripeCustomerId): self
+    {
+        $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
     }

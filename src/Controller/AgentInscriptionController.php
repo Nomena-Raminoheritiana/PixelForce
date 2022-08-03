@@ -5,11 +5,13 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\AgentSecteur;
+use App\Entity\PlanAgentAccount;
 use App\Form\InscriptionAgentType;
 use App\Manager\EntityManager;
 use App\Manager\StripeManager;
 use App\Manager\UserManager;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\PlanAgentAccountRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Services\StripeService;
@@ -40,7 +42,10 @@ class AgentInscriptionController extends AbstractController
     /** @var AgentSecteurRepository $repoAgentSecteur */
     private $repoAgentSecteur;
 
-    public function __construct(EntityManager $entityManager, UserManager $userManager, StripeManager $stripeManager, SessionInterface $session, UserRepository $userRepository, AgentSecteurRepository $repoAgentSecteur)
+    /** @var PlanAgentAccountRepository $repoPlanAgentAccount */
+    protected $repoPlanAgentAccount;
+
+    public function __construct(EntityManager $entityManager, UserManager $userManager, StripeManager $stripeManager, SessionInterface $session, UserRepository $userRepository, AgentSecteurRepository $repoAgentSecteur, PlanAgentAccountRepository $repoPlanAgentAccount)
     {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
@@ -48,6 +53,7 @@ class AgentInscriptionController extends AbstractController
         $this->session = $session;
         $this->userRepository = $userRepository;
         $this->repoAgentSecteur = $repoAgentSecteur;
+        $this->repoPlanAgentAccount = $repoPlanAgentAccount;
     }
 
 
@@ -99,7 +105,10 @@ class AgentInscriptionController extends AbstractController
 
             $agent = $this->userRepository->find($sessionAgentId);
             $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
-            $planPrice = $agent->pricePlanAccountBySecteurChoice($agentSecteurs);
+            $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
+            /** @var PlanAgentAccount */
+            $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
+            $planPrice = $planAgentAccount->getAmount();
             $stripeIntentSecret = $stripeService->intentSecret($planPrice);
         }
       
@@ -110,7 +119,9 @@ class AgentInscriptionController extends AbstractController
             'agent_accountStatus' => USER::ACCOUNT_STATUS['UNPAID'],
             'repoAgentSecteur' => $this->repoAgentSecteur,
             'repoUser' => $this->userRepository,
-            'planPrice' => $planPrice
+            'plan' => $planAgentAccount,
+            'planPrice' => $planPrice,
+            'planAgentAccountType' => $planAgentAccountType
         ]);
     }
 
@@ -142,5 +153,45 @@ class AgentInscriptionController extends AbstractController
             ['stripe_checkout' => 'successfully'], 
             200
         );
+    }
+
+    
+    /**
+     * @Route("/inscription/agent/stripe/subscription/plan/check", name="agent_stripe_subscription_plan_account_execute")
+     */
+    public function agent_stripe_subscription_plan_account_execute(Request $request)
+    {
+
+        $sessionAgentId =  $this->session->get('agentId');
+
+        /** @var User */
+        $user = $this->userRepository->find($sessionAgentId);
+        
+        $dataPostAjax = $request->getContent();
+        $jsonToArray =  json_decode($dataPostAjax, true);
+        $stripePriceId = $jsonToArray["data"]["stripePriceId"];
+        $paymentMethodId = $jsonToArray["data"]["paymentMethodId"];
+        $stripePriceName = $jsonToArray["data"]["stripePriceName"]; 
+        $planSubscriptionId = $jsonToArray["data"]["planSubscriptionId"]; 
+
+        if ($request->getMethod() === "POST") {
+            $sessionAgentId_Post = intval($jsonToArray["data"]['sessionAgentId']);
+
+            if ($sessionAgentId_Post === $sessionAgentId) {
+                $user = $this->userRepository->find($sessionAgentId_Post);
+                $this->stripeManager->persistAgentSubscriptionPlan($stripePriceId, $paymentMethodId, $stripePriceName, $planSubscriptionId, $user);
+            }else{
+                return $this->json(
+                    [
+                        'stripe_subscription_plan' => 'error',
+                        'cause' => 'different_agentId'
+                    ], 
+                    200
+                );
+            }
+        }
+        return $this->json([
+            'stripe_subscription_plan' => 'successfully'
+        ]);
     }
 }

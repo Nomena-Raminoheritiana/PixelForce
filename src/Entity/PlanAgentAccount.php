@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlanAgentAccountRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -51,6 +53,16 @@ class PlanAgentAccount
      * @ORM\Column(type="string", length=255)
      */
     private $status;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SubscriptionPlanAgentAccount::class, mappedBy="planAgentAccount")
+     */
+    private $subscriptions;
+
+    public function __construct()
+    {
+        $this->subscriptions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -137,6 +149,36 @@ class PlanAgentAccount
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SubscriptionPlanAgentAccount>
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(SubscriptionPlanAgentAccount $subscription): self
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions[] = $subscription;
+            $subscription->setPlanAgentAccount($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(SubscriptionPlanAgentAccount $subscription): self
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            // set the owning side to null (unless already changed)
+            if ($subscription->getPlanAgentAccount() === $this) {
+                $subscription->setPlanAgentAccount(null);
+            }
+        }
 
         return $this;
     }
