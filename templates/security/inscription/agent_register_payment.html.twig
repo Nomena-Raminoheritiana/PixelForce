@@ -3,49 +3,63 @@
 {% block title %}Inscription agent{% endblock %}
 
 {% block form %}
-    {% set stripe_defaultButton =  'Essayer (' ~ priceTrialAccount ~ ' €)' %}
-    {% if app.request.get('stripe_checkout') != 'successfully' %}
-        <div class="alert alert-primary"><i class="fa-solid fa-circle-info me-1"></i> Après sous-mission, votre compte sera valable pendant 14 jours pour une essaie, et après ce delais vous devez réactiver votre compte</div>
-    {% endif %}
-
-    <div class="content-field-stripe">
-        <h5 class="my-4">Paiement</h5>
-    
-        {% if app.request.get('stripe_checkout') == 'successfully' %}
-            <div class="text-center alert alert-success h5">
-                Paiement efféctué avec success ! <br>
-                Votre inscription sur Pixelforce a été effectuée avec succès <br>
-                <a href="{{ path('app_login') }}">Lien connexion </a>
-            </div>
-        {% elseif app.request.get('stripe_checkout') == 'error_different_agent_id' %}
-            <div class="text-center alert alert-success">
-                Veuillez reprocéder au paiment car le navigateur a perdu votre session ou vous pouvez aussi vous connecter sur PixelForce pour poursuivre le paiment
-                Mais avant de poursuivre, vueillez verifier votre solde bancaire
+    {% if app.session.get('agentId') == null  %}
+        <div class="text-center">
+            Une erreur s'est produite, veuillez retourner vers la page de connexion <br>
+            <a href="{{ path('app_login') }}" class="h4 text-decoration-none text-center">Lien connexion </a>
+        </div>
+    {% else %}
+        {% set agent = repoUser.find(app.session.get('agentId')) %}
+        {% set agentSecteurs = repoAgentSecteur.findBy({'agent' : agent}) %}
+        {% set stripe_defaultButton =  "S'abonner " ~ planPrice ~ " €)" %}
+        {% if app.request.get('stripe_checkout') != 'successfully' %}
+            <div class="alert alert-primary">
+                <i class="fa-solid fa-circle-info me-1"></i> 
+                Vous avez choisi le(s) secteur(s) suivant(s) : <span class="fw-bolder"> {{ agent.allSecteursOfUser(agentSecteurs) }}</span>. 
+                Vous pouvez vous abonner pour seulement  <span class="fw-bolder">{{ planPrice }} euro/mois</span>.
+             
             </div>
         {% endif %}
-        
-        
-        {% if app.request.get('stripe_checkout') and app.request.get('stripe_checkout') == 'successfully' %}
-        {% else %}
-            <form  method="post" id="single-payment-form">
-                <div id="card-errors" role="alert"></div>
-                <div id="card-elements"></div>
 
-                <div class="w-100 text-center">
-                    <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span class="label-button">{{ stripe_defaultButton }}</span> <span class="loader-submit"></span></button>
+        <div class="content-field-stripe">
+            <h5 class="my-4">Paiement</h5>
+        
+            {% if app.request.get('stripe_checkout') == 'successfully' %}
+                <div class="text-center alert alert-success h5">
+                    Paiement efféctué avec success ! <br>
+                    Votre inscription sur Pixelforce a été effectuée avec succès <br>
+                    <a href="{{ path('app_login') }}">Lien connexion </a>
                 </div>
-            </form>
-        {% endif %}
-        
-        <input type="hidden" id="agent_accountStatus" value="{{ agent_accountStatus }}">
-    	<input type="hidden" id="sessionAgentId" value="{{ sessionAgentId }}">
-    	<input type="hidden" id="stripe_stripeToken" value="{{ stripe_publishable_key }}">
-		<input type="hidden" id="stripe_clientSecret" value="{{ stripeIntentSecret }}">
-		<input type="hidden" id="stripe_url_stripeCheckout" value="{{ path('agent_register_payment_execute') }}">
-		<input type="hidden" id="stripe_urlSuccessTransaction" value="{{ path('agent_register_payment_intent') }}">
-		<input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_register_payment_intent') }}">
-		<input type="hidden" id="stripe_defaultButton" value="{{ stripe_defaultButton }}">
-    </div>
+            {% elseif app.request.get('stripe_checkout') == 'error_different_agent_id' %}
+                <div class="text-center alert alert-success">
+                    Veuillez reprocéder au paiment car le navigateur a perdu votre session ou vous pouvez aussi vous connecter sur PixelForce pour poursuivre le paiment
+                    Mais avant de poursuivre, vueillez verifier votre solde bancaire
+                </div>
+            {% endif %}
+            
+            
+            {% if app.request.get('stripe_checkout') and app.request.get('stripe_checkout') == 'successfully' %}
+            {% else %}
+                <form  method="post" id="single-payment-form">
+                    <div id="card-errors" role="alert"></div>
+                    <div id="card-elements"></div>
+
+                    <div class="w-100 text-center">
+                        <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span class="label-button">{{ stripe_defaultButton }}</span> <span class="loader-submit"></span></button>
+                    </div>
+                </form>
+            {% endif %}
+            
+            <input type="hidden" id="agent_accountStatus" value="{{ agent_accountStatus }}">
+            <input type="hidden" id="sessionAgentId" value="{{ sessionAgentId }}">
+            <input type="hidden" id="stripe_stripeToken" value="{{ stripe_publishable_key }}">
+            <input type="hidden" id="stripe_clientSecret" value="{{ stripeIntentSecret }}">
+            <input type="hidden" id="stripe_url_stripeCheckout" value="{{ path('agent_register_payment_execute') }}">
+            <input type="hidden" id="stripe_urlSuccessTransaction" value="{{ path('agent_register_payment_intent') }}">
+            <input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_register_payment_intent') }}">
+            <input type="hidden" id="stripe_defaultButton" value="{{ stripe_defaultButton }}">
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}

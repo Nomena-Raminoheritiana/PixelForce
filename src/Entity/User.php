@@ -975,16 +975,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @param array $secteurs
      * @return string
      */
-    public function allSecteursOfUser(array $secteurs)
+    public function allSecteursOfUser(array $agentSecteurs)
     {
         $mySecteurs = [];
         /** @var AgentSecteur $secteur */
-        foreach ($secteurs as $secteur) {
-           $mySecteurs[] = $secteur->getSecteur()->getNom();
+        foreach ($agentSecteurs as $agentSecteur) {
+           $mySecteurs[] = $agentSecteur->getSecteur()->getNom();
         }
 
         $joinSecteur = join(', ', $mySecteurs);
         return $joinSecteur;
+    }
+
+    public function pricePlanAccountBySecteurChoice(array $agentSecteurs)
+    {
+        $nbrSector = count($agentSecteurs);
+        if ($nbrSector <= 1) {
+            $price = self::ACCOUNT_PRICE_ONE_SECTOR;
+        } else {
+            $price = self::ACCOUNT_PRICE_MANY_SECTOR;
+        }
+        
+        return $price;
     }
 
     /**

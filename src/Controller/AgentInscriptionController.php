@@ -34,15 +34,20 @@ class AgentInscriptionController extends AbstractController
     /** @var SessionInterface $session */
     private $session;
 
-    protected $userRepository;
+    /** @var UserRepository $userRepository */
+    private $userRepository;
 
-    public function __construct(EntityManager $entityManager, UserManager $userManager, StripeManager $stripeManager, SessionInterface $session, UserRepository $userRepository)
+    /** @var AgentSecteurRepository $repoAgentSecteur */
+    private $repoAgentSecteur;
+
+    public function __construct(EntityManager $entityManager, UserManager $userManager, StripeManager $stripeManager, SessionInterface $session, UserRepository $userRepository, AgentSecteurRepository $repoAgentSecteur)
     {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->stripeManager = $stripeManager;
         $this->session = $session;
         $this->userRepository = $userRepository;
+        $this->repoAgentSecteur = $repoAgentSecteur;
     }
 
 
@@ -77,31 +82,35 @@ class AgentInscriptionController extends AbstractController
     public function agent_register_payment_intent(Request $request, StripeService $stripeService)
     {
         $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
-        $priceTrialAccount = USER::ACCOUNT_PRICE['TRIAL'];
 
         if ($request->query->get('stripe_checkout') && $request->query->get('stripe_checkout') === 'successfully') {
-            // Si la transaction est faite, $stripeIntentSecret être vide ou null
+            // Si la transaction est faite, $stripeIntentSecret doit être vide ou null
             $stripeIntentSecret = '';
         }else{
-            $stripeIntentSecret = $stripeService->intentSecret($priceTrialAccount);
-        }
+            /** @var User $agent */
+            $sessionAgentId =  $this->session->get('agentId');
+            if (!$sessionAgentId) {
+                $this->addFlash(
+                   'warning',
+                   'Vous avez été rediriger vers cette page car une erreur s\'est produite !'
+                );
+                return $this->redirectToRoute('app_login');
+            }
 
-        $sessionAgentId =  $this->session->get('agentId');
+            $agent = $this->userRepository->find($sessionAgentId);
+            $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+            $planPrice = $agent->pricePlanAccountBySecteurChoice($agentSecteurs);
+            $stripeIntentSecret = $stripeService->intentSecret($planPrice);
+        }
       
-        if (!$sessionAgentId) {
-            $this->addFlash(
-                'warning',
-                'Veuillez reprocéder au paiment car le navigateur a perdu votre session ou vous pouvez aussi vous connecter sur PixelForce pour poursuivre le paiment <br> Mais avant de poursuivre, vueillez verifier votre solde bancaire'
-            );
-            return $this->redirectToRoute('app_login');
-        }
-
         return $this->render('security/inscription/agent_register_payment.html.twig', [
             'stripeIntentSecret' => $stripeIntentSecret,
             'stripe_publishable_key' => $stripe_publishable_key,
             'sessionAgentId' => $sessionAgentId,
-            'priceTrialAccount' => $priceTrialAccount,
-            'agent_accountStatus' => USER::ACCOUNT_STATUS['UNPAID']
+            'agent_accountStatus' => USER::ACCOUNT_STATUS['UNPAID'],
+            'repoAgentSecteur' => $this->repoAgentSecteur,
+            'repoUser' => $this->userRepository,
+            'planPrice' => $planPrice
         ]);
     }
 

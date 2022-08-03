@@ -81,9 +81,9 @@ class StripeService
     }
 
 
-    public function intentSecret($formationPrice)
+    public function intentSecret($amount)
     {
-        $intent = $this->paymentIntent($formationPrice);
+        $intent = $this->paymentIntent($amount);
 
         return $intent['client_secret'] ?? null;
     }
