@@ -62,11 +62,10 @@ class AccountAgentType extends AbstractType
                 ]
             ])
             ->add('username', TextType::class, [
-                'label' => 'Nom d\'utilisateur',
+                'label' => 'Pseudo',
                 'attr' => [
-                    'placeholder' => 'Nom d\'utilisateur',
-                ],
-                'disabled' => true
+                    'placeholder' => 'Entrer votre pseudo',
+                ]
             ])
 
             ->add('email', EmailType::class, [
