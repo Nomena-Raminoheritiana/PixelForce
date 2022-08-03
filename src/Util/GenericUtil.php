@@ -77,4 +77,9 @@ class GenericUtil{
         }
         return $class;
     }
+
+    public static function getFileName(string $path){
+        $tab = explode('/', $path);
+        return $tab[count($tab)-1];
+    }
 }

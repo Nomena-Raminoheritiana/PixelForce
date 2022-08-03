@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DemandeDevisRepository;
+use App\Util\GenericUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -228,5 +229,15 @@ class DemandeDevis
         $this->files = $files;
 
         return $this;
+    }
+
+    public function getFilesShortName(){
+        if(!$this->getFiles())
+            return null;
+        $filesSN = [];
+        for($i=0; $i<count($this->getFiles()); $i++){
+            $filesSN[] = GenericUtil::getFileName($this->getFiles()[$i]);
+        }
+        return $filesSN; 
     }
 }
