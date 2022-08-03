@@ -1,6 +1,7 @@
 <?php
 namespace App\Manager;
 
+use App\Entity\PlanAgentAccount;
 use App\Entity\User;
 use App\Services\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,5 +48,20 @@ class StripeManager {
             $this->em->flush();
         }
 
+    }
+
+    public function persistCreationPlanAgentAccount($planParams)
+    {
+        $planAgentAccount = new PlanAgentAccount();
+        $planAgentAccount->setStipeProductId($planParams['productId']);
+        $planAgentAccount->setStripePriceId($planParams['priceId']);
+        $planAgentAccount->setStripePriceName($planParams['priceName']);
+        $planAgentAccount->setDescription($planParams['description']);
+        $planAgentAccount->setAmount($planParams['amount']);
+        $planAgentAccount->setPriceIntervalUnit($planParams['intervallUnit']);
+        $planAgentAccount->setStatus($planParams['status']);
+
+        $this->em->persist($planAgentAccount);
+        $this->em->flush();
     }
 }

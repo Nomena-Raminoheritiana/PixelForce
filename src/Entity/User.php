@@ -55,14 +55,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'EXPIRED' => 'Expiré'
     ];
 
+    const ACCOUNT_PRICE_TRIAL = 1.0;
+    const ACCOUNT_PRICE_INTEGRAL = 20.0;
+    const ACCOUNT_PRICE_ONE_SECTOR = 97.0;
+    const ACCOUNT_PRICE_MANY_SECTOR = 297.0;
+
     /**
      *  Clés disponibles :
      *  - TRIAL 
      *  - INTEGRAL
+     *  - ONE_SECTOR
+     *  - MANY_SECTOR
      */
     const ACCOUNT_PRICE = [
-        'TRIAL' => 1.0,
-        'INTEGRAL' => 50.0
+        'TRIAL' => self::ACCOUNT_PRICE_TRIAL,
+        'INTEGRAL' => self::ACCOUNT_PRICE_INTEGRAL,
+        'ONE_SECTOR' => self::ACCOUNT_PRICE_ONE_SECTOR,
+        'MANY_SECTOR' => self::ACCOUNT_PRICE_MANY_SECTOR
     ];
 
     const EXPIRY_DATE = 14;

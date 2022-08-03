@@ -1,0 +1,32 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+	Création prix d'abonnement
+{% endblock %}
+
+{% block body %}	
+
+<div class="p-5">
+    <h2 class="mt-4 text-center">Création prix d'abonnement</h2>
+    <div class="d-flex justify-content-center">
+        {{ form_start(formStripe) }}
+            <div class="card card text-center" style="width: 28rem;">
+                <div class="p-3">
+                    <img src="{{ asset('assets/img/price.png') }}" class="card-img-top" alt="...">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Abonnement (Agent)</h5>
+                    <p class="card-text">Créer un prix d'abonnment pour l'inscription des agents.</p>
+                    {{ form_row(formStripe.amount) }}
+                    {{ form_row(formStripe.priceName) }}
+                    {{ form_row(formStripe.planDescription) }}
+                    <button type="submit" class="btn btn-primary mt-4"> Créer <i class="fa-solid fa-circle-check"></i> </button>
+                </div>
+            </div>
+        {{ form_end(formStripe) }}
+    </div>
+</div>
+
+{% endblock %}
+
+
