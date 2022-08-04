@@ -9,6 +9,8 @@
 {% endblock %}
 
 {% block body %}
+    {% set stripe_defaultButton =  "S'abonner (" ~ planPrice ~ " €)" %}
+
     <div class="container-page">
         <h1 class="text-center mt-3">Bienvenue sur PixelForce</h1>    
 
@@ -54,19 +56,29 @@
                     <div class="alert alert-warning text-center">
                         {% if accountStatus == USER_ACCOUNT_STATUS['UNPAID']  %}
                             {% set agent_accountStatus = USER_ACCOUNT_STATUS['UNPAID'] %}
-                            Veuillez procéder au paiement pour activer votre compte
+                            <h5 class="text-warning"> Veuillez procéder au paiement pour activer votre compte </h5>
                         {% elseif expiredAccount %}
                             {% set agent_accountStatus = USER_ACCOUNT_STATUS['EXPIRED'] %}
                             Votre essaie de 14 jours sur PixelForce est expirée, veuillez procéder au paiement pour reactiver votre compte
                             <span class="mt-2">...Ou contacter le responsable pour plus d'informations</span>
                         {% endif %}
+
+                         <div class="alert alert-secondary mt-3">
+                            {% set agent = repoUser.find(app.session.get('agentId')) %}
+                            {% set agentSecteurs = repoAgentSecteur.findBy({'agent' : agent}) %}
+                            <i class="fa-solid fa-circle-info me-1"></i> 
+                            Vous avez choisi le(s) secteur(s) suivant(s) : <span class="fw-bolder"> {{ agent.allSecteursOfUser(agentSecteurs) }}</span>. 
+                            Vous pouvez vous abonner pour seulement  <span class="fw-bolder">{{ planPrice }} euro/mois</span>.
+                        </div>
                     </div>
-                    <form  method="post" id="single-payment-form">
+
+                    <!-- Stripe form -->
+                    <form  method="post" id="subscription-payment-form">
                         <div id="card-errors" role="alert"></div>
                         <div id="card-elements"></div>
         
                         <div class="w-100 text-center">
-                            <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span>Payer ({{accountPrice}} €)</span> <span class="loader-submit"></span></button>
+                            <button id="card-button-submit" class="btn btn-primary mt-3"><i class="fa-solid fa-cart-shopping me-1"></i> <span class="label-button">{{ stripe_defaultButton }}</span> <span class="loader-submit"></span></button>
                         </div>
                     </form>
                 </div>
@@ -75,11 +87,19 @@
           
             <input type="hidden" id="agent_accountStatus" value="{{ agent_accountStatus }}">
             <input type="hidden" id="sessionAgentId" value="{{ sessionAgentId }}">
+            <input type="hidden" id="planSubscriptionId" value="{{ plan.id }}">
+            <input type="hidden" id="stripe_stripePriceId" value="{{ plan.stripePriceId }}">
+            <input type="hidden" id="stripe_stripePriceName" value="{{ plan.stripePriceName }}">
             <input type="hidden" id="stripe_stripeToken" value="{{ stripe_publishable_key }}">
             <input type="hidden" id="stripe_clientSecret" value="{{ stripeIntentSecret }}">
-            <input type="hidden" id="stripe_url_stripeCheckout" value="{{ path('agent_account_trial_payment_execute') }}">
+            <input type="hidden" id="stripe_url_stripeSubscription" value="{{ path('agent_stripe_subscription_plan_account_execute') }}">
             <input type="hidden" id="stripe_urlSuccessTransaction" value="{{ path('agent_home') }}">
-		    <input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_home') }}">     
+		    <input type="hidden" id="stripe_urlErrorTransaction" value="{{ path('agent_home') }}">
+            <input type="hidden" id="stripe_defaultButton" value="{{ stripe_defaultButton }}">
+            
+            <input type="hidden" id="stripe_nameHolder" value="{{ agent.prenom }}">
+            <input type="hidden" id="stripe_emailHolder" value="{{ agent.email }}">
+            <input type="hidden" id="stripe_PostalCodeHolder" value="{{ agent.codePostal }}">     
         {% endif %}
 
     </div>
@@ -89,7 +109,7 @@
     {{ parent() }}
     {% if app.session.get('enabledContent')  == false  %}
         <script src="https://js.stripe.com/v3/"></script>     
-        {{ encore_entry_script_tags('StripeAgentRegistration') }}
+        {{ encore_entry_script_tags('StripeAgentRegistrationSubscription') }}
     {% endif %}
 
     <script>
