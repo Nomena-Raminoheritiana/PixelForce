@@ -100,7 +100,7 @@ class StripeManager {
             $subscription->setStripeSubscriptionId($resource['stripe_subscription_id']);
             $subscription->setStripeCustumerId($resource['stripe_customer_id']);
             $subscription->setStripeProductId($resource['stripe_product_id']);
-            $subscription->setAmount($resource['stripe_amount']);
+            $subscription->setAmount($resource['stripe_amount']/100);
             $subscription->setStripeSubscriptionInterval($resource['stripe_subscription_interval']);
             $subscription->setStripeSubscriptionStatus($resource['stripe_subscription_status']);
             $subscription->setReference(uniqid('', false));
