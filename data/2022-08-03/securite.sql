@@ -1,3 +1,25 @@
+INSERT INTO type_abonnement_secu
+(id, nom, description, prix)
+VALUES(1, 'Sans abonnement', NULL, 1299.0);
+INSERT INTO type_abonnement_secu
+(id, nom, description, prix)
+VALUES(2, 'Avec abonnement', NULL, 699.0);
+
+INSERT INTO type_installation_secu
+(id, description, prix)
+VALUES(1, 'Je veux faire l’installation moi-même', 0.0);
+INSERT INTO type_installation_secu
+(id, description, prix)
+VALUES(2, 'Un installateur se déplace chez moi', 150.0);
+
+INSERT INTO code_promo_secu
+(id, code, description, prix, statut)
+VALUES(1, 'CODE1', NULL, 499.0, 1);
+INSERT INTO code_promo_secu
+(id, code, description, prix, statut)
+VALUES(2, 'CODE2', NULL, 299.0, 1);
+
+
 --  Auto-generated SQL script #202208031218
 INSERT INTO categorie_secu (id,secteur_id,nom,statut)
 	VALUES (1,1,'Unités centrales',1);
