@@ -118,7 +118,7 @@ class DocumentClientController extends AbstractController
 
             try{
                 $file = $form->get('file')->getData();
-                $filename = $this->fileHandler->uploadTmp($file, "contracts", $token);
+                $filename = $this->fileHandler->uploadTmp($file, "Contrats", $token);
                 $rec->setSignedFile($filename);
                 // $rec->setDateSigned(new DateTime());
                 $this->entityManager->flush(); 
