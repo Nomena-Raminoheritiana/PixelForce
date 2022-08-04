@@ -109,6 +109,12 @@ class AgentInscriptionController extends AbstractController
             $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
             /** @var PlanAgentAccount */
             $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
+            
+            // Gestion exeption
+            if (is_null($planAgentAccount)) {
+                return throw new \Exception("Plan d'abonnement null, n'oublie pas de créer des plans d'abonnement pour les agents dans l'espace Admin", 1);
+            }
+
             $planPrice = $planAgentAccount->getAmount();
             $stripeIntentSecret = $stripeService->intentSecret($planPrice);
         }
