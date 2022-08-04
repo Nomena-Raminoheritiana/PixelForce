@@ -3,6 +3,7 @@
 BUG_and_SOLUTION.markdown
 VAKIO_AHO.markdown
 /.env.local
+/src/DataFixtures/User76Fixtures.php
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
