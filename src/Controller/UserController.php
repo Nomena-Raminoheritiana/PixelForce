@@ -130,7 +130,7 @@ class UserController extends AbstractController
             $fileName = $this->fileUploader->upload($request->files->get('user_avatar'), $this->directoryManagement->getMediaFolder_UserAvatars(), $user->getPhoto());
             $user->setPhoto($fileName);
             $this->entityManager->save($user);
-            $this->addFlash('success', 'Informations modifié avec succès');
+            $this->addFlash('success', 'Informations modifiées avec succès');
         }
 
         return $this->render('users/account_setting.html.twig', [
