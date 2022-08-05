@@ -170,6 +170,11 @@ class AgentInscriptionController extends AbstractController
     {
 
         $sessionAgentId =  $this->session->get('agentId');
+        /** @var User $agent */
+        $agent = $this->getUser();
+        if ($agent) {
+            $sessionAgentId = $agent->getId();
+        }
 
         /** @var User */
         $user = $this->userRepository->find($sessionAgentId);
