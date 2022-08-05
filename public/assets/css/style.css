@@ -366,3 +366,25 @@ a, a:hover{
 		transform: rotate(360deg);
 	}
 }
+
+.file-block{
+	border: 1px solid #ced4da;
+	border-radius: 0.25rem;
+	color: #5e5873;
+	padding: 5px;
+	position: relative;
+	padding-right: 27px;
+}
+
+.file-block .file-close{
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	width: 25px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-left: inherit;
+	cursor: pointer;
+}

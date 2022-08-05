@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CalendarEventRepository;
+use App\Repository\PlanAgentAccountRepository;
+use App\Repository\UserRepository;
 use App\Services\StripeService;
 use App\Services\User\AgentService;
 
@@ -42,8 +44,10 @@ class AgentAccountController extends AbstractController
     private $stripeService;
     private $stripeManager;
     private $agentService;
+    private $repoPlanAgentAccount;
+    protected $repoUser;
 
-    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository, StripeService $stripeService, StripeManager $stripeManager, AgentService $agentService)
+    public function __construct(SecteurRepository $repoSecteur, AgentSecteurRepository $repoAgentSecteur, FormationRepository $repoFormation,SessionInterface $session, ContactRepository $repoContact, FormationAgentRepository $repoFormationAgent, CategorieFormationRepository $repoCatFormation, RFormationCategorieRepository $repoRelationFormationCategorie, CategorieFormationAgentService $categorieFormationAgentService, CalendarEventRepository $calendarEventRepository, StripeService $stripeService, StripeManager $stripeManager, AgentService $agentService, PlanAgentAccountRepository $repoPlanAgentAccount, UserRepository $repoUser)
     {
         $this->repoSecteur = $repoSecteur;
         $this->repoAgentSecteur = $repoAgentSecteur;
@@ -58,6 +62,8 @@ class AgentAccountController extends AbstractController
         $this->stripeService = $stripeService;
         $this->stripeManager = $stripeManager;
         $this->agentService = $agentService;
+        $this->repoPlanAgentAccount = $repoPlanAgentAccount;
+        $this->repoUser = $repoUser;
     }
 
     /**
@@ -67,31 +73,36 @@ class AgentAccountController extends AbstractController
      */
     public function agent_home(AgentSecteurService $agentSecteurService)
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var User $agent */
+        $agent = $this->getUser();
         
         $this->session->remove('secteurId');
-        $this->agentService->setSesssionEnabledContent($user);
+        $this->agentService->setSesssionEnabledContent($agent);
 
         $allSecteurs = $this->repoSecteur->findAllActive();
 
         // On vérifie le statut de compte de l'utilisateur 
-        $accountStatus = $user->getAccountStatus();
-        $expiredAccount = ($this->agentService->isAccountExpired($user)) ? true : false;
+        $accountStatus = $agent->getAccountStatus();
+        $expiredAccount = ($this->agentService->isAccountExpired($agent)) ? true : false;
+        $planAgentAccount = [];
 
-
-        if ($this->agentService->isActivableContent($user)) {
+        if ($this->agentService->isActivableContent($agent)) {
             $stripe_publishable_key = '';
             $stripeIntentSecret = '';
-            $accountPrice  = 0.0;
+            $planPrice  = 0.0;
         }else {
-            // Handling account price (Trial or Integral )
-            if ($accountStatus === USER::ACCOUNT_STATUS['UNPAID']) {
-                $accountPrice = USER::ACCOUNT_PRICE['TRIAL'];
-            } elseif ($expiredAccount) {
-                $accountPrice  = USER::ACCOUNT_PRICE['INTEGRAL'];
+            $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
+            $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
+            /** @var PlanAgentAccount */
+            $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
+            
+            // Gestion exeption
+            if (is_null($planAgentAccount)) {
+                return throw new \Exception("Plan d'abonnement null, n'oublie pas de créer des plans d'abonnement pour les agents dans l'espace Admin", 1);
             }
-            $stripeIntentSecret = $this->stripeService->intentSecret($accountPrice);
+            
+            $planPrice = $planAgentAccount->getAmount();
+            $stripeIntentSecret = $this->stripeService->intentSecret($planPrice);
             $stripe_publishable_key = $_ENV['STRIPE_PUBLIC_KEY'];
         }
 
@@ -100,13 +111,15 @@ class AgentAccountController extends AbstractController
             'repoAgentSecteur' => $this->repoAgentSecteur,
             'agent' => $this->getUser(),
             'agentSecteurService' => $agentSecteurService,
-            'sessionAgentId' => $user->getId(),
+            'sessionAgentId' => $agent->getId(),
             'stripeIntentSecret' => $stripeIntentSecret,
             'stripe_publishable_key' => $stripe_publishable_key,
-            'accountPrice' => $accountPrice,
+            'planPrice' => $planPrice,
             'expiredAccount' => $expiredAccount,
             'accountStatus' => $accountStatus,
-            'USER_ACCOUNT_STATUS' => USER::ACCOUNT_STATUS
+            'USER_ACCOUNT_STATUS' => USER::ACCOUNT_STATUS,
+            'repoUser' => $this->repoUser,
+            'plan' => $planAgentAccount,
         ]);
     }
 
@@ -150,7 +163,7 @@ class AgentAccountController extends AbstractController
             return $this->redirectToRoute('agent_home');
         }
 
-        $contacts = $this->repoContact->findBy(['secteur' => $secteur]);
+        $contacts = $this->repoContact->findBy(['secteur' => $secteur, 'agent' => $agent]);
         $contacts = $paginator->paginate(
             $contacts,
             $request->query->getInt('page', 1),

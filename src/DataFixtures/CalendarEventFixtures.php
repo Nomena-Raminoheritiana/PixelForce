@@ -40,33 +40,13 @@ class CalendarEventFixtures extends Fixture  implements FixtureGroupInterface
 
         $this->objectManager->createObject(CalendarEvent::class, [
             "url"=>"",
-            "title"=> 'Meeting with the client',
+            "title"=> 'Rendez-vous avec le client',
             "start"=> new \DateTime(),
             "end"=> new \DateTime(),
             "allDay"=> false,
             "user"=> $agentUser,
             "calendarEventLabel"=>$businessLabel
 
-        ]);
-
-        $this->objectManager->createObject(CalendarEvent::class, [
-            "url"=>"",
-            "title"=> 'Buy a Ferrari',
-            "start"=> new \DateTime(),
-            "end"=> (new \DateTime())->add(new \DateInterval("P1D")),
-            "allDay"=> true,
-            "user"=> $agentUser,
-            "calendarEventLabel"=>$personnalLabel
-        ]);
-
-        $this->objectManager->createObject(CalendarEvent::class, [
-            "url"=>"",
-            "title"=> 'Go to supermarket',
-            "start"=> (new \DateTime())->add(new \DateInterval("P4D")),
-            "end"=> (new \DateTime())->add(new \DateInterval("P4D")),
-            "allDay"=> false,
-            "user"=> $agentUser,
-            "calendarEventLabel"=>$otherLabel
         ]);
 
         $manager->flush();

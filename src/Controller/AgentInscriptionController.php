@@ -69,6 +69,7 @@ class AgentInscriptionController extends AbstractController
         if($form->isSubmitted() && $form->isValid()) {
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
             $user->setRoles([ User::ROLE_AGENT ]);
+            $user->setActive(1);
             $user->setAccountStatus(User::ACCOUNT_STATUS['UNPAID']);
             $this->entityManager->save($user);
             $this->session->set('agentId', $user->getId());
@@ -108,6 +109,12 @@ class AgentInscriptionController extends AbstractController
             $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
             /** @var PlanAgentAccount */
             $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
+            
+            // Gestion exeption
+            if (is_null($planAgentAccount)) {
+                return throw new \Exception("Plan d'abonnement null, n'oublie pas de créer des plans d'abonnement pour les agents dans l'espace Admin", 1);
+            }
+
             $planPrice = $planAgentAccount->getAmount();
             $stripeIntentSecret = $stripeService->intentSecret($planPrice);
         }
@@ -163,6 +170,11 @@ class AgentInscriptionController extends AbstractController
     {
 
         $sessionAgentId =  $this->session->get('agentId');
+        /** @var User $agent */
+        $agent = $this->getUser();
+        if ($agent) {
+            $sessionAgentId = $agent->getId();
+        }
 
         /** @var User */
         $user = $this->userRepository->find($sessionAgentId);

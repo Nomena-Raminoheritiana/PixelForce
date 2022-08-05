@@ -109,4 +109,19 @@ class AdminCategorieFormationController extends AbstractController
         $this->addFlash('danger', "Catégorie supprimée");
         return $this->redirectToRoute('admin_formation_categorie_list');    
     }
+
+    /**
+     * @Route("/admin/formation/categorie/{id}/reactiver", name="admin_formation_categorie_reactiver")
+     */
+    public function admin_coach_reactiver(CategorieFormation $category)
+    {
+
+        $category->setStatut(1);
+        $this->entityManager->save($category);
+
+        $this->addFlash('success', 'Catégorie réactiver');
+
+        return $this->redirectToRoute('admin_formation_categorie_list');
+    }
+
 }

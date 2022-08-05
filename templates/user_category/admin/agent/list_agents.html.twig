@@ -121,11 +121,17 @@
                                 <a href="{{ path('admin_agent_view', {'id': agent.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <form method="post" action="{{path('admin_agent_delete', {id: agent.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer cet agent ?')">
+                                {% if agent.active == 1 %}
+                                <form method="post" action="{{path('admin_agent_delete', {id: agent.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de bannir cet agent ?')">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ agent.id) }}">
                                     <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                                </form>  
+                                </form>
+                                {% elseif agent.active == -1 %}
+                                    <a href="{{ path('admin_agent_reactiver', {'id': agent.id}) }}" class="btn btn-success">
+                                        <i class="fa-solid fa-sync"></i>
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
 					{% endfor %}

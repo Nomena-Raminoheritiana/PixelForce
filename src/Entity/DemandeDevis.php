@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DemandeDevisRepository;
+use App\Util\GenericUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -75,6 +76,11 @@ class DemandeDevis
      * @ORM\JoinColumn(nullable=false)
      */
     private $produit;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $files = [];
 
     public function getId(): ?int
     {
@@ -211,5 +217,27 @@ class DemandeDevis
         $this->produit = $produit;
 
         return $this;
+    }
+
+    public function getFiles(): ?array
+    {
+        return $this->files;
+    }
+
+    public function setFiles(?array $files): self
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+    public function getFilesShortName(){
+        if(!$this->getFiles())
+            return null;
+        $filesSN = [];
+        for($i=0; $i<count($this->getFiles()); $i++){
+            $filesSN[] = GenericUtil::getFileName($this->getFiles()[$i]);
+        }
+        return $filesSN; 
     }
 }

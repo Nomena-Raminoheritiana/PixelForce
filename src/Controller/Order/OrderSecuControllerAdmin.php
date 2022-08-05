@@ -17,8 +17,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -129,6 +131,22 @@ class OrderSecuControllerAdmin extends AbstractController
             );
         } 
         return $this->redirectToRoute('admin_ordersecu_details', ['id' => $id]);
+    }
+
+    /**
+     * @Route("/{id}/downloadContrat", name="admin_ordersecu_download_contrat")
+     */
+    public function downloadContrat(OrderSecu $order): Response
+    {
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".$order->getContratSigned()
+        );
+        $response->headers->set('Content-Type', 'appication/pdf');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'contrat-'.$order->getId().'.pdf'
+        );
+        return $response;
     }
 
 }

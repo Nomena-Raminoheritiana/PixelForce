@@ -34,8 +34,6 @@ $(function() {
         }
     }
 
-    console.log('urlStripeSubscription', urlStripeSubscription)
-
     // Monter notre form à l'objet Stripe 
     var card = elements.create('card', {style: styleCustom});
     card.update({value: {postalCode: postalCodeHolder}});

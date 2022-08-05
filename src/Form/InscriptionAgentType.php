@@ -42,7 +42,7 @@ class InscriptionAgentType extends AbstractType
             ->add('adresse', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Votre Adresse'
+                    'placeholder' => 'Votre adresse'
                 ],
                 'constraints' => [
                     new NotNull([],'champ obligatoire')
@@ -51,7 +51,7 @@ class InscriptionAgentType extends AbstractType
             ->add('telephone', TelType::class, [
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'Numéro Téléphone'
+                    'placeholder' => 'Numéro téléphone'
                 ],
                 'constraints' => [
                     new NotNull([],'champ obligatoire')

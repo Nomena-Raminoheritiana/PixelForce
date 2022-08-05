@@ -103,7 +103,7 @@
                                         <i class="fa-solid fa-circle-check"></i> Valider
                                     </a>
                                 {% else %}
-                                    <a href="{{ path('coach_agent_secteur_invalidate', {'agentSecteur': agentSecteur.id, 'pageReloaded': 'true'}) }}" class="btn btn-danger" onclick="return confirm('Êtes vous vraiment sûr de bloquer le secteur de cet agent ?')">
+                                    <a href="{{ path('coach_agent_secteur_invalidate', {'agentSecteur': agentSecteur.id, 'pageReloaded': 'true'}) }}" class="btn btn-danger" onclick="return confirm('Êtes vous vraiment sûr de bloquer cet agent de ce secteur?')">
                                         <i class="fa-solid fa-circle-minus"></i> Bloquer
                                     </a>
                                 {% endif %}

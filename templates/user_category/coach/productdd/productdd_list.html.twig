@@ -156,9 +156,9 @@
                         <td>{{product.nom}}</td>
                         <td>{{product.categorie.nom}}</td>
                         <td>{{product.description | raw}}</td>
-                        <td>
+                        <td class="text-center">
                             {% if product.photo != null %}
-                                <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
+                                <img class="img-fluid card-img-top ecommerce-card-img" style="height:150px !important; width:auto !important;" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
                             {% endif %}
                         </td>
 

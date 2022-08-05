@@ -186,14 +186,31 @@ class AdminAgentController extends AbstractController
             $agent->setActive(-1);
             $this->entityManager->save($agent);
 
-            $this->addFlash( 'danger', 'Agent supprimé');
+            $this->addFlash( 'danger', 'L\'agent a été banni du plateforme avec succès');
         }
         return $this->redirectToRoute('admin_agent_list');    
     }
 
     /**
+     * @Route("/admin/agent/{id}/reactiver", name="admin_agent_reactiver")
+     */
+    public function admin_agent_reactiver(User $coach, Request $request)
+    {
+
+        $coach->setActive(1);
+        $this->entityManager->save($coach);
+
+        $this->addFlash('success', 'Le compte de l\'agent a été réactivé');
+
+        return $this->redirectToRoute('admin_agent_list');
+    }
+
+    /**
      * @Route("/admin/agent/secteur/multiple/add", name="admin_agent_secteur_multiple_add")
-     * @return Json
+     * @param Request $request
+     * @param CoachSecteurRepository $coachSecteurRepository
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      */
     public function admin_agent_secteur_multiple_add(Request $request, CoachSecteurRepository $coachSecteurRepository)
     {
@@ -213,8 +230,6 @@ class AdminAgentController extends AbstractController
             if ($isNewSectorInArray) {
                 $errorMessages[] = 'Duplication secteur ' . $secteur->getNom() .'<br>';  
             }else{
-                $coach = $coachSecteurRepository->findOneBy(['secteur' => $secteur])->getCoach();
-
                 // Si il n'y a pas de doublon, on sauvegarde la modification
                 if ($request->getMethod() === "POST") {
                     $agentSecteur  = new AgentSecteur();
@@ -226,7 +241,6 @@ class AdminAgentController extends AbstractController
 
 
                     $secteurAdded['secteur'.$index]['nom'] = $secteur->getNom();
-                    $secteurAdded['secteur'.$index]['coach'] = $coach->getNom();
                     $secteurAdded['secteur'.$index]['dateValidation'] = (new \DateTime())->format('d/m/Y');
                     $secteurAdded['secteur'.$index]['agentSecteurId'] = $agentSecteur->getId();
                 }

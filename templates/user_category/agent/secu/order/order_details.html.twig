@@ -175,8 +175,11 @@
                                                     <div class="detail-amt fw-bolder" id="total-cost" >{{order.total | number_format(2, ',', ' ')}} €</div>
                                                 </li>
                                             </ul>
+                                            {% if order.contratSigned %}
+                                            <a role="button" class="btn btn-primary w-100 btn-next place-order mt-2" href="{{path('admin_ordersecu_download_contrat', {'id': order.id})}}">Voir le contrat</a>                                            
+                                            {% endif %}
                                             {% if order.statut == 1 %}
-                                            <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{path('admin_ordersecu_status', {'id': order.id, 'status': 2})}}">Valider</a>
+                                            <a role="button" class="btn btn-success w-100 btn-next place-order mt-2" href="{{path('admin_ordersecu_status', {'id': order.id, 'status': 2})}}">Valider</a>
                                             
                                             <a role="button" class="btn btn-danger w-100 btn-next place-order mt-2" href="{{path('admin_ordersecu_status', {'id': order.id, 'status': -1})}}">Rejeter</a>
                                             {% endif %}

@@ -34,6 +34,8 @@ use DateTime;
 use Exception;
 use SessionIdInterface;
 use Stripe\Product;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -128,6 +130,23 @@ class DemandeDevisControllerAgent extends AbstractController
         ]);
     }
 
+
+    /**
+     * @Route("/{id}/file/{index}", name="agent_demandedevis_file_download")
+     */
+    public function view(DemandeDevis $dd, int $index): Response
+    {
+        $filepath = $dd->getFiles()[$index];
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".
+            $dd->getFiles()[$index]
+        );
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            GenericUtil::getFileName($filepath)
+        );
+        return $response;
+    }
     
 
     

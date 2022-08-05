@@ -137,7 +137,15 @@ class DemandeDevisControllerClient extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                
+                $files = [];
+
+                $data = $form->get('files')->getData();
+                for($i=0; $i<count($data); $i++){
+                    $filename = $this->fileHandler->upload($data[$i], "dd/".date('Y-m-d-H-i-s'));
+                    $files[] = $filename;
+                }
+
+                $dd->setFiles($files);
                 $dd->setStatut(1);
                 $dd->setSecteur($secteur);
                 $dd->setAgent($agent);

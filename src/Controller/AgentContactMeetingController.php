@@ -79,21 +79,25 @@ class AgentContactMeetingController extends AbstractController
             $meetingTitle = $form->getData()->getTitle();
             $secteurId = $this->session->get('secteurId');
             $secteur = $this->secteurRepository->find($secteurId);
-            $coachSecteur = $this->coachSecteurRepository->findBy(['secteur' => $secteur]);
-            $coach = $coachSecteur[0]->getCoach();
+            $allCoachSecteur = $this->coachSecteurRepository->findBy(['secteur' => $secteur]);
            
             try{
                 if($userToMeet == null) throw new \Exception('User to meet invalid');
+
                 $meetingCalendarEventLabel = $this->calendarEventLabelRepository->findOneBy(["value"=>"meeting"]);
                 if($meetingCalendarEventLabel == null) throw new \Exception('Calendar event "meeting" is missing in the database.');
                 
                 $this->entityManager->beginTransaction();
 
-                $meetingCoach = $meeting->clone($coach);
+                foreach ($allCoachSecteur as $coachSecteur) {
+                    $coach = $coachSecteur->getCoach();
+                    $meetingCoach = $meeting->clone($coach);
+                    $this->meetingService->saveMeeting($meetingCoach, $coach, $userToMeet);
+                    $this->meetingService->saveMeetingEvent($meetingCoach, $coach, $meetingCalendarEventLabel);
+                }
+
                 $this->meetingService->saveMeeting($meeting, $agent, $userToMeet);
-                $this->meetingService->saveMeeting($meetingCoach, $coach, $userToMeet);
                 $this->meetingService->saveMeetingEvent($meeting, $agent, $meetingCalendarEventLabel);
-                $this->meetingService->saveMeetingEvent($meetingCoach, $coach, $meetingCalendarEventLabel);
 
                 $this->entityManager->commit();
 

@@ -44,7 +44,6 @@
 										<tr>
 											<th></th>
 											<th>Secteur</th>
-											<th class="text-nowrap">Coach</th>
 											<th>Date de validation</th>
 											<th>Statut</th>
 											<th>Action</th>
@@ -56,7 +55,6 @@
 												<td></td>
 												<td>{{ agentSecteur.secteur.nom }}</td>
 												{% set coachtSecteur = repoCoachSecteur.findOneBy({'secteur' : agentSecteur.secteur}) %}
-												<td>{{ coachtSecteur.coach.nom }}</td>
 												<td>{{ agentSecteur.dateValidation|date('d/m/Y') }}</td>
 												<td>
 													{% if agentSecteur.statut == false %}

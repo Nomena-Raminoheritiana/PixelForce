@@ -19,6 +19,8 @@ use App\Repository\SecteurRepository;
 use App\Repository\TypeAbonnementSecuRepository;
 use App\Repository\TypeInstallationSecuRepository;
 use App\Repository\UserRepository;
+use App\Services\DocumentService;
+use App\Services\FileHandler;
 use App\Services\OrderSecuService;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
@@ -27,15 +29,20 @@ use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @Route("/client/{token}/makeordersecu")
@@ -46,13 +53,15 @@ class MakeOrderSecuControllerClient extends AbstractController
     private $userRepository;
     private $session;
     private $orderSecuService;
+    private $fileHandler;
 
-    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, SessionInterface $session, OrderSecuService $orderSecuService)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, SessionInterface $session, OrderSecuService $orderSecuService, FileHandler $fileHandler)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->session = $session;
         $this->orderSecuService = $orderSecuService;
+        $this->fileHandler = $fileHandler;
     }
 
     /**
@@ -375,7 +384,7 @@ class MakeOrderSecuControllerClient extends AbstractController
 
             try{
                 $this->orderSecuService->setOrderSecu($order);
-                return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token]);
+                return $this->redirectToRoute('client_make_ordersecu_download_contrat_instructions', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
                 $this->addFlash('danger', $error);
@@ -394,6 +403,180 @@ class MakeOrderSecuControllerClient extends AbstractController
 
     }
 
+    /**
+     * @Route("/downloadContratInstructions", name="client_make_ordersecu_download_contrat_instructions")
+     */
+    public function downloadContratInstructions($token, Request $request, SecteurRepository $secteurRepository): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $secteurRepository->find($secteurId);
+        $contratSecu = $secteur->getContratSecu();
+        $agent = $this->userRepository->findAgentByToken($token);
+
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_download_contrat.html.twig', [
+            'order' => $order,
+            'contratSecu' => $contratSecu,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'token' => $token,
+            'agent' => $agent
+        ]);
+
+    }
+
+    /**
+     * @Route("/signContrat", name="client_make_ordersecu_sign_contrat")
+     */
+    public function signContrat($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository, DocumentService $documentService): Response
+    {
+        $filesDirectory = $this->getParameter('files_directory_relative');
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        $form = $formFactory
+            ->createNamedBuilder("sign-contrat-form", FormType::class)
+            ->add('signature', HiddenType::class, [
+                "label" => "Signature",
+                'mapped' => false,
+                "required" => true
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $signature = $form->get('signature')->getData();
+                $photo = $this->fileHandler->saveBase64($signature, $filesDirectory."secu/signature/".$user->getId()."_".date('Y-m-d-H-i-s').'.png');
+                $filename = $documentService->signContrat($order->getContratRempli(), "secu/contrat/signed/".$user->getId()."_".date('Y-m-d-H-i-s').".pdf", $photo);
+                $order->setContratSigned($filename);
+                $this->orderSecuService->setOrderSecu($order);
+                return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_sign_contrat.html.twig', [
+            'order' => $order,
+            'filesDirectory' => $filesDirectory,
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent
+        ]);
+
+    }
+
+    /**
+     * @Route("/downloadContrat", name="client_make_ordersecu_download_contrat")
+     */
+    public function downloadContrat($token, SecteurRepository $secteurRepository): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $secteur = $secteurRepository->find($secteurId);
+        $filename = $secteur->getContratSecu()->getFichier();
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".$filename
+        );
+        $response->headers->set('Content-Type', 'appication/pdf');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'contrat.pdf'
+        );
+        return $response;
+    }
+
+
+    /**
+     * @Route("/uploadContrat", name="client_make_ordersecu_upload_contrat")
+     */
+    public function uploadContrat($token, Request $request, FormFactoryInterface $formFactory, DocumentService $documentService): Response
+    {
+        $filesDirectory = $this->getParameter('files_directory_relative');
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        $form = $formFactory
+            ->createNamedBuilder("upload-contrat-form", FormType::class)
+            ->add('file', FileType::class, [
+                "label" => "Contrat rempli",
+                'mapped' => false,
+                "required" => true,
+                'constraints' => [
+                    new NotNull(["message" => "Fichier obligatoire"]),
+                    new File([
+                        // 'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            "application/pdf", 
+                            "application/x-pdf"
+                        ],
+                        'mimeTypesMessage' => 'Sélectionner un fichier PDF valide',
+                    ])
+                ]
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $file = $form->get('file')->getData();
+                $filename = $this->fileHandler->upload($file, "secu/contrat/rempli/".$user->getId()."/".date('Y-m-d-H-i-s'));
+                $order->setContratRempli($filename);
+                $this->orderSecuService->setOrderSecu($order);
+                $formData = $documentService->getData($filename);
+                $sepa = $documentService->getDataSepa($formData);
+                $order->setSepa($sepa);
+                $this->orderSecuService->setOrderSecu($order);
+                return $this->redirectToRoute('client_make_ordersecu_sign_contrat', ['token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+        
+        return $this->render('user_category/client/secu/makeorder/makeorder_upload_contrat.html.twig', [
+            'order' => $order,
+            'filesDirectory' => $filesDirectory,
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent
+        ]);
+
+    }
 
     /**
      * @Route("/payment", name="client_make_ordersecu_payment")
@@ -451,4 +634,5 @@ class MakeOrderSecuControllerClient extends AbstractController
         ]);
 
     }
+
 }

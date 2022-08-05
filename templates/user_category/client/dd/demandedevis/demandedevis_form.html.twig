@@ -43,7 +43,7 @@
                     <div class="block block--bordered block--rounded">
                         <h1 class="block__text block__text--center mt-2" >Demande de devis :</h1>
                             
-                        {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
+                        {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'demandedevis-form'}}) }}
                             {% if error %}
                             <div class="alert alert-danger" role="alert">
                                 <div class="alert-body">
@@ -76,7 +76,28 @@
                                 {{form_widget(form.description)}}
                                 {{form_errors(form.description)}}
                             </div>
-                            
+                            <div class="d-none">
+                                {{form_widget(form.files)}}
+                            </div>
+                            <div class="my-form-widget">
+                                <button class="btn btn-success btn-large" type="button" id="btn-add-file"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Ajouter des fichiers</button>
+                                {{form_errors(form.files)}}
+                            </div>
+                            <div class="my-form-widget">
+                                <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
+                                    {# <div class="file-block m-2">
+                                        <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
+                                        <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
+                                    </div>
+
+                                    <div class="file-block m-2">
+                                        <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
+                                        <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
+                                    </div> #}
+
+                                    
+                                </div>
+                            </div>
                             
                             <div class="btn-wrap">
                                 <button class="btn btn-primary" type="submit">{{ isEdit ? 'Enregistrer les modifications' : 'Envoyer' }}<i data-feather="send"></i></button>
@@ -92,6 +113,57 @@
     </div>
     <!-- END: Content-->
 
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    let files = [];
+    let filesInput = $('#demande_devis_form_files');
+    $('#btn-add-file').click(function (e){
+        filesInput.click();
+    });
+
+    filesInput.change(function (e){
+        for(let i=0; i<e.target.files.length; i++){
+            addFile(e.target.files[i]);
+        }
+    });
+
+    function getFileName(fullPath){
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            var filename = fullPath.substring(startIndex);
+            if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+                filename = filename.substring(1);
+            }
+            return filename;
+        }
+        return "";
+    }
+
+    function addFile(newFile){
+        files.push(newFile);
+        let fileBlock = $(`<div class="file-block m-2">
+            <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;${newFile.name}</span>
+        </div>`);
+        let fileClose = $(`<div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>`);
+        fileClose.click(function (e) {
+            files.splice(files.indexOf(newFile), 1);
+            fileBlock.remove();
+        });
+        fileBlock.append(fileClose);
+        $('#files-container').append(fileBlock);
+    }
+
+    $('#demandedevis-form').submit(function (e){
+        let dt = new DataTransfer();
+        for(let i=0; i<files.length; i++){
+            dt.items.add(files[i]);
+        }
+        filesInput[0].files = dt.files;
+    });
+</script>
 {% endblock %}
 
 

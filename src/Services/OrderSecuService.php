@@ -81,7 +81,7 @@ class OrderSecuService
                 $montantAccomp += $accomp->getProduit()->getPrix() * $accomp->getQte();
             }
             $orderSecu->setAccompMontant($montantAccomp); 
-
+            
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 
@@ -89,7 +89,7 @@ class OrderSecuService
                         'description' => 'Paiement commande'
                     ]);
 
-            $orderSecu->setChargeId($chargeId);        
+            $orderSecu->setChargeId($chargeId);  
             $this->entityManager->flush();
             return $orderSecu;
         } finally {

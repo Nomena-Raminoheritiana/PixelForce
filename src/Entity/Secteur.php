@@ -28,6 +28,7 @@ class Secteur implements JsonSerializable
     /**
      * @ORM\Column(type="text", nullable=true)
      */
+    
     private $description;
 
     /**
@@ -75,6 +76,11 @@ class Secteur implements JsonSerializable
      * @ORM\ManyToOne(targetEntity=TypeSecteur::class)
      */
     private $type;
+
+    /**
+     * @ORM\OneToOne(targetEntity=ContratSecu::class, mappedBy="secteur", cascade={"persist", "remove"})
+     */
+    private $contratSecu;
 
     public function __construct()
     {
@@ -348,5 +354,22 @@ class Secteur implements JsonSerializable
     {
         $vars = get_object_vars($this);
         return $vars;
+    }
+
+    public function getContratSecu(): ?ContratSecu
+    {
+        return $this->contratSecu;
+    }
+
+    public function setContratSecu(ContratSecu $contratSecu): self
+    {
+        // set the owning side of the relation if necessary
+        if ($contratSecu->getSecteur() !== $this) {
+            $contratSecu->setSecteur($this);
+        }
+
+        $this->contratSecu = $contratSecu;
+
+        return $this;
     }
 }

@@ -59,6 +59,17 @@ class DemandeDevisFormType extends AbstractType
                     'uiColor' => '#ffffff',
                     //'uiColor' => '#7367f0',
                 )))
+            ->add('files', FileType::class, [
+                "label" => false,
+                'mapped' => false,
+                "required" => false,
+                "multiple" => true,
+                'constraints' => [
+                    // new File([
+                    //     'maxSize' => '1024k'
+                    // ])
+                ]
+            ])   
         ;
     }
 
