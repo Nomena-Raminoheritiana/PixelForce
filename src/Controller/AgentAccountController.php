@@ -163,7 +163,7 @@ class AgentAccountController extends AbstractController
             return $this->redirectToRoute('agent_home');
         }
 
-        $contacts = $this->repoContact->findBy(['secteur' => $secteur]);
+        $contacts = $this->repoContact->findBy(['secteur' => $secteur, 'agent' => $agent]);
         $contacts = $paginator->paginate(
             $contacts,
             $request->query->getInt('page', 1),
