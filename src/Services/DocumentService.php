@@ -179,7 +179,9 @@ class DocumentService
             $field = DocumentService::FIELDS_SEPA[$i];
             $val = '';
             for($j=$field['debut']; $j<=$field['fin']; $j++){
-                $val .= $tab[$j]['FieldValue'];
+                if(isset($tab[$j]['FieldValue'])){
+                    $val .= $tab[$j]['FieldValue'];
+                }
             }
             $result[$field['field']] = $val;
         }
