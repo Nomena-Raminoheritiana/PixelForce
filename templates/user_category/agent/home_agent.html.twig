@@ -64,7 +64,7 @@
                         {% endif %}
 
                          <div class="alert alert-secondary mt-3">
-                            {% set agent = repoUser.find(app.session.get('agentId')) %}
+                            {% set agent = app.user %}
                             {% set agentSecteurs = repoAgentSecteur.findBy({'agent' : agent}) %}
                             <i class="fa-solid fa-circle-info me-1"></i> 
                             Vous avez choisi le(s) secteur(s) suivant(s) : <span class="fw-bolder"> {{ agent.allSecteursOfUser(agentSecteurs) }}</span>. 
