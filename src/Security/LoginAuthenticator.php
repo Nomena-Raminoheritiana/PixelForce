@@ -35,10 +35,10 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $this->userRepository = $userRepository;
     }
 
-    public function supports(Request $request): bool
+    /*public function supports(Request $request): bool
     {
         return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getRequestUri();
-    }
+    }*/
 
     public function authenticate(Request $request): Passport
     {
