@@ -1,0 +1,13 @@
+/*!
+                Copyright (c) 2016 Jed Watson.
+                Licensed under the MIT License (MIT), see
+                http://jedwatson.github.io/classnames
+              */
+
+/*!
+ * perfect-scrollbar v1.5.0
+ * Copyright 2020 Hyunje Jun, MDBootstrap and Contributors
+ * Licensed under MIT
+ */
+
+/*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */

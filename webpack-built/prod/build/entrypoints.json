@@ -1,0 +1,363 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/1386.71e1332e.js",
+        "/build/8674.ce3e2607.js",
+        "/build/5666.9df01066.js",
+        "/build/7165.65292ab4.js",
+        "/build/2206.1e1945be.js",
+        "/build/5633.8a34cf95.js",
+        "/build/app.56acc6b1.js"
+      ],
+      "css": [
+        "/build/app.81963a15.css"
+      ]
+    },
+    "bootstrap_touchspin": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/1386.71e1332e.js",
+        "/build/7956.c805ceda.js",
+        "/build/bootstrap_touchspin.865fa393.js"
+      ]
+    },
+    "form_addAgent": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/form_addAgent.0d8977e2.js"
+      ]
+    },
+    "PlanificationLiveVideo": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/PlanificationLiveVideo.8f79cbc7.js"
+      ]
+    },
+    "ImportVideoVimeo": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/1386.71e1332e.js",
+        "/build/8674.ce3e2607.js",
+        "/build/5666.9df01066.js",
+        "/build/ImportVideoVimeo.a7c51629.js"
+      ]
+    },
+    "commentaire": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/8674.ce3e2607.js",
+        "/build/5666.9df01066.js",
+        "/build/7165.65292ab4.js",
+        "/build/9237.4b72400d.js",
+        "/build/commentaire.76a2283b.js"
+      ]
+    },
+    "chatJS": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/1386.71e1332e.js",
+        "/build/8674.ce3e2607.js",
+        "/build/5666.9df01066.js",
+        "/build/7165.65292ab4.js",
+        "/build/2206.1e1945be.js",
+        "/build/4197.04f03a59.js",
+        "/build/chatJS.479677d1.js"
+      ]
+    },
+    "formationForm": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/1386.71e1332e.js",
+        "/build/8674.ce3e2607.js",
+        "/build/5666.9df01066.js",
+        "/build/7165.65292ab4.js",
+        "/build/8394.678b061d.js",
+        "/build/formationForm.979e1da6.js"
+      ]
+    },
+    "ckeditorForm": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/ckeditorForm.26813b1d.js"
+      ]
+    },
+    "validationSecteur": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/2206.1e1945be.js",
+        "/build/validationSecteur.ff8f6d4f.js"
+      ]
+    },
+    "ImportExportContact": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/8674.ce3e2607.js",
+        "/build/5666.9df01066.js",
+        "/build/ImportExportContact.cf7e8e52.js"
+      ]
+    },
+    "tag": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/tag.5d511f01.js"
+      ]
+    },
+    "StripeAgentRegistration": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/StripeAgentRegistration.b1a25937.js"
+      ]
+    },
+    "StripeAgentRegistrationSubscription": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/StripeAgentRegistrationSubscription.4276910b.js"
+      ]
+    },
+    "datatableJs": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/datatableJs.8cbc96bf.js"
+      ]
+    },
+    "vuexyJS": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/vuexyJS.bdedbb00.js"
+      ]
+    },
+    "vuexy_vendors_js": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/1386.71e1332e.js",
+        "/build/8674.ce3e2607.js",
+        "/build/902.97b20710.js",
+        "/build/9138.55a5f676.js",
+        "/build/1710.f89655a5.js",
+        "/build/vuexy_vendors_js.ba5af21b.js"
+      ]
+    },
+    "vuexy_apexcharts_js": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/1386.71e1332e.js",
+        "/build/8674.ce3e2607.js",
+        "/build/902.97b20710.js",
+        "/build/9138.55a5f676.js",
+        "/build/4838.a1031554.js",
+        "/build/vuexy_apexcharts_js.4fb87af1.js"
+      ]
+    },
+    "vuexy_toastr_js": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/vuexy_toastr_js.dc68a1db.js"
+      ]
+    },
+    "vuexy_jquery_validate": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/1386.71e1332e.js",
+        "/build/902.97b20710.js",
+        "/build/vuexy_jquery_validate.1bda8a9c.js"
+      ]
+    },
+    "vuexy_app": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/3602.f60b57c8.js",
+        "/build/vuexy_app.c7bbdae3.js"
+      ]
+    },
+    "vuexy_app_menu": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/2273.7e261a08.js",
+        "/build/vuexy_app_menu.7993ee96.js"
+      ]
+    },
+    "vuexy_dashboard_ecommerce_js": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/vuexy_dashboard_ecommerce_js.0cc5c9db.js"
+      ]
+    },
+    "vuexy_app_user_view_js": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/2719.2d2a8e1b.js",
+        "/build/vuexy_app_user_view_js.ef3edf19.js"
+      ]
+    },
+    "vuexy_page_account_settings_account_js": {
+      "js": [
+        "/build/runtime.25a80981.js",
+        "/build/9755.58d5f244.js",
+        "/build/vuexy_page_account_settings_account_js.a977dfc7.js"
+      ]
+    },
+    "base": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/base.50f99921.css"
+      ]
+    },
+    "chat": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/chat.445e4bad.css"
+      ]
+    },
+    "vuexy_bootstrap": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_bootstrap.aecb49eb.css"
+      ]
+    },
+    "vuexy_apexcharts": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_apexcharts.9955bc8e.css"
+      ]
+    },
+    "vuexy_toastr": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_toastr.8552e5f9.css"
+      ]
+    },
+    "vuexy_bootstrap_extended": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_bootstrap_extended.d8ff7039.css"
+      ]
+    },
+    "vuexy_colors": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_colors.1b076e65.css"
+      ]
+    },
+    "vuexy_components": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_components.a321e1f6.css"
+      ]
+    },
+    "vuexy_dark_layout": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_dark_layout.8bd8acb7.css"
+      ]
+    },
+    "vuexy_vertical_menu": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_vertical_menu.8c166304.css"
+      ]
+    },
+    "vuexy_dashboard_ecommerce": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_dashboard_ecommerce.68fae6c0.css"
+      ]
+    },
+    "vuexy_chart_apex": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_chart_apex.48bb6e5e.css"
+      ]
+    },
+    "vuexy_ext_component_toastr": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_ext_component_toastr.934b7217.css"
+      ]
+    },
+    "vuexy_form_validation": {
+      "js": [
+        "/build/runtime.25a80981.js"
+      ],
+      "css": [
+        "/build/vuexy_form_validation.5c6e4a41.css"
+      ]
+    }
+  }
+}
