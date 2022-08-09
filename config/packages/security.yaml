@@ -48,6 +48,7 @@ security:
             - { path: ^/client, roles: ROLE_CLIENT }
             - { path: ^/do, roles: ROLE_DOCUMENT_OWNER }
             - { path: ^/dc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { path: ^/boutique, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/*, roles: IS_AUTHENTICATED_REMEMBERED }
         # - { path: ^/profile, roles: ROLE_USER }
 
