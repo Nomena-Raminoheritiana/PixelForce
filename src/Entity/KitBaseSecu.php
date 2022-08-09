@@ -45,6 +45,11 @@ class KitBaseSecu
      */
     private $elmts;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
+
     public function __construct()
     {
         $this->elmts = new ArrayCollection();
@@ -129,6 +134,18 @@ class KitBaseSecu
                 $elmt->setKitBase(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
 
         return $this;
     }
