@@ -82,6 +82,12 @@ class Secteur implements JsonSerializable
      */
     private $contratSecu;
 
+    /**
+     * @ORM\OneToOne(targetEntity=KitBaseSecu::class, mappedBy="secteur", cascade={"persist", "remove"})
+     */
+    private $kitBaseSecu;
+
+
     public function __construct()
     {
         $this->agentSecteurs = new ArrayCollection();
@@ -372,4 +378,23 @@ class Secteur implements JsonSerializable
 
         return $this;
     }
+
+    public function getKitBaseSecu(): ?KitBaseSecu
+    {
+        return $this->kitBaseSecu;
+    }
+
+    public function setKitBaseSecu(KitBaseSecu $kitBaseSecu): self
+    {
+        // set the owning side of the relation if necessary
+        if ($kitBaseSecu->getSecteur() !== $this) {
+            $kitBaseSecu->setSecteur($this);
+        }
+
+        $this->kitBaseSecu = $kitBaseSecu;
+
+        return $this;
+    }
+
+    
 }
