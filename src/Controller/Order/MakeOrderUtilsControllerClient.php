@@ -52,8 +52,9 @@ class MakeOrderUtilsControllerClient extends AbstractController
         try{
             $data = json_decode( $request->getContent(), true);
             $code = $data['code'];
+            $secteurId = $data['secteurId']; 
 
-            $codePromo = $codePromoSecuRepository->findValid($code);
+            $codePromo = $codePromoSecuRepository->findValid($code, $secteurId);
             if(!$codePromo) throw new Exception("Code invalide");
             
             return new JsonResponse(array('codePromo' => $codePromo));

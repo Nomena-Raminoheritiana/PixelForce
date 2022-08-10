@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use App\Repository\TvaSecuRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=TvaSecuRepository::class)
  */
-class TvaSecu
+class TvaSecu implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -90,5 +91,9 @@ class TvaSecu
         return $this;
     }
 
-
+    public function jsonSerialize()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
+    }
 }

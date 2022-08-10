@@ -47,28 +47,36 @@
                     <label class="section-label form-label mb-3">Détails de la commande</label>
                     <div class="price-details">
                         <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
-                            <li class="price-detail">
-                                <div class="detail-title">{{order.typeAbonnement.nom}}</div>
+                            {# <li class="price-detail"> #}
+                                {# <div class="detail-title">{{order.typeAbonnement.nom}}</div> #}
                                 {# <div class="detail-amt discount-amt text-success">Gratuit</div> #}
-                            </li>
+                            {# </li> #}
                             <li class="price-detail">
-                                <div class="detail-title">Prix du produit</div>
+                                <div class="detail-title">Prix du kit</div>
                                 <div class="detail-amt discount-amt" id="product-cost" data-product-cost="{{order.prixProduit}}">{{order.prixProduit | number_format(2, ',', ' ')}} €</div>
                             </li>
                             <li class="price-detail">
                                 <div class="detail-title">Montant des accompagnements</div>
                                 <div class="detail-amt discount-amt" id="accomp-cost" data-accomp-cost="{{order.montantAccomp}}">{{order.montantAccomp | number_format(2, ',', ' ')}} €</div>
                             </li>
-                            <li class="price-detail" id="installation">
+                            {# <li class="price-detail" id="installation">
                                 <div class="detail-title">Frais d'installation</div>
                                 <div class="detail-amt discount-amt" id="installation-cost" data-installation-cost="{{order.fraisInstallation}}">{{order.fraisInstallation | number_format(2, ',', ' ')}} €</div>
-                            </li>
+                            </li> #}
                         </ul>
                         <hr />
                         <ul class="list-unstyled">
                             <li class="price-detail">
-                                <div class="detail-title detail-total">Montant total  :</div>
-                                <div class="detail-amt fw-bolder" id="total-cost" >{{(order.prixProduit + order.montantAccomp + order.fraisInstallation ) | number_format(2, ',', ' ')}} €</div>
+                                <div class="detail-title detail-total">Montant HT :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{order.montantHt}}">{{order.montantHt | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">TVA (<span id="tvaPercentage">{{order.tva.valeur | number_format(2, ',', ' ')}}</span> %) :</div>
+                                <div class="detail-amt fw-bolder" id="tva-amount" >{{order.montantTva | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Montant TTC :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost-ttc" >{{order.montantTtc | number_format(2, ',', ' ')}} €</div>
                             </li>
                         </ul>
                         {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
@@ -87,13 +95,13 @@
 {{ parent() }}
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-    let type = {{ order.typeInstallation|json_encode() | raw }};
+    {# let type = {{ order.typeInstallation|json_encode() | raw }};
     let installationJQuery = $('#installation');
     if(type.prix > 0){
         installationJQuery.show();
     } else{
         installationJQuery.hide();
-    }
+    } #}
     
 
     var form = document.getElementById('{{ form.vars.id }}');

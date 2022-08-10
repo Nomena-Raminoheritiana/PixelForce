@@ -13,11 +13,25 @@
                 <div class="card-body">
                 {{ form_start(form, {'attr': {}}) }}
                 <div class="row">
-                    <div class="col-md-12 col-sm-12">
+                    {# <div class="col-md-12 col-sm-12">
                         <div class="mb-2">
                             {{form_label(form.typeInstallation)}}
                             {{form_widget(form.typeInstallation)}}
                             {{form_errors(form.typeInstallation)}}
+                        </div> 
+                    </div>     #}
+                    <div class="col-md-12 col-sm-12">
+                        <div class="mb-2">
+                            {{form_label(form.type1)}}
+                            {{form_widget(form.type1)}}
+                            {{form_errors(form.type1)}}
+                        </div>
+                    </div>    
+                    <div class="col-md-12 col-sm-12" id="type2">
+                        <div class="mb-2">
+                            {{form_label(form.type2)}}
+                            {{form_widget(form.type2)}}
+                            {{form_errors(form.type2)}}
                         </div>
                     </div>
                     
@@ -40,28 +54,37 @@
                     <label class="section-label form-label mb-3">Détails de la commande</label>
                     <div class="price-details">
                         <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
-                            <li class="price-detail">
-                                <div class="detail-title">{{order.typeAbonnement.nom}}</div>
+                            {# <li class="price-detail"> #}
+                                {# <div class="detail-title">{{order.typeAbonnement.nom}}</div> #}
                                 {# <div class="detail-amt discount-amt text-success">Gratuit</div> #}
-                            </li>
+                            {# </li> #}
                             <li class="price-detail">
-                                <div class="detail-title">Prix du produit</div>
+                                <div class="detail-title">Prix du kit</div>
                                 <div class="detail-amt discount-amt" id="product-cost" data-product-cost="{{order.prixProduit}}">{{order.prixProduit | number_format(2, ',', ' ')}} €</div>
                             </li>
                             <li class="price-detail">
                                 <div class="detail-title">Montant des accompagnements</div>
                                 <div class="detail-amt discount-amt" id="accomp-cost" data-accomp-cost="{{order.montantAccomp}}">{{order.montantAccomp | number_format(2, ',', ' ')}} €</div>
                             </li>
-                            <li class="price-detail" id="installation">
+                            {# <li class="price-detail" id="installation">
                                 <div class="detail-title">Frais d'installation</div>
                                 <div class="detail-amt discount-amt" id="installation-cost" data-installation-cost="{{order.fraisInstallation}}">{{order.fraisInstallation | number_format(2, ',', ' ')}} €</div>
-                            </li>
+                            </li> #}
+                            
                         </ul>
                         <hr />
                         <ul class="list-unstyled">
                             <li class="price-detail">
-                                <div class="detail-title detail-total">Montant total  :</div>
-                                <div class="detail-amt fw-bolder" id="total-cost" >{{(order.prixProduit + order.montantAccomp + order.fraisInstallation ) | number_format(2, ',', ' ')}} €</div>
+                                <div class="detail-title detail-total">Montant HT :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{order.prixProduit + order.montantAccomp}}">{{(order.prixProduit + order.montantAccomp ) | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">TVA (<span id="tvaPercentage"></span> %) :</div>
+                                <div class="detail-amt fw-bolder" id="tva-amount" >0,00 €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Montant TTC :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost-ttc" >{{(order.prixProduit + order.montantAccomp ) | number_format(2, ',', ' ')}} €</div>
                             </li>
                         </ul>
                         {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
@@ -79,29 +102,41 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
-    let types = {{ types|json_encode() | raw }};
-    console.log(types);
+    {# let types = {{ types|json_encode() | raw }}; #}
+    {# console.log(types); #}
     let totalCostDOM = document.getElementById(`total-cost`);
     let productCostDOM = document.getElementById(`product-cost`);
     let accompCostDOM = document.getElementById(`accomp-cost`);
-    let installationCostDOM = document.getElementById(`installation-cost`);
-    let installationJQuery = $('#installation');
-
+    let tvaPercentageDOM = document.getElementById(`tvaPercentage`);
+    let tvaAmountDOM = document.getElementById(`tva-amount`);
+    let totalCostTtcDOM = document.getElementById(`total-cost-ttc`);
+    let type2JQuery = $('#type2');
+    {# let installationCostDOM = document.getElementById(`installation-cost`); #}
+    {# let installationJQuery = $('#installation'); #}
+    let tva = {{ tva|json_encode() | raw }};
+    console.log(tva);
 
     function formatPrice(price){
         let text = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
         return text;
     }
 
-    function getType(id){
+    function formatNbr(nbr){
+        let text = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(nbr);
+        return text;
+    }
+
+
+
+    {# function getType(id){
         for(let i=0; i<types.length; i++){
             if(types[i].id == id) return types[i];
         }
         return null;
-    }
+    } #}
 
     
-    function checkSelected(){
+    {# function checkSelected(){
         let val = $('input[name="installation-form[typeInstallation]"]:checked').val();
         let type = getType(val);
         setTypeInstallation(type);
@@ -117,18 +152,54 @@
         } else{
             installationJQuery.hide();
         }
-    }
+    } #}
 
     
-    function setTotalCost(){
+    {# function setTotalCost(){
         totalCostDOM.innerHTML = formatPrice(parseFloat(productCostDOM.dataset.productCost) + parseFloat(accompCostDOM.dataset.accompCost) + parseFloat(installationCostDOM.dataset.installationCost));
-    }
+    } #}
 
-    $('input[name="installation-form[typeInstallation]"]').change(function (e){
+    {# $('input[name="installation-form[typeInstallation]"]').change(function (e){
         checkSelected();
-    });
+    }); #}
 
     
+    {# checkSelected(); #}
+
+    function getTva(val1, val2){
+        let typeTva = val1 == '1' ? val1 : val2;
+        for(let i=0; i<tva.length; i++){
+            if(tva[i].type == typeTva) return tva[i];
+        }
+        return null;
+    } 
+
+    function setTva(selectedTva){
+        let totalCost = parseFloat(totalCostDOM.dataset.totalCost);
+        let montantTva = totalCost * selectedTva.valeur/100;
+        let montantTtc =  totalCost + montantTva;
+
+        tvaPercentageDOM.innerHTML = formatNbr(selectedTva.valeur);
+        tvaAmountDOM.innerHTML = formatPrice(montantTva);
+        totalCostTtcDOM.innerHTML = formatPrice(montantTtc);
+    }
+
+    function checkSelected(){
+        let val1 = $('input[name="installation-form[type1]"]:checked').val();
+        let val2 = $('input[name="installation-form[type2]"]:checked').val();
+        let selectedTva = getTva(val1, val2);
+        setTva(selectedTva);
+        if(val1 == '1'){
+            type2JQuery.hide();
+        } else{
+            type2JQuery.show();
+        }
+    }
+
+    $('input[name="installation-form[type1]"], input[name="installation-form[type2]"]').change(function (e){
+        checkSelected();
+    }); 
+
     checkSelected();
 
 </script>

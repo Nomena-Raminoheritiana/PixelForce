@@ -41,13 +41,13 @@ class OrderSecu implements JsonSerializable
 
     /**
      * @ORM\ManyToOne(targetEntity=ProduitSecu::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $produit;
 
     /**
      * @ORM\ManyToOne(targetEntity=TypeAbonnementSecu::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $typeAbonnement;
 
@@ -89,7 +89,7 @@ class OrderSecu implements JsonSerializable
 
     /**
      * @ORM\ManyToOne(targetEntity=TypeInstallationSecu::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $typeInstallation;
 
@@ -105,7 +105,7 @@ class OrderSecu implements JsonSerializable
     private $dateCommande;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable=true)
      */
     private $installationFrais;
 
@@ -133,6 +133,21 @@ class OrderSecu implements JsonSerializable
      * @ORM\Column(type="json", nullable=true)
      */
     private $sepa = [];
+
+    /**
+     * @ORM\ManyToOne(targetEntity=KitBaseSecu::class)
+     */
+    private $kitbase;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=TvaSecu::class)
+     */
+    private $tva;
+
+    /**
+     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
+     */
+    private $tvaPourcentage;
 
     
 
@@ -338,6 +353,18 @@ class OrderSecu implements JsonSerializable
         return $montant;
     }
 
+    public function getMontantHt(){
+        return $this->getPrixProduit() + $this->getMontantAccomp();
+    }
+
+    public function getMontantTva(){
+        return $this->getMontantHt() * $this->getTva()->getValeur()/100;
+    }
+
+    public function getMontantTtc(){
+        return $this->getMontantHt() + $this->getMontantTva();
+    }
+
     public function jsonSerialize()
     {
         $vars = get_object_vars($this);
@@ -409,7 +436,7 @@ class OrderSecu implements JsonSerializable
     
 
     public function refresh(EntityManagerInterface $em){
-        if($this->getProduit()){
+        /* if($this->getProduit()){
             $this->setProduit($em->getRepository(ProduitSecu::class)->find($this->getProduit()->getId()));
         }
         if($this->getTypeAbonnement()){
@@ -417,6 +444,12 @@ class OrderSecu implements JsonSerializable
         }
         if($this->getTypeInstallation()){
             $this->setTypeInstallation($em->getRepository(TypeInstallationSecu::class)->find($this->getTypeInstallation()->getId()));
+        } */
+        if($this->getKitbase()){
+            $this->setKitbase($em->getRepository(KitBaseSecu::class)->find($this->getKitbase()->getId()));
+        }
+        if($this->getTva()){
+            $this->setTva($em->getRepository(TvaSecu::class)->find($this->getTva()->getId()));
         }
     }
 
@@ -498,6 +531,42 @@ class OrderSecu implements JsonSerializable
     public function setSepa(?array $sepa): self
     {
         $this->sepa = $sepa;
+
+        return $this;
+    }
+
+    public function getKitbase(): ?KitBaseSecu
+    {
+        return $this->kitbase;
+    }
+
+    public function setKitbase(?KitBaseSecu $kitbase): self
+    {
+        $this->kitbase = $kitbase;
+
+        return $this;
+    }
+
+    public function getTva(): ?TvaSecu
+    {
+        return $this->tva;
+    }
+
+    public function setTva(?TvaSecu $tva): self
+    {
+        $this->tva = $tva;
+
+        return $this;
+    }
+
+    public function getTvaPourcentage(): ?string
+    {
+        return $this->tvaPourcentage;
+    }
+
+    public function setTvaPourcentage(?string $tvaPourcentage): self
+    {
+        $this->tvaPourcentage = $tvaPourcentage;
 
         return $this;
     }

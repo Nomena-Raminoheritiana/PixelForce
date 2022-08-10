@@ -10,15 +10,16 @@
         <!-- Checkout Place Order Left starts -->
         <div class="checkout-items" style="overflow: auto; height: calc(100vh - 300px);">
             <div class="card ecommerce-card">
+                {% if order.kitbase.image %}
                 <div class="item-img">
-                    <a href="{{path('client_productsecu_details', {'token': token, 'id': order.produit.id})}}">
-                        <img src="{{ asset( filesDirectory ~ order.produit.photo) }}" alt="Image pour {{order.produit.nom}}" />
+                    <a href="{{path('client_kitbasesecu_details', {'token': token, 'id': order.kitbase.id})}}">
+                        <img src="{{ asset( filesDirectory ~ order.kitbase.image) }}" alt="Image pour {{order.kitbase.nom}}" />
                     </a>
                 </div>
+                {% endif %}
                 <div class="card-body">
                     <div class="item-name">
-                        <h6 class="mb-0"><a href="{{path('client_productsecu_details', {'token': token, 'id': order.produit.id})}}" class="text-body">{{order.produit.nom}}</a></h6>
-                    
+                        <h6 class="mb-0"><a href="{{path('client_kitbasesecu_details', {'token': token, 'id': order.kitbase.id})}}" class="text-body">{{order.kitbase.nom}}</a></h6>
                     </div>
                     {# <span class="text-success mb-1">En stock</span>
                     <div class="item-quantity">
@@ -28,7 +29,14 @@
                         </div>
                     </div>
                     <span class="text-success">Remise de 20%</span> #}
-                    <span class="delivery-date text-muted"><i><b>Description :</b></i> {{order.produit.description|raw}}</span>
+                    {% if order.kitbase.description %}
+                    <span class="delivery-date text-muted"><i><b>Description :</b></i> {{order.kitbase.description|raw}}</span>
+                    {% endif %}
+                    <div class="item-wrapper">
+                        <div>
+                            <h6 class="item-price">{{order.kitbase.prix | number_format(2, ',', ' ')}} €</h6>
+                        </div>
+                    </div>
                 </div>
                 {# <div class="item-options text-center">
                     <div class="item-wrapper">
@@ -57,10 +65,10 @@
         <div class="checkout-options" >
             <div class="card">
                 <div class="card-body">
-                    <label class="section-label form-label mb-3">Choix</label>
+                    <label class="section-label form-label mb-3">Code Promo</label>
                     <div class="price-details">
                         {{ form_start(form, {'attr': {}}) }}
-                            <div class="row">
+                            {# <div class="row">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="mb-2">
                                         {{form_label(form.typeAbonnement)}}
@@ -68,7 +76,7 @@
                                         {{form_errors(form.typeAbonnement)}}
                                     </div>
                                 </div>
-                            </div>
+                            </div> #}
 
                             <div class="row" id="codePromo">
                                 <div class="col-md-6 col-sm-12" >
@@ -99,7 +107,7 @@
                         <ul class="list-unstyled">
                             <li class="price-detail">
                                 <div class="detail-title detail-total">Prix :</div>
-                                <div class="detail-amt fw-bolder"><span id="prix">0,00 €</span></div>
+                                <div class="detail-amt fw-bolder"><span id="prix">{{order.kitbase.prix | number_format(2, ',', ' ')}} €</span></div>
                             </li>
                         </ul>
                         <button type="submit" class="btn btn-primary w-100 btn-next place-order">Suivante</button>
@@ -119,13 +127,14 @@
 {{ parent() }}
 <script>
     
-    let types = {{ types|json_encode() | raw }};
+    let secteurId = {{app.session.get('secteurId')}};
+    {# let types = {{ types|json_encode() | raw }}; #}
 
     function checkCodePromo(code, success, error, fin){
         let request = $.ajax({  
             url:        "{{path('check_code_promo_secu')}}",  
             type:       'POST', 
-            data : JSON.stringify({code}),  
+            data : JSON.stringify({code, secteurId}),  
             contentType: 'application/json; charset=utf-8',
             dataType: "json"
         });  
@@ -141,9 +150,9 @@
         });
     }
 
-    $('input[name="abonnement-form[typeAbonnement]"]').change(function (e){
+    {# $('input[name="abonnement-form[typeAbonnement]"]').change(function (e){
         checkSelected();
-    });
+    }); #}
 
     $('#btn-check-code-promo').click(function (e){
         let checkFeedback = $('#check-feedback');
@@ -171,14 +180,14 @@
         $('#prix').html(text);
     }
 
-    function getType(id){
+    {# function getType(id){
         for(let i=0; i<types.length; i++){
             if(types[i].id == id) return types[i];
         }
         return null;
-    }
+    } #}
 
-    function checkSelected(){
+    {# function checkSelected(){
         let val = $('input[name="abonnement-form[typeAbonnement]"]:checked').val();
         console.log('val', val);
         let type = getType(val);
@@ -189,9 +198,9 @@
             $('#codePromo').addClass('invisible');
         }
         console.log('checked');
-    }
-    console.log('here');
-    checkSelected();
+    } #}
+
+    {# checkSelected(); #}
 </script>
 {% endblock %}
 

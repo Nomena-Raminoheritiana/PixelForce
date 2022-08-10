@@ -39,11 +39,13 @@ class CodePromoSecuRepository extends ServiceEntityRepository
         }
     }
 
-    public function findValid(string $code): ?CodePromoSecu
+    public function findValid(string $code, int $secteurId): ?CodePromoSecu
     {
         return $this->createQueryBuilder('c')
-           ->where('c.code = :code and c.statut != 0')
+            ->join('c.secteur', 's')
+           ->where('c.code = :code and s.id = :secteurId and c.statut != 0')
            ->setParameter('code', $code)
+           ->setParameter('secteurId', $secteurId)
            ->getQuery()
            ->getOneOrNullResult()
        ;

@@ -38,6 +38,11 @@ class CodePromoSecu implements JsonSerializable
      */
     private $statut;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     */
+    private $secteur;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -95,5 +100,17 @@ class CodePromoSecu implements JsonSerializable
     {
         $vars = get_object_vars($this);
         return $vars;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
+
+        return $this;
     }
 }

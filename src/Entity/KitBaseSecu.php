@@ -6,6 +6,7 @@ use App\Repository\KitBaseSecuRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 
 /**
  * @ORM\Entity(repositoryClass=KitBaseSecuRepository::class)
@@ -191,6 +192,11 @@ class KitBaseSecu
         $this->elmts = $elmts;
 
         return $this;
+    }
+
+    public function checkValid(){
+        if($this->getStatus() == 0)
+            throw new Exception("Kit de base invalide");
     }
     
 }

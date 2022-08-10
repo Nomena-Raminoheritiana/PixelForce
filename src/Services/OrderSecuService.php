@@ -50,10 +50,10 @@ class OrderSecuService
     }
 
 
-    public function calculerPrixProduit(OrderSecu $order){
-        $order->setPrixProduit($order->getTypeAbonnement()->getPrix());
+    public function calculerPrixProduit(OrderSecu $order, $secteurId){
+        $order->setPrixProduit($order->getKitbase()->getPrix());
         if($order->getCodePromo()){
-            $codePromoSecu = $this->codePromoSecuRepository->findValid($order->getCodePromo());
+            $codePromoSecu = $this->codePromoSecuRepository->findValid($order->getCodePromo(), $secteurId);
             if($codePromoSecu) $order->setPrixProduit($codePromoSecu->getPrix());
         }
     }
@@ -61,11 +61,12 @@ class OrderSecuService
     public function saveOrder(string $stripeToken, OrderSecu $orderSecu): ?OrderSecu{
         try{
             $orderSecu->refresh($this->entityManager);
-            $orderSecu->getProduit()->checkValid();
+            $orderSecu->getKitbase()->checkValid();
             $orderSecu->setDateCommande(new DateTime());
             $orderSecu->setStatut(OrderSecu::CREATED);
             $orderSecu->setAccompMontant(0);
-            $orderSecu->setInstallationFrais($orderSecu->getFraisInstallation());
+            $orderSecu->setTvaPourcentage($orderSecu->getTva()->getValeur());
+            //$orderSecu->setInstallationFrais($orderSecu->getFraisInstallation());
 
             $this->entityManager->persist($orderSecu);
 

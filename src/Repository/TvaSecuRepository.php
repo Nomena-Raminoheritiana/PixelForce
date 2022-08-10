@@ -39,6 +39,24 @@ class TvaSecuRepository extends ServiceEntityRepository
         }
     }
 
+    public function findBySecteur(int $secteurId, $type = null)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.secteur', 's')
+           ->andWhere('s.id = :secteurId')
+           ->setParameter('secteurId', $secteurId)
+        ; 
+        if($type !== null){
+            $qb->andWhere('t.type = :type')
+            ->setParameter('type', $type);
+        }
+        return $qb->getQuery()
+           ->getResult()
+        ;
+    }
+
+    
+
 //    /**
 //     * @return TvaSecu[] Returns an array of TvaSecu objects
 //     */

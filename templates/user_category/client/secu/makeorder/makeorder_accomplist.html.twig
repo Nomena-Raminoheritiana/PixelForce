@@ -69,12 +69,12 @@
                     <label class="section-label form-label mb-3">Détails de la commande</label>
                     <div class="price-details">
                         <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
-                            <li class="price-detail">
-                                <div class="detail-title">{{order.typeAbonnement.nom}}</div>
+                            {# <li class="price-detail"> #}
+                                {# <div class="detail-title">{{order.typeAbonnement.nom}}</div> #}
                                 {# <div class="detail-amt discount-amt text-success">Gratuit</div> #}
-                            </li>
+                            {# </li> #}
                             <li class="price-detail">
-                                <div class="detail-title">Prix du produit</div>
+                                <div class="detail-title">Prix du kit</div>
                                 <div class="detail-amt discount-amt" id="product-cost" data-product-cost="{{order.prixProduit}}">{{order.prixProduit | number_format(2, ',', ' ')}} €</div>
                             </li>
                             <li class="price-detail">

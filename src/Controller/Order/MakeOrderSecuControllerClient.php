@@ -4,6 +4,7 @@ namespace App\Controller\Order;
 
 use App\Controller\BaseControllerClient;
 use App\Entity\BasketItem;
+use App\Entity\KitBaseSecu;
 use App\Entity\Order;
 use App\Entity\OrderSecu;
 use App\Entity\OrderSecuAccomp;
@@ -16,6 +17,7 @@ use App\Form\MyProduitSecuAccompFilterType;
 use App\Form\OrderClientFilterType;
 use App\Repository\OrderRepository;
 use App\Repository\SecteurRepository;
+use App\Repository\TvaSecuRepository;
 use App\Repository\TypeAbonnementSecuRepository;
 use App\Repository\TypeInstallationSecuRepository;
 use App\Repository\UserRepository;
@@ -29,6 +31,7 @@ use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -67,19 +70,20 @@ class MakeOrderSecuControllerClient extends AbstractController
     /**
      * @Route("/make/{id}", name="client_make_ordersecu")
      */
-    public function index($token, ProduitSecu $produit, Request $request): Response
+    public function index($token, KitBaseSecu $kitbase, Request $request): Response
     {
         
         try{
-            $produit->checkValid();
+            $kitbase->checkValid();
             $order = new OrderSecu();
-            $order->setProduit($produit);
+            $order->setKitbase($kitbase);
 
             $agent = $this->userRepository->findAgentByToken($token);
             $user = (object) $this->getUser();
             $secteurId = $this->session->get('secteurId');
             $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
             $order->setSessionKey($sessionKey);
+
             $this->orderSecuService->setOrderSecu($order);
             return $this->redirectToRoute('client_make_ordersecu_abonnement', [
                 'token' => $token
@@ -96,7 +100,7 @@ class MakeOrderSecuControllerClient extends AbstractController
     /**
      * @Route("/order", name="client_make_ordersecu_abonnement")
      */
-    public function order($token, Request $request, FormFactoryInterface $formFactory, TypeAbonnementSecuRepository $typeAbonnementSecuRepository): Response
+    public function order($token, Request $request, FormFactoryInterface $formFactory, TypeAbonnementSecuRepository $typeAbonnementSecuRepository, SecteurRepository $secteurRepository): Response
     {
         $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
@@ -111,10 +115,10 @@ class MakeOrderSecuControllerClient extends AbstractController
             ]);
         }
 
-        $types = $typeAbonnementSecuRepository->findAll();
+        //$types = $typeAbonnementSecuRepository->findAll();
         $form = $formFactory
             ->createNamedBuilder("abonnement-form", FormType::class, $order)
-            ->add('typeAbonnement', EntityType::class, array(
+            /* ->add('typeAbonnement', EntityType::class, array(
                 'label' => false,
                 'label_attr' => array(
                     'class' => 'radio'
@@ -127,7 +131,7 @@ class MakeOrderSecuControllerClient extends AbstractController
                 },
                 'expanded' => true,
                 'data' => $types[0]
-            ))
+            )) */
             ->add('codePromo', TextType::class, [
                 "label" => "Code Promo",
                 "trim" => true,
@@ -139,7 +143,7 @@ class MakeOrderSecuControllerClient extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $this->orderSecuService->calculerPrixProduit($order);
+                $this->orderSecuService->calculerPrixProduit($order, $secteurId);
                 $this->orderSecuService->setOrderSecu($order);
                 return $this->redirectToRoute('client_produitsecuaccomp_list', ['token' => $token]);
             } catch(Exception $ex){
@@ -155,7 +159,7 @@ class MakeOrderSecuControllerClient extends AbstractController
             'form' => $form->createView(),
             'token' => $token,
             'agent' => $agent,
-            'types' => $types
+            //'types' => $types
         ]);
 
     }
@@ -341,7 +345,7 @@ class MakeOrderSecuControllerClient extends AbstractController
     /**
      * @Route("/installation", name="client_make_ordersecu_installation")
      */
-    public function installation($token, Request $request, FormFactoryInterface $formFactory, TypeInstallationSecuRepository $typeInstallationSecuRepository): Response
+    public function installation($token, Request $request, FormFactoryInterface $formFactory, TypeInstallationSecuRepository $typeInstallationSecuRepository, TvaSecuRepository $tvaSecuRepository): Response
     {
         $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
@@ -356,10 +360,39 @@ class MakeOrderSecuControllerClient extends AbstractController
             ]);
         }
 
-        $types = $typeInstallationSecuRepository->findAll();
+        // $types = $typeInstallationSecuRepository->findAll();
+        $tva = $tvaSecuRepository->findBySecteur($secteurId);
         $form = $formFactory
             ->createNamedBuilder("installation-form", FormType::class, $order)
-            ->add('typeInstallation', EntityType::class, array(
+            ->add('type1', ChoiceType::class, array(
+                'label' => false,
+                'mapped' => false,
+                'label_attr' => array(
+                    'class' => 'radio'
+                ),
+                'required' => true,
+                'choices' => [
+                    'Professionnel' => 1,
+                    'Particulier' => 2
+                ],
+                'expanded' => true,
+                'data' => 1
+            ))
+            ->add('type2', ChoiceType::class, array(
+                'label' => 'Votre maison a été construite',
+                'mapped' => false,
+                'label_attr' => array(
+                    'class' => 'radio'
+                ),
+                'required' => true,
+                'choices' => [
+                    'il y a moins de 2 ans' => 2,
+                    'il y plus de 2 ans' => 3
+                ],
+                'expanded' => true,
+                'data' => 2
+            ))
+            /* ->add('typeInstallation', EntityType::class, array(
                 'label' => false,
                 'label_attr' => array(
                     'class' => 'radio'
@@ -376,13 +409,21 @@ class MakeOrderSecuControllerClient extends AbstractController
                 },
                 'expanded' => true,
                 'data' => $types[0]
-            ))
+            )) */
             ->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
+                $type1 = $form->get('type1')->getData();
+                $type2 = $form->get('type2')->getData();
+                $typeTva = $type1 == 1 ? $type1 : $type2;
+                $tva = $tvaSecuRepository->findBySecteur($secteurId, $typeTva);
+                if(count($tva) == 0){
+                    throw new Exception("Tva invalide");
+                }
+                $order->setTva($tva[0]);
                 $this->orderSecuService->setOrderSecu($order);
                 return $this->redirectToRoute('client_make_ordersecu_download_contrat_instructions', ['token' => $token]);
             } catch(Exception $ex){
@@ -398,7 +439,8 @@ class MakeOrderSecuControllerClient extends AbstractController
             'form' => $form->createView(),
             'token' => $token,
             'agent' => $agent,
-            'types' => $types
+            'tva' => $tva
+            //'types' => $types
         ]);
 
     }
