@@ -69,9 +69,9 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Produit</th>
+                        <th>Kit de base</th>
                         <th>Client</th>
-                        <th>Montant</th>
+                        <th>Montant TTC</th>
                         <th>Statut</th>
                         <th></th>
                     </tr>
@@ -80,9 +80,9 @@
                     {% for order in orderList %}
                     <tr>
                         <td>{{order.dateCommande | date("d/m/Y H:i")}}</td>
-                        <td>{{order.produit.nom}}</td>
+                        <td>{{order.kitbase.nom}}</td>
                         <td>{{order.client.prenom}} {{order.client.nom}}</td>
-                        <td class="text-right">{{order.total | number_format(2, ',', ' ') }}</td>
+                        <td class="text-right">{{order.totalTtc | number_format(2, ',', ' ') }}</td>
                         <td>{{order.statusStr}}</td>
                         <td class="col-action ">
                             <a href="{{path('admin_ordersecu_details', {'id': order.id})}}">
