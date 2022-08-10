@@ -97,6 +97,39 @@
 
 
                     </div>
+
+                    <section id="ecommerce-products" class="grid-view" style="grid-template-columns: repeat(auto-fill, 250px);">
+                        {% for elmt in kitbase.elmts %}
+                        <div class="card ecommerce-card">
+                            <div class="item-img text-center">
+                                <a href="#">
+                                <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ elmt.produit.photo) }}" alt="Image pour {{elmt.produit.nom}}" /></a>
+                            </div>
+                            <div class="card-body">
+                                
+                                <h6 class="item-name">
+                                    <a class="text-body" href="#">{{elmt.produit.nom}}</a>
+                                </h6>
+
+                                {% if elmt.produit.description %}
+                                <p class="card-text item-description">
+                                    {{elmt.produit.description|raw}}
+                                </p>
+                                {% endif %}
+                                <div class="item-wrapper">
+                                    <div>
+                                        <h6 class="item-price">Quantité: {{elmt.qte}}</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        {% endfor %}
+                        
+                    </section>
+                        
+                    
+            
                 </section>
                 <!-- app e-commerce details end -->
 
