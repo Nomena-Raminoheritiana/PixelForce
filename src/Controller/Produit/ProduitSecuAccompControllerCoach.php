@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\ProduitSecuAccomp;
-use App\Form\MyproductSecuAccompFilter;
+use App\Form\MyProductSecuAccompFilter;
 use App\Form\MyProduitSecuAccompFilterType;
 use App\Form\ProduitSecuAccompFormType;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
@@ -285,7 +285,7 @@ class ProduitSecuAccompControllerCoach extends AbstractController
 
         $filter = [];
 
-        $form = $this->createForm(MyproductSecuAccompFilter::class, $filter, [
+        $form = $this->createForm(MyProductSecuAccompFilter::class, $filter, [
             'method' => 'GET'
         ]);
 

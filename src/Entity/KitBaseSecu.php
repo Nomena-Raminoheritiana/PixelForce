@@ -35,12 +35,6 @@ class KitBaseSecu
     private $prix;
 
     /**
-     * @ORM\OneToOne(targetEntity=Secteur::class, inversedBy="kitBaseSecu", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $secteur;
-
-    /**
      * @ORM\OneToMany(targetEntity=KitBaseElmtSecu::class, mappedBy="kitBase")
      */
     private $elmts;
@@ -49,6 +43,17 @@ class KitBaseSecu
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $secteur;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image;
 
     public function __construct()
     {
@@ -96,18 +101,6 @@ class KitBaseSecu
         return $this;
     }
 
-    public function getSecteur(): ?Secteur
-    {
-        return $this->secteur;
-    }
-
-    public function setSecteur(Secteur $secteur): self
-    {
-        $this->secteur = $secteur;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, KitBaseElmtSecu>
      */
@@ -149,4 +142,43 @@ class KitBaseSecu
 
         return $this;
     }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+
+    public function initFilles(int $count){
+        foreach ($this->getElmts() as $fille ){
+            $fille->setCheck(1);
+            $count--;
+        }
+        
+        for($i=0; $i<$count; $i++){
+            $fille = new KitBaseElmtSecu();
+            $fille->setCheck(1);
+            $this->addElmt($fille);
+        }
+    }
+    
 }

@@ -27,6 +27,16 @@ class TvaSecu
      */
     private $valeur;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $type;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     */
+    private $secteur;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +62,30 @@ class TvaSecu
     public function setValeur(string $valeur): self
     {
         $this->valeur = $valeur;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }

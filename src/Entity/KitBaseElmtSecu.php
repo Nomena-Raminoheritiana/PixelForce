@@ -39,6 +39,10 @@ class KitBaseElmtSecu
      */
     private $qte;
 
+    private $check;
+    private $realCheck;
+    private $produitlib;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -88,6 +92,67 @@ class KitBaseElmtSecu
     public function setQte(int $qte): self
     {
         $this->qte = $qte;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of check
+     */ 
+    public function getCheck(): ?int
+    {
+        return $this->check;
+    }
+
+    /**
+     * Set the value of check
+     *
+     * @return  self
+     */ 
+    public function setCheck(?int $check)
+    {
+        $this->check = $check;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of realCheck
+     */ 
+    public function getRealCheck(): ?bool
+    {
+        return $this->realCheck;
+    }
+
+    /**
+     * Set the value of realCheck
+     *
+     * @return  self
+     */ 
+    public function setRealCheck(?bool $realCheck)
+    {
+        $this->realCheck = $realCheck;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of produitlib
+     */ 
+    public function getProduitlib()
+    {
+
+        return $this->getProduit() ? $this->getProduit()->getNom() : null;
+    }
+
+    /**
+     * Set the value of produitlib
+     *
+     * @return  self
+     */ 
+    public function setProduitlib($produitlib)
+    {
+        $this->produitlib = $produitlib;
 
         return $this;
     }

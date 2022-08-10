@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\KitBaseElmtSecu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +38,18 @@ class KitBaseElmtSecuRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findValidByMere($mereId)
+    {
+       $result = $this->createQueryBuilder('k')
+           ->join('k.kitBase', 'm')
+           ->where('m.id = :mereId and ( k.status is NULL or k.status != 0 ) ')
+           ->setParameter('mereId', $mereId)
+           ->getQuery()
+           ->getResult()
+       ;
+       return new ArrayCollection($result);
     }
 
 //    /**
