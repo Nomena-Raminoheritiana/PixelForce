@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\KitBaseSecu;
 use App\Entity\Produit;
 use App\Entity\ProduitDD;
 use App\Entity\ProduitFavori;
 use App\Entity\ProduitSecu;
 use App\Entity\ProduitSecuFavori;
 use App\Entity\Secteur;
+use App\Form\KitBaseFilterType;
 use App\Form\MyProduitDDFilterType;
 use App\Form\MyProduitFilterType;
 use App\Form\MyProduitSecuFilterType;
 use App\Repository\AgentSecteurRepository;
+use App\Repository\KitBaseElmtSecuRepository;
+use App\Repository\KitBaseSecuRepository;
 use App\Repository\ProduitFavoriRepository;
 use App\Repository\ProduitRepository;
 use App\Repository\ProduitSecuFavoriRepository;
@@ -133,6 +137,59 @@ class BoutiqueController extends AbstractController
         $this->session->set('secteurId', $secteur->getId());
         $this->session->set('typeSecteurId', $secteur->getType()->getId());
         $agent = $this->userRepository->findAgentByToken($token);
+        $page = $request->query->get('page', 1);
+        $limit = 6;
+        $criteria = [
+            ['prop' => 'description', 'op' => 'LIKE'],
+            ['prop' => 'nom', 'op' => 'LIKE'],
+            ['prop' => 'prixMin', 'op' => '>=', "col" => "prix"],
+            ['prop' => 'prixMax', 'op' => '<=', "col" => "prix"],
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(KitBaseFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('k')
+            ->from(KitBaseSecu::class, 'k')
+            ->join('k.secteur', 's')
+        ;  
+
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'k'));   
+        $query->where($where["where"]." and k.status != 0 and s.id = :secteurId ");
+        $where["params"]["secteurId"] = $secteur->getId();
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'k.id', 'direction' => 'asc']);
+
+        $kitbaseList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+    
+        return $this->render('user_category/client/secu/kitbase/kitbase_list.html.twig', [
+            'kitbaseList' => $kitbaseList,
+            'form' => $form->createView(),
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+
+    }
+    /* public function secteursecu($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService, ProduitSecuFavoriRepository $produitSecuFavoriRepository): Response
+    {
+        $this->session->set('secteurId', $secteur->getId());
+        $this->session->set('typeSecteurId', $secteur->getType()->getId());
+        $agent = $this->userRepository->findAgentByToken($token);
         $error = null;
         $page = $request->query->get('page', 1);
         $limit = 6;
@@ -189,7 +246,7 @@ class BoutiqueController extends AbstractController
             'token' => $token
         ]);
 
-    }
+    } */
 
    /**
      * @Route("/secteur/{id}", name="boutique_secteur")
@@ -383,6 +440,22 @@ class BoutiqueController extends AbstractController
         $agent = $this->userRepository->findAgentByToken($token);
         return $this->render('user_category/client/dd/product/product_details.html.twig',[
             'product' => $product,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+    }
+
+
+    /**
+     * @Route("/kitbasesecu/{id}", name="client_kitbasesecu_details")
+     */
+    public function detailskbsecu($token, KitBaseSecu $kitbase, KitBaseElmtSecuRepository $kitBaseElmtSecuRepository): Response
+    {
+        $agent = $this->userRepository->findAgentByToken($token);
+        $kitbase->setElmts($kitBaseElmtSecuRepository->findValidByMere($kitbase->getId()));
+        return $this->render('user_category/client/secu/kitbase/kitbase_details.html.twig',[
+            'kitbase' => $kitbase,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'agent' => $agent,
             'token' => $token

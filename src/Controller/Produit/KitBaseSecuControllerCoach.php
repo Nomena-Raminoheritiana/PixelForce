@@ -126,7 +126,7 @@ class KitBaseSecuControllerCoach extends AbstractController
     /**
      * @Route("/fiche/{id}", name="admin_kitbasesecu_fiche")
      */
-    public function fiche_inventaire(KitBaseSecu $kitBase, KitBaseElmtSecuRepository $kitBaseElmtSecuRepository): Response
+    public function ficheKitBase(KitBaseSecu $kitBase, KitBaseElmtSecuRepository $kitBaseElmtSecuRepository): Response
     {
         
         $kitBase->setElmts($kitBaseElmtSecuRepository->findValidByMere($kitBase->getId()));
