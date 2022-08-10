@@ -109,7 +109,7 @@ class KitBaseSecuControllerCoach extends AbstractController
                 }
                 $this->kitBaseSecuService->saveKitBase($user, $mere);
                 $this->addFlash('success', 'Kit de base enregistré');
-                return $this->redirectToRoute('admin_kitbasesecu_list');
+                return $this->redirectToRoute('admin_kitbasesecu_fiche', ['id' => $mere->getId()]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
                 $this->addFlash('danger', $error);
@@ -118,7 +118,71 @@ class KitBaseSecuControllerCoach extends AbstractController
 
         return $this->render('user_category/coach/kitbasesecu/kitbasesecu_form.html.twig', [
             'form' => $form->createView(),
-            'kitbase' => $mere
+            'kitbase' => $mere,
+            'filesDirectory' => $this->getParameter('files_directory_relative')
         ]);
+    }
+
+    /**
+     * @Route("/fiche/{id}", name="admin_kitbasesecu_fiche")
+     */
+    public function fiche_inventaire(KitBaseSecu $kitBase, KitBaseElmtSecuRepository $kitBaseElmtSecuRepository): Response
+    {
+        
+        $kitBase->setElmts($kitBaseElmtSecuRepository->findValidByMere($kitBase->getId()));
+        return $this->render('user_category/coach/kitbasesecu/kitbasesecu_fiche.html.twig', [
+            'kitBase' => $kitBase,
+            'filesDirectory' => $this->getParameter('files_directory_relative')
+        ]);
+    }
+
+    /**
+     * @Route("/modif/{id}", name="admin_kitbasesecu_modif")
+     */
+    public function modifKitBase(KitBaseSecu $mere, Request $request): Response
+    {
+        $user = (object)$this->getUser();
+        $mere->initFilles(count($mere->getElmts()));
+        $form = $this->createForm(KitBaseSecuType::class, $mere);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile) {
+                    $photo = $this->fileHandler->upload($imageFile, "images/kitbase/".$user->getUniqueCoachSecteur()->getId());
+                    $mere->setImage($photo);
+                }
+                $this->kitBaseSecuService->saveKitBase($user, $mere);
+                $this->addFlash('success', 'Kit de base modifié');
+                return $this->redirectToRoute('admin_kitbasesecu_fiche', ['id' => $mere->getId()]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+        }
+
+        return $this->render('user_category/coach/kitbasesecu/kitbasesecu_form.html.twig', [
+            'form' => $form->createView(),
+            'kitbase' => $mere,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'btnText' => 'Modifier'
+        ]);
+    }
+
+    /**
+     * @Route("/supprimer/{id}", name="admin_kitbasesecu_supprimer")
+     */
+    public function supprimerKitBase(KitBaseSecu $kitBase): Response
+    {
+        try{
+            $this->kitBaseSecuService->supprimerKitBase($kitBase);
+            $this->addFlash('success', 'Kit de base supprimé');
+            return $this->redirectToRoute('admin_kitbasesecu_list');
+        } catch(Exception $ex){
+            $this->addFlash('danger', $ex->getMessage());
+            return $this->redirectToRoute('admin_kitbasesecu_fiche', ['id' => $kitBase->getId()]);
+        }
+
     }
 }

@@ -180,5 +180,17 @@ class KitBaseSecu
             $this->addElmt($fille);
         }
     }
+
+    /**
+     * Set the value of elmts
+     *
+     * @return  self
+     */ 
+    public function setElmts($elmts)
+    {
+        $this->elmts = $elmts;
+
+        return $this;
+    }
     
 }

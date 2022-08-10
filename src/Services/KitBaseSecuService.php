@@ -36,7 +36,7 @@ class KitBaseSecuService
             if(!$isSave){
                 $filles = $this->kitBaseElmtSecuRepository->findValidByMere($kitBase->getId());
                 foreach($filles as $fille){
-                    $fille->setStatut(0);
+                    $fille->setStatus(0);
                     $this->entityManager->persist($fille);
                 }
             }
@@ -49,6 +49,22 @@ class KitBaseSecuService
                 $length++; 
             }
             if($isSave && $length == 0) throw new Exception("Aucun produit sélectionné");
+            $this->entityManager->flush();
+        } finally {
+            $this->entityManager->clear();
+        }
+    }
+
+    public function supprimerKitBase(KitBaseSecu $kitBase)
+    {
+        try{
+            
+            $kitBase->setStatus(0);
+            $this->entityManager->persist($kitBase);
+            foreach($kitBase->getElmts() as $fille){
+               $fille->setStatus(0);
+               $this->entityManager->persist($fille);
+            }
             $this->entityManager->flush();
         } finally {
             $this->entityManager->clear();
