@@ -41,7 +41,7 @@ class OrderSecuClientFilterType extends AbstractType
             "label" => "Trier par",
             'choices'  => [
                 'Date' => "o.dateCommande",
-                'Produit' => "p.nom",
+                'Nom du Kit' => "k.nom",
             ],
             "required" => false
         ])

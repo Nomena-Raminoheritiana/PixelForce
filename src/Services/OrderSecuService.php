@@ -86,7 +86,7 @@ class OrderSecuService
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 
-                    $orderSecu->getTotal(), [
+                    $orderSecu->getTotalTtc(), [
                         'description' => 'Paiement commande'
                     ]);
 

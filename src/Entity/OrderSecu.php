@@ -495,8 +495,16 @@ class OrderSecu implements JsonSerializable
     }
 
 
-    public function getTotal(){
-        return $this->getPrixProduit() + $this->getAccompMontant() + $this->getInstallationFrais();
+    public function getTotalHt(){
+        return $this->getPrixProduit() + $this->getAccompMontant();
+    }
+
+    public function getTvaMontantBase(){
+        return $this->getTotalHt() * $this->getTvaPourcentage()/100; 
+    }
+
+    public function getTotalTtc(){
+       return  $this->getTotalHt() + $this->getTvaMontantBase();
     }
 
     public function getContratRempli(): ?string

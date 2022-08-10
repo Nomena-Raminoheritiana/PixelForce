@@ -45,15 +45,19 @@
                             
                             <div class="checkout-items">
                                 <div class="card ecommerce-card">
+                                    {% if order.kitbase.image %}
                                     <div class="item-img">
                                         <a href="#">
-                                            <img src="{{ asset( filesDirectory ~ order.produit.photo) }}" alt="Image pour {{order.produit.nom}}" />
+                                            <img src="{{ asset( filesDirectory ~ order.kitbase.image) }}" alt="Image pour {{order.kitbase.nom}}" />
                                         </a>
                                     </div>
+                                    {% endif %}
                                     <div class="card-body">
                                         <div class="item-name">
-                                            <h6 class="mb-0"><a href="#" class="text-body">{{order.produit.nom}}</a></h6>
-                                            <span class="delivery-date text-muted"><i><b>Description :</b></i> {{order.produit.description|raw}}</span>
+                                            <h6 class="mb-0"><a href="#" class="text-body">{{order.kitbase.nom}}</a></h6>
+                                            {% if order.kitbase.description %}
+                                            <span class="delivery-date text-muted"><i><b>Description :</b></i> {{order.kitbase.description|raw}}</span>
+                                            {% endif %}
                                         </div>
                                         {# <span class="text-success mb-1">En stock</span> #}
                                         <div class="item-quantity">
@@ -95,7 +99,9 @@
                                     <div class="card-body">
                                         <div class="item-name">
                                             <h6 class="mb-0"><a href="#" class="text-body">{{accomp.produit.nom}}</a></h6>
+                                            {% if accomp.produit.photo %}
                                             <span class="delivery-date text-muted"><i><b>Description :</b></i> {{accomp.produit.description|raw}}</span>
+                                            {% endif %}
                                         </div>
                                         {# <span class="text-success mb-1">En stock</span> #}
                                         <div class="item-quantity">
@@ -147,8 +153,12 @@
                                                     <div class="detail-title">Statut</div>
                                                     <div class="detail-amt discount-amt text-primary">{{order.statusStr}}</div>
                                                 </li>
-                                                <li class="price-detail">
+                                                {# <li class="price-detail">
                                                     <div class="detail-title">{{order.typeAbonnement.nom}}</div>
+                                                    <div class="detail-amt"></div>
+                                                </li> #}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">{{order.tva.description}}</div>
                                                     <div class="detail-amt"></div>
                                                 </li>
                                                 {# <li class="price-detail">
@@ -156,27 +166,35 @@
                                                     <div class="detail-amt"></div>
                                                 </li> #}
                                                 <li class="price-detail">
-                                                    <div class="detail-title">Prix du produit</div>
+                                                    <div class="detail-title">Prix du kit</div>
                                                     <div class="detail-amt">{{order.prixProduit| number_format(2, ',', ' ')}} €</div>
                                                 </li>
                                                 <li class="price-detail">
                                                     <div class="detail-title">Montant des accompagnements</div>
                                                     <div class="detail-amt">{{order.accompMontant| number_format(2, ',', ' ')}} €</div>
                                                 </li>
-                                                {% if order.installationFrais > 0 %}
+                                                {# {% if order.installationFrais > 0 %}
                                                 <li class="price-detail">
                                                     <div class="detail-title">Frais d'installation</div>
                                                     <div class="detail-amt">{{order.installationFrais| number_format(2, ',', ' ')}} €</div>
                                                 </li>
-                                                {% endif %}
+                                                {% endif %} #}
 
                                                 
                                             </ul>
                                             <hr />
                                             <ul class="list-unstyled">
                                                 <li class="price-detail">
-                                                    <div class="detail-title detail-total">Prix total  :</div>
-                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{order.total | number_format(2, ',', ' ')}} €</div>
+                                                    <div class="detail-title detail-total">Montant HT :</div>
+                                                    <div class="detail-amt fw-bolder" >{{order.totalHt | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">TVA (<span id="tvaPercentage">{{order.tva.valeur | number_format(2, ',', ' ')}}</span> %) :</div>
+                                                    <div class="detail-amt fw-bolder" >{{order.tvaMontantBase | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Montant TTC :</div>
+                                                    <div class="detail-amt fw-bolder" >{{order.totalTtc | number_format(2, ',', ' ')}} €</div>
                                                 </li>
                                             </ul>
                                             {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address')}}">Commander</a> #}
