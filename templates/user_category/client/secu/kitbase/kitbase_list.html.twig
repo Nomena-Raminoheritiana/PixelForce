@@ -102,6 +102,34 @@
                                             <h6 class="item-price">{{kitbase.prix | number_format(2, ',', ' ')}} €</h6>
                                         </div>
                                     </div>
+                                    <div class="d-flex justify-content-center flex-wrap" >
+                                    {% for elmt in kitbase.elmts %}
+                                        <div class="card ecommerce-card" style="width : 100px; margin : 5px;">
+                                            <div class="item-img text-center" style="min-height : 0px;">
+                                                <a href="#">
+                                                <img class="img-fluid card-img-top ecommerce-card-img" style="height : auto;" src="{{ asset( filesDirectory ~ elmt.produit.photo) }}" alt="Image pour {{elmt.produit.nom}}" /></a>
+                                            </div>
+                                            <div class="card-body" style="padding : 5px 10px;">
+                                                
+                                                <h6 class="item-name" style="font-size : 12px;">
+                                                    <a class="text-body" href="#">{{elmt.produit.nom}}</a>
+                                                </h6>
+
+                                                {% if elmt.produit.description %}
+                                                <p class="card-text item-description">
+                                                    {{elmt.produit.description|raw}}
+                                                </p>
+                                                {% endif %}
+                                                <div class="item-wrapper">
+                                                    <div>
+                                                        <h6 class="item-price" style="font-size : 12px;">Quantité: {{elmt.qte}}</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    {% endfor %}
+                                    </div>
                                 </div>
                                 <div class="item-options text-center">
                                     {# <div class="item-wrapper">

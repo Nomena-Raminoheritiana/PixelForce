@@ -131,8 +131,8 @@ class BoutiqueController extends AbstractController
 
     /**
      * @Route("/secteursecu/{id}", name="boutique_secteursecu")
-     */
-    public function secteursecu($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService, ProduitSecuFavoriRepository $produitSecuFavoriRepository): Response
+     */ 
+    public function secteursecu($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService, ProduitSecuFavoriRepository $produitSecuFavoriRepository, KitBaseElmtSecuRepository $kitBaseElmtSecuRepository): Response
     {
         $this->session->set('secteurId', $secteur->getId());
         $this->session->set('typeSecteurId', $secteur->getType()->getId());
@@ -174,6 +174,10 @@ class BoutiqueController extends AbstractController
             $page,
             $limit
         );
+
+        for($i=0; $i< count($kitbaseList); $i++){
+            $kitbaseList[$i]->setElmts($kitBaseElmtSecuRepository->findValidByMere($kitbaseList[$i]->getId()));
+        }
 
     
         return $this->render('user_category/client/secu/kitbase/kitbase_list.html.twig', [
