@@ -91,9 +91,12 @@ class AgentContactMeetingController extends AbstractController
 
                 foreach ($allCoachSecteur as $coachSecteur) {
                     $coach = $coachSecteur->getCoach();
-                    $meetingCoach = $meeting->clone($coach);
-                    $this->meetingService->saveMeeting($meetingCoach, $coach, $userToMeet);
-                    $this->meetingService->saveMeetingEvent($meetingCoach, $coach, $meetingCalendarEventLabel);
+                    if($coach!=null) {
+                        $meetingCoach = $meeting->clone($coach);
+                        $this->meetingService->saveMeeting($meetingCoach, $coach, $userToMeet);
+                        $this->meetingService->saveMeetingEvent($meetingCoach, $coach, $meetingCalendarEventLabel);
+                    }
+                   
                 }
 
                 $this->meetingService->saveMeeting($meeting, $agent, $userToMeet);

@@ -153,16 +153,13 @@ class Meeting implements JsonSerializable
         $event->setUrl("/meeting/fiche/".$this->getId());
         return $event;
     }
-    public function clone(User $user = null): ?Meeting
+    public function clone(): ?Meeting
     {
         $meeting = new Meeting();
         $meeting->setTitle($this->getTitle());
         $meeting->setNote($this->getNote());
         $meeting->setStart($this->getStart());
         $meeting->setEnd($this->getEnd());
-        $meeting->setUserToMeet($this->getUserToMeet());
-        if($user == null)$meeting->setUser($this->getUser());
-        else $meeting->setUser($user);
         return $meeting;
     }
 
