@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CodePromoSecu{% endblock %}
+
+{% block body %}
+    <div class="w-100 mt-4 d-flex">
+        <div class="w-50 m-auto">
+
+            <h1>Edition code promotion</h1>
+            {{ include('code_promo_secu/_form.html.twig') }}
+            <a href="{{ path('app_code_promo_secu_index') }}" class="btn btn-danger mt-3"><i class="fa fa-arrow-left"></i> Retourner à la liste des codes promos</a>
+        </div>
+
+    </div>
+{% endblock %}

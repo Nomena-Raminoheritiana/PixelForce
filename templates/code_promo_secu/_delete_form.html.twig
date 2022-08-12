@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_code_promo_secu_delete', {'id': code_promo_secu.id}) }}" onsubmit="return confirm('Voulez vous supprimer la code promo ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ code_promo_secu.id) }}">
+    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+</form>
