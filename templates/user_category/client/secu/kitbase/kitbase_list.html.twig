@@ -77,9 +77,9 @@
                                 </div>
                         {% endif %}
                         {% if kitbaseList|length !=0 %}
-                        <section id="ecommerce-products" class="" style="margin-top : 20px;">
+                        <section id="ecommerce-products" style="margin-top : 20px;">
                             {% for kitbase in kitbaseList %}
-                            <div class="card ecommerce-card">
+                            <div class="card ecommerce-card" style="padding-bottom: 20px;">
                                 {% if kitbase.image %}
                                 <div class="item-img text-center">
                                     <a href="{{path('client_kitbasesecu_details', {'id': kitbase.id, 'token': token})}}">
@@ -103,7 +103,7 @@
                                             
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-flex-start flex-wrap" >
+                                    <div class="d-flex justify-content-center flex-wrap" >
                                     {% for elmt in kitbase.elmts %}
                                         <div class="card ecommerce-card" style="width : 200px; margin : 5px;">
                                             <div class="item-img text-center" style="min-height : 0px;">
