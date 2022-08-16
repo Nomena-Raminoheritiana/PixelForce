@@ -1,6 +1,7 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import {launchLiveVideo,arretJitsi,generateCode} from './liveFunctions'
+import { EventSourcePolyfill } from 'event-source-polyfill';
 $(function() {
     // code de l'appel video
     let code = null;
@@ -135,7 +136,11 @@ $(function() {
     const elementUrl = document.getElementById("live-call-topic");
     if(elementUrl) {
         const urlDetectionAppel = JSON.parse(elementUrl.textContent);
-        const eventDetectionAppelSource = new EventSource(urlDetectionAppel);
+        const eventDetectionAppelSource = new EventSourcePolyfill(`{{ mercure(${urlDetectionAppel}) }}`, {
+            headers: {
+                'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec',
+            }
+        });
         eventDetectionAppelSource.onmessage = async event => {
             const data = JSON.parse(event.data);
             // puis on récupère toute les appels entrants
@@ -167,7 +172,11 @@ $(function() {
     const elementUrlRefus = document.getElementById("live-refus-topic");
     if(elementUrlRefus) {
         const urlRefus = JSON.parse(elementUrlRefus.textContent);
-        const evenRefusSource = new EventSource(urlRefus);
+        const evenRefusSource = new EventSourcePolyfill(`{{ mercure(${urlRefus}) }}`, {
+            headers: {
+                'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec',
+            }
+        });;
         evenRefusSource.onmessage = async event => {
             const data = JSON.parse(event.data);
             const alertRefu = $('#model-alert');
