@@ -136,7 +136,7 @@ $(function() {
     const elementUrl = document.getElementById("live-call-topic");
     if(elementUrl) {
         const urlDetectionAppel = JSON.parse(elementUrl.textContent);
-        const eventDetectionAppelSource = new EventSourcePolyfill(`{{ mercure(${urlDetectionAppel}) }}`, {
+        const eventDetectionAppelSource = new EventSourcePolyfill(urlDetectionAppel, {
             headers: {
                 'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec',
             }
@@ -172,7 +172,7 @@ $(function() {
     const elementUrlRefus = document.getElementById("live-refus-topic");
     if(elementUrlRefus) {
         const urlRefus = JSON.parse(elementUrlRefus.textContent);
-        const evenRefusSource = new EventSourcePolyfill(`{{ mercure(${urlRefus}) }}`, {
+        const evenRefusSource = new EventSourcePolyfill(urlRefus, {
             headers: {
                 'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec',
             }
