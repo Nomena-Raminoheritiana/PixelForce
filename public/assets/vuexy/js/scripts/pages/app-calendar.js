@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
     calEventFilter = $('.calendar-events-filter'),
     filterInput = $('.input-filter'),
     btnDeleteEvent = $('.btn-delete-event'),
-    calendarEditor = $('#event-description-editor');
+    calendarEditor = $('#event-description-editor'),
+    btnOpenSidebar = $('#btn-open-sidebar');
     console.log(events);
   
   const userId = userCalendar.data('userId');
@@ -69,6 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
     $('.event-sidebar').addClass('show');
     $('.sidebar-left').removeClass('show');
     $('.app-calendar .body-content-overlay').addClass('show');
+  });
+
+  btnOpenSidebar.on('click', function (){
+    sidebar.modal('show');
   });
 
   // Label  select
@@ -368,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log(data);
           //calendar.addEvent(eventData);
           calendar.refetchEvents();
+          sidebar.modal('hide');
       });
 
       request.fail(function(jqXHR, textStatus) {
@@ -502,7 +508,9 @@ document.addEventListener('DOMContentLoaded', function () {
           description: calendarEditor.val()
         }
       };
+      
       addEvent(newEvent);
+      
     }
   });
 

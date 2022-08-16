@@ -72,6 +72,9 @@ class CalendarController extends AbstractController
         $user = $this->getUser();
 
         $lienCalendly = $user->getLienCalendly();
+        if(!$lienCalendly){
+            return $this->redirectToRoute('calendar_config');
+        }
 
         $form = $this->createForm(CalendlyType::class);
         $form->handleRequest($request);
