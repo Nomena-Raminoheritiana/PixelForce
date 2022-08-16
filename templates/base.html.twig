@@ -82,12 +82,12 @@
         {% include 'live/chat/mini_menu_chat.html.twig'  %}
         
         {% block javascripts %}
-{#            <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>#}
-{#            <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>#}
-{#            <script type="application/json" id="chat-newMessage-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_MESSAGE_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>#}
-{#            <script type="application/json" id="chat-vu-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_VU_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>#}
-{#            <script type="application/json" id="chat-userTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>#}
-{#            <script type="application/json" id="chat-userStopTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_STOP_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>#}
+            <script type="application/json" id="live-call-topic">{{ mercure(constant('App\\Services\\LiveVideo::CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="live-refus-topic">{{ mercure(constant('App\\Services\\LiveVideo::REFUS_CALL_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-newMessage-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_MESSAGE_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-vu-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_ADD_VU_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-userTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
+            <script type="application/json" id="chat-userStopTyping-topic">{{ mercure(constant('App\\Services\\Chat\\ChatMercureNotification::CHAT_USER_STOP_TYPING_TOPIC')~(app.user.id|base64_encode))|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_HEX_TAG'))|raw }}</script>
             <script type="application/json"  id="current-user-id">{{ app.user.id }}</script>
             <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
             <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
