@@ -1,7 +1,7 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import {launchLiveVideo,arretJitsi,generateCode} from './liveFunctions'
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import { EventSourcePolyfill } from 'event-source-polyfill/src/eventsource.min.js';
 $(function() {
     // code de l'appel video
     let code = null;
