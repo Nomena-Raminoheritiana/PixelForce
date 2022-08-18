@@ -60,10 +60,12 @@ class OrderSecuService
 
     public function saveOrder(string $stripeToken, OrderSecu $orderSecu): ?OrderSecu{
         try{
+            $this->entityManager->beginTransaction();
+
             $orderSecu->refresh($this->entityManager);
             $orderSecu->getKitbase()->checkValid();
             $orderSecu->setDateCommande(new DateTime());
-            $orderSecu->setStatut(OrderSecu::CREATED);
+            $orderSecu->setStatut(OrderSecu::VALIDATED);
             $orderSecu->setAccompMontant(0);
             $orderSecu->setTvaPourcentage($orderSecu->getTva()->getValeur());
             //$orderSecu->setInstallationFrais($orderSecu->getFraisInstallation());
@@ -92,7 +94,13 @@ class OrderSecuService
 
             $orderSecu->setChargeId($chargeId);  
             $this->entityManager->flush();
+            $this->entityManager->commit();
             return $orderSecu;
+        } catch(\Exception $ex){
+            if($this->entityManager->getConnection()->isTransactionActive()) {
+                $this->entityManager->rollback();
+            }
+            throw $ex;
         } finally {
             $this->entityManager->clear();
         }

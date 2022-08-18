@@ -658,6 +658,7 @@ class MakeOrderSecuControllerClient extends AbstractController
                 $order->setSecteur($secteur);
                 $order = $this->orderSecuService->saveOrder($stripeToken, $order);
                 $this->orderSecuService->removeOrderSecu($order->getSessionKey());
+                $this->addFlash('success', 'Commande validée');
                 return $this->redirectToRoute('client_ordersecu_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
