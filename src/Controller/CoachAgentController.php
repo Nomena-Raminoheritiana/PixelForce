@@ -64,6 +64,7 @@ class CoachAgentController extends AbstractController
      */
     public function coach_agent_list(Request $request, PaginatorInterface $paginator)
     {
+        
         /** @var User $coach */
         $coach = $this->getUser();
         $mySector = $this->repoCoachSecteur->findOneBy(['coach' => $this->getUser()])->getSecteur();

@@ -1,3 +1,4 @@
+import { EventSourcePolyfill } from "event-source-polyfill/src/eventsource.min.js";
 import {ConversationComponent} from "./components/ConversationComponent";
 import {showMessageInstance, updateMenu} from "./helpers/chat_helpers";
 

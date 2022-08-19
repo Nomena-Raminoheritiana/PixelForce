@@ -1,0 +1,23 @@
+nelmio_api_doc:
+    documentation:
+        servers:
+            - url: https://pixelforce.tk:3000
+              description: mercure en Pixelforce url
+            - url: https://redirectmercure.tk
+              description: Mercure en redirectMercure url
+        info:
+            title: My App
+            description: This is an awesome app!
+            version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: https
+                    scheme: bearer
+                    bearerFormat: JWT
+        security:
+            - Bearer: []
+
+    # areas: # to filter documented areas
+    #     path_patterns:
+    #         - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
