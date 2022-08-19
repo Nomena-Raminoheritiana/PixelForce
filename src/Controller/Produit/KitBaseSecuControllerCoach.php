@@ -139,9 +139,10 @@ class KitBaseSecuControllerCoach extends AbstractController
     /**
      * @Route("/modif/{id}", name="admin_kitbasesecu_modif")
      */
-    public function modifKitBase(KitBaseSecu $mere, Request $request): Response
+    public function modifKitBase(KitBaseSecu $mere, Request $request, KitBaseElmtSecuRepository $kitBaseElmtSecuRepository): Response
     {
         $user = (object)$this->getUser();
+        $mere->setElmts($kitBaseElmtSecuRepository->findValidByMere($mere->getId()));
         $mere->initFilles(count($mere->getElmts()));
         $form = $this->createForm(KitBaseSecuType::class, $mere);
         $form->handleRequest($request);
