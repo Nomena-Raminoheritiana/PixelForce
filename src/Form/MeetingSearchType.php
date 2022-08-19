@@ -44,7 +44,7 @@ class MeetingSearchType extends AbstractType
             ])
             ->add('status', ChoiceType::class, [
                 'required' => false,
-                'placeholder' => 'Status',
+                'placeholder' => 'Statut',
                 'label' => false,
                 'choices' => $this->getMeetingState()
             ])
