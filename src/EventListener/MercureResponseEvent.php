@@ -24,66 +24,13 @@ class MercureResponseEvent implements EventSubscriberInterface
 
     public function onKernelRequest( RequestEvent $request)
     {
-        
-        // $cookie = $request->cookies->get('mercureAuthorization02');
-        // dd('sdf');
 
-
-        // $cookies = [];
-        // foreach ($request->getRequest()->cookies as $key => $value ) {
-        //     $cookies[$key] = $value ;
-        // }
-        // dd($request->getRequest());
-
-        // // if (in_array($cookies['PHPSESSID'], $cookies)) {
-        // //     # code...
-        // // }
-        
-            
-        
-        // dd($cookies);
-        // dd(
-        //     $request->getRequest(),
-        //     // $request->cookies->get('_ga'),
-        //     // $request->cookies->all()
-        // );
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse()
     {
-
-        // check to see if onKernelController marked this as a token "auth'ed" request
-        // if (!$token = $event->getRequest()->attributes->get('auth_token')) {
-        //     return;
-        // }
-        
-        $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec7';
-        $response = $event->getResponse();
-        
-        $_COOKIE['mercureAuth_PxlForce'] = $token;
-        // $response->headers->setCookie(
-        //     Cookie::create(
-        //         'mercureAuthorization',
-        //         $token,
-        //         0,
-        //         '/',
-        //         '127.0.0.1',
-        //         false,
-        //         false,
-        //         false,
-        //         'lax'
-        //     )
-        // );
-
-
-
-        // $event->getResponse()->headers->set(
-        //     'set-cookie-mercure',
-        //     sprintf('mercureAuthorization=%s; path=/.well-known/mercure; secure; httponly;', $token)
-        // );
-
-// dd($event->getResponse(), $_COOKIE);
-
-        // return $response->sendHeaders();
+        if (!in_array($_ENV['MERCURE_JWT_TOKEN'], $_COOKIE)) {
+            setcookie($_ENV['MERCURE_NAME_COOKIE'], $_ENV['MERCURE_JWT_TOKEN'], 0, "/", "", false, false);
+        }
     }
 }
