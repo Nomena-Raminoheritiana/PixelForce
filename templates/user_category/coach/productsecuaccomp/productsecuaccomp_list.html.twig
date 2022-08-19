@@ -162,9 +162,9 @@
                         <td>{{product.nom}}</td>
                         <td>{{product.prix | number_format(2, ',', ' ')}}</td>
                         <td>{{product.description | raw}}</td>
-                        <td>
+                        <td class="text-center">
                             {% if product.photo != null %}
-                                <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
+                                <img class="ecommerce-card-img" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" height="200" />
                             {% endif %}
                         </td>
 
