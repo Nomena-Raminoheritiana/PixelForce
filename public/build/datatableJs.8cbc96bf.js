@@ -1,0 +1,1 @@
+(self.webpackChunk=self.webpackChunk||[]).push([[2123],{689:(e,n,s)=>{var a=s(9755);a((function(){a(".dataTables_empty").text("Aucunes données correspondantes")}))}},e=>{e.O(0,[9755],(()=>{return n=689,e(e.s=n);var n}));e.O()}]);
