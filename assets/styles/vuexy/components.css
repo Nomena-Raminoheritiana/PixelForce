@@ -1025,7 +1025,7 @@ footer.footer-border {
 .main-menu .navbar-header .navbar-brand {
   display: flex;
   align-items: center;
-  margin-top: 1.35rem;
+  /* margin-top: 1.35rem; */
   font-size: inherit; }
 
 .main-menu .navbar-header .navbar-brand .brand-logo img {
