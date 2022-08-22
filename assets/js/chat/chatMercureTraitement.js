@@ -1,4 +1,3 @@
-import { EventSourcePolyfill } from "event-source-polyfill/src/eventsource.min.js";
 import {ConversationComponent} from "./components/ConversationComponent";
 import {showMessageInstance, updateMenu} from "./helpers/chat_helpers";
 
@@ -8,11 +7,7 @@ $(function() {
     const chat_vu_topic = JSON.parse(document.getElementById("chat-vu-topic").textContent);
     const chat_userTyping_topic = JSON.parse(document.getElementById("chat-userTyping-topic").textContent);
     const chat_userStopTyping_topic = JSON.parse(document.getElementById("chat-userStopTyping-topic").textContent);
-    const eventNewMessage = new EventSourcePolyfill(chat_newMessage_topic, {
-        header : {
-            'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec'
-        }
-    });
+    const eventNewMessage = new EventSource(chat_newMessage_topic);
     const eventVu = new EventSource(chat_vu_topic);
     const eventUserTyping = new EventSource(chat_userTyping_topic);
     const eventUserStopTyping = new EventSource(chat_userStopTyping_topic);
