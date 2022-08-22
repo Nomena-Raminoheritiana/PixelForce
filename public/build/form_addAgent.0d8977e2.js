@@ -1,0 +1,1 @@
+(self.webpackChunk=self.webpackChunk||[]).push([[9955],{3087:(a,n,e)=>{var t=e(9755);t(document).ready((function(){t(this).on("click","a.add-mail",(function(a){a.preventDefault();var n=t(".mail-container").first().clone();t(".mail-container").last().after(n)}))}))}},a=>{a.O(0,[9755],(()=>{return n=3087,a(a.s=n);var n}));a.O()}]);

@@ -37,7 +37,7 @@ export class MenuComponent {
         membres.forEach(function(user){
            if(user.id !== current_user_id) {
                avatar += user.id;
-               nomCanal = user.nom+' '+user.prenom;
+               nomCanal = (user.nom ?? '')+' '+(user.prenom ?? '');
            }
         });
         const lastMessageClass = !canalMessage.isSeen? 'col-7' : 'col-9';
