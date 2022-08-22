@@ -1,7 +1,7 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import {launchLiveVideo,arretJitsi,generateCode} from './liveFunctions'
-import { EventSourcePolyfill } from 'event-source-polyfill/src/eventsource.min.js';
+
 $(function() {
     // code de l'appel video
     let code = null;
@@ -136,12 +136,7 @@ $(function() {
     const elementUrl = document.getElementById("live-call-topic");
     if(elementUrl) {
         const urlDetectionAppel = JSON.parse(elementUrl.textContent);
-        const eventDetectionAppelSource = new EventSourcePolyfill(urlDetectionAppel, {
-            header : {
-                'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.c6_7faKRwz4VbZwLt7a1ivjCIi1U6jxNhQ3dPYYY7Ec'
-            },
-            withCredentials: true
-        });
+        const eventDetectionAppelSource = new EventSource(urlDetectionAppel);
         
         eventDetectionAppelSource.onmessage = async event => {
             const data = JSON.parse(event.data);

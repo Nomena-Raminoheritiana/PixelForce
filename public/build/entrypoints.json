@@ -13,12 +13,11 @@
         "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_find_js.js",
         "/build/vendors-node_modules_core-js_modules_web_url-search-params_js.js",
         "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-690d99.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_filter_js-node_modules_core-js_modules_es_objec-9f8e31.js",
-        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_internals_fun-750b51.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_internals_str-fe1890.js",
         "/build/app.js"
       ],
       "css": [
-        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_internals_fun-750b51.css",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_internals_str-fe1890.css",
         "/build/app.css"
       ]
     },
@@ -99,7 +98,7 @@
         "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_find_js.js",
         "/build/vendors-node_modules_core-js_modules_web_url-search-params_js.js",
         "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-690d99.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_filter_js-node_modules_core-js_modules_es_objec-9f8e31.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_filter_js-node_modules_core-js_modules_es_array-c1e187.js",
         "/build/chatJS.js"
       ]
     },
