@@ -23,6 +23,4 @@ return [
     FOS\CKEditorBundle\FOSCKEditorBundle::class => ['all' => true],
     Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class => ['all' => true],
     Gregwar\CaptchaBundle\GregwarCaptchaBundle::class => ['all' => true],
-    Nelmio\CorsBundle\NelmioCorsBundle::class => ['all' => true],
-    Nelmio\ApiDocBundle\NelmioApiDocBundle::class => ['all' => true],
 ];
