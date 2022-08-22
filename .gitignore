@@ -8,6 +8,7 @@ VAKIO_AHO.markdown
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+/public/build/
 #/public/files/images/products/
 /media/user/
 /var/
