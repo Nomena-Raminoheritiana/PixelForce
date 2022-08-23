@@ -1,4 +1,9 @@
+{% set typeSecteurId = app.session.get('typeSecteurId') %}
+{% set estSecurite = typeSecteurId == constant('App\\Entity\\TypeSecteur::SECURITE') %}
+{% set estDemandeDevis = typeSecteurId == constant('App\\Entity\\TypeSecteur::DEMANDE_DEVIS') %}
+{% set estEcommerce = typeSecteurId == constant('App\\Entity\\TypeSecteur::ECOMMERCE') %}
 {% extends 'base.html.twig' %}
+
 
 {% block title %}
 	Dashboard : {{ secteur.nom }}
@@ -23,10 +28,19 @@
                         <div class="card-body">
                             <h5>Félicitation 🎉 {{ app.user.prenom }}!</h5>
                             <p class="card-text font-small-3">Vous avez gagné la médaille d'or</p>
+                            {% if (estSecurite or estEcommerce) %}
                             <h3 class="mb-75 mt-2 pt-50">
-                                <a href="#">48.9k €</a>
+                                <a href="#">{{statVente.ca | number_format(2, ',', ' ')}} €</a>
                             </h3>
-                            <button type="button" class="btn btn-primary">Voir les ventes</button>
+                            {% endif %}
+                            {% if estSecurite %}
+                            <a role="button" href="{{path('admin_ordersecu_list')}}" class="btn btn-primary">Voir les ventes</a>
+                            {% elseif estEcommerce %}
+                            <a role="button" href="{{path('admin_order_list')}}" class="btn btn-primary">Voir les ventes</a>
+                            {% elseif estDemandeDevis %}
+                            <a role="button" href="{{path('agent_demandedevis_list')}}" class="btn btn-primary">Voir les demandes de devis</a>
+                            {% endif %}
+                            
                             <img src="{{asset('assets/vuexy/images/illustration/badge.svg')}}" class="congratulation-medal" alt="Medal Pic" />
                         </div>
                     </div>
@@ -38,9 +52,6 @@
                     <div class="card card-statistics">
                         <div class="card-header">
                             <h4 class="card-title">Statistiques</h4>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text font-small-2 me-25 mb-0">Mis à jour il y a 1 mois</p>
-                            </div>
                         </div>
                         <div class="card-body statistics-body">
                             <div class="row">
@@ -52,7 +63,7 @@
                                             </div>
                                         </div>
                                         <div class="my-auto">
-                                            <h4 class="fw-bolder mb-0">230k</h4>
+                                            <h4 class="fw-bolder mb-0">{{statVente.nbr_ventes | number_format(0, ',', ' ')}}</h4>
                                             <p class="card-text font-small-3 mb-0">Ventes</p>
                                         </div>
                                     </div>
@@ -65,7 +76,7 @@
                                             </div>
                                         </div>
                                         <div class="my-auto">
-                                            <h4 class="fw-bolder mb-0">8.549k</h4>
+                                            <h4 class="fw-bolder mb-0">{{nbrClients | number_format(0, ',', ' ')}}</h4>
                                             <p class="card-text font-small-3 mb-0">Les clients</p>
                                         </div>
                                     </div>
@@ -79,10 +90,11 @@
                                         </div>
                                         <div class="my-auto">
                                             <h4 class="fw-bolder mb-0">1.423k</h4>
-                                            <p class="card-text font-small-3 mb-0">Produits</p>
+                                            <p class="card-text font-small-3 mb-0">Rendez-vous</p>
                                         </div>
                                     </div>
                                 </div>
+                                {% if (estSecurite or estEcommerce) %}
                                 <div class="col-xl-3 col-sm-6 col-12">
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-success me-2">
@@ -91,11 +103,12 @@
                                             </div>
                                         </div>
                                         <div class="my-auto">
-                                            <h4 class="fw-bolder mb-0">$9745</h4>
+                                            <h4 class="fw-bolder mb-0">{{statVente.ca | number_format(2, ',', ' ')}} €</h4>
                                             <p class="card-text font-small-3 mb-0">Revenu</p>
                                         </div>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -310,87 +323,34 @@
                 <div class="col-lg-4 col-md-6 col-12">
                     <div class="card card-transaction">
                         <div class="card-header">
-                            <h4 class="card-title">Transactions</h4>
-                            <div class="dropdown chart-dropdown">
+                            <h4 class="card-title">Analyse clients</h4>
+                            {# <div class="dropdown chart-dropdown">
                                 <i data-feather="more-vertical" class="font-medium-3 cursor-pointer" data-bs-toggle="dropdown"></i>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <a class="dropdown-item" href="#">28 derniers jours</a>
                                     <a class="dropdown-item" href="#">Le mois dernier</a>
                                     <a class="dropdown-item" href="#">L'année dernière</a>
                                 </div>
-                            </div>
+                            </div> #}
                         </div>
                         <div class="card-body">
+                            {% for client in topClients %}
                             <div class="transaction-item">
                                 <div class="d-flex">
                                     <div class="avatar bg-light-primary rounded float-start">
                                         <div class="avatar-content">
-                                            <i data-feather="pocket" class="avatar-icon font-medium-3"></i>
+                                            <i data-feather="user" class="avatar-icon font-medium-3"></i>
                                         </div>
                                     </div>
                                     <div class="transaction-percentage">
-                                        <h6 class="transaction-title">Porte monnaie</h6>
-                                        <small>Starbuck</small>
+                                        <h6 class="transaction-title">{{client.prenom}} {{client.nom}}</h6>
+                                        <small>{{client.email}}</small>
                                     </div>
                                 </div>
-                                <div class="fw-bolder text-danger">- $74</div>
+                                {# <div class="fw-bolder text-danger">- $74</div> #}
+                                <div class="fw-bolder text-success">{{loop.index}}</div>
                             </div>
-                            <div class="transaction-item">
-                                <div class="d-flex">
-                                    <div class="avatar bg-light-success rounded float-start">
-                                        <div class="avatar-content">
-                                            <i data-feather="check" class="avatar-icon font-medium-3"></i>
-                                        </div>
-                                    </div>
-                                    <div class="transaction-percentage">
-                                        <h6 class="transaction-title">Virement</h6>
-                                        <small>Ajouter de l'argent</small>
-                                    </div>
-                                </div>
-                                <div class="fw-bolder text-success">+ $480</div>
-                            </div>
-                            <div class="transaction-item">
-                                <div class="d-flex">
-                                    <div class="avatar bg-light-danger rounded float-start">
-                                        <div class="avatar-content">
-                                            <i data-feather="dollar-sign" class="avatar-icon font-medium-3"></i>
-                                        </div>
-                                    </div>
-                                    <div class="transaction-percentage">
-                                        <h6 class="transaction-title">Paypal</h6>
-                                        <small>Ajouter de l'argent</small>
-                                    </div>
-                                </div>
-                                <div class="fw-bolder text-success">+ $590</div>
-                            </div>
-                            <div class="transaction-item">
-                                <div class="d-flex">
-                                    <div class="avatar bg-light-warning rounded float-start">
-                                        <div class="avatar-content">
-                                            <i data-feather="credit-card" class="avatar-icon font-medium-3"></i>
-                                        </div>
-                                    </div>
-                                    <div class="transaction-percentage">
-                                        <h6 class="transaction-title">Mastercard</h6>
-                                        <small>Nourriture commandée</small>
-                                    </div>
-                                </div>
-                                <div class="fw-bolder text-danger">- $23</div>
-                            </div>
-                            <div class="transaction-item">
-                                <div class="d-flex">
-                                    <div class="avatar bg-light-info rounded float-start">
-                                        <div class="avatar-content">
-                                            <i data-feather="trending-up" class="avatar-icon font-medium-3"></i>
-                                        </div>
-                                    </div>
-                                    <div class="transaction-percentage">
-                                        <h6 class="transaction-title">Transférer</h6>
-                                        <small>Rembourser</small>
-                                    </div>
-                                </div>
-                                <div class="fw-bolder text-success">+ $98</div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

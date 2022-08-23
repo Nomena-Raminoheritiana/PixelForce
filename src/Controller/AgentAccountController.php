@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\AgentSecteur;
 use App\Entity\CategorieFormation;
 use App\Entity\Secteur;
+use App\Entity\TypeSecteur;
 use App\Entity\User;
 use App\Manager\StripeManager;
 use App\Repository\AgentSecteurRepository;
@@ -26,6 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CalendarEventRepository;
 use App\Repository\PlanAgentAccountRepository;
 use App\Repository\UserRepository;
+use App\Services\Stat\StatAgentService;
 use App\Services\StripeService;
 use App\Services\User\AgentService;
 
@@ -140,10 +142,10 @@ class AgentAccountController extends AbstractController
     /**
      * @Route("/agent/dashboard/secteur/{id}", name="agent_dashboard_secteur")
      */
-    public function agent_dashboard_secteur( Request $request, PaginatorInterface $paginator, Secteur $secteur)
+    public function agent_dashboard_secteur( Request $request, PaginatorInterface $paginator, Secteur $secteur, StatAgentService $statAgentService)
     {
       
-        $agent = $this->getUser();
+        $agent = (object)$this->getUser();
         $this->agentService->setStartDate($agent);
 
         $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
@@ -175,6 +177,12 @@ class AgentAccountController extends AbstractController
         $eventsOfTheDay = $this->calendarEventRepository->findEventsOfTheDay($agent);
 
 
+        //stat
+        $statVente = $statAgentService->getStatVente($agent->getId(), $secteur->getId(), $secteur->getType()->getId());
+        $nbrClients = $statAgentService->getNbrClients($agent->getId());
+        $topClients = $statAgentService->getTopClients($agent->getId(), $secteur->getId(), 5);
+        
+        
         return $this->render('user_category/agent/dashboard_secteur.html.twig', [
             'secteur' => $secteur,
             'formations' => $formations,
@@ -184,7 +192,10 @@ class AgentAccountController extends AbstractController
             'nbrAllMyContacts' => count($this->repoContact->findAll()),
             'repoRelationFormationCategorie' => $this->repoRelationFormationCategorie,
             'upcomingEvents'=> $upcomingEvents,
-            'eventsOfTheDay'=> $eventsOfTheDay
+            'eventsOfTheDay'=> $eventsOfTheDay,
+            'statVente' => $statVente,
+            'nbrClients' => $nbrClients,
+            'topClients' => $topClients
         ]);
     }
 
