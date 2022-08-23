@@ -117,10 +117,10 @@ create or replace view all_type_order_valide_gp_mois_annee as
 select agent_id, secteur_id, mois, annee, sum(montant) as montant, count(agent_id) as nbr
 from all_type_order_valide_mois_annee group by agent_id, secteur_id, mois, annee;
 
-select m.*, coalesce(t.montant, 0) as montant, coalesce(t.nbr, 0) as nbr
+/*select m.*, coalesce(t.montant, 0) as montant, coalesce(t.nbr, 0) as nbr
 from les_mois m left join 
 (select * from all_type_order_valide_gp_mois_annee where agent_id = 5 and secteur_id = 1 and annee = 2022
-) t on m.mois = t.mois;
+) t on m.mois = t.mois;*/
 
 
 DELIMITER //
