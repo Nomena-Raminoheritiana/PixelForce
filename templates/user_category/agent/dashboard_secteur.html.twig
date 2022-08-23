@@ -59,7 +59,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-primary me-2">
                                             <div class="avatar-content">
-                                                <i data-feather="trending-up" class="avatar-icon"></i>
+                                                <a href="{% if estSecurite %}{{path('admin_ordersecu_list')}}{% elseif estEcommerce %}{{path('admin_order_list')}}{% elseif estDemandeDevis %}{{path('agent_demandedevis_list')}}{% else %}#{% endif %}"><i data-feather="trending-up" class="avatar-icon"></i></a>
                                             </div>
                                         </div>
                                         <div class="my-auto">
@@ -85,7 +85,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-danger me-2">
                                             <div class="avatar-content">
-                                                <i data-feather="box" class="avatar-icon"></i>
+                                                <a href="{{path('agent_contact_meeting_list')}}"><i data-feather="box" class="avatar-icon"></i></a>
                                             </div>
                                         </div>
                                         <div class="my-auto">
@@ -99,7 +99,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-success me-2">
                                             <div class="avatar-content">
-                                                <i data-feather="dollar-sign" class="avatar-icon"></i>
+                                                <a href="{% if estSecurite %}{{path('admin_ordersecu_list')}}{% elseif estEcommerce %}{{path('admin_order_list')}}{% elseif estDemandeDevis %}{{path('agent_demandedevis_list')}}{% else %}#{% endif %}"><i data-feather="dollar-sign" class="avatar-icon"></i></a>
                                             </div>
                                         </div>
                                         <div class="my-auto">
