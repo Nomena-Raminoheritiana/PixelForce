@@ -59,11 +59,11 @@ select * from stat_vente_ecommerce_tout_agent union all
 select * from stat_vente_dd_tout_agent;
 
 create or replace view all_type_order_valide as
-select agent_id, secteur_id, client_id, montant_ttc as montant from  order_secu_valide
+select agent_id, secteur_id, client_id, montant_ttc as montant, date_commande from  order_secu_valide
 union all
-select agent_id, secteur_id, user_id, amount from order_valide 
+select agent_id, secteur_id, user_id, amount, order_date from order_valide 
 union all 
-select agent_id, secteur_id, client_id, 0 from demande_devis_valide;
+select agent_id, secteur_id, client_id, 0, date_demande from demande_devis_valide;
 
 create or replace view agent_secteur_client_valide as 
 select a.agent_id, a.secteur_id, ac.id as client_id
@@ -81,4 +81,58 @@ on (a.agent_id, a.secteur_id, a.client_id) = (o.agent_id, o.secteur_id, o.client
 create or replace view client_secteur_agent as 
 select a.*, ac.nom, ac.prenom, ac.email, ac.username
 from all_type_order_valide_all_client a 
-join active_clients ac on a.client_id = ac.id; 
+join active_clients ac on a.client_id = ac.id;
+
+
+create or replace view les_mois as 
+select 1 as mois, 'Janvier' as mois_str
+union all 
+select 2 as mois, 'Février' as mois_str
+union all 
+select 3 as mois, 'Mars' as mois_str
+union all 
+select 4 as mois, 'Avril' as mois_str
+union all 
+select 5 as mois, 'Mai' as mois_str
+union all 
+select 6 as mois, 'Juin' as mois_str
+union all 
+select 7 as mois, 'Juillet' as mois_str
+union all 
+select 8 as mois, 'Août' as mois_str
+union all 
+select 9 as mois, 'Septembre' as mois_str
+union all 
+select 10 as mois, 'Octobre' as mois_str
+union all 
+select 11 as mois, 'Novembre' as mois_str
+union all 
+select 12 as mois, 'Décembre' as mois_str;
+
+create or replace view all_type_order_valide_mois_annee as
+select a.*, month(a.date_commande) as mois, year(a.date_commande) as annee
+from all_type_order_valide a;
+
+create or replace view all_type_order_valide_gp_mois_annee as 
+select agent_id, secteur_id, mois, annee, sum(montant) as montant, count(agent_id) as nbr
+from all_type_order_valide_mois_annee group by agent_id, secteur_id, mois, annee;
+
+select m.*, coalesce(t.montant, 0) as montant, coalesce(t.nbr, 0) as nbr
+from les_mois m left join 
+(select * from all_type_order_valide_gp_mois_annee where agent_id = 5 and secteur_id = 1 and annee = 2022
+) t on m.mois = t.mois;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS getRevenuAnnee //
+CREATE PROCEDURE 
+  getRevenuAnnee( agentIdParam INT, secteurIdParam INT, anneeParam INT )
+BEGIN  
+   select m.*, coalesce(t.montant, 0) as montant, coalesce(t.nbr, 0) as nbr
+	from les_mois m left join 
+	(select * from all_type_order_valide_gp_mois_annee where agent_id = agentIdParam and secteur_id = secteurIdParam and annee = anneeParam
+	) t on m.mois = t.mois order by m.mois
+   ;  
+END 
+//
+   

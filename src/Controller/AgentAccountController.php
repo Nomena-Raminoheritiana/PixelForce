@@ -178,11 +178,13 @@ class AgentAccountController extends AbstractController
 
 
         //stat
+        $anneeActuelle = intval(date('Y'));
+        $annee = $request->get('annee', $anneeActuelle);
         $statVente = $statAgentService->getStatVente($agent->getId(), $secteur->getId(), $secteur->getType()->getId());
         $nbrClients = $statAgentService->getNbrClients($agent->getId());
         $topClients = $statAgentService->getTopClients($agent->getId(), $secteur->getId(), 5);
-        
-        
+        $revenuAnnee = $statAgentService->getRevenuAnnee($agent->getId(), $secteur->getId(), $annee);
+
         return $this->render('user_category/agent/dashboard_secteur.html.twig', [
             'secteur' => $secteur,
             'formations' => $formations,
@@ -195,7 +197,10 @@ class AgentAccountController extends AbstractController
             'eventsOfTheDay'=> $eventsOfTheDay,
             'statVente' => $statVente,
             'nbrClients' => $nbrClients,
-            'topClients' => $topClients
+            'topClients' => $topClients,
+            'revenuAnnee' => $revenuAnnee,
+            'annee' => $annee,
+            'anneeActuelle' => $anneeActuelle
         ]);
     }
 

@@ -409,13 +409,13 @@
                 </div>
     
                 <!-- Revenue Report Card -->
-                <div class="col-lg-8 col-12">
+                <div class="col-lg-8 col-12 {% if estDemandeDevis %}d-none{% endif %}">
                     <div class="card card-revenue-budget">
                         <div class="row mx-0">
                             <div class="col-md-8 col-12 revenue-report-wrapper">
                                 <div class="d-sm-flex justify-content-between align-items-center mb-3">
                                     <h4 class="card-title mb-50 mb-sm-0">Rapport sur les revenus</h4>
-                                    <div class="d-flex align-items-center">
+                                    {# <div class="d-flex align-items-center">
                                         <div class="d-flex align-items-center me-2">
                                             <span class="bullet bullet-primary font-small-3 me-50 cursor-pointer"></span>
                                             <span>Gain</span>
@@ -424,28 +424,34 @@
                                             <span class="bullet bullet-warning font-small-3 me-50 cursor-pointer"></span>
                                             <span>Frais</span>
                                         </div>
-                                    </div>
+                                    </div> #}
                                 </div>
                                 <div id="revenue-report-chart"></div>
                             </div>
-                            <div class="col-md-4 col-12 budget-wrapper">
+                            <div class="col-md-4 col-12 budget-wrapper" >
                                 <div class="btn-group">
+                                    <form method="get" id="form-annee">
+                                        <input name="annee" type="hidden" value="{{annee}}" />
+                                    </form>
                                     <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle budget-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        2020
+                                        <span id="anneeSelected">{{annee}}</span>
                                     </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">2020</a>
-                                        <a class="dropdown-item" href="#">2019</a>
-                                        <a class="dropdown-item" href="#">2018</a>
+                                    <div class="dropdown-menu" id="anneeContainer">
+                                        {% for i in 2020..anneeActuelle %}
+                                            <div class="dropdown-item annee-item" data-annee="{{i}}">{{i}}</div>
+                                        {% endfor %}
+                                        
                                     </div>
+                                    
+                                    
                                 </div>
-                                <h2 class="mb-25">$25,852</h2>
-                                <div class="d-flex justify-content-center">
+                                <h2 class="mb-25">{{revenuAnnee.total | number_format(2, ',', ' ')}} €</h2>
+                                {# <div class="d-flex justify-content-center">
                                     <span class="fw-bolder me-25">Budget:</span>
                                     <span>56,800</span>
                                 </div>
                                 <div id="budget-chart"></div>
-                                <button type="button" class="btn btn-primary">Augmenter le budget</button>
+                                <button type="button" class="btn btn-primary">Augmenter le budget</button> #}
                             </div>
                         </div>
                     </div>
@@ -457,4 +463,103 @@
         </section>
 
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{asset('app-assets/vendors/js/charts/apexcharts.min.js')}}"></script>
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            var revenuAnnee = {{revenuAnnee.result |json_encode() | raw}};
+            var data = [];
+            var label = [];
+            for(let i=0;i<revenuAnnee.length; i++){
+                data.push(parseInt(revenuAnnee[i]['montant']));
+                label.push(revenuAnnee[i]['mois_str']);
+            }
+
+            var $revenueReportChart = document.querySelector('#revenue-report-chart');
+            var formAnnee = $('#form-annee');
+            var revenueReportChartOptions;
+            var revenueReportChart;
+            var $textMutedColor = '#b9b9c3';
+            var anneeSelected = $('#anneeSelected');
+
+
+            $('#anneeContainer .annee-item').click(function (e){
+                let val = $(this).attr('data-annee');
+                anneeSelected.html(val);
+                formAnnee.find('input[name="annee"]').val(val);
+                formAnnee.submit();
+            });
+
+            //------------ Revenue Report Chart ------------
+            //----------------------------------------------
+            revenueReportChartOptions = {
+                chart: {
+                height: 230,
+                stacked: true,
+                type: 'bar',
+                toolbar: { show: false }
+                },
+                plotOptions: {
+                bar: {
+                    columnWidth: '17%',
+                    endingShape: 'rounded'
+                },
+                distributed: true
+                },
+                colors: [window.colors.solid.primary, window.colors.solid.warning],
+                series: [
+                {
+                    name: 'Revenu',
+                    data: data
+                }
+                ],
+                dataLabels: {
+                enabled: false
+                },
+                legend: {
+                show: false
+                },
+                grid: {
+                padding: {
+                    top: -20,
+                    bottom: -10
+                },
+                yaxis: {
+                    lines: { show: false }
+                }
+                },
+                xaxis: {
+                categories: label,
+                labels: {
+                    style: {
+                    colors: $textMutedColor,
+                    fontSize: '0.86rem'
+                    }
+                },
+                axisTicks: {
+                    show: false
+                },
+                axisBorder: {
+                    show: false
+                }
+                },
+                yaxis: {
+                labels: {
+                    style: {
+                    colors: $textMutedColor,
+                    fontSize: '0.86rem'
+                    }
+                }
+                }
+            };
+            revenueReportChart = new ApexCharts($revenueReportChart, revenueReportChartOptions);
+            revenueReportChart.render();
+
+            
+        });
+    </script>
+    
 {% endblock %}

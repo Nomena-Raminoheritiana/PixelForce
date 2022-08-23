@@ -29,6 +29,21 @@ class StatAgentService
         return $result[0];
     }
 
+    public function getRevenuAnnee($agentId, $secteurId, $annee){
+        $conn = $this->entityManager->getConnection();
+
+        $sql = '
+            call getRevenuAnnee(:agentId, :secteurId, :annee)
+            ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['agentId' => $agentId, 'secteurId' => $secteurId, 'annee' => $annee]);
+        $result = (array)$resultSet->fetchAllAssociative();
+        $total = array_sum(array_map(function($item) { 
+            return $item['montant']; 
+        }, $result));
+        return ['result' => $result, 'total' => $total];
+    }
+
     public function getTopClients($agentId, $secteurId, $nbr){
         $conn = $this->entityManager->getConnection();
 
