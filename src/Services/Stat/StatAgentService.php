@@ -70,4 +70,19 @@ class StatAgentService
         $result = $resultSet->fetchNumeric();
         return $result[0];
     }
+
+    public function getNbrRdv($userId){
+        $conn = $this->entityManager->getConnection();
+
+        $sql = '
+            SELECT count(id) as nbr FROM meeting 
+            WHERE user_id = :userId
+            ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId]);
+        $result = $resultSet->fetchNumeric();
+        return $result[0];
+    }
+
+    
 }

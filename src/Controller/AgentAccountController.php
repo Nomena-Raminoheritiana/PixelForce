@@ -184,6 +184,7 @@ class AgentAccountController extends AbstractController
         $nbrClients = $statAgentService->getNbrClients($agent->getId());
         $topClients = $statAgentService->getTopClients($agent->getId(), $secteur->getId(), 5);
         $revenuAnnee = $statAgentService->getRevenuAnnee($agent->getId(), $secteur->getId(), $annee);
+        $nbrRdv = $statAgentService->getNbrRdv($agent->getId());
 
         return $this->render('user_category/agent/dashboard_secteur.html.twig', [
             'secteur' => $secteur,
@@ -200,7 +201,8 @@ class AgentAccountController extends AbstractController
             'topClients' => $topClients,
             'revenuAnnee' => $revenuAnnee,
             'annee' => $annee,
-            'anneeActuelle' => $anneeActuelle
+            'anneeActuelle' => $anneeActuelle,
+            'nbrRdv' => $nbrRdv
         ]);
     }
 
