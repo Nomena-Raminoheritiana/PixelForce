@@ -5,7 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('vuexy_dashboard_ecommerce') }}
-    {{ encore_entry_link_tags('vuexy_chart_apex') }}
+    {# {{ encore_entry_link_tags('vuexy_chart_apex') }} #}
 {% endblock %}
 
 {% set typeSecteurId = app.user.uniqueCoachSecteur.type.id %}
@@ -846,7 +846,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('assets/vuexy/vendors/js/charts/apexcharts.min.js') }}" defer></script>
+    <script src="{{asset('app-assets/vendors/js/charts/apexcharts.min.js')}}" defer></script> 
     {# {{ encore_entry_script_tags('vuexy_dashboard_ecommerce_js') }} #}
     <script type="text/javascript">
         $(window).on('load', function () {

@@ -68,6 +68,13 @@ class SecteurRepository extends ServiceEntityRepository
         $this->entityManager->delete($sector);
     }
 
+    public function getValidSecteurs() {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.active = 1')
+            ->getQuery()
+            ->getResult(); 
+    }
+
     // /**
     //  * @return Secteur[] Returns an array of Secteur objects
     //  */

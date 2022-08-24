@@ -55,7 +55,7 @@ class CoachDashboardController extends AbstractController
         $annee = $request->get('annee', $anneeActuelle);
         $statVente = $statCoachService->getStatVente($secteur->getId());
         $nbrClients = $statCoachService->getNbrClients($secteur->getId());
-        $revenuAnnee = $statCoachService->getRevenuAnnee($secteur->getId(), $annee);
+        $revenuAnnee = $statAgentService->getRevenuAnnee($annee, $secteur->getId());
         $nbrRdv = $statAgentService->getNbrRdv($user->getId());
         $nbrAgents = $statCoachService->getNbrAgents($secteur->getId());
 

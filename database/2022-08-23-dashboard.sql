@@ -1,3 +1,13 @@
+create or replace view active_coach as 
+select * from active_user where json_contains(roles, '"ROLE_COACH"', '$');
+
+create or replace view active_agent as 
+select * from active_user where json_contains(roles, '"ROLE_AGENT"', '$');
+
+create or replace view secteur_active as 
+select *
+from secteur where active;
+
 create or replace view order_secu_valide as 
 select os.*, (accomp_montant + prix_produit) * (1 + tva_pourcentage/100) as montant_ttc
 from order_secu os where statut = 2;
@@ -8,7 +18,9 @@ from order_secu_valide group by agent_id, secteur_id;
 
 create or replace view agent_secteur_valide as 
 select ase.*, s.type_id as type_secteur_id
-from agent_secteur ase join secteur s on ase.secteur_id = s.id where ase.statut;
+from agent_secteur ase 
+join secteur_active s on ase.secteur_id = s.id
+join active_agent a on ase.agent_id = a.id;
 
 create or replace view stat_vente_secu_tout_agent as 
 select ase.id, ase.agent_id, ase.secteur_id, coalesce(sv.nbr_ventes, 0) as nbr_ventes,
@@ -17,9 +29,13 @@ from (select * from agent_secteur_valide where type_secteur_id = 3) ase left joi
 stat_vente_secu_agent sv 
 on (ase.agent_id, ase.secteur_id) = (sv.agent_id, sv.secteur_id);
 
+create or replace view active_user as 
+select *
+from user where active;
+
 create or replace view active_clients as
 select *
-from user where active and json_contains(roles, '"ROLE_CLIENT"', '$');
+from active_user where json_contains(roles, '"ROLE_CLIENT"', '$');
 
 
 create or replace view order_valide as 
@@ -122,7 +138,7 @@ from les_mois m left join
 (select * from all_type_order_valide_gp_mois_annee where agent_id = 5 and secteur_id = 1 and annee = 2022
 ) t on m.mois = t.mois;*/
 
-
+/*
 DELIMITER //
 DROP PROCEDURE IF EXISTS getRevenuAnnee //
 CREATE PROCEDURE 
@@ -135,4 +151,4 @@ BEGIN
    ;  
 END 
 //
-   
+*/   

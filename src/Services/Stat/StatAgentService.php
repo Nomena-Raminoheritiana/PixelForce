@@ -29,11 +29,11 @@ class StatAgentService
         return $result[0];
     }
 
-    public function getRevenuAnnee($agentId, $secteurId, $annee){
+    public function getRevenuAnnee($annee, $secteurId = -1, $agentId = -1){
         $conn = $this->entityManager->getConnection();
 
         $sql = '
-            call getRevenuAnnee(:agentId, :secteurId, :annee)
+            call getRevenuAnneeAll(:agentId, :secteurId, :annee)
             ';
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery(['agentId' => $agentId, 'secteurId' => $secteurId, 'annee' => $annee]);
@@ -44,14 +44,16 @@ class StatAgentService
         return ['result' => $result, 'total' => $total];
     }
 
-    public function getTopClients($agentId, $secteurId, $nbr){
+    public function getTopClients($agentId, $secteurId, $limit){
         $conn = $this->entityManager->getConnection();
 
 
         $sql = '
             SELECT * FROM client_secteur_agent 
             WHERE agent_id = :agentId AND secteur_id = :secteurId order by montant desc, nbr desc
+             LIMIT %d 
             ';
+        $sql = sprintf($sql, $limit);    
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery(['agentId' => $agentId, 'secteurId' => $secteurId]);
         $result = $resultSet->fetchAllAssociative();

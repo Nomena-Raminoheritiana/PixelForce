@@ -5,7 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('vuexy_dashboard_ecommerce') }}
-    {{ encore_entry_link_tags('vuexy_chart_apex') }}
+    {# {{ encore_entry_link_tags('vuexy_chart_apex') }} #}
 {% endblock %}
 
 
@@ -19,9 +19,9 @@
                         <h5>Félicitation 🎉 {{ app.user.prenom }}!</h5>
                         <p class="card-text font-small-3">Vous avez gagné la médaille d'or</p>
                         <h3 class="mb-75 mt-2 pt-50">
-                            <a href="#">48.9k €</a>
+                            <a href="#">{{statVente.ca | number_format(2, ',', ' ')}} €</a>
                         </h3>
-                        <button type="button" class="btn btn-primary">Voir les ventes</button>
+                        {# <button type="button" class="btn btn-primary">Voir les ventes</button> #}
                         <img src="{{asset('assets/vuexy/images/illustration/badge.svg')}}" class="congratulation-medal" alt="Medal Pic" />
                     </div>
                 </div>
@@ -33,9 +33,9 @@
                 <div class="card card-statistics">
                     <div class="card-header">
                         <h4 class="card-title">Statistiques</h4>
-                        <div class="d-flex align-items-center">
+                        {# <div class="d-flex align-items-center">
                             <p class="card-text font-small-2 me-25 mb-0">Mis à jour il y a 1 mois</p>
-                        </div>
+                        </div> #}
                     </div>
                     <div class="card-body statistics-body">
                         <div class="row">
@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <div class="my-auto">
-                                        <h4 class="fw-bolder mb-0">230k</h4>
+                                        <h4 class="fw-bolder mb-0">{{statVente.nbr_ventes | number_format(0, ',', ' ')}}</h4>
                                         <p class="card-text font-small-3 mb-0">Ventes</p>
                                     </div>
                                 </div>
@@ -60,37 +60,39 @@
                                         </div>
                                     </div>
                                     <div class="my-auto">
-                                        <h4 class="fw-bolder mb-0">8.549k</h4>
-                                        <p class="card-text font-small-3 mb-0">Les clients</p>
+                                        <h4 class="fw-bolder mb-0">{{nbrCoachs | number_format(0, ',', ' ')}}</h4>
+                                        <p class="card-text font-small-3 mb-0">Les coachs</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
+                            <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
                                 <div class="d-flex flex-row">
-                                    <div class="avatar bg-light-danger me-2">
+                                    <div class="avatar bg-light-info me-2">
                                         <div class="avatar-content">
-                                            <i data-feather="box" class="avatar-icon"></i>
+                                            <i data-feather="user" class="avatar-icon"></i>
                                         </div>
                                     </div>
                                     <div class="my-auto">
-                                        <h4 class="fw-bolder mb-0">1.423k</h4>
-                                        <p class="card-text font-small-3 mb-0">Produits</p>
+                                        <h4 class="fw-bolder mb-0">{{nbrAgents | number_format(0, ',', ' ')}}</h4>
+                                        <p class="card-text font-small-3 mb-0">Les agents</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-sm-6 col-12">
+                            <div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
                                 <div class="d-flex flex-row">
-                                    <div class="avatar bg-light-success me-2">
+                                    <div class="avatar bg-light-info me-2">
                                         <div class="avatar-content">
-                                            <i data-feather="dollar-sign" class="avatar-icon"></i>
+                                            <i data-feather="user" class="avatar-icon"></i>
                                         </div>
                                     </div>
                                     <div class="my-auto">
-                                        <h4 class="fw-bolder mb-0">$9745</h4>
-                                        <p class="card-text font-small-3 mb-0">Revenu</p>
+                                        <h4 class="fw-bolder mb-0">{{nbrSecteurs | number_format(0, ',', ' ')}}</h4>
+                                        <p class="card-text font-small-3 mb-0">Les secteurs</p>
                                     </div>
                                 </div>
                             </div>
+                            
+                            
                         </div>
                     </div>
                 </div>
@@ -156,7 +158,7 @@
                         <div class="col-md-8 col-12 revenue-report-wrapper">
                             <div class="d-sm-flex justify-content-between align-items-center mb-3">
                                 <h4 class="card-title mb-50 mb-sm-0">Rapport sur les revenus</h4>
-                                <div class="d-flex align-items-center">
+                                {# <div class="d-flex align-items-center">
                                     <div class="d-flex align-items-center me-2">
                                         <span class="bullet bullet-primary font-small-3 me-50 cursor-pointer"></span>
                                         <span>Gain</span>
@@ -165,28 +167,50 @@
                                         <span class="bullet bullet-warning font-small-3 me-50 cursor-pointer"></span>
                                         <span>Frais</span>
                                     </div>
-                                </div>
+                                </div> #}
                             </div>
                             <div id="revenue-report-chart"></div>
                         </div>
-                        <div class="col-md-4 col-12 budget-wrapper">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle budget-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    2020
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">2020</a>
-                                    <a class="dropdown-item" href="#">2019</a>
-                                    <a class="dropdown-item" href="#">2018</a>
+                        <div class="col-md-4 col-12 budget-wrapper" >
+                            <div>
+                                <div class="btn-group">
+                                    <form method="get" id="form-annee">
+                                        <input name="annee" type="hidden" value="{{annee}}" />
+                                        <input name="secteurId" type="hidden" value="{{secteur ? secteur.id : -1 }}" />
+                                    </form>
+                                    <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle budget-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span id="anneeSelected">{{annee}}</span>
+                                    </button>
+                                    <div class="dropdown-menu" id="anneeContainer">
+                                        {% for i in 2020..anneeActuelle %}
+                                            <div class="dropdown-item annee-item" data-annee="{{i}}">{{i}}</div>
+                                        {% endfor %}
+                                        
+                                    </div>
+                                    
+                                    
                                 </div>
                             </div>
-                            <h2 class="mb-25">$25,852</h2>
-                            <div class="d-flex justify-content-center">
+                            <div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle budget-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span id="secteurSelected">{{secteur ? secteur.nom: '--'}}</span>
+                                    </button>
+                                    <div class="dropdown-menu" id="secteurContainer">
+                                        <div class="dropdown-item secteur-item" data-secteur="-1">--</div>
+                                        {% for secteur in secteurs %}
+                                            <div class="dropdown-item secteur-item" data-secteur="{{secteur.id}}" data-secteur-label="{{secteur.nom}}">{{secteur.nom}}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <h2 class="mb-25">{{revenuAnnee.total | number_format(2, ',', ' ')}} €</h2>
+                            {# <div class="d-flex justify-content-center">
                                 <span class="fw-bolder me-25">Budget:</span>
                                 <span>56,800</span>
                             </div>
                             <div id="budget-chart"></div>
-                            <button type="button" class="btn btn-primary">Augmenter le budget</button>
+                            <button type="button" class="btn btn-primary">Augmenter le budget</button> #}
                         </div>
                     </div>
                 </div>
@@ -739,6 +763,108 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('assets/vuexy/vendors/js/charts/apexcharts.min.js') }}"></script>
-    {{ encore_entry_script_tags('vuexy_dashboard_ecommerce_js') }}
+    <script src="{{asset('app-assets/vendors/js/charts/apexcharts.min.js')}}" defer></script>
+    {# {{ encore_entry_script_tags('vuexy_dashboard_ecommerce_js') }} #}
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            var revenuAnnee = {{revenuAnnee.result |json_encode() | raw}};
+            var data = [];
+            var label = [];
+            for(let i=0;i<revenuAnnee.length; i++){
+                data.push(parseInt(revenuAnnee[i]['montant']));
+                label.push(revenuAnnee[i]['mois_str']);
+            }
+
+            var $revenueReportChart = document.querySelector('#revenue-report-chart');
+            var formAnnee = $('#form-annee');
+            var revenueReportChartOptions;
+            var revenueReportChart;
+            var $textMutedColor = '#b9b9c3';
+            var anneeSelected = $('#anneeSelected');
+            var secteurSelected = $('#secteurSelected');
+
+
+            $('#anneeContainer .annee-item').click(function (e){
+                let val = $(this).attr('data-annee');
+                anneeSelected.html(val);
+                formAnnee.find('input[name="annee"]').val(val);
+                formAnnee.submit();
+            });
+
+            $('#secteurContainer .secteur-item').click(function (e){
+                let val = $(this).attr('data-secteur');
+                let label = $(this).attr('data-secteur-label');
+                secteurSelected.html(label);
+                formAnnee.find('input[name="secteurId"]').val(val);
+                formAnnee.submit();
+            });
+
+            //------------ Revenue Report Chart ------------
+            //----------------------------------------------
+            revenueReportChartOptions = {
+                chart: {
+                height: 230,
+                stacked: true,
+                type: 'bar',
+                toolbar: { show: false }
+                },
+                plotOptions: {
+                bar: {
+                    columnWidth: '17%',
+                    endingShape: 'rounded'
+                },
+                distributed: true
+                },
+                colors: [window.colors.solid.primary, window.colors.solid.warning],
+                series: [
+                {
+                    name: 'Revenu',
+                    data: data
+                }
+                ],
+                dataLabels: {
+                enabled: false
+                },
+                legend: {
+                show: false
+                },
+                grid: {
+                padding: {
+                    top: -20,
+                    bottom: -10
+                },
+                yaxis: {
+                    lines: { show: false }
+                }
+                },
+                xaxis: {
+                categories: label,
+                labels: {
+                    style: {
+                    colors: $textMutedColor,
+                    fontSize: '0.86rem'
+                    }
+                },
+                axisTicks: {
+                    show: false
+                },
+                axisBorder: {
+                    show: false
+                }
+                },
+                yaxis: {
+                labels: {
+                    style: {
+                    colors: $textMutedColor,
+                    fontSize: '0.86rem'
+                    }
+                }
+                }
+            };
+            revenueReportChart = new ApexCharts($revenueReportChart, revenueReportChartOptions);
+            revenueReportChart.render();
+
+            
+        });
+    </script>
 {% endblock %}
