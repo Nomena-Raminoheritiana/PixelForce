@@ -234,7 +234,7 @@ class BoutiqueController extends AbstractController
         );
 
         $user = (object) $this->getUser();
-        if($user){
+        if($this->isGranted('ROLE_CLIENT')){
             foreach($productList as $p){
                 $produitFavori = $produitSecuFavoriRepository->findProduitFavori($p->getId(), $user->getId());
                 $p->setEstFavori($produitFavori ? true : false);
@@ -301,7 +301,7 @@ class BoutiqueController extends AbstractController
         );
 
         $user = (object) $this->getUser();
-        if($user){
+        if($this->isGranted('ROLE_CLIENT')){
             foreach($productList as $p){
                 $produitFavori = $produitFavoriRepository->findProduitFavori($p->getId(), $user->getId());
                 $p->setEstFavori($produitFavori ? true : false);
@@ -390,7 +390,7 @@ class BoutiqueController extends AbstractController
 
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        if($user){
+        if($this->isGranted('ROLE_CLIENT')){
             $produitFavori = $produitFavoriRepository->findProduitFavori($product->getId(), $user->getId());
             $product->setEstFavori($produitFavori ? true : false);
         }
@@ -473,7 +473,7 @@ class BoutiqueController extends AbstractController
     {
         $agent = $this->userRepository->findAgentByToken($token);
         $user = (object) $this->getUser();
-        if($user){
+        if($this->isGranted('ROLE_CLIENT')){
             $produitFavori = $produitFavoriRepository->findProduitFavori($product->getId(), $user->getId());
             $product->setEstFavori($produitFavori ? true : false);
         }
