@@ -36,14 +36,13 @@ class CoachDashboardController extends AbstractController
         $user = (object)$this->getUser();
         $secteur = $user->getUniqueCoachSecteur();
         
-        /*
-        $contacts = $this->repoContact->findBy(['secteur' => $secteur, 'agent' => $user]);
+
+        $contacts = $this->repoContact->findBy(['secteur' => $secteur]);
         $contacts = $paginator->paginate(
             $contacts,
             $request->query->getInt('page', 1),
             5
         );
-        */
 
         // Calendar upcoming events :
         $upcomingEvents = $this->calendarEventRepository->findUpcomingEvents($user);
@@ -61,8 +60,8 @@ class CoachDashboardController extends AbstractController
 
         return $this->render('user_category/coach/dashboard/dashboard_index.html.twig', [
             'secteur' => $secteur,
-            //'contacts' => $contacts,
-            //'nbrAllMyContacts' => count($contacts),
+            'contacts' => $contacts,
+            'nbrAllMyContacts' => count($contacts),
             'upcomingEvents'=> $upcomingEvents,
             'eventsOfTheDay'=> $eventsOfTheDay,
             'statVente' => $statVente,

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Contact;
 use App\Entity\SearchEntity\UserSearch;
+use App\Entity\User;
 use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;

@@ -28,17 +28,17 @@
                         <div class="card-body">
                             <h5>Félicitation 🎉 {{ app.user.prenom }}!</h5>
                             <p class="card-text font-small-3">Vous avez gagné la médaille d'or</p>
-                            {% if (estSecurite or estEcommerce) %}
+                            {# {% if (estSecurite or estEcommerce) %} #}
                             <h3 class="mb-75 mt-2 pt-50">
                                 <a href="#">{{statVente.ca | number_format(2, ',', ' ')}} €</a>
                             </h3>
-                            {% endif %}
+                            {# {% endif %} #}
                             {% if estSecurite %}
                             <a role="button" href="{{path('admin_ordersecu_list')}}" class="btn btn-primary">Voir les ventes</a>
                             {% elseif estEcommerce %}
                             <a role="button" href="{{path('admin_order_list')}}" class="btn btn-primary">Voir les ventes</a>
                             {% elseif estDemandeDevis %}
-                            <a role="button" href="{{path('agent_demandedevis_list')}}" class="btn btn-primary">Voir les demandes de devis</a>
+                            <a role="button" href="{{path('agent_demandedevis_list')}}" class="btn btn-primary">Voir les ventes</a>
                             {% endif %}
                             
                             <img src="{{asset('assets/vuexy/images/illustration/badge.svg')}}" class="congratulation-medal" alt="Medal Pic" />
@@ -94,7 +94,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% if (estSecurite or estEcommerce) %}
+                                {# {% if (estSecurite or estEcommerce) %} #}
                                 <div class="col-xl-3 col-sm-6 col-12">
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-success me-2">
@@ -108,7 +108,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% endif %}
+                                {# {% endif %} #}
                             </div>
                         </div>
                     </div>
@@ -409,7 +409,8 @@
                 </div>
     
                 <!-- Revenue Report Card -->
-                <div class="col-lg-8 col-12 {% if estDemandeDevis %}d-none{% endif %}">
+                {# {% if estDemandeDevis %}d-none{% endif %} #}
+                <div class="col-lg-8 col-12 ">
                     <div class="card card-revenue-budget">
                         <div class="row mx-0">
                             <div class="col-md-8 col-12 revenue-report-wrapper">
