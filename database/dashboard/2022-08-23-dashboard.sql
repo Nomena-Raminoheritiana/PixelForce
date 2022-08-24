@@ -1,3 +1,11 @@
+create or replace view active_user as 
+select *
+from user where active;
+
+create or replace view active_clients as
+select *
+from active_user where json_contains(roles, '"ROLE_CLIENT"', '$');
+
 create or replace view active_coach as 
 select * from active_user where json_contains(roles, '"ROLE_COACH"', '$');
 
@@ -28,15 +36,6 @@ coalesce(sv.ca, 0) as ca, ase.type_secteur_id
 from (select * from agent_secteur_valide where type_secteur_id = 3) ase left join 
 stat_vente_secu_agent sv 
 on (ase.agent_id, ase.secteur_id) = (sv.agent_id, sv.secteur_id);
-
-create or replace view active_user as 
-select *
-from user where active;
-
-create or replace view active_clients as
-select *
-from active_user where json_contains(roles, '"ROLE_CLIENT"', '$');
-
 
 create or replace view order_valide as 
 select *
