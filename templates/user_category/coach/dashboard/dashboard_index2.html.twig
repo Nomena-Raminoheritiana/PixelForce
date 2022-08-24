@@ -1,4 +1,4 @@
-{% set typeSecteurId = app.session.get('typeSecteurId') %}
+{% set typeSecteurId = app.user.uniqueCoachSecteur.type.id %}
 {% set estSecurite = typeSecteurId == constant('App\\Entity\\TypeSecteur::SECURITE') %}
 {% set estDemandeDevis = typeSecteurId == constant('App\\Entity\\TypeSecteur::DEMANDE_DEVIS') %}
 {% set estEcommerce = typeSecteurId == constant('App\\Entity\\TypeSecteur::ECOMMERCE') %}
@@ -6,7 +6,7 @@
 
 
 {% block title %}
-	Dashboard : {{ secteur.nom }}
+	Tableau de bord
 {% endblock %}
 
 {% block stylesheets %}
@@ -16,10 +16,7 @@
 
 {% block body %}
     <div class="container">
-        {% if formations != null %}
-            {% set currentCategorie = firstFormation.categorieFormation %}
-        {% endif %}
-
+        
         <section id="dashboard-ecommerce">
             <div class="row match-height">
                 <!-- Medal Card -->
@@ -33,14 +30,7 @@
                                 <a href="#">{{statVente.ca | number_format(2, ',', ' ')}} €</a>
                             </h3>
                             {% endif %}
-                            {% if estSecurite %}
-                            <a role="button" href="{{path('admin_ordersecu_list')}}" class="btn btn-primary">Voir les ventes</a>
-                            {% elseif estEcommerce %}
-                            <a role="button" href="{{path('admin_order_list')}}" class="btn btn-primary">Voir les ventes</a>
-                            {% elseif estDemandeDevis %}
-                            <a role="button" href="{{path('agent_demandedevis_list')}}" class="btn btn-primary">Voir les demandes de devis</a>
-                            {% endif %}
-                            
+                        
                             <img src="{{asset('assets/vuexy/images/illustration/badge.svg')}}" class="congratulation-medal" alt="Medal Pic" />
                         </div>
                     </div>
@@ -59,7 +49,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-primary me-2">
                                             <div class="avatar-content">
-                                                <a href="{% if estSecurite %}{{path('admin_ordersecu_list')}}{% elseif estEcommerce %}{{path('admin_order_list')}}{% elseif estDemandeDevis %}{{path('agent_demandedevis_list')}}{% else %}#{% endif %}"><i data-feather="trending-up" class="avatar-icon"></i></a>
+                                                <i data-feather="trending-up" class="avatar-icon"></i>
                                             </div>
                                         </div>
                                         <div class="my-auto">
@@ -99,7 +89,7 @@
                                     <div class="d-flex flex-row">
                                         <div class="avatar bg-light-success me-2">
                                             <div class="avatar-content">
-                                                <a href="{% if estSecurite %}{{path('admin_ordersecu_list')}}{% elseif estEcommerce %}{{path('admin_order_list')}}{% elseif estDemandeDevis %}{{path('agent_demandedevis_list')}}{% else %}#{% endif %}"><i data-feather="dollar-sign" class="avatar-icon"></i></a>
+                                                <i data-feather="dollar-sign" class="avatar-icon"></i>
                                             </div>
                                         </div>
                                         <div class="my-auto">
@@ -119,39 +109,41 @@
             <div class="row match-height">
                 <div class="col-lg-8 col-12">
                     <div class="card card-company-table">
-                        <div class="card-body p-0">
-                            {% if formations == null %}
-                                <div class="alert alert-primary text-center m-5">
-                                    Il n'y a plus de formation à terminer
-                                </div>
-                            {% else %}
-                                {% if currentCategorie and currentCategorie.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
-                                    <h3 class="fw-bolder text-center mt-2">{{ firstFormation.titre}} </h3>    
-                                    <div class="alert alert-warning m-5 text-center h2">
-                                        Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
+                        {# <div class="card-body p-0">
+                            <div class="card-body p-0">
+                                {% if formations == null %}
+                                    <div class="alert alert-primary text-center m-5">
+                                        Il n'y a plus de formation à terminer
                                     </div>
                                 {% else %}
-                                    <h3 class="fw-bolder text-center mt-2">{{ firstFormation.titre}} </h3>
-                                    <div class="border d-flex bg-white">
-                                        <iframe src="https://player.vimeo.com/video/{{ firstFormation.videoId }}" width="700" height="400" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                    </div>
-                                    <div class="text-center m-2 p-2">
-                                        <div class="row">
-                                            <div class="col">
-                                                <a href="{{ path('agent_formation_fiche', {id:firstFormation.id}) }}" class="btn btn-primary fw-bolder mt-4"><i class="fa-solid fa-file me-2"></i> Fiche formation</a>
-                                            </div>
-                                            <div class="col">
-                                                <a href="{{ path('agent_formation_terminer', {id:firstFormation.id, path: 'fromDashboard'}) }}" class="btn btn-success fw-bolder mt-4"><i class="fa fa-check"></i> J'ai terminé cette formation</a>
-                                            </div>
-                                            <div class="col">
-                                                <a href="{{ path('agent_formation_list') }}" class="btn btn-secondary fw-bolder mt-4"><i class="fa-solid fa-list me-2"></i> Liste des formations</a>
+                                    {% if currentCategorie and currentCategorie.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                        <h3 class="fw-bolder text-center mt-2">{{ firstFormation.titre}} </h3>    
+                                        <div class="alert alert-warning m-5 text-center h2">
+                                            Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.
+                                        </div>
+                                    {% else %}
+                                        <h3 class="fw-bolder text-center mt-2">{{ firstFormation.titre}} </h3>
+                                        <div class="border d-flex bg-white">
+                                            <iframe src="https://player.vimeo.com/video/{{ firstFormation.videoId }}" width="700" height="400" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                        </div>
+                                        <div class="text-center m-2 p-2">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <a href="{{ path('agent_formation_fiche', {id:firstFormation.id}) }}" class="btn btn-primary fw-bolder mt-4"><i class="fa-solid fa-file me-2"></i> Fiche formation</a>
+                                                </div>
+                                                <div class="col">
+                                                    <a href="{{ path('agent_formation_terminer', {id:firstFormation.id, path: 'fromDashboard'}) }}" class="btn btn-success fw-bolder mt-4"><i class="fa fa-check"></i> J'ai terminé cette formation</a>
+                                                </div>
+                                                <div class="col">
+                                                    <a href="{{ path('agent_formation_list') }}" class="btn btn-secondary fw-bolder mt-4"><i class="fa-solid fa-list me-2"></i> Liste des formations</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                            
-                        </div>
+                                
+                            </div>
+                        </div> #}
                     </div>
                 </div>
     
@@ -203,38 +195,6 @@
                             {% if upcomingEvents|length == 0 %}
                                 <div class="alert alert-secondary">Aucun évenement à venir.</div>
                             {% endif %}
-                            {# <div class="meetup-header d-flex align-items-center">
-                                <div class="meetup-day">
-                                    <h6 class="mb-0">MARDI</h6>
-                                    <h3 class="mb-0">24</h3>
-                                </div>
-                                <div class="my-auto">
-                                    <h4 class="card-title mb-25">Rencontre de développeurs</h4>
-                                    <p class="card-text mb-0">Rencontrez des développeurs de renommée mondiale</p>
-                                </div>
-                            </div>
-                            <div class="mt-0">
-                                <div class="avatar float-start bg-light-primary rounded me-1">
-                                    <div class="avatar-content">
-                                        <i data-feather="calendar" class="avatar-icon font-medium-3"></i>
-                                    </div>
-                                </div>
-                                <div class="more-info">
-                                    <h6 class="mb-0">Samedi, Mai 25, 2020</h6>
-                                    <small>10:AM to 6:PM</small>
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <div class="avatar float-start bg-light-primary rounded me-1">
-                                    <div class="avatar-content">
-                                        <i data-feather="map-pin" class="avatar-icon font-medium-3"></i>
-                                    </div>
-                                </div>
-                                <div class="more-info">
-                                    <h6 class="mb-0">Parc central</h6>
-                                    <small>Manhattan, New York</small>
-                                </div>
-                            </div> #}
                         </div>
                     </div>
                 </div>
@@ -244,7 +204,7 @@
                 <div class="col-lg-12 col-12">
                     <h6 class="display-6" style="font-size : 20px;">Votre liste de contact :</h6>
                     <div class="card card-company-table pb-5" style="min-height: 300px;">
-                        <div class="card-body p-0">
+                        {# <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
@@ -290,7 +250,7 @@
                                 <a href="{{ path('agent_contact_list') }}" class="btn btn-primary float-bottom">Voir plus <i class="fa-solid fa-circle-arrow-right ms-1"></i></a>
                             </div>
                             {% endif %}
-                        </div>
+                        </div> #}
                     </div>
                 </div>
                 <!--/ Browser States Card -->
@@ -467,7 +427,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{asset('app-assets/vendors/js/charts/apexcharts.min.js')}}" defer></script>
+    <script src="{{asset('app-assets/vendors/js/charts/apexcharts.min.js')}}"></script>
     <script type="text/javascript">
         $(window).on('load', function () {
             var revenuAnnee = {{revenuAnnee.result |json_encode() | raw}};
