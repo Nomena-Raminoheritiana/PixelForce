@@ -2,361 +2,414 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/1386.71e1332e.js",
-        "/build/8674.ce3e2607.js",
-        "/build/5666.9df01066.js",
-        "/build/7165.65292ab4.js",
-        "/build/2206.1e1945be.js",
-        "/build/5633.8a34cf95.js",
-        "/build/app.56acc6b1.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_regenerator-runtime_runtime_js.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_find_js.js",
+        "/build/vendors-node_modules_core-js_modules_web_url-search-params_js.js",
+        "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-690d99.js",
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_internals_str-fe1890.js",
+        "/build/app.js"
       ],
       "css": [
-        "/build/app.81963a15.css"
+        "/build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_core-js_internals_str-fe1890.css",
+        "/build/app.css"
       ]
     },
     "bootstrap_touchspin": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/1386.71e1332e.js",
-        "/build/7956.c805ceda.js",
-        "/build/bootstrap_touchspin.865fa393.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_internals_string-multibyte_js-node_modules_core-js_modules_es_ar-9d9ec6.js",
+        "/build/bootstrap_touchspin.js"
       ]
     },
     "form_addAgent": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/form_addAgent.0d8977e2.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/form_addAgent.js"
       ]
     },
     "PlanificationLiveVideo": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/PlanificationLiveVideo.8f79cbc7.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/PlanificationLiveVideo.js"
       ]
     },
     "ImportVideoVimeo": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/1386.71e1332e.js",
-        "/build/8674.ce3e2607.js",
-        "/build/5666.9df01066.js",
-        "/build/ImportVideoVimeo.a7c51629.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_regenerator-runtime_runtime_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_join_js-node_modules_core-js_modules_es_array_m-08e58c.js",
+        "/build/assets_js_ImportVideoVimeo_js.js",
+        "/build/ImportVideoVimeo.js"
       ]
     },
     "commentaire": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/8674.ce3e2607.js",
-        "/build/5666.9df01066.js",
-        "/build/7165.65292ab4.js",
-        "/build/9237.4b72400d.js",
-        "/build/commentaire.76a2283b.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_regenerator-runtime_runtime_js.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_find_js.js",
+        "/build/vendors-node_modules_core-js_modules_web_url-search-params_js.js",
+        "/build/vendors-node_modules_bootstrap_js_src_modal_js-node_modules_core-js_internals_array-slice-sim-d434bf.js",
+        "/build/commentaire.js"
       ]
     },
     "chatJS": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/1386.71e1332e.js",
-        "/build/8674.ce3e2607.js",
-        "/build/5666.9df01066.js",
-        "/build/7165.65292ab4.js",
-        "/build/2206.1e1945be.js",
-        "/build/4197.04f03a59.js",
-        "/build/chatJS.e3b1ab4b.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_regenerator-runtime_runtime_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_index-of_js-node_modules_core-js_modules_es_par-06157e.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_find_js.js",
+        "/build/vendors-node_modules_core-js_modules_web_url-search-params_js.js",
+        "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-690d99.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_filter_js-node_modules_core-js_modules_es_array-c1e187.js",
+        "/build/chatJS.js"
       ]
     },
     "formationForm": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/1386.71e1332e.js",
-        "/build/8674.ce3e2607.js",
-        "/build/5666.9df01066.js",
-        "/build/7165.65292ab4.js",
-        "/build/8394.678b061d.js",
-        "/build/formationForm.979e1da6.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_regenerator-runtime_runtime_js.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_find_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_join_js-node_modules_core-js_modules_es_array_m-08e58c.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-389bcd.js",
+        "/build/assets_js_ImportVideoVimeo_js.js",
+        "/build/formationForm.js"
       ]
     },
     "ckeditorForm": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/ckeditorForm.26813b1d.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/ckeditorForm.js"
       ]
     },
     "validationSecteur": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/2206.1e1945be.js",
-        "/build/validationSecteur.ff8f6d4f.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_esm_js-node_modules_core-js_modules_es_array-690d99.js",
+        "/build/vendors-node_modules_core-js_internals_array-iteration_js-node_modules_core-js_internals_arra-173bd9.js",
+        "/build/validationSecteur.js"
       ]
     },
     "ImportExportContact": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/8674.ce3e2607.js",
-        "/build/5666.9df01066.js",
-        "/build/ImportExportContact.cf7e8e52.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_regenerator-runtime_runtime_js.js",
+        "/build/vendors-node_modules_core-js_internals_array-slice_js-node_modules_core-js_internals_function-ddb79d.js",
+        "/build/ImportExportContact.js"
       ]
     },
     "tag": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/tag.5d511f01.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/tag.js"
       ]
     },
     "StripeAgentRegistration": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/StripeAgentRegistration.b1a25937.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/StripeAgentRegistration.js"
       ]
     },
     "StripeAgentRegistrationSubscription": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/StripeAgentRegistrationSubscription.4276910b.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/StripeAgentRegistrationSubscription.js"
       ]
     },
     "datatableJs": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/datatableJs.8cbc96bf.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/datatableJs.js"
       ]
     },
     "vuexyJS": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/vuexyJS.bdedbb00.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_object-create_js-node_modules_core-js_modules_es_strin-849a75.js",
+        "/build/vuexyJS.js"
       ]
     },
     "vuexy_vendors_js": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/1386.71e1332e.js",
-        "/build/8674.ce3e2607.js",
-        "/build/902.97b20710.js",
-        "/build/9138.55a5f676.js",
-        "/build/1710.f89655a5.js",
-        "/build/vuexy_vendors_js.ba5af21b.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_index-of_js-node_modules_core-js_modules_es_par-06157e.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-a30a25.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_every_js-node_modules_core-js_modules_es_array_-d046c0.js",
+        "/build/vendors-node_modules_core-js_internals_array-sort_js-node_modules_core-js_modules_es_array_fi-af6bd0.js",
+        "/build/vuexy_vendors_js.js"
       ]
     },
     "vuexy_apexcharts_js": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/1386.71e1332e.js",
-        "/build/8674.ce3e2607.js",
-        "/build/902.97b20710.js",
-        "/build/9138.55a5f676.js",
-        "/build/4838.a1031554.js",
-        "/build/vuexy_apexcharts_js.4fb87af1.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_modules_es_promise_js.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_index-of_js-node_modules_core-js_modules_es_par-06157e.js",
+        "/build/vendors-node_modules_core-js_modules_web_url-search-params_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-a30a25.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_every_js-node_modules_core-js_modules_es_array_-d046c0.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_fill_js-node_modules_core-js_modules_es_date_to-acb887.js",
+        "/build/vuexy_apexcharts_js.js"
       ]
     },
     "vuexy_toastr_js": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/vuexy_toastr_js.dc68a1db.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_object-create_js-node_modules_core-js_modules_es_date_-c25276.js",
+        "/build/vuexy_toastr_js.js"
       ]
     },
     "vuexy_jquery_validate": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/1386.71e1332e.js",
-        "/build/902.97b20710.js",
-        "/build/vuexy_jquery_validate.1bda8a9c.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_dom-iterables_js-node_modules_core-js_internals_dom-to-831329.js",
+        "/build/vendors-node_modules_core-js_modules_es_string_iterator_js-node_modules_core-js_modules_web_d-930e15.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-a30a25.js",
+        "/build/vendors-node_modules_core-js_internals_set-species_js-node_modules_core-js_internals_species--38af52.js",
+        "/build/vuexy_jquery_validate.js"
       ]
     },
     "vuexy_app": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/3602.f60b57c8.js",
-        "/build/vuexy_app.c7bbdae3.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_internals_array-method-is-strict_js-node_modules_core-js_interna-fb67f6.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_index-of_js-node_modules_core-js_modules_es_par-06157e.js",
+        "/build/vuexy_app.js"
       ]
     },
     "vuexy_app_menu": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/2273.7e261a08.js",
-        "/build/vuexy_app_menu.7993ee96.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_internals_add-to-unscopables_js-node_modules_core-js_internals_a-464164.js",
+        "/build/vendors-node_modules_core-js_internals_advance-string-index_js-node_modules_core-js_internals-7d93ee.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_index-of_js-node_modules_core-js_modules_es_par-06157e.js",
+        "/build/vendors-node_modules_core-js_internals_array-slice_js-node_modules_core-js_internals_validate-2e331c.js",
+        "/build/vuexy_app_menu.js"
       ]
     },
     "vuexy_dashboard_ecommerce_js": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/vuexy_dashboard_ecommerce_js.0cc5c9db.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vuexy_dashboard_ecommerce_js.js"
       ]
     },
     "vuexy_app_user_view_js": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/2719.2d2a8e1b.js",
-        "/build/vuexy_app_user_view_js.ef3edf19.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_core-js_internals_classof_js-node_modules_core-js_internals_export_js.js",
+        "/build/vendors-node_modules_core-js_modules_es_array_for-each_js-node_modules_core-js_modules_es_obj-7bb33f.js",
+        "/build/vuexy_app_user_view_js.js"
       ]
     },
     "vuexy_page_account_settings_account_js": {
       "js": [
-        "/build/runtime.25a80981.js",
-        "/build/9755.58d5f244.js",
-        "/build/vuexy_page_account_settings_account_js.a977dfc7.js"
+        "/build/runtime.js",
+        "/build/vendors-node_modules_jquery_dist_jquery_js.js",
+        "/build/vuexy_page_account_settings_account_js.js"
       ]
     },
     "base": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/base.50f99921.css"
+        "/build/base.css"
       ]
     },
     "chat": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/chat.445e4bad.css"
+        "/build/chat.css"
       ]
     },
     "vuexy_bootstrap": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_bootstrap.aecb49eb.css"
+        "/build/vuexy_bootstrap.css"
       ]
     },
     "vuexy_apexcharts": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_apexcharts.9955bc8e.css"
+        "/build/vuexy_apexcharts.css"
       ]
     },
     "vuexy_toastr": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_toastr.8552e5f9.css"
+        "/build/vuexy_toastr.css"
       ]
     },
     "vuexy_bootstrap_extended": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_bootstrap_extended.d8ff7039.css"
+        "/build/vuexy_bootstrap_extended.css"
       ]
     },
     "vuexy_colors": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_colors.1b076e65.css"
+        "/build/vuexy_colors.css"
       ]
     },
     "vuexy_components": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_components.a321e1f6.css"
+        "/build/vuexy_components.css"
       ]
     },
     "vuexy_dark_layout": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_dark_layout.8bd8acb7.css"
+        "/build/vuexy_dark_layout.css"
       ]
     },
     "vuexy_vertical_menu": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_vertical_menu.8c166304.css"
+        "/build/vuexy_vertical_menu.css"
       ]
     },
     "vuexy_dashboard_ecommerce": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_dashboard_ecommerce.68fae6c0.css"
+        "/build/vuexy_dashboard_ecommerce.css"
       ]
     },
     "vuexy_chart_apex": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_chart_apex.48bb6e5e.css"
+        "/build/vuexy_chart_apex.css"
       ]
     },
     "vuexy_ext_component_toastr": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_ext_component_toastr.934b7217.css"
+        "/build/vuexy_ext_component_toastr.css"
       ]
     },
     "vuexy_form_validation": {
       "js": [
-        "/build/runtime.25a80981.js"
+        "/build/runtime.js"
       ],
       "css": [
-        "/build/vuexy_form_validation.5c6e4a41.css"
+        "/build/vuexy_form_validation.css"
       ]
     }
   }
