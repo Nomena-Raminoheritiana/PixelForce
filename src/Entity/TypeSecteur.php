@@ -11,6 +11,10 @@ use JsonSerializable;
  */
 class TypeSecteur implements JsonSerializable
 {
+    const SECURITE = 3;
+    const ECOMMERCE = 1;
+    const DEMANDE_DEVIS = 2;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

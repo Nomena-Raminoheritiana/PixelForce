@@ -34,129 +34,267 @@
                 </div>
             </div>
             <div class="content-body">
-                <div class="bs-stepper checkout-tab-steps">
-                    <!-- Wizard starts -->
-                    <div class="bs-stepper-header">
-                        <div class="step {% if active == 'abonnement' %} active {% endif %}" data-target="#step-cart" role="tab" id="step-cart-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="shopping-cart" class="font-medium-3"></i>
-                                </span>
-                                <span class="bs-stepper-label">
-                                    {# <span class="bs-stepper-title">Type d'abonnement</span>
-                                    <span class="bs-stepper-subtitle">Choisissez le type d'abonnement</span> #}
-                                    <span class="bs-stepper-title">Commande</span>
-                                    <span class="bs-stepper-subtitle">Votre commande</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line">
-                            <i data-feather="chevron-right" class="font-medium-2"></i>
-                        </div>
-                        <div class="step {% if active == 'add_products' %} active {% endif %}" data-target="#step-address" role="tab" id="step-address-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="home" class="font-medium-3"></i>
-                                </span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Produits supplémentaires</span>
-                                    <span class="bs-stepper-subtitle">Ajouter des produits supplémentaires</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line">
-                            <i data-feather="chevron-right" class="font-medium-2"></i>
-                        </div>
-                        <div class="step {% if active == 'installation' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="settings" class="font-medium-3"></i>
-                                </span>
-                                {# <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Installation</span>
-                                    <span class="bs-stepper-subtitle">Quelle option choisissez-vous ?</span>
-                                </span> #}
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Type du client</span>
-                                    <span class="bs-stepper-subtitle">Professionnel ou particuler ?</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line">
-                            <i data-feather="chevron-right" class="font-medium-2"></i>
-                        </div>
-                        <div class="step {% if active == 'download_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="file" class="font-medium-3"></i>
-                                </span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Télécharger le contrat</span>
-                                    <span class="bs-stepper-subtitle">Télécharger le contrat</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line">
-                            <i data-feather="chevron-right" class="font-medium-2"></i>
-                        </div>
-                        <div class="step {% if active == 'upload_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="file" class="font-medium-3"></i>
-                                </span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Retourner le contrat rempli</span>
-                                    <span class="bs-stepper-subtitle">Retourner le contrat rempli</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line">
-                            <i data-feather="chevron-right" class="font-medium-2"></i>
-                        </div>
+                <div class="row">
+                    {# regroupement voalohany #}
+                    <div class="col-12 col-md-4">
+                        <h6 class="text-decoration-underline">Personnalisation de la commande</h6>
+                        <div class="bs-stepper checkout-tab-steps">
+                            <div class="bs-stepper-header">
+                                <div class="step {% if active == 'abonnement' %} active {% endif %}" data-target="#step-cart" role="tab" id="step-cart-trigger">
+                                    <button type="button" class="step-trigger">
+                                    <span class="bs-stepper-box">
+                                        <i data-feather="shopping-cart" class="font-medium-3"></i>
+                                    </span>
+                                        <span class="bs-stepper-label">
+                                        {# <span class="bs-stepper-title">Type d'abonnement</span>
+                                        <span class="bs-stepper-subtitle">Choisissez le type d'abonnement</span> #}
+                                        <span class="bs-stepper-title">Commande</span>
+                                        <span class="bs-stepper-subtitle">Votre commande</span>
+                                    </span>
+                                    </button>
+                                </div>
+                                <div class="line opacity-0">
+                                    <i data-feather="chevron-right" class="font-medium-2"></i>
+                                </div>
+                                <div class="step {% if active == 'add_products' %} active {% endif %}" data-target="#step-address" role="tab" id="step-address-trigger">
+                                    <button type="button" class="step-trigger">
+                                    <span class="bs-stepper-box">
+                                        <i data-feather="home" class="font-medium-3"></i>
+                                    </span>
+                                        <span class="bs-stepper-label">
+                                        <span class="bs-stepper-title">Produits supplémentaires</span>
+                                        <span class="bs-stepper-subtitle">Ajouter des produits supplémentaires</span>
+                                    </span>
+                                    </button>
+                                </div>
 
-                        <div class="step {% if active == 'sign_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="file" class="font-medium-3"></i>
-                                </span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Signature du contrat</span>
-                                    <span class="bs-stepper-subtitle">Signer le contrat</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line">
-                            <i data-feather="chevron-right" class="font-medium-2"></i>
-                        </div>
-                        
-                        <div class="step {% if active == 'payment' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-box">
-                                    <i data-feather="credit-card" class="font-medium-3"></i>
-                                </span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-title">Paiement</span>
-                                    <span class="bs-stepper-subtitle">Selectionnez votre moyen de paiement</span>
-                                </span>
-                            </button>
+                                <div class="step {% if active == 'installation' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                                    <button type="button" class="step-trigger">
+                                    <span class="bs-stepper-box">
+                                        <i data-feather="settings" class="font-medium-3"></i>
+                                    </span>
+                                        {# <span class="bs-stepper-label">
+                                            <span class="bs-stepper-title">Installation</span>
+                                            <span class="bs-stepper-subtitle">Quelle option choisissez-vous ?</span>
+                                        </span> #}
+                                        <span class="bs-stepper-label">
+                                        <span class="bs-stepper-title">Type du client</span>
+                                        <span class="bs-stepper-subtitle">Professionnel ou particuler ?</span>
+                                    </span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-12 col-md-4">
+                        {# regroupement faharoa #}
+                        <h6 class="text-decoration-underline">Contrat</h6>
+                        <div class="bs-stepper checkout-tab-steps">
+                            <div class="bs-stepper-header">
+                                <div class="step {% if active == 'download_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                                    <button type="button" class="step-trigger">
+                                        <span class="bs-stepper-box">
+                                            <i data-feather="file" class="font-medium-3"></i>
+                                        </span>
+                                        <span class="bs-stepper-label">
+                                            <span class="bs-stepper-title">Télécharger le contrat</span>
+                                            <span class="bs-stepper-subtitle">Télécharger le contrat</span>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="line opacity-0">
+                                    <i data-feather="chevron-right" class="font-medium-2"></i>
+                                </div>
+                                <div class="step {% if active == 'upload_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                                    <button type="button" class="step-trigger">
+                                        <span class="bs-stepper-box">
+                                            <i data-feather="file" class="font-medium-3"></i>
+                                        </span>
+                                        <span class="bs-stepper-label">
+                                            <span class="bs-stepper-title">Retourner le contrat rempli</span>
+                                            <span class="bs-stepper-subtitle">Retourner le contrat rempli</span>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="line opacity-0">
+                                    <i data-feather="chevron-right" class="font-medium-2"></i>
+                                </div>
+
+                                <div class="step {% if active == 'sign_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                                    <button type="button" class="step-trigger">
+                                        <span class="bs-stepper-box">
+                                            <i data-feather="file" class="font-medium-3"></i>
+                                        </span>
+                                        <span class="bs-stepper-label">
+                                            <span class="bs-stepper-title">Signature du contrat</span>
+                                            <span class="bs-stepper-subtitle">Signer le contrat</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        {# regroupement fahatelo #}
+                        <h6 class="text-decoration-underline">Paiement</h6>
+                        <div class="bs-stepper checkout-tab-steps">
+                            <div class="bs-stepper-header">
+                                <div class="step {% if active == 'payment' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                                    <button type="button" class="step-trigger">
+                                        <span class="bs-stepper-box">
+                                            <i data-feather="credit-card" class="font-medium-3"></i>
+                                        </span>
+                                        <span class="bs-stepper-label">
+                                            <span class="bs-stepper-title">Paiement</span>
+                                            <span class="bs-stepper-subtitle">Selectionnez votre moyen de paiement</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="bs-stepper checkout-tab-steps">
+                    <!-- Wizard starts -->
+{#                    <div class="bs-stepper-header">#}
+{#                        <div class="step {% if active == 'abonnement' %} active {% endif %}" data-target="#step-cart" role="tab" id="step-cart-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                    <span class="bs-stepper-box">#}
+{#                                        <i data-feather="shopping-cart" class="font-medium-3"></i>#}
+{#                                    </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                        #}{# <span class="bs-stepper-title">Type d'abonnement</span>#}
+{#                                        <span class="bs-stepper-subtitle">Choisissez le type d'abonnement</span> #}
+{#                                        <span class="bs-stepper-title">Commande</span>#}
+{#                                        <span class="bs-stepper-subtitle">Votre commande</span>#}
+{#                                    </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line opacity-0">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+{#                        <div class="step {% if active == 'abonnement' %} active {% endif %}" data-target="#step-cart" role="tab" id="step-cart-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="shopping-cart" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                     <span class="bs-stepper-title">Type d'abonnement</span>#}
+{#                                    <span class="bs-stepper-subtitle">Choisissez le type d'abonnement</span>#}
+{#                                    <span class="bs-stepper-title">Commande</span>#}
+{#                                    <span class="bs-stepper-subtitle">Votre commande</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+{#                        <div class="step {% if active == 'add_products' %} active {% endif %}" data-target="#step-address" role="tab" id="step-address-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="home" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Produits supplémentaires</span>#}
+{#                                    <span class="bs-stepper-subtitle">Ajouter des produits supplémentaires</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+{#                        <div class="step {% if active == 'installation' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="settings" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                 <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Installation</span>#}
+{#                                    <span class="bs-stepper-subtitle">Quelle option choisissez-vous ?</span>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Type du client</span>#}
+{#                                    <span class="bs-stepper-subtitle">Professionnel ou particuler ?</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+{#                        <div class="step {% if active == 'download_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="file" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Télécharger le contrat</span>#}
+{#                                    <span class="bs-stepper-subtitle">Télécharger le contrat</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+{#                        <div class="step {% if active == 'upload_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="file" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Retourner le contrat rempli</span>#}
+{#                                    <span class="bs-stepper-subtitle">Retourner le contrat rempli</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+
+{#                        <div class="step {% if active == 'sign_contrat' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="file" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Signature du contrat</span>#}
+{#                                    <span class="bs-stepper-subtitle">Signer le contrat</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                        <div class="line">#}
+{#                            <i data-feather="chevron-right" class="font-medium-2"></i>#}
+{#                        </div>#}
+
+{#                        <div class="step {% if active == 'payment' %} active {% endif %}" data-target="#step-payment" role="tab" id="step-payment-trigger">#}
+{#                            <button type="button" class="step-trigger">#}
+{#                                <span class="bs-stepper-box">#}
+{#                                    <i data-feather="credit-card" class="font-medium-3"></i>#}
+{#                                </span>#}
+{#                                <span class="bs-stepper-label">#}
+{#                                    <span class="bs-stepper-title">Paiement</span>#}
+{#                                    <span class="bs-stepper-subtitle">Selectionnez votre moyen de paiement</span>#}
+{#                                </span>#}
+{#                            </button>#}
+{#                        </div>#}
+{#                    </div>#}
                     <!-- Wizard ends -->
 
-                    
+
                     <div class="bs-stepper-content">
                         <!-- Checkout Place order starts -->
                         {% block content_makeorder %}
                         {% endblock %}
                         <!-- Checkout Customer Address Starts -->
-                        
+
                         <!-- Checkout Customer Address Ends -->
                         <!-- Checkout Payment Starts -->
-                        
+
                         <!-- Checkout Payment Ends -->
                         <!-- </div> -->
                     </div>
-                    
+
                 </div>
 
             </div>

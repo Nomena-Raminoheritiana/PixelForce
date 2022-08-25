@@ -338,12 +338,15 @@ input:focus ~ .bg-light {
 
 .btn-primary {
   border-color: #7367f0 !important;
-  background-color: #7367f0 !important;
+  /*background-color: #7367f0 !important;*/
+  background-color: #3e4f9c !important;
   color: #fff !important; }
 
 .btn-primary:focus, .btn-primary:active, .btn-primary.active {
   color: #fff;
-  background-color: #5e50ee !important; }
+  /*background-color: #5e50ee !important;*/
+  background-color: #3e4f9c !important;
+}
 
 .btn-primary:hover:not(.disabled):not(:disabled) {
   box-shadow: 0 8px 25px -8px #7367f0; }

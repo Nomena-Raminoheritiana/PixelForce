@@ -9,6 +9,7 @@ use App\Entity\ProduitFavori;
 use App\Entity\ProduitSecu;
 use App\Entity\ProduitSecuFavori;
 use App\Entity\Secteur;
+use App\Entity\User;
 use App\Form\KitBaseFilterType;
 use App\Form\MyProduitDDFilterType;
 use App\Form\MyProduitFilterType;
