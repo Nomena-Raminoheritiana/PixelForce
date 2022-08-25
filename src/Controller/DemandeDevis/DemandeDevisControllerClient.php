@@ -3,6 +3,7 @@
 namespace App\Controller\DemandeDevis;
 
 use App\Entity\DemandeDevis;
+use App\Entity\Devis;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,11 +14,13 @@ use App\Entity\Produit;
 use App\Entity\ProduitDD;
 use App\Form\DemandeDevisFilterType;
 use App\Form\DemandeDevisFormType;
+use App\Form\DevisType;
 use App\Form\MyProductFilter;
 use App\Form\MyProduitFilterType;
 use App\Form\ProduitFormType;
 use App\Form\ProduitFilterType;
 use App\Repository\DemandeDevisRepository;
+use App\Repository\DevisRepository;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 
 use App\Repository\ProduitRepository;
@@ -47,14 +50,16 @@ class DemandeDevisControllerClient extends AbstractController
     private $secteurRepository;
     private $session;
     private $userRepository;
+    private $repoDevis;
 
-    public function __construct(UserRepository $userRepository, SessionInterface $session, EntityManagerInterface $entityManager, DemandeDevisRepository $demandeDevisRepository, FileHandler $fileHandler, SecteurRepository $secteurRepository){
+    public function __construct(UserRepository $userRepository, SessionInterface $session, EntityManagerInterface $entityManager, DemandeDevisRepository $demandeDevisRepository, FileHandler $fileHandler, SecteurRepository $secteurRepository, DevisRepository $repoDevis){
         $this->entityManager = $entityManager;
         $this->demandeDevisRepository = $demandeDevisRepository;
         $this->fileHandler = $fileHandler;
         $this->secteurRepository = $secteurRepository;
         $this->session = $session;
         $this->userRepository = $userRepository;
+        $this->repoDevis = $repoDevis;
     }
 
    /**
@@ -181,17 +186,67 @@ class DemandeDevisControllerClient extends AbstractController
         $secteurId = $this->session->get('secteurId');
         $secteur = $this->secteurRepository->find($secteurId);
         $agent = $this->userRepository->findAgentByToken($token);
+        $allDevis = $this->repoDevis->findBy(['demandeDevis'=> $dd]);
+
         return $this->render('user_category/client/dd/demandedevis/demandedevis_details.html.twig',[
             'dd' => $dd,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'agent' => $agent,
             'error' => null,
-            'token' => $token
+            'token' => $token,
+            'allDevis' => $allDevis
         ]);
     }
 
     
+    /**
+     * @Route("/{dd}/devis/{devis}/fiche", name="client_agent_devis_fiche")
+     */
+    public function client_agent_devis_fiche($token, DemandeDevis $dd, Devis $devis, Request $request)
+    {
+        $agent = $this->userRepository->findAgentByToken($token);
+        $formDevis = $this->createForm(DevisType::class, $devis)
+            ->remove('title')
+            ->remove('price')
+            ->remove('files')
+        ;
+        $formDevis->handleRequest($request);
 
+        if($formDevis->isSubmitted() && $formDevis->isValid()) {
+            $this->entityManager->persist($devis);
+            $this->entityManager->flush();
+            $this->addFlash(
+               'success',
+               'Devis "'.$devis->getTitle().'" modifié'
+            );
+            return $this->redirectToRoute('client_demandedevis_fiche', ['token' => $token, 'id' => $dd->getId()]);
+        }
+
+        return $this->render('user_category/client/dd/demandedevis/devis_details.html.twig',[
+            'dd' => $dd,
+            'devis' => $devis,
+            'agent' => $agent,
+            'token' => $token,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'formDevis' => $formDevis->createView(),
+            'DEVIS_STATUS' => Devis::DEVIS_STATUS
+        ]);
+    }
+
+    /**
+     * @Route("/{dd}/devis/{devis}/reject", name="agent_client_devis_reject")
+     */
+    public function agent_client_devis_reject($token, DemandeDevis $dd, Devis $devis)
+    {
+        $devis->setStatus(Devis::DEVIS_STATUS['REJECTED']);
+        $this->entityManager->persist($devis);
+        $this->entityManager->flush();
+        $this->addFlash(
+           'danger',
+           'Devis rejeté'
+        );
+        return $this->redirectToRoute('client_demandedevis_fiche', ['token' => $token, 'id' => $dd->getId()]);
+    }
     
     
 }
