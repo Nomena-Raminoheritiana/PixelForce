@@ -26,6 +26,7 @@ class AuthService
     private $passwordHasher;
     private $validator;
     private $accountValidationRepository;
+    private $mailerService;
 
     public function __construct(
         EntityManagerInterface $entityManager, 
@@ -33,7 +34,8 @@ class AuthService
         UserPasswordHasherInterface $passwordHasher, 
         Swift_Mailer $mailer,
         ValidatorInterface $validator,
-        AccountValidationRepository $accountValidationRepository
+        AccountValidationRepository $accountValidationRepository,
+        MailerService $mailerService
         )
     {
         $this->entityManager = $entityManager;
@@ -42,6 +44,7 @@ class AuthService
         $this->mailer = $mailer;
         $this->validator = $validator;
         $this->accountValidationRepository = $accountValidationRepository;
+        $this->mailerService = $mailerService;
     }
 
     public function checkNewAccount(User $user): User
@@ -72,12 +75,7 @@ class AuthService
         $this->entityManager->persist($accountValidation);
         $this->entityManager->flush();
 
-        $message = (new Swift_Message())
-            ->setFrom('noreply.pixenshop@yahoo.com', "PixelForce")
-            ->setTo($user->getEmail())
-            ->setSubject('Validation du nouveau compte')
-            ->setBody("<p><b>Code de vérification:</b> ".$code."</p><p><b>Date d'expiration:</b> ".$dateExpiration->format('Y-m-d H:i:s')."</p>", "text/html");    
-        $this->mailer->send($message); 
+        $this->mailerService->sendVerifCodeToClient($user, $code, $dateExpiration);
         return $user;
     }
 

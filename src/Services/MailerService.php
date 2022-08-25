@@ -77,6 +77,23 @@ class MailerService
         ]);
     }
 
+    public function sendVerifCodeToClient($recipient, $code, $dateExpiration)
+    {
+        $this->sendMail([
+            'subject' => 'Validation du nouveau compte',
+            'from' => 'noreply.pixenshop@yahoo.com',
+            'from_name' => $this->from_name,
+            'to' => [
+                $recipient->getEmail()
+            ],
+            'template' => 'inscription/code_verification_client.html.twig',
+            'template_vars' => [
+                'code' => $code,
+                'dateExpiration' => $dateExpiration
+            ]
+        ]);       
+    }
+
     public function sendMail($parameters)
     {
         $email = (new TemplatedEmail())
