@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Devis;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -20,7 +21,7 @@ class DevisType extends AbstractType
             ->add('title', TextType::class, [
                 "label" => "Titre"
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', CKEditorType::class, [
                 "label" => "Contenu"
             ])
             ->add('price', IntegerType::class, [

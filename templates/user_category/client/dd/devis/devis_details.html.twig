@@ -74,10 +74,10 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="item-name">
-                                            <h6 class="mb-0"><a href="#" class="text-body">{{devis.title}}</a></h6>
+                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">{{devis.title}}</span></a></h6>
                                         </div>
                                         <div class="item-name my-2 mb-5">
-                                            <h6 class="mb-0"><a href="#" class="text-body">Date : {{devis.createdAt|date('d/m/Y')}}</a></h6>
+                                            <h6 class="mb-0"><a href="#" class="text-body"> <span class="fw-bolder">Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
                                         </div>
                                         {% if devis.status == DEVIS_STATUS["CREATED"] %}
                                             {{ form_start(formDevis) }}
@@ -123,7 +123,9 @@
                                             <hr />
                                             <div class="price-details">
                                                 {% if devis.status == DEVIS_STATUS["PAID"] %}
-                                                    <a role="button" class="btn btn-primary w-100 btn-next place-order" href="">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
+                                                    {% if devis.contratFileName %}
+                                                        <a href="/files/{{devis.contratFileName}}" download  class="btn btn-primary w-100 btn-next place-order">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
+                                                    {% endif %}
                                                 {% else %}
                                                     <ul class="list-unstyled">
                                                         <li class="price-detail">
@@ -131,7 +133,7 @@
                                                             <div class="detail-amt fw-bolder" id="total-cost" >{{devis.price}} €</div>
                                                         </li>
                                                     </ul>
-                                                    <a role="button" class="btn btn-success w-100 btn-next place-order" href="">Signer le devis <i class="fa-solid fa-pen ms-2"></i></a>
+                                                    <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{ path('client_devis_signature_step_one', {'token': token, 'dd': dd.id, 'devis': devis.id}) }}">Signer le devis <i class="fa-solid fa-pen ms-2"></i></a>
                                                 {% endif %}
                                             </div>
                                         </div>

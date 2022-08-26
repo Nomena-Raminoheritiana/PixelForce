@@ -57,7 +57,7 @@
                                     <div class="card-body">
                                         <div class="item-name">
                                             <h6 class="mb-0"><a href="#" class="text-body">{{dd.produit.nom}}</a></h6>
-                                        
+
                                         </div>
                                         <p class="card-text">
                                             {{dd.description|raw}}
@@ -125,7 +125,7 @@
                             <div class="checkout-options">
                                 <div class="card">
                                     <div class="card-body">
-                                        <label class="section-label form-label mb-1">Détails</label>
+                                        <label class="section-label form-label mb-1">Détails | Client</label>
                                         <hr />
                                         <div class="price-details">
                                             <ul class="list-unstyled">
@@ -214,9 +214,10 @@
                         <thead>
                             <tr>
                                 <th scope="col">Date</th>
-                                <th scope="col">Titre</th>
-                                <th scope="col">Prix</th>
-                                <th scope="col">Etat</th>
+                                <th scope="col" class="table-th-notSortable text-center">Titre</th>
+                                <th scope="col" class="table-th-notSortable text-center">Prix</th>
+                                <th scope="col" class="text-center">Etat</th>
+                                <th scope="col" class="table-th-notSortable text-center"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -225,10 +226,8 @@
                                     <td>{{ devis.createdAt|date('d/m/Y') }}</td>
                                     <td>{{ devis.title }}</td>
                                     <td>{{ devis.price }} €</td>
-
-                                    <td >
-                                        dsf
-                                    </td>
+                                    <td> <span class="badge bg-{{devis.getStatusColor}}">{{ devis.status }}</span></td>
+                                    <td> <a href="{{ path('agent_devis_fiche', {'dd': dd.id, 'devis': devis.id}) }}"><i class="fa-solid fa-eye"></i></a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>

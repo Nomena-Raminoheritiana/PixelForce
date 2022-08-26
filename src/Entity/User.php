@@ -305,6 +305,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $stripeCustomerId;
 
+    /**
+     * @ORM\OneToMany(targetEntity=OrderDigital::class, mappedBy="agent")
+     */
+    private $orderDigitals;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -325,6 +330,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->meetings = new ArrayCollection();
         $this->meetingGuests = new ArrayCollection();
         $this->subscriptionPlanAgentAccounts = new ArrayCollection();
+        $this->orderDigitals = new ArrayCollection();
 
 
     }
@@ -1275,6 +1281,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStripeCustomerId(?string $stripeCustomerId): self
     {
         $this->stripeCustomerId = $stripeCustomerId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderDigital>
+     */
+    public function getOrderDigitals(): Collection
+    {
+        return $this->orderDigitals;
+    }
+
+    public function addOrderDigital(OrderDigital $orderDigital): self
+    {
+        if (!$this->orderDigitals->contains($orderDigital)) {
+            $this->orderDigitals[] = $orderDigital;
+            $orderDigital->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderDigital(OrderDigital $orderDigital): self
+    {
+        if ($this->orderDigitals->removeElement($orderDigital)) {
+            // set the owning side to null (unless already changed)
+            if ($orderDigital->getAgent() === $this) {
+                $orderDigital->setAgent(null);
+            }
+        }
 
         return $this;
     }

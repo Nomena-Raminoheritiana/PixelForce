@@ -59,6 +59,16 @@ class Devis
      */
     private $status;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $contratFileName;
+
+    /**
+     * @ORM\OneToOne(targetEntity=OrderDigital::class, mappedBy="devis", cascade={"persist", "remove"})
+     */
+    private $orderDigital;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
@@ -168,5 +178,34 @@ class Devis
         }
         
         return $color;
+    }
+
+    public function getContratFileName(): ?string
+    {
+        return $this->contratFileName;
+    }
+
+    public function setContratFileName(?string $contratFileName): self
+    {
+        $this->contratFileName = $contratFileName;
+
+        return $this;
+    }
+
+    public function getOrderDigital(): ?OrderDigital
+    {
+        return $this->orderDigital;
+    }
+
+    public function setOrderDigital(OrderDigital $orderDigital): self
+    {
+        // set the owning side of the relation if necessary
+        if ($orderDigital->getDevis() !== $this) {
+            $orderDigital->setDevis($this);
+        }
+
+        $this->orderDigital = $orderDigital;
+
+        return $this;
     }
 }

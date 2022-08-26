@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Signature devis</title>
+        <style>
+            .text-right{
+                text-align: right;
+            }
+            body{
+                padding : 12px;
+            }
+            h1{
+                font-family : 'Segoe UI';
+                margin : 0px;
+                margin-bottom: 10px;
+                color : #61071a;
+                font-weight : normal;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                text-align: center;
+            }
+            table{
+                margin : 0 auto;
+                font-size: 16px;
+            }
+            table, td, th{
+                border : none;
+            }
+            table td, table th{
+                padding : 5px;
+                border : 1px solid #eee;
+                font-family : 'Segoe UI';
+            }
+            table th{
+                background-color: #61071a;
+                color : #fff;
+                font-weight : normal;
+                text-transform: uppercase;
+            }
+        </style>
+        
+    </head>
+    
+    <body>
+        <h1>Signature devis</h1>
+        <br/><br/>
+
+        <h3>Client</h3>
+        <table border="1">
+            <tr>
+                <th>Nom</th>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+            </tr>
+                <tr>
+                    <td>{{ dd.nom }}</td>
+                    <td>{{ dd.prenom }}</td>
+                    <td>{{ dd.telephone }}</td>
+                    <td>{{ dd.email }}</td>
+                </tr>
+        </table>
+        <br/><br/>
+
+        <h3>Devis</h3>
+        <table border="1">
+            <tr>
+                <th>Date création</th>
+                <th>Titre</th>
+                <th>Prix</th>
+            </tr>
+                <tr>
+                    <td>{{ devis.createdAt|date('d/m/Y') }}</td>
+                    <td>{{ devis.title }}</td>
+                    <td>{{ devis.price }} €</td>
+                </tr>
+        </table>
+        <br/><br/>
+
+        <h3>Signatures</h3>
+
+    </body>
+</html>

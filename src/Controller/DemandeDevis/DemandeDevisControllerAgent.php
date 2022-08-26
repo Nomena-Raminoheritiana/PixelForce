@@ -184,4 +184,37 @@ class DemandeDevisControllerAgent extends AbstractController
             'agent' => $agent
         ]);
     }
+
+    /**
+     * @Route("/{dd}/devis/{devis}/fiche", name="agent_devis_fiche")
+     */
+    public function agent_devis_fiche(Request $request, DemandeDevis $dd, Devis $devis): Response
+    {
+        $agent = $this->getUser();
+        $formDevis = $this->createForm(DevisType::class, $devis)
+            ->remove('title')
+            ->remove('files')
+        ;
+        $formDevis->handleRequest($request);
+
+        if($formDevis->isSubmitted() && $formDevis->isValid()) {
+            $this->entityManager->persist($devis);
+            $this->entityManager->flush();
+            $this->addFlash(
+               'success',
+               'Devis "'.$devis->getTitle().'" modifié'
+            );
+            return $this->redirectToRoute('agent_demandedevis_fiche', ['id' => $dd->getId()]);
+        }
+
+        return $this->render('user_category/agent/dd/devis/devis_details.html.twig',[
+            'dd' => $dd,
+            'devis' => $devis,
+            'agent' => $agent,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'formDevis' => $formDevis->createView(),
+            'DEVIS_STATUS' => Devis::DEVIS_STATUS
+        ]);
+    }
+    
 }
