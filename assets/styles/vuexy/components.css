@@ -1017,7 +1017,7 @@ footer.footer-border {
 .main-menu .navbar-header {
   height: 100%;
   width: 260px;
-  height: 6.45rem;
+  height: 4.45rem;
   position: relative;
   padding: 0.35rem 1rem 0.3rem 1.64rem;
   transition: 300ms ease all, background 0s; }
@@ -1044,7 +1044,7 @@ footer.footer-border {
   animation: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s normal forwards 1 fadein; }
 
 .main-menu .main-menu-content {
-  height: calc(100% - 6.45rem) !important;
+  height: calc(100% - 4.45rem) !important;
   position: relative; }
 
 .main-menu .main-menu-content .ps__rail-y {
