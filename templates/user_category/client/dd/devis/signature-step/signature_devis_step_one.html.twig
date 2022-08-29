@@ -1,0 +1,148 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Etape signature devis
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="app-content content client ecommerce-application">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">Signature devis</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body mt-4">
+                <div class="bs-stepper checkout-tab-steps">
+                    <!-- Wizard starts -->
+                    <div class="bs-stepper-header">
+                        <div class="step active" data-target="#step-cart" role="tab" id="step-cart-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i class="fa-solid fa-download"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Model</span>
+                                    <span class="bs-stepper-subtitle">Télécharger le model</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line">
+                            <i data-feather="chevron-right" class="font-medium-2"></i>
+                        </div>
+                        <div class="step" data-target="#step-address" role="tab" id="step-address-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i class="fa-solid fa-file"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Soumission</span>
+                                    <span class="bs-stepper-subtitle">Retourner le contrat</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line">
+                            <i data-feather="chevron-right" class="font-medium-2"></i>
+                        </div>
+                        <div class="step" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Paiement</span>
+                                    <span class="bs-stepper-subtitle">Procéder au paiement</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="content-wrapper container-xxl p-0">
+            <hr class="mb-5">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class="content active dstepper-block" role="tabpanel" >
+                        <div id="place-order" class="list-view product-checkout">
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                <div class="card ecommerce-card">
+                                    <div class="item-img">
+                                        <i class="fa-solid fa-download fa-4x"></i>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="item-name">
+                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">Téléchargement contrat</span></a></h6>
+                                        </div>
+                                      
+                                        <p class="card-text">
+                                            Veuillez télécherger le contrat pour ensuite le signer
+                                        </p>
+
+                                        <p class="card-text">
+                                            <a class="btn btn-success" href="{{ path('client_devis_download', {'token': token, 'dd': dd.id, 'devis': devis.id}) }}">Télécharger</a>
+                                        </p>
+                                    </div>
+                                    <div class="item-options text-center">
+                                        <div class="item-options text-center">
+                                            <a  href="{{ path('client_devis_signature_step_two', {'token' : token, 'dd': dd.id, 'devis': devis.id}) }}" class="btn btn-primary btn-next">
+                                                <span class="fw-bolder">Suivant <i class="fa-solid fa-circle-chevron-right"></i></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Devis</label>
+                                        <hr />
+                                        <div class="price-details">
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Titre :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{devis.title}} </div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Prix :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{devis.price}} €</div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

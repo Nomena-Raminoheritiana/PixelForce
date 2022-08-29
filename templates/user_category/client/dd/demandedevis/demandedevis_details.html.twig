@@ -97,7 +97,7 @@
                             <div class="checkout-options">
                                 <div class="card">
                                     <div class="card-body">
-                                        <label class="section-label form-label mb-1">Détails</label>
+                                        <label class="section-label form-label mb-1">Détails | Demande de devis</label>
                                         <hr />
                                         <div class="price-details">
                                             <ul class="list-unstyled">
@@ -158,6 +158,54 @@
                 </div>
                     
             </div>
+            
+            <hr class="my-3">
+            {% if allDevis|length > 0 %}
+                <div class="content-header row">
+                    <div class="content-header-left col-md-9 col-12 mb-2">
+                        <div class="row breadcrumbs-top">
+                            <div class="col-12">
+                                <h2 class="content-header-title float-start mb-0">Liste de devis </h2>
+                                {# <div class="breadcrumb-wrapper">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="index.html">Home</a>
+                                        </li>
+                                        <li class="breadcrumb-item"><a href="#">eCommerce</a>
+                                        </li>
+                                        <li class="breadcrumb-item active">Commande
+                                        </li>
+                                    </ol>
+                                </div> #}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-body pb-5">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover text-center sortable">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col" class="table-th-notSortable text-center">Titre</th>
+                                <th scope="col" class="table-th-notSortable text-center">Prix</th>
+                                <th scope="col" class="text-center">Etat</th>
+                                <th scope="col" class="table-th-notSortable text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for devis in allDevis %}
+                                <tr>
+                                    <td>{{ devis.createdAt|date('d/m/Y') }}</td>
+                                    <td>{{ devis.title }}</td>
+                                    <td>{{ devis.price }} €</td>
+                                    <td> <span class="badge bg-{{devis.getStatusColor}}">{{ devis.status }}</span></td>
+                                    <td> <a href="{{ path('client_agent_devis_fiche', {'token': token, 'dd': dd.id, 'devis': devis.id}) }}"><i class="fa-solid fa-eye"></i></a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
         </div>
     </div>
     <!-- END: Content-->

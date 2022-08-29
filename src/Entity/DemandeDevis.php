@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\DemandeDevisRepository;
 use App\Util\GenericUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -81,6 +83,16 @@ class DemandeDevis
      * @ORM\Column(type="json", nullable=true)
      */
     private $files = [];
+
+    /**
+     * @ORM\OneToMany(targetEntity=Devis::class, mappedBy="demandeDevis")
+     */
+    private $devis;
+
+    public function __construct()
+    {
+        $this->devis = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -239,5 +251,35 @@ class DemandeDevis
             $filesSN[] = GenericUtil::getFileName($this->getFiles()[$i]);
         }
         return $filesSN; 
+    }
+
+    /**
+     * @return Collection<int, Devis>
+     */
+    public function getDevis(): Collection
+    {
+        return $this->devis;
+    }
+
+    public function addDevi(Devis $devi): self
+    {
+        if (!$this->devis->contains($devi)) {
+            $this->devis[] = $devi;
+            $devi->setDemandeDevis($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDevi(Devis $devi): self
+    {
+        if ($this->devis->removeElement($devi)) {
+            // set the owning side to null (unless already changed)
+            if ($devi->getDemandeDevis() === $this) {
+                $devi->setDemandeDevis(null);
+            }
+        }
+
+        return $this;
     }
 }

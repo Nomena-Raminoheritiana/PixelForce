@@ -1,0 +1,157 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Devis détails
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+<!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">Produit</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class="content active dstepper-block" role="tabpanel" >
+                        <div id="place-order" class="list-view product-checkout">
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                <div class="card ecommerce-card">
+                                    <div class="item-img">
+                                        <a href="#">
+                                            <img src="{{ asset( filesDirectory ~ dd.produit.photo) }}" alt="Image pour {{dd.produit.nom}}" />
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="item-name">
+                                            <h6 class="mb-0"><a href="#" class="text-body">{{dd.produit.nom}}</a></h6>
+                                        </div>
+                                        <p class="card-text">
+                                            {{dd.description|raw}}
+                                        </p>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <!-- Checkout Place Order Left ends -->
+                        </div>
+                    </div>
+                </div>    
+            </div>
+            <hr class="mb-5">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">Détails devis</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class="content active dstepper-block" role="tabpanel" >
+                        <div id="place-order" class="list-view product-checkout">
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                <div class="card ecommerce-card">
+                                    <div class="item-img">
+                                        <i class="fa-solid fa-diagram-project fa-4x"></i>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="item-name">
+                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">{{devis.title}}</span></a></h6>
+                                        </div>
+                                        <div class="item-name my-2 mb-5">
+                                            <h6 class="mb-0"><a href="#" class="text-body"> <span class="fw-bolder">Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
+                                        </div>
+                                        {% if devis.status == DEVIS_STATUS["CREATED"] %}
+                                            {{ form_start(formDevis) }}
+                                                <p class="card-text">
+                                                    <span class="fw-bolder h3">Description :</span> <br>
+                                                    {{form_widget(formDevis.content, {'attr': {'rows':'7', 'cols':'50'}})}}
+                                                </p>
+                                                <p class="card-text">
+                                                    <button class="btn btn-primary" type="submit">Modifier le devis <i class="fa-solid fa-floppy-disk ms-2"></i></button>
+                                                </p>
+                                            {{form_end(formDevis)}}
+                                        {% else %}
+                                            <p class="card-text">
+                                                <span class="fw-bolder h3">Description :</span> <br>
+                                                {{ devis.content|raw}}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="item-options text-center">
+                                        {% if devis.status == DEVIS_STATUS["CREATED"] %}
+                                            <div class="item-options text-center">
+                                                <a href="{{ path('agent_client_devis_reject', {'token' : token, 'dd': dd.id, 'devis': devis.id}) }}" class="btn btn-light mt-1" onclick="return confirm('Êtes vous vraiment sûr de rejeter ce devis ?')">
+                                                    <span class="text-warning fw-bolder">Rejeter <i class="fa-solid fa-trash-can"></i></span>
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            <div class="item-options text-center">
+                                                {% if devis.status == DEVIS_STATUS["REJECTED"] %}
+                                                    <span class="text-danger fw-bolder">Rejeté !</span>
+                                                {% elseif devis.status == DEVIS_STATUS["PAID"] %}
+                                                    <span class="text-success fw-bolder">Payé <i class="fa-solid fa-circle-check ms-2"></i></span>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>                                
+                            </div>
+                            {% if devis.status != DEVIS_STATUS["REJECTED"] %}
+                                <div class="checkout-options">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <label class="section-label form-label mb-1">{{devis.title}}</label>
+                                            <hr />
+                                            <div class="price-details">
+                                                {% if devis.status == DEVIS_STATUS["PAID"] %}
+                                                    {% if devis.contratFileName %}
+                                                        <a href="/files/{{devis.contratFileName}}" download  class="btn btn-primary w-100 btn-next place-order">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <ul class="list-unstyled">
+                                                        <li class="price-detail">
+                                                            <div class="detail-title detail-total">Prix :</div>
+                                                            <div class="detail-amt fw-bolder" id="total-cost" >{{devis.price}} €</div>
+                                                        </li>
+                                                    </ul>
+                                                    <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{ path('client_devis_signature_step_one', {'token': token, 'dd': dd.id, 'devis': devis.id}) }}">Signer le devis <i class="fa-solid fa-pen ms-2"></i></a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>    
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+{% endblock %}
+
+

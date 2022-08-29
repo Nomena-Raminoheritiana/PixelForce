@@ -78,7 +78,9 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $user = (object)$token->getUser();
         if(in_array(User::ROLE_ADMINISTRATEUR, $token->getRoleNames())) {
             return new RedirectResponse('/admin/dashboard');
-        }else if(in_array(User::ROLE_AGENT, $token->getRoleNames())) { 
+        } else if(in_array(User::ROLE_COACH, $token->getRoleNames())) { 
+            return new RedirectResponse('/coach/dashboard'); 
+        } else if(in_array(User::ROLE_AGENT, $token->getRoleNames())) { 
             return new RedirectResponse('/agent/accueil'); 
         } else if(in_array(User::ROLE_CLIENT, $token->getRoleNames())) { 
             return new RedirectResponse('/boutique/'.$user->getClientAgent()->getAgentToken().'/'); 
