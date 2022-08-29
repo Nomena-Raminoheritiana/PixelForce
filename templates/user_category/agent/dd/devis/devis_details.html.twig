@@ -47,6 +47,32 @@
                                 </div>                                
                             </div>
                             <!-- Checkout Place Order Left ends -->
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                {% if dd.files %}
+                                    <div class="card"> 
+                                        <div class="card-header">
+                                            <i class="fa-solid fa-align-justify me-2"></i> Fichiers | Demande devis
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
+                                                {% for file in dd.filesShortName %}
+                                                <div class="file-block m-2">
+                                                {# {{ loop.index }} #}
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="mx-2"><span><i class="fa-regular fa-file fa-lg"></i></span></div>
+                                                        <div><span>{{file}}</span></div>
+                                                    </div>
+                                                    
+                                                    <div class="file-close"><a href="{{path('agent_demandedevis_file_download', {'id': dd.id, 'index': loop.index - 1})}}"><i class="fa fa-download fa-lg" aria-hidden="true"></i></a></div>
+                                                </div>
+                                                {% endfor %}    
+                                            </div>
+                                        </div>
+                                    </div>    
+                                {% endif %}  
+                            </div>
+                            <!-- Checkout Place Order Left ends -->
                         </div>
                     </div>
                 </div>    
@@ -115,7 +141,33 @@
                                             </div>
                                         {% endif %}
                                     </div>
-                                </div>                                
+                                </div>    
+                                <!-- Checkout Place Order Left starts -->
+                                <div class="checkout-items">
+                                    {% if devis.files %}
+                                        <div class="card"> 
+                                            <div class="card-header">
+                                                 <i class="fa-solid fa-arrow-trend-up me-2"></i> Fichiers | Devis
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
+                                                    {% for file in devis.filesShortName %}
+                                                    <div class="file-block m-2">
+                                                    {# {{ loop.index }} #}
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="mx-2"><span><i class="fa-regular fa-file fa-lg"></i></span></div>
+                                                            <div><span>{{file}}</span></div>
+                                                        </div>
+                                                        
+                                                        <div class="file-close"><a href="{{path('agent_devis_file_download', {'devis': devis.id, 'index': loop.index - 1})}}"><i class="fa fa-download fa-lg" aria-hidden="true"></i></a></div>
+                                                    </div>
+                                                    {% endfor %}    
+                                                </div>
+                                            </div>
+                                        </div>    
+                                    {% endif %}  
+                                </div>
+                                <!-- Checkout Place Order Left ends -->                            
                             </div>
                             {% if devis.status == DEVIS_STATUS["PAID"]  %}
                                 <div class="checkout-options">

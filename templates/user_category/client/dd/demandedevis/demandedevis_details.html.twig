@@ -90,6 +90,28 @@
                                         </button>
                                     </div> #}
                                 </div>                                
+                                {% if dd.files %}
+                                    <div class="card"> 
+                                        <div class="card-header">
+                                            Fichiers
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
+                                                {% for file in dd.filesShortName %}
+                                                <div class="file-block m-2">
+                                                {# {{ loop.index }} #}
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="mx-2"><span><i class="fa-regular fa-file fa-lg"></i></span></div>
+                                                        <div><span>{{file}}</span></div>
+                                                    </div>
+                                                    
+                                                    <div class="file-close"><a href="{{path('agent_demandedevis_file_download', {'id': dd.id, 'index': loop.index - 1})}}"><i class="fa fa-download fa-lg" aria-hidden="true"></i></a></div>
+                                                </div>
+                                                {% endfor %}    
+                                            </div>
+                                        </div>
+                                    </div>    
+                                {% endif %}   
                             </div>
                             <!-- Checkout Place Order Left ends -->
 

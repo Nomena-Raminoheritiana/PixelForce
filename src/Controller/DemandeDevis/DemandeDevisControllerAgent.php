@@ -167,6 +167,18 @@ class DemandeDevisControllerAgent extends AbstractController
         $formDevis->handleRequest($request);
 
         if($formDevis->isSubmitted() && $formDevis->isValid()) {
+
+            $files = [];
+
+            $data = $formDevis->get('files')->getData();
+
+            for($i=0; $i<count($data); $i++){
+                $filename = $this->fileHandler->upload($data[$i], "devis/digital/".date('Y-m-d-H-i-s'));
+                $files[] = $filename;
+            }
+            $devis->setFiles($files);
+
+
             $devis->setDemandeDevis($dd);
             $devis->setStatus(Devis::DEVIS_STATUS['CREATED']);
             $this->entityManager->persist($devis);
@@ -215,6 +227,24 @@ class DemandeDevisControllerAgent extends AbstractController
             'formDevis' => $formDevis->createView(),
             'DEVIS_STATUS' => Devis::DEVIS_STATUS
         ]);
+    }
+
+    /**
+     * @Route("/devis/{devis}/file/{index}", name="agent_devis_file_download")
+     */
+    public function agent_devis_file_download(Devis $devis, int $index): Response
+    {
+        $filepath = $devis->getFiles()[$index];
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".
+            $devis->getFiles()[$index]
+        );
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            GenericUtil::getFileName($filepath)
+        );
+        return $response;
+
     }
     
 }

@@ -44,6 +44,8 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -394,5 +396,23 @@ class DemandeDevisControllerClient extends AbstractController
 
         $date = (new \DateTime())->format('Y-m-d m:s');
         return $wrapper->getStreamResponse($html, "signature-devis-$date.pdf", ['isRemoteEnabled' => true]);
+    }
+
+    /**
+     * @Route("/devis/{devis}/file/{index}", name="client_devis_file_download")
+     */
+    public function client_devis_file_download(Devis $devis, int $index)
+    {
+        $filepath = $devis->getFiles()[$index];
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".
+            $devis->getFiles()[$index]
+        );
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            GenericUtil::getFileName($filepath)
+        );
+        return $response;
+
     }
 }

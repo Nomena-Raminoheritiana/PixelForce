@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DevisRepository;
+use App\Util\GenericUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -207,5 +208,15 @@ class Devis
         $this->orderDigital = $orderDigital;
 
         return $this;
+    }
+
+    public function getFilesShortName(){
+        if(!$this->getFiles())
+            return null;
+        $filesSN = [];
+        for($i=0; $i<count($this->getFiles()); $i++){
+            $filesSN[] = GenericUtil::getFileName($this->getFiles()[$i]);
+        }
+        return $filesSN; 
     }
 }
