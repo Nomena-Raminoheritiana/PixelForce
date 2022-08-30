@@ -95,4 +95,15 @@ class FileHandler
 
         return $filename; 
     }
+
+    public function saveBinary($data, $filename, $dir){
+        $filesystem = new Filesystem();
+        $path =Path::join($this->getFilesDirectory(), $dir);
+        if(!$filesystem->exists($path))$filesystem->mkdir($path);
+        $filePath = Path::join($dir, $filename);
+        $ifp = fopen( Path::join($this->getFilesDirectory(), $filePath), 'wb' );
+        fwrite( $ifp, $data);
+        fclose( $ifp ); 
+        return $filePath; 
+    }
 }

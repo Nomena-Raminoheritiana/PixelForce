@@ -17,6 +17,12 @@ class Devis
         'PAID' => 'Payé'
     ];
 
+    const DEVIS_STATUS_INT = [
+        'CREATED' => 0,
+        'REJECTED' => -1,
+        'PAID' => 1
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -69,6 +75,11 @@ class Devis
      * @ORM\OneToOne(targetEntity=OrderDigital::class, mappedBy="devis", cascade={"persist", "remove"})
      */
     private $orderDigital;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $statusInt;
 
     public function __construct()
     {
@@ -218,5 +229,17 @@ class Devis
             $filesSN[] = GenericUtil::getFileName($this->getFiles()[$i]);
         }
         return $filesSN; 
+    }
+
+    public function getStatusInt(): ?int
+    {
+        return $this->statusInt;
+    }
+
+    public function setStatusInt(?int $statusInt): self
+    {
+        $this->statusInt = $statusInt;
+
+        return $this;
     }
 }

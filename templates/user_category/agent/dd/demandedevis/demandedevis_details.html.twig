@@ -73,10 +73,12 @@
                                         {# <span class="text-success">Remise de 20%</span> #}
                                     </div>
                                     <div class="item-options text-center">
+                                        {% if not dd.paidDevis %}
                                         <a href="{{ path('agent_client_devis_create', {id: dd.id}) }}" class="btn btn-light mt-1">
                                             <span class="text-primary fw-bolder">Envoyer un devis</span>
                                             <i class="fa-solid fa-arrow-turn-up align-middle"></i>
                                         </a>
+                                        {% endif %}
                                         {# <div class="item-wrapper">
                                             <div class="item-cost">
                                                 <h4 class="item-price" >{{op.amount | number_format(2, ',', ' ')}} €</h4>

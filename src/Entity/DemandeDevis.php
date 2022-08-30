@@ -282,4 +282,18 @@ class DemandeDevis
 
         return $this;
     }
+
+
+    public function getPaidDevis(){
+        foreach($this->getDevis() as $d){
+            if($d->getStatusInt() == Devis::DEVIS_STATUS_INT['PAID']){
+                return $d;
+            }
+        }
+        return null;
+    }
+
+    public function isPaid(){
+        return $this->getPaidDevis() !== null;
+    }
 }

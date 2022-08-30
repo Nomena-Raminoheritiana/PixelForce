@@ -161,6 +161,7 @@ class ProduitControllerCoach extends AbstractController
             $html = $this->renderView('pdf/produits.html.twig', [
                 'productList' => $productList
             ]);
+            
             return $wrapper->getStreamResponse($html, "produits-$date.pdf", ['isRemoteEnabled' => true]);
         } 
         

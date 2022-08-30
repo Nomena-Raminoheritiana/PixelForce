@@ -28,6 +28,7 @@ use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use App\Repository\ProduitRepository;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
+use App\Services\DemandeDevisService;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Services\SearchService;
 use App\Services\ExcelService;
@@ -63,8 +64,9 @@ class DemandeDevisControllerClient extends AbstractController
     private $session;
     private $userRepository;
     private $repoDevis;
+    private $demandeDevisService;
 
-    public function __construct(UserRepository $userRepository, SessionInterface $session, EntityManagerInterface $entityManager, DemandeDevisRepository $demandeDevisRepository, FileHandler $fileHandler, SecteurRepository $secteurRepository, DevisRepository $repoDevis){
+    public function __construct(UserRepository $userRepository, SessionInterface $session, EntityManagerInterface $entityManager, DemandeDevisRepository $demandeDevisRepository, FileHandler $fileHandler, SecteurRepository $secteurRepository, DevisRepository $repoDevis, DemandeDevisService $demandeDevisService){
         $this->entityManager = $entityManager;
         $this->demandeDevisRepository = $demandeDevisRepository;
         $this->fileHandler = $fileHandler;
@@ -72,6 +74,7 @@ class DemandeDevisControllerClient extends AbstractController
         $this->session = $session;
         $this->userRepository = $userRepository;
         $this->repoDevis = $repoDevis;
+        $this->demandeDevisService = $demandeDevisService;
     }
 
    /**
@@ -251,6 +254,7 @@ class DemandeDevisControllerClient extends AbstractController
     public function agent_client_devis_reject($token, DemandeDevis $dd, Devis $devis)
     {
         $devis->setStatus(Devis::DEVIS_STATUS['REJECTED']);
+        $devis->setStatusInt(Devis::DEVIS_STATUS_INT['REJECTED']);
         $this->entityManager->persist($devis);
         $this->entityManager->flush();
         $this->addFlash(
@@ -264,14 +268,53 @@ class DemandeDevisControllerClient extends AbstractController
     /**
      * @Route("/{dd}/devis/{devis}/signature/step/one", name="client_devis_signature_step_one")
      */
-    public function client_devis_signature_step_one($token, DemandeDevis $dd, Devis $devis): Response
+    public function client_devis_signature_step_one($token, DemandeDevis $dd, Devis $devis, Request $request, FormFactoryInterface $formFactoryInterface, DompdfWrapperInterface $wrapper): Response
     {
+        $user = (object) $this->getUser();
+        $filesDirectory = $this->getParameter('files_directory_relative');
         $agent = $this->userRepository->findAgentByToken($token);
+        $form = $formFactoryInterface
+            ->createNamedBuilder("sign-contrat-form", FormType::class)
+            ->add('signature', HiddenType::class, [
+                "label" => "Signature",
+                'mapped' => false,
+                "required" => true
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+
+                $signature = $form->get('signature')->getData();
+                $photo = $this->fileHandler->saveBase64($signature, $filesDirectory."digital/signature/".$user->getId()."_".date('Y-m-d-H-i-s').'.png');
+                
+                $html = $this->renderView('pdf/signature_devis.html.twig', [
+                    'dd' => $dd,
+                    'devis' => $devis
+                ]);
+        
+                $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
+                $filepath = $this->fileHandler->saveBinary($binary, $user->getId()."_".date('Y-m-d-H-i-s').'.pdf', 'digital/contrat');
+                $this->demandeDevisService->signContrat($filesDirectory.$filepath, $photo);
+                $devis->setContratFileName($filepath);
+                $this->entityManager->persist($devis);
+                $this->entityManager->flush();
+                return $this->redirectToRoute('client_devis_signature_step_three', ['token' => $token, 'dd' => $dd->getId(), 'devis' => $devis->getId()]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+
         return $this->render('user_category/client/dd/devis/signature-step/signature_devis_step_one.html.twig',[
             'dd' => $dd,
             'devis' => $devis,
             'agent' => $agent,
             'token' => $token,
+            'form' => $form->createView()
         ]);    
     }
 
@@ -369,6 +412,7 @@ class DemandeDevisControllerClient extends AbstractController
             $orderDigital->setStripeChargeId($chargeId);
 
             $devis->setStatus(Devis::DEVIS_STATUS['PAID']);
+            $devis->setStatusInt(Devis::DEVIS_STATUS_INT['PAID']);
             $this->entityManager->persist($orderDigital);
             $this->entityManager->flush();
             $this->addFlash('success', 'Devis payé');

@@ -105,7 +105,7 @@
                                         <div class="item-name my-2 mb-5">
                                             <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder"> Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
                                         </div>
-                                        {% if devis.status == DEVIS_STATUS["CREATED"] %}
+                                        {% if (devis.status == DEVIS_STATUS["CREATED"] and not dd.paidDevis) %}
                                             {{ form_start(formDevis) }}
                                                 <p class="card-text">
                                                     <span class="fw-bolder h3">Prix :</span> <br>

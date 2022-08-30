@@ -35,4 +35,7 @@ services:
     App\Services\DocumentService:
         arguments:
             $filesDirectory: '%files_directory%'
-            $baseUrl: '%base_url%'        
+            $baseUrl: '%base_url%' 
+    App\Services\DemandeDevisService:
+        arguments:
+            $filesDirectory: '%files_directory%'
