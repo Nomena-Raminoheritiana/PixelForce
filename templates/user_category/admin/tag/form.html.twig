@@ -3,7 +3,7 @@
    tag - formulaire
 {% endblock %}
 {% block body %}
-    <div class="container my-5">
+    <div class="my-5">
         <div class="content-body-form">
             <a href="{{ path('admin_tag_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
             <h1 class="text-center fw-bold">{{ app.request.attributes.get('_route') == 'admin_tag_add' ? 'Ajouter un tag' : 'Modifier le tag' }}</h1>

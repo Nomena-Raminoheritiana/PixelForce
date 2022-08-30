@@ -8,13 +8,19 @@
     {{ parent() }}
 	<style>
 		.form-relate-secteur{
-			padding: 0 300px;
+			padding: 0 30px;
+		}
+
+		@media (min-width: 700px) {
+			.form-relate-secteur{
+				padding: 0 300px;
+			}
 		}
 	</style>
 {% endblock %}
 
 {% block body %}
-	<div class="container my-5">
+	<div class="my-5">
 		<a href="{{ path('admin_coach_edit', {id: coach.id}) }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
 		
 		<!-- Message alert -->

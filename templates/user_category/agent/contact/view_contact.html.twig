@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-2">
+	<div class="mt-2">
 		<a href="{{ path('agent_contact_list') }}" class="btn btn-secondary"> <i class="fa-solid fa-circle-arrow-left"></i> Retour </a>
 
         <!-- Message alert -->
@@ -29,7 +29,7 @@
 			
 			<section class="app-user-view-account">
 				<div class="row">
-					<div class="col-8">
+					<div class="col-12 col-md-8">
 						<div class="contact-card">
 							<div class="contact-card__name-container">
 								<h3 class="mb-5">{{ contact.information.fullName }}</h3>
@@ -108,7 +108,7 @@
 							{% endfor %}
 						</div>
 					</div>
-					<div class="col-4">
+					<div class="col-12 col-md-4">
 						<div class="note">
 							<div class="note-header">
 								Notes
