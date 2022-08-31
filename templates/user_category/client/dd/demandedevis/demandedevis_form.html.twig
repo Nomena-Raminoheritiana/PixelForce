@@ -19,7 +19,6 @@
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h2 class="content-header-title float-start mb-0">{{produit.nom}}</h2>
                             {# <div class="breadcrumb-wrapper">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="index.html">Accueil</a>
@@ -38,75 +37,94 @@
 
             </div>
             <div class="content-body">
-                <!-- app e-commerce details start -->
-                <section class="app-ecommerce-details">
-                    <div class="block block--bordered block--rounded">
-                        <h1 class="block__text block__text--center mt-2" >Demande de devis :</h1>
-                            
-                        {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'demandedevis-form'}}) }}
-                            {% if error %}
-                            <div class="alert alert-danger" role="alert">
-                                <div class="alert-body">
-                                    {{error}}
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <section class="app-ecommerce-details">
+                            <!-- Demande devis -->
+                            <section class="app-ecommerce-details">
+                                <div class="block block--bordered block--rounded">
+                                    <h1 class="block__text block__text--center mt-2" >Demande de devis :</h1>
+                                        
+                                    {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'demandedevis-form'}}) }}
+                                        {% if error %}
+                                        <div class="alert alert-danger" role="alert">
+                                            <div class="alert-body">
+                                                {{error}}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="my-form-widget">
+                                            {{form_label(form.nom)}}
+                                            {{form_widget(form.nom)}}
+                                            {{form_errors(form.nom)}}
+                                        </div>
+                                        <div class="my-form-widget">
+                                            {{form_label(form.prenom)}}
+                                            {{form_widget(form.prenom)}}
+                                            {{form_errors(form.prenom)}}
+                                        </div>
+                                        <div class="my-form-widget">
+                                            {{form_label(form.email)}}
+                                            {{form_widget(form.email)}}
+                                            {{form_errors(form.email)}}
+                                        </div>
+                                        <div class="my-form-widget">
+                                            {{form_label(form.telephone)}}
+                                            {{form_widget(form.telephone)}}
+                                            {{form_errors(form.telephone)}}
+                                        </div>
+                                        <div class="my-form-widget">
+                                            {{form_label(form.description)}}
+                                            {{form_widget(form.description)}}
+                                            {{form_errors(form.description)}}
+                                        </div>
+                                        <div class="d-none">
+                                            {{form_widget(form.files)}}
+                                        </div>
+                                        <div class="my-form-widget">
+                                            <button class="btn btn-success btn-large" type="button" id="btn-add-file"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Ajouter des fichiers</button>
+                                            {{form_errors(form.files)}}
+                                        </div>
+                                        <div class="my-form-widget">
+                                            <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
+                                                {# <div class="file-block m-2">
+                                                    <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
+                                                    <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
+                                                </div>
+            
+                                                <div class="file-block m-2">
+                                                    <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
+                                                    <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
+                                                </div> #}
+            
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="btn-wrap">
+                                            <button class="btn btn-primary" type="submit">{{ isEdit ? 'Enregistrer les modifications' : 'Envoyer' }}<i data-feather="send"></i></button>
+                                        </div>
+                                    {{ form_end(form) }}
                                 </div>
-                            </div>
-                            {% endif %}
-                            <div class="my-form-widget">
-                                {{form_label(form.nom)}}
-                                {{form_widget(form.nom)}}
-                                {{form_errors(form.nom)}}
-                            </div>
-                            <div class="my-form-widget">
-                                {{form_label(form.prenom)}}
-                                {{form_widget(form.prenom)}}
-                                {{form_errors(form.prenom)}}
-                            </div>
-                            <div class="my-form-widget">
-                                {{form_label(form.email)}}
-                                {{form_widget(form.email)}}
-                                {{form_errors(form.email)}}
-                            </div>
-                            <div class="my-form-widget">
-                                {{form_label(form.telephone)}}
-                                {{form_widget(form.telephone)}}
-                                {{form_errors(form.telephone)}}
-                            </div>
-                            <div class="my-form-widget">
-                                {{form_label(form.description)}}
-                                {{form_widget(form.description)}}
-                                {{form_errors(form.description)}}
-                            </div>
-                            <div class="d-none">
-                                {{form_widget(form.files)}}
-                            </div>
-                            <div class="my-form-widget">
-                                <button class="btn btn-success btn-large" type="button" id="btn-add-file"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Ajouter des fichiers</button>
-                                {{form_errors(form.files)}}
-                            </div>
-                            <div class="my-form-widget">
-                                <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
-                                    {# <div class="file-block m-2">
-                                        <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
-                                        <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
-                                    </div>
-
-                                    <div class="file-block m-2">
-                                        <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
-                                        <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
-                                    </div> #}
-
-                                    
-                                </div>
-                            </div>
-                            
-                            <div class="btn-wrap">
-                                <button class="btn btn-primary" type="submit">{{ isEdit ? 'Enregistrer les modifications' : 'Envoyer' }}<i data-feather="send"></i></button>
-                            </div>
-                        {{ form_end(form) }}
+                                
+                            </section>
+                            <!-- Demande devis -->
+                        </section>
                     </div>
-                    
-                </section>
-                <!-- app e-commerce details end -->
+                    <div class="col-12 col-md-4">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h1 class="text-center mt-2 h3" > {{produit.nom}}</h1>
+                                <div class="item-img">
+                                    <a href="#">
+                                        <img src="{{ asset( filesDirectory ~ produit.photo) }}" class="img-fluid" alt="Image pour {{produit.nom}}" />
+                                    </a>
+                                </div>
+                                <h2 class="mt-4"> {{produit.description|raw}}</h2>
+                            </div>
+                        </section>
+                    </div>
+                </div>
 
             </div>
         </div>

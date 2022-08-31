@@ -28,7 +28,7 @@
                     <div class="bs-stepper-content">
                         <div class="content active dstepper-block" role="tabpanel" >
                         <div id="place-order" class="list-view product-checkout">
-                            <!-- Checkout Place Order Left starts -->
+                            <!-- Produit -->
                             <div class="checkout-items">
                                 <div class="card ecommerce-card">
                                     <div class="item-img">
@@ -46,8 +46,59 @@
                                     </div>
                                 </div>                                
                             </div>
-                            <!-- Checkout Place Order Left ends -->
-                            <!-- Checkout Place Order Left starts -->
+                            <!-- Produit -->
+
+                            <!-- Demande devis -->
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Détails | Client</label>
+                                        <hr />
+                                        <div class="price-details">
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Date</div>
+                                                    <div class="detail-amt">{{dd.dateDemande | date("d/m/Y H:i")}}</div>
+                                                </li>
+                                                {# <li class="price-detail">
+                                                    <div class="detail-title">Statut</div>
+                                                    <div class="detail-amt discount-amt text-primary">{{order.statusStr}}</div>
+                                                </li> #}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Nom</div>
+                                                    <div class="detail-amt">{{dd.nom}}</div>
+                                                </li>
+
+                                                {% if dd.prenom %}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Prénom</div>
+                                                    <div class="detail-amt">{{dd.prenom}}</div>
+                                                </li>
+                                                {% endif %}
+
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Adresse Email</div>
+                                                    <div class="detail-amt">{{dd.email}}</div>
+                                                </li>
+
+                                                {% if dd.telephone %}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Téléphone</div>
+                                                    <div class="detail-amt">{{dd.telephone}}</div>
+                                                </li>
+                                                {% endif %}
+
+                                                
+                                            </ul>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Checkout Place Order Right ends -->
+                            </div>
+                            <!-- Demande devis -->
+
+                            <!-- Devis -->
                             <div class="checkout-items">
                                 {% if dd.files %}
                                     <div class="card"> 
@@ -72,7 +123,7 @@
                                     </div>    
                                 {% endif %}  
                             </div>
-                            <!-- Checkout Place Order Left ends -->
+                            <!-- Devis -->
                         </div>
                     </div>
                 </div>    
