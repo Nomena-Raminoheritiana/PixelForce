@@ -9,6 +9,8 @@ use App\Entity\User;
 use App\Form\DevisType;
 use App\Manager\EntityManager;
 use App\Repository\UserRepository;
+use App\Services\DemandeDevisService;
+use App\Services\FileHandler;
 use App\Services\StripeService;
 use App\Util\GenericUtil;
 use Exception;
@@ -34,11 +36,16 @@ class ClientDevisController extends AbstractController
 {
     private $userRepository;
     private $entityManager;
+    private $fileHandler;
+    private $demandeDevisService;
 
-    public function __construct(UserRepository $userRepository, EntityManager $entityManager)
+    public function __construct(UserRepository $userRepository, EntityManager $entityManager, FileHandler $fileHandler, DemandeDevisService $demandeDevisService)
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
+        $this->fileHandler = $fileHandler;
+        $this->demandeDevisService = $demandeDevisService;
+
     }
 
     /**
@@ -81,6 +88,7 @@ class ClientDevisController extends AbstractController
     public function agent_client_devis_reject($token, DemandeDevis $dd, Devis $devis)
     {
         $devis->setStatus(Devis::DEVIS_STATUS['REJECTED']);
+        $devis->setStatusInt(Devis::DEVIS_STATUS_INT['REJECTED']);
         $this->entityManager->persist($devis);
         $this->entityManager->flush();
         $this->addFlash(
@@ -94,14 +102,53 @@ class ClientDevisController extends AbstractController
     /**
      * @Route("/{dd}/devis/{devis}/signature/step/one", name="client_devis_signature_step_one")
      */
-    public function client_devis_signature_step_one($token, DemandeDevis $dd, Devis $devis): Response
+    public function client_devis_signature_step_one($token, DemandeDevis $dd, Devis $devis, Request $request, FormFactoryInterface $formFactoryInterface, DompdfWrapperInterface $wrapper): Response
     {
+        $user = (object) $this->getUser();
+        $filesDirectory = $this->getParameter('files_directory_relative');
         $agent = $this->userRepository->findAgentByToken($token);
+        $form = $formFactoryInterface
+            ->createNamedBuilder("sign-contrat-form", FormType::class)
+            ->add('signature', HiddenType::class, [
+                "label" => "Signature",
+                'mapped' => false,
+                "required" => true
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+
+                $signature = $form->get('signature')->getData();
+                $photo = $this->fileHandler->saveBase64($signature, $filesDirectory."digital/signature/".$user->getId()."_".date('Y-m-d-H-i-s').'.png');
+                
+                $html = $this->renderView('pdf/signature_devis.html.twig', [
+                    'dd' => $dd,
+                    'devis' => $devis
+                ]);
+        
+                $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
+                $filepath = $this->fileHandler->saveBinary($binary, $user->getId()."_".date('Y-m-d-H-i-s').'.pdf', 'digital/contrat');
+                $this->demandeDevisService->signContrat($filesDirectory.$filepath, $photo);
+                $devis->setContratFileName($filepath);
+                $this->entityManager->persist($devis);
+                $this->entityManager->flush();
+                return $this->redirectToRoute('client_devis_signature_step_three', ['token' => $token, 'dd' => $dd->getId(), 'devis' => $devis->getId()]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+
         return $this->render('user_category/client/dd/devis/signature-step/signature_devis_step_one.html.twig',[
             'dd' => $dd,
             'devis' => $devis,
             'agent' => $agent,
             'token' => $token,
+            'form' => $form->createView()
         ]);    
     }
 
@@ -199,6 +246,7 @@ class ClientDevisController extends AbstractController
             $orderDigital->setStripeChargeId($chargeId);
 
             $devis->setStatus(Devis::DEVIS_STATUS['PAID']);
+            $devis->setStatusInt(Devis::DEVIS_STATUS_INT['PAID']);
             $this->entityManager->persist($orderDigital);
             $this->entityManager->flush();
             $this->addFlash('success', 'Devis payé');

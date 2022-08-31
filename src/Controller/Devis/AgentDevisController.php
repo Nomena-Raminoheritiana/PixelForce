@@ -51,6 +51,7 @@ class AgentDevisController extends AbstractController
 
             $devis->setDemandeDevis($dd);
             $devis->setStatus(Devis::DEVIS_STATUS['CREATED']);
+            $devis->setStatusInt(Devis::DEVIS_STATUS_INT['CREATED']);
             $this->entityManager->persist($devis);
             $this->entityManager->flush();
             $this->addFlash(
