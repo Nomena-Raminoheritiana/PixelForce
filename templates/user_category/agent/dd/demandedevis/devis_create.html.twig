@@ -24,52 +24,82 @@
 
             </div>
             <div class="content-body">
-                <!-- app e-commerce details start -->
-                <section class="app-ecommerce-details">
-                    <div class="block block--bordered block--rounded">
-                        <h1 class="block__text block__text--center mt-2" >Création devis :</h1>
-                            
-                        {{ form_start(formDevis, {'attr': {'class': 'my-form', 'id': 'devis-form'}}) }}
-                            <div class="my-form-widget">
-                                {{form_row(formDevis.title)}}
-                            </div>
-                            <div class="my-form-widget">
-                                {{form_row(formDevis.content)}}
-                            </div>
-                            <div class="my-form-widget">
-                                {{form_row(formDevis.price)}}
-                            </div>
-                            <div class="d-none">
-                                {{form_widget(formDevis.files)}}
-                            </div>
-                            <div class="my-form-widget">
-                                <button class="btn btn-success btn-large" type="button" id="btn-add-file"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Ajouter des fichiers</button>
-                                {{form_errors(formDevis.files)}}
-                            </div>
-                            <div class="my-form-widget">
-                                <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
-                                    {# <div class="file-block m-2">
-                                        <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
-                                        <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
-                                    </div>
-
-                                    <div class="file-block m-2">
-                                        <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
-                                        <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
-                                    </div> #}
-
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <!-- Creation devis -->
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h1 class="block__text block__text--center mt-2" >Création devis :</h1>
                                     
-                                </div>
+                                {{ form_start(formDevis, {'attr': {'class': 'my-form', 'id': 'devis-form'}}) }}
+                                    <div class="my-form-widget">
+                                        {{form_row(formDevis.title)}}
+                                    </div>
+                                    <div class="my-form-widget">
+                                        {{form_row(formDevis.content)}}
+                                    </div>
+                                    <div class="my-form-widget">
+                                        {{form_row(formDevis.price, {'attr': {'placeholder' : 'Prix estimatif'}})}}
+                                    </div>
+                                    <div class="d-none">
+                                        {{form_widget(formDevis.files)}}
+                                    </div>
+                                    <div class="my-form-widget">
+                                        <button class="btn btn-success btn-large" type="button" id="btn-add-file"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Ajouter des fichiers</button>
+                                        {{form_errors(formDevis.files)}}
+                                    </div>
+                                    <div class="my-form-widget">
+                                        <div class="d-flex align-items-center justify-content-start flex-wrap" id="files-container">
+                                            {# <div class="file-block m-2">
+                                                <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
+                                                <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
+                                            </div>
+        
+                                            <div class="file-block m-2">
+                                                <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
+                                                <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
+                                            </div> #}
+        
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="btn-wrap">
+                                        <button class="btn btn-primary" type="submit">Enregistrer<i data-feather="send"></i></button>
+                                    </div>
+                                {{ form_end(formDevis) }}
                             </div>
                             
-                            <div class="btn-wrap">
-                                <button class="btn btn-primary" type="submit">Enregistrer<i data-feather="send"></i></button>
-                            </div>
-                        {{ form_end(formDevis) }}
+                        </section>
+                        <!-- Creation devis -->
                     </div>
-                    
-                </section>
-                <!-- app e-commerce details end -->
+                    <div class="col-12 col-md-4">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h1 class="text-center mt-2 h3" > {{dd.produit.nom}}</h1>
+                                <div class="item-img">
+                                    <a href="#">
+                                        <img src="{{ asset( filesDirectory ~ dd.produit.photo) }}" class="img-fluid" alt="Image pour {{dd.produit.nom}}" />
+                                    </a>
+                                </div>
+                                <h2 class="mt-4"> {{dd.produit.description|raw}}</h2>
+                            </div>
+                        </section>
+
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h1 class="text-center mt-2 h3" > Demande de devis</h1>
+                                <hr class="my-4">
+                                <h5><span class="fw-bolder">Nom : </span> {{dd.nom}}</h5>
+                                <h5><span class="fw-bolder">Prénom : </span> {{dd.prenom}}</h5>
+                                <h5><span class="fw-bolder">Email : </span> {{dd.email}}</h5>
+                                <h5><span class="fw-bolder">Téléphone : </span> {{dd.telephone}}</h5>
+                                <hr class="my-4">
+                                <p>{{dd.description|raw}}</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
 
             </div>
         </div>
