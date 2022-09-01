@@ -147,16 +147,9 @@ class AgentAccountController extends AbstractController
       
         $agent = (object)$this->getUser();
         $this->agentService->setStartDate($agent);
-
-        $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
       
-        $formations = $this->repoFormation->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
-       
-        if (count($formations) > 0) {
-            $firstFormation = $formations[0];
-        }else{
-            $firstFormation = null;
-        }
+        $formations = $this->repoFormation->findOrderedNonFinishedFormations($secteur, $agent);
+        $firstFormation = count($formations) > 0 ?$formations[0] : null;
         
         // On vérifie d'abord si la session avec la clé 'secteurId' est générée ou les contenus sont activés
         $sessionSecteurId =  $this->session->get('secteurId');
@@ -205,6 +198,69 @@ class AgentAccountController extends AbstractController
             'nbrRdv' => $nbrRdv
         ]);
     }
+    // public function agent_dashboard_secteur( Request $request, PaginatorInterface $paginator, Secteur $secteur, StatAgentService $statAgentService)
+    // {
+      
+    //     $agent = (object)$this->getUser();
+    //     $this->agentService->setStartDate($agent);
+
+    //     $categorie = $this->categorieFormationAgentService->getCurrentAgentCategorie($agent, $secteur);
+      
+    //     $formations = $this->repoFormation->findFormationsAgentBySecteurAndCategorie($secteur, $agent, $categorie, true);
+       
+    //     if (count($formations) > 0) {
+    //         $firstFormation = $formations[0];
+    //     }else{
+    //         $firstFormation = null;
+    //     }
+        
+    //     // On vérifie d'abord si la session avec la clé 'secteurId' est générée ou les contenus sont activés
+    //     $sessionSecteurId =  $this->session->get('secteurId');
+    //     $sessionAccountStatus =  $this->agentService->isActivableContent($agent);
+    //     if (!$sessionSecteurId || !$sessionAccountStatus) {
+    //         return $this->redirectToRoute('agent_home');
+    //     }
+
+    //     $contacts = $this->repoContact->findBy(['secteur' => $secteur, 'agent' => $agent]);
+    //     $contacts = $paginator->paginate(
+    //         $contacts,
+    //         $request->query->getInt('page', 1),
+    //         5
+    //     );
+
+    //     // Calendar upcoming events :
+    //     $upcomingEvents = $this->calendarEventRepository->findUpcomingEvents($agent);
+    //     $eventsOfTheDay = $this->calendarEventRepository->findEventsOfTheDay($agent);
+
+
+    //     //stat
+    //     $anneeActuelle = intval(date('Y'));
+    //     $annee = $request->get('annee', $anneeActuelle);
+    //     $statVente = $statAgentService->getStatVente($agent->getId(), $secteur->getId(), $secteur->getType()->getId());
+    //     $nbrClients = $statAgentService->getNbrClients($agent->getId());
+    //     $topClients = $statAgentService->getTopClients($agent->getId(), $secteur->getId(), 5);
+    //     $revenuAnnee = $statAgentService->getRevenuAnnee($annee, $secteur->getId(), $agent->getId());
+    //     $nbrRdv = $statAgentService->getNbrRdv($agent->getId());
+
+    //     return $this->render('user_category/agent/dashboard_secteur.html.twig', [
+    //         'secteur' => $secteur,
+    //         'formations' => $formations,
+    //         'firstFormation' => $firstFormation,
+    //         'contacts' => $contacts,
+    //         'CategorieFormation' => CategorieFormation::class,
+    //         'nbrAllMyContacts' => count($this->repoContact->findAll()),
+    //         'repoRelationFormationCategorie' => $this->repoRelationFormationCategorie,
+    //         'upcomingEvents'=> $upcomingEvents,
+    //         'eventsOfTheDay'=> $eventsOfTheDay,
+    //         'statVente' => $statVente,
+    //         'nbrClients' => $nbrClients,
+    //         'topClients' => $topClients,
+    //         'revenuAnnee' => $revenuAnnee,
+    //         'annee' => $annee,
+    //         'anneeActuelle' => $anneeActuelle,
+    //         'nbrRdv' => $nbrRdv
+    //     ]);
+    // }
 
     /**
      * @Route("/agent/account/trial/payement/execute", name="agent_account_trial_payment_execute")

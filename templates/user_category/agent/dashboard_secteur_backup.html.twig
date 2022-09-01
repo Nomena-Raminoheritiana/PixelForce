@@ -16,6 +16,10 @@
 
 {% block body %}
     <div class="mt-3">
+        {% if formations != null %}
+            {% set currentCategorie = firstFormation.categorieFormation %}
+        {% endif %}
+
         <section id="dashboard-ecommerce">
             <div class="row match-height">
                 <!-- Medal Card -->
@@ -116,12 +120,12 @@
                 <div class="col-lg-8 col-12">
                     <div class="card card-company-table">
                         <div class="card-body p-0">
-                            {% if firstFormation == null %}
+                            {% if formations == null %}
                                 <div class="alert alert-primary text-center m-5">
                                     Il n'y a plus de formation à terminer
                                 </div>
                             {% else %}
-                                {% if firstFormation.categorieFormation.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
+                                {% if currentCategorie and currentCategorie.ordreCatFormation == constant('App\\Entity\\CategorieFormation::ORDRE_LISTE_DE_CONTACT') and nbrAllMyContacts < constant('App\\Entity\\CategorieFormation::CONDITION_LISTE_DE_CONTACT') %}
                                     <h3 class="fw-bolder text-center mt-2">{{ firstFormation.titre}} </h3>    
                                     <div class="alert alert-warning m-5 text-center h2">
                                         Pour débloquer cette formation, assurez-vous d’avoir enregistré plus de 100 contacts dans votre liste de prospection.

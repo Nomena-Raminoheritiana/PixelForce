@@ -976,6 +976,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    // public function getFormationStatut(Formation $formation)
+    // {
+    //    $formationAgents =  $formation->getFormationAgents();
+    //    foreach($formationAgents->toArray() as $formationAgent) {
+    //        if($formationAgent->getAgent()->getId() === $this->getId()) {
+    //            return $formationAgent->getStatut();
+    //        }
+    //    }
+    //    return '';
+    // }
     public function getFormationStatut(Formation $formation)
     {
        $formationAgents =  $formation->getFormationAgents();
@@ -984,7 +994,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                return $formationAgent->getStatut();
            }
        }
-       return '';
+       return Formation::STATUT_DISPONIBLE;
     }
 
     /**

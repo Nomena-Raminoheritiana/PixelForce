@@ -9,6 +9,7 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Formation|null find($id, $lockMode = null, $lockVersion = null)
@@ -85,6 +86,52 @@ class FormationRepository extends ServiceEntityRepository
                 ->where('f.secteur=:secteur')
                 ->setParameter('secteur',$secteur->getId())
                 ->getQuery();
+    }
+
+    public function findFormationsCoach(?array $criteres, Secteur $secteur)
+    {
+
+        $queryBuilder = ($this->createQueryBuilder('f'))->where('f.secteur=:secteur')
+        ->setParameter('secteur',$secteur->getId());
+        if(isset($criteres['titre']) && !empty($criteres['titre'])) {
+            $queryBuilder->andWhere('f.titre LIKE :titre')
+                ->setParameter('titre', '%'.$criteres['titre'].'%');
+        }
+        if(isset($criteres['description']) && !empty($criteres['description'])) {
+            $queryBuilder->andWhere('f.description LIKE :description')
+                ->setParameter('description', '%'.$criteres['description'].'%');
+        }
+        if(isset($criteres['etat']) && !empty($criteres['etat'])) {
+            switch ($criteres['etat']) {
+                case 'disponible' :   $queryBuilder->andWhere('f.debloqueAgent = :etat')
+                    ->setParameter('etat', true );
+                    break;
+                case 'brouillon' : $queryBuilder->andWhere('f.brouillon = :etat')
+                    ->setParameter('etat', true );
+                break;
+            }
+
+        }
+        if(isset($criteres['auteur']) && !empty($criteres['auteur'])) {
+            $queryBuilder->innerJoin('App\Entity\User', 'u', 'ON')
+                ->andWhere('u.nom LIKE :nom')
+                ->setParameter('nom', '%'.$criteres['auteur'].'%');
+        }
+        if(isset($criteres['trie']) && !empty($criteres['trie'])) {
+            $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
+        }
+
+
+        if (isset($criteres['categorie'])) {
+            $queryBuilder
+                ->join('f.CategorieFormation', 'cf')
+                ->andwhere('cf.nom LIKE :nomCategorie')
+                ->setParameter('nomCategorie', '%'.$criteres['categorie'].'%')
+            ;           
+        }
+
+      return $queryBuilder->getQuery();
+
     }
 
     public function searchForCoach(?array $criteres, Secteur $secteur)
@@ -180,6 +227,55 @@ class FormationRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
+
+    public function findFormationsAgent(?array $criteres, $secteur)
+    {
+        $queryBuilder = ($this->createQueryBuilder('f'))
+            ->where('f.secteur=:secteur')
+            ->setParameter('secteur',$secteur->getId())
+            ->andWhere('f.brouillon=:brouillon')
+            ->setParameter('brouillon', false);
+        if(isset($criteres['titre']) && !empty($criteres['titre'])) {
+            $queryBuilder->andWhere('f.titre LIKE :titre')
+                ->setParameter('titre', '%'.$criteres['titre'].'%');
+        }
+        if(isset($criteres['description']) && !empty($criteres['description'])) {
+            $queryBuilder->andWhere('f.description LIKE :description')
+                ->setParameter('description', '%'.$criteres['description'].'%');
+        }
+        if(isset($criteres['etat']) && !empty($criteres['etat'])) {
+            switch ($criteres['etat']) {
+                case 'bloquee' :
+                    $queryBuilder->andWhere('f.debloqueAgent = :etat')
+                        ->setParameter('etat', false ); break;
+                case 'disponible' :   $queryBuilder->andWhere('f.debloqueAgent = :etat')
+                    ->setParameter('etat', true );
+                    break;
+            }
+
+        }
+        if(isset($criteres['auteur']) && !empty($criteres['auteur'])) {
+            $queryBuilder->innerJoin('App\Entity\User', 'u', 'ON')
+                ->andWhere('u.nom LIKE :nom')
+                ->setParameter('nom', '%'.$criteres['auteur'].'%');
+        }
+        if(isset($criteres['trie']) && !empty($criteres['trie'])) {
+            $queryBuilder->orderBy('f.'.$criteres['trie'], $criteres['ordre']);
+        }
+
+        if (isset($criteres['categorie'])) {
+            $queryBuilder
+                ->join('f.CategorieFormation', 'cf')
+                ->andwhere('cf.nom LIKE :nomCategorie')
+                ->setParameter('nomCategorie', '%'.$criteres['categorie'].'%')
+            ;           
+        }
+        
+//        dd((string) $queryBuilder);
+
+        return $queryBuilder->getQuery();
+    }
+
     public function AgentfindBySecteur($secteur)
     {
         return $this->createQueryBuilder('f')
@@ -187,6 +283,21 @@ class FormationRepository extends ServiceEntityRepository
             ->andWhere('f.brouillon=false')
             ->setParameter('secteur',$secteur->getId())
             ->getQuery();
+    }
+
+    public function findOrderedNonFinishedFormations(Secteur $secteur, User $agent){
+        $qb = $this->createQueryBuilder('f');
+        $qb->join('f.CategorieFormation', 'cf')
+            ->leftJoin('f.formationAgents', 'fa', Join::WITH, $qb->expr()->eq('fa.agent', ':agent'))
+            ->andWhere('f.secteur=:secteur')
+            ->andWhere('f.brouillon=false')
+            ->andWhere('fa.agent is NULL OR fa.statut != :finishedStatus')
+            ->setParameter('secteur',$secteur->getId())
+            ->setParameter('agent', $agent->getId())
+            ->setParameter('finishedStatus', Formation::STATUT_TERMINER)
+            ->addOrderBy('cf.ordreCatFormation')
+            ->addOrderBy('f.id');
+        return $qb->getQuery()->getResult();    
     }
 
     /**

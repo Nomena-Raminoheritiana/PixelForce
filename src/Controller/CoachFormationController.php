@@ -105,7 +105,7 @@ class CoachFormationController extends AbstractController
      *
      * @Security("is_granted('ROLE_COACH') or is_granted('ROLE_ADMINISTRATEUR')")
      */
-   public function coach_formation_list(Request $request)
+    public function coach_formation_list(Request $request)
    {
         $coach = $this->getUser();
         
@@ -113,19 +113,15 @@ class CoachFormationController extends AbstractController
        if($secteur_id = $request->query->get('secteur')) {
            $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
        }
-       if($criteres = $request->query->get('q')) {
-           $formations = $this->formationRepository->searchForCoach($criteres, $secteur);
-       } else {
-           $formations = $secteur ? $this->formationRepository->findBySecteur($secteur) : [];
-       }
-
+       $criteres = $request->query->get('q') ? $request->query->get('q') : [];
+        $formations = $this->formationRepository->findFormationsCoach($criteres, $secteur);
+       
        $formations = $this->paginator->paginate(
            $formations,
            $request->query->getInt('page', 1),
            20
        );
         
-        $allCategoriesOfCoach = $this->formationService->getCoachCategoriesInFormation($coach);
 
        $agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
        $agent = $agent && in_array($secteur->getId(), $agent->getSecteursIdsByAgent()) ? $agent : null;
@@ -135,9 +131,41 @@ class CoachFormationController extends AbstractController
            'agent' => $agent,
            'secteur' => $secteur,
            'categories' => $this->repoCatFormation->findBy(['statut' => 1]),
-           'allCategoriesOfCoach' => $allCategoriesOfCoach
        ]);
    }
+//    public function coach_formation_list(Request $request)
+//    {
+//         $coach = $this->getUser();
+        
+//        $secteur = $this->getUser()->getSecteurByCoach();
+//        if($secteur_id = $request->query->get('secteur')) {
+//            $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
+//        }
+//        if($criteres = $request->query->get('q')) {
+//            $formations = $this->formationRepository->searchForCoach($criteres, $secteur);
+//        } else {
+//            $formations = $secteur ? $this->formationRepository->findBySecteur($secteur) : [];
+//        }
+
+//        $formations = $this->paginator->paginate(
+//            $formations,
+//            $request->query->getInt('page', 1),
+//            20
+//        );
+        
+//         $allCategoriesOfCoach = $this->formationService->getCoachCategoriesInFormation($coach);
+
+//        $agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
+//        $agent = $agent && in_array($secteur->getId(), $agent->getSecteursIdsByAgent()) ? $agent : null;
+//        return $this->render('formation/video/coach_formation_list.html.twig', [
+//            'formations' => $formations,
+//            'criteres' => $criteres,
+//            'agent' => $agent,
+//            'secteur' => $secteur,
+//            'categories' => $this->repoCatFormation->findBy(['statut' => 1]),
+//            'allCategoriesOfCoach' => $allCategoriesOfCoach
+//        ]);
+//    }
 
     /**
      * @Route("/coach/formation/fiche/{id}", name="coach_formation_fiche", options={"expose"=true})
@@ -189,7 +217,7 @@ class CoachFormationController extends AbstractController
             $this->addMedia($request, $formation);
             $coachSecteurRelation = $this->getUser()->getCoachSecteurs();
             if($coachSecteurRelation->count() > 0) {
-                $this->formationService->affecterToutAgent($formation, $coachSecteurRelation->toArray()[0]->getSecteur());
+                //$this->formationService->affecterToutAgent($formation, $coachSecteurRelation->toArray()[0]->getSecteur());
             }
 
             $this->addFlash('success', 'Formation ajouté avec succès');
