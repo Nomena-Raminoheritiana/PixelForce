@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Repository\CalendarEventRepository;
 use App\Repository\SecteurRepository;
 use App\Services\Stat\StatAdminService;
 use App\Services\Stat\StatAgentService;
@@ -12,6 +13,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdminAccountController extends AbstractController
 {
+    private $calendarEventRepository;
+
+    public function __construct(CalendarEventRepository $calendarEventRepository)
+    {
+        $this->calendarEventRepository = $calendarEventRepository;
+    }
+
     /**
      * @Route("/admin/dashboard", name="admin_dashboard")
      */
@@ -30,6 +38,12 @@ class AdminAccountController extends AbstractController
         $nbrCoachs = $statAdminService->getNbrCoachs();
         $nbrSecteurs = $statAdminService->getNbrSecteurs();
         $revenuAnnee = $statAgentService->getRevenuAnnee($annee, $secteurId);
+
+        // Calendar upcoming events :
+        $upcomingEvents = $this->calendarEventRepository->findBy([], ['id' => 'DESC'], 3);
+        $eventsOfTheDay = $this->calendarEventRepository->findBy([], ['id' => 'DESC'], 3);
+
+
         return $this->render('user_category/admin/admin_dashboard.html.twig', [
             'statVente' => $statVente,
             'revenuAnnee' => $revenuAnnee,
@@ -39,7 +53,9 @@ class AdminAccountController extends AbstractController
             'nbrAgents' => $nbrAgents,
             'nbrSecteurs' => $nbrSecteurs,
             'secteurs' => $secteurs,
-            'secteur' => $secteur
+            'secteur' => $secteur,
+            'upcomingEvents'=> $upcomingEvents,
+            'eventsOfTheDay'=> $eventsOfTheDay
         ]);
     }
 }

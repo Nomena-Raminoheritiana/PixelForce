@@ -1,0 +1,76 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}
+    Mon calendrier
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vuexy/vendors/css/calendars/fullcalendar.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/vuexy/css/pages/app-calendar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/templates/calendar/calendar.style.css') }}">
+{% endblock %}
+
+{% block body %}
+        <!-- BEGIN: Content-->
+        <div class="content-body calendar-wrapper">
+            <!-- Full calendar start -->
+            <section id="user-calendar" data-user-id="{{app.user.id}}">
+                <div class="app-calendar overflow-hidden border">
+                    <div class="row g-0">
+                        <!-- Sidebar -->
+                        <div class="col app-calendar-sidebar flex-grow-0 overflow-hidden d-flex flex-column" id="app-calendar-sidebar">
+                            <div class="sidebar-wrapper">
+                                <div class="card-body pb-0">
+                                    <h5 class="section-label mb-1">
+                                        <span class="align-middle">Filtrer</span>
+                                    </h5>
+                                    <div class="form-check mb-1">
+                                        <input type="checkbox" class="form-check-input select-all" id="select-all" checked />
+                                        <label class="form-check-label" for="select-all">Tout voir</label>
+                                    </div>
+                                    <div class="calendar-events-filter">
+                                        {% for calendarEventLabel in calendarEventLabelList %}
+                                            <div class="form-check form-check-info">
+                                                <input type="checkbox" class="form-check-input input-filter" id="{{calendarEventLabel.value}}" data-value="{{calendarEventLabel.value}}" checked style="--label-color:{{calendarEventLabel.color}};"/>
+                                                <label class="form-check-label" for="{{calendarEventLabel.value}}">{{calendarEventLabel.name}}</label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-auto">
+                                <img src="{{ asset('assets/vuexy/images/pages/calendar-illustration.png') }}" alt="Calendar illustration" class="img-fluid" />
+                            </div>
+                        </div>
+                        <!-- /Sidebar -->
+
+                        <!-- Calendar -->
+                        <div class="col position-relative">
+                            <div class="card shadow-none border-0 mb-0 rounded-0">
+                                <div class="card-body pb-0">
+                                    <div id="calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Calendar -->
+                        <div class="body-content-overlay"></div>
+                    </div>
+                </div>
+
+            </section>
+            <!-- Full calendar end -->
+          
+        </div>
+        <!-- END: Content-->
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    {# <script src="{{ asset('assets/templates/calendar/calendar.js') }}"></script> #}
+    <script src="{{ asset('assets/vuexy/js/scripts/pages/app-calendar-events.js') }}"></script>
+    <script src="{{ asset('assets/vuexy/js/scripts/pages/app-calendar.js') }}"></script>
+{% endblock %}
