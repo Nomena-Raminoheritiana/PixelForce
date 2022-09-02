@@ -39,7 +39,8 @@ class UserType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Entrer votre prénom'
                 ],
-                'required' => false
+                'required' => false,
+                'label' => 'Prénom'
             ])
             ->add('dateNaissance', DateType::class, [
                 'label' => 'Date de naissance',
@@ -56,7 +57,8 @@ class UserType extends AbstractType
             ->add('numeroSecurite', TextType::class, [
                 'attr' => [
                     'placeholder' => 'XXXXXXXXXX'
-                ]
+                ],
+                'label' => 'Numéro de sécurité'
             ])
             ->add('rib', TextType::class, [
                 'label' => 'RIB',

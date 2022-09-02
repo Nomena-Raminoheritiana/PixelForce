@@ -56,12 +56,12 @@
                                 <div class="d-flex flex-row">
                                     <div class="avatar bg-light-info me-2">
                                         <div class="avatar-content">
-                                            <i data-feather="user" class="avatar-icon"></i>
+                                            <a href="{{ path('admin_coach_list') }}"><i data-feather="user" class="avatar-icon"></i></a>
                                         </div>
                                     </div>
                                     <div class="my-auto">
                                         <h4 class="fw-bolder mb-0">{{nbrCoachs | number_format(0, ',', ' ')}}</h4>
-                                        <p class="card-text font-small-3 mb-0">Les coachs</p>
+                                        <a href="{{ path('admin_coach_list') }}"><p class="card-text font-small-3 mb-0 text-black">Les coachs</p></a>
                                     </div>
                                 </div>
                             </div>
@@ -69,12 +69,12 @@
                                 <div class="d-flex flex-row">
                                     <div class="avatar bg-light-info me-2">
                                         <div class="avatar-content">
-                                            <i data-feather="user" class="avatar-icon"></i>
+                                            <a href="{{ path('admin_agent_list') }}"><i data-feather="user" class="avatar-icon"></i></a>
                                         </div>
                                     </div>
                                     <div class="my-auto">
                                         <h4 class="fw-bolder mb-0">{{nbrAgents | number_format(0, ',', ' ')}}</h4>
-                                        <p class="card-text font-small-3 mb-0">Les agents</p>
+                                        <a href="{{ path('admin_agent_list') }}"><p class="card-text font-small-3 mb-0 text-black">Les agents</p></a>
                                     </div>
                                 </div>
                             </div>
@@ -82,12 +82,12 @@
                                 <div class="d-flex flex-row">
                                     <div class="avatar bg-light-info me-2">
                                         <div class="avatar-content">
-                                            <i data-feather="user" class="avatar-icon"></i>
+                                            <a href="{{ path('admin_sector_list') }}"><i data-feather="user" class="avatar-icon"></i></a>
                                         </div>
                                     </div>
                                     <div class="my-auto">
                                         <h4 class="fw-bolder mb-0">{{nbrSecteurs | number_format(0, ',', ' ')}}</h4>
-                                        <p class="card-text font-small-3 mb-0">Les secteurs</p>
+                                        <a href="{{ path('admin_sector_list') }}"><p class="card-text font-small-3 mb-0 text-black">Les secteurs</p></a>
                                     </div>
                                 </div>
                             </div>
