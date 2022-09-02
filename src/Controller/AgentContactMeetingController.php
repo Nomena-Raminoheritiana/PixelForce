@@ -26,6 +26,7 @@ use App\Form\MeetingType;
 use App\Form\MeetingFilterType;
 use App\Form\MeetingSearchType;
 use App\Repository\ContactRepository;
+use DateInterval;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -71,7 +72,7 @@ class AgentContactMeetingController extends AbstractController
         $error = null;
         $meeting = new Meeting();
         $meeting->setStart(new \Datetime());
-        $meeting->setEnd(new \Datetime());
+        $meeting->setEnd((new \Datetime())->add(new DateInterval('PT1H')));
         $form = $this->createForm(MeetingType::class, $meeting);
         $form->handleRequest($request);
 
