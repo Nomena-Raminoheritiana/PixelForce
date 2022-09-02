@@ -145,16 +145,13 @@
                         <div id="place-order" class="list-view product-checkout">
                             <!-- Checkout Place Order Left starts -->
                             <div class="checkout-items">
-                                <div class="card ecommerce-card">
-                                    <div class="item-img">
-                                        <i class="fa-solid fa-diagram-project fa-4x"></i>
-                                    </div>
+                                <div class="card">
                                     <div class="card-body">
                                         <div class="item-name">
-                                            <h5 class="mb-0"><a href="#" class="text-body">{{devis.title}}</a></h5>
+                                            <h5 class="text-center mb-0"><a href="#" class="text-body">{{devis.title|capitalize}}</a></h5>
                                         </div>
-                                        <div class="item-name my-2 mb-5">
-                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder"> Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
+                                        <div class="item-name mt-2 mb-4 mb-5">
+                                            <h6 class="text-center mb-0"><a href="#" class="text-body"><span class="fw-bolder"> Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
                                         </div>
                                         {% if (devis.status == DEVIS_STATUS["CREATED"] and not dd.paidDevis) %}
                                             {{ form_start(formDevis) }}
@@ -175,21 +172,6 @@
                                                 <span class="fw-bolder h3">Description :</span> <br>
                                                 {{ devis.content|raw}}
                                             </p>
-                                        {% endif %}
-                                    </div>
-                                    <div class="item-options text-center">
-                                        {% if devis.status == DEVIS_STATUS["CREATED"] %}
-                                            <div class="item-options text-center">
-                                                <span class="text-primary fw-bolder">{{devis.status}} <i class="fa-solid fa-arrow-trend-up"></i></span>
-                                            </div>
-                                        {% else %}
-                                            <div class="item-options text-center">
-                                                {% if devis.status == DEVIS_STATUS["REJECTED"] %}
-                                                    <span class="text-danger fw-bolder">Rejeté <i class="fa-solid fa-circle-exclamation ms-2"></i></span>
-                                                {% elseif devis.status == DEVIS_STATUS["PAID"] %}
-                                                    <span class="text-success fw-bolder">Payé <i class="fa-solid fa-circle-check ms-2"></i></span>
-                                                {% endif %}
-                                            </div>
                                         {% endif %}
                                     </div>
                                 </div>    
