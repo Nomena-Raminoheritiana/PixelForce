@@ -1,4 +1,4 @@
-{% extends 'base_client.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}
 	Création devis
@@ -90,10 +90,10 @@
                             <div class="block block--bordered block--rounded">
                                 <h1 class="text-center mt-2 h3" > Demande de devis</h1>
                                 <hr class="my-4">
-                                <h5><span class="fw-bolder">Nom : </span> {{dd.nom}}</h5>
-                                <h5><span class="fw-bolder">Prénom : </span> {{dd.prenom}}</h5>
-                                <h5><span class="fw-bolder">Email : </span> {{dd.email}}</h5>
-                                <h5><span class="fw-bolder">Téléphone : </span> {{dd.telephone}}</h5>
+                                <p><span class="fw-bolder">Nom : </span> {{dd.nom}}</p>
+                                <p><span class="fw-bolder">Prénom : </span> {{dd.prenom}}</p>
+                                <p><span class="fw-bolder">Email : </span> {{dd.email}}</p>
+                                <p><span class="fw-bolder">Téléphone : </span> {{dd.telephone}}</p>
                                 <hr class="my-4">
                                 <p>{{dd.description|raw}}</p>
                             </div>
