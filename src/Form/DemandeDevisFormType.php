@@ -54,6 +54,14 @@ class DemandeDevisFormType extends AbstractType
                     new NotBlank(["message" => "Adresse email obligatoire"])
                 ]
             ])
+            ->add('whatsapp', TextType::class, [
+                "label" => "Whatsapp",
+                "trim" => true,
+                "required" => true,
+                "constraints" => [
+                    new NotBlank(["message" => "Whatsapp obligatoire"])
+                ]
+            ])
             ->add('description', CKEditorType::class,  array(
                 'config' => array(
                     'uiColor' => '#ffffff',

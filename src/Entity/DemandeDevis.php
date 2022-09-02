@@ -89,6 +89,11 @@ class DemandeDevis
      */
     private $devis;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $whatsapp;
+
     public function __construct()
     {
         $this->devis = new ArrayCollection();
@@ -295,5 +300,17 @@ class DemandeDevis
 
     public function isPaid(){
         return $this->getPaidDevis() !== null;
+    }
+
+    public function getWhatsapp(): ?string
+    {
+        return $this->whatsapp;
+    }
+
+    public function setWhatsapp(?string $whatsapp): self
+    {
+        $this->whatsapp = $whatsapp;
+
+        return $this;
     }
 }
