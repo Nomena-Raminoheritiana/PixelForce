@@ -7,6 +7,7 @@ use App\Repository\CalendarEventRepository;
 use App\Repository\SecteurRepository;
 use App\Services\Stat\StatAdminService;
 use App\Services\Stat\StatAgentService;
+use App\Services\Stat\StatCoachService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,15 +16,18 @@ class AdminAccountController extends AbstractController
 {
     private $calendarEventRepository;
 
-    public function __construct(CalendarEventRepository $calendarEventRepository)
+    protected $repoSecteur;
+
+    public function __construct(CalendarEventRepository $calendarEventRepository, SecteurRepository $repoSecteur)
     {
         $this->calendarEventRepository = $calendarEventRepository;
+        $this->repoSecteur = $repoSecteur;
     }
 
     /**
      * @Route("/admin/dashboard", name="admin_dashboard")
      */
-    public function admin_dashboard(Request $request, StatAdminService $statAdminService, StatAgentService $statAgentService, SecteurRepository $secteurRepository)
+    public function admin_dashboard(Request $request, StatAdminService $statAdminService, StatAgentService $statAgentService, SecteurRepository $secteurRepository, StatCoachService $statCoachService)
     {
         $secteurs = $secteurRepository->getValidSecteurs();
         $secteur = null;
@@ -42,7 +46,9 @@ class AdminAccountController extends AbstractController
         // Calendar upcoming events :
         $upcomingEvents = $this->calendarEventRepository->findBy([], ['id' => 'DESC'], 3);
         $eventsOfTheDay = $this->calendarEventRepository->findBy([], ['id' => 'DESC'], 3);
-
+        
+        $bestStatVente = $statCoachService->getBestStatVente();
+        $allStatsVente = $statCoachService->getAllStatVente();
 
         return $this->render('user_category/admin/admin_dashboard.html.twig', [
             'statVente' => $statVente,
@@ -55,7 +61,10 @@ class AdminAccountController extends AbstractController
             'secteurs' => $secteurs,
             'secteur' => $secteur,
             'upcomingEvents'=> $upcomingEvents,
-            'eventsOfTheDay'=> $eventsOfTheDay
+            'eventsOfTheDay'=> $eventsOfTheDay,
+            'bestStatVente'=> $bestStatVente,
+            'repoSecteur' => $this->repoSecteur,
+            'allStatsVente' => $allStatsVente
         ]);
     }
 }

@@ -107,8 +107,8 @@
                     <div class="col-lg-6 col-md-3 col-6">
                         <div class="card">
                             <div class="card-body pb-50">
-                                <h6>Commandes</h6>
-                                <h2 class="fw-bolder mb-1">2,76k</h2>
+                                <h6>Secteur clé</h6>
+                                <h2 class="fw-bolder mb-1">{{ repoSecteur.findOneBy({'id' : bestStatVente.secteur_id }).nom }}</h2>
                                 <div id="statistics-order-chart"></div>
                             </div>
                         </div>
@@ -119,8 +119,8 @@
                     <div class="col-lg-6 col-md-3 col-6">
                         <div class="card card-tiny-line-stats">
                             <div class="card-body pb-50">
-                                <h6>Profit</h6>
-                                <h2 class="fw-bolder mb-1">6,24k</h2>
+                                <h6>Revenus</h6>
+                                <h4 class="fw-bolder mb-1">{{bestStatVente.ca}} €</h4>
                                 <div id="statistics-profit-chart"></div>
                             </div>
                         </div>
@@ -227,280 +227,45 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Société</th>
-                                        <th>Catégorie</th>
-                                        <th>Vues</th>
+                                        <th>Secteur</th>
+                                        <th>Type de commercialisation</th>
                                         <th>Revenu</th>
                                         <th>Ventes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/toolbox.svg')}}" alt="Toolbar svg" />
+                                    {% for sv in allStatsVente %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar rounded">
+                                                        <div class="avatar-content">
+                                                            <img src="{{asset('assets/vuexy/images/icons/toolbox.svg')}}" alt="Toolbar svg" />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bolder">{{ repoSecteur.findOneBy({'id' : sv.secteur_id }).nom }}</div>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <div class="fw-bolder">Dixons</div>
-                                                    <div class="font-small-2 text-muted">meguc@ruj.io</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-primary me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="monitor" class="font-medium-3"></i>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar bg-light-primary me-1">
+                                                        <div class="avatar-content">
+                                                            <i data-feather="monitor" class="font-medium-3"></i>
+                                                        </div>
                                                     </div>
+                                                    <span>Technologie</span>
                                                 </div>
-                                                <span>Technologie</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">23.4k</span>
-                                                <span class="font-small-2 text-muted">en 24 heures</span>
-                                            </div>
-                                        </td>
-                                        <td>$891.2</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">68%</span>
-                                                <i data-feather="trending-down" class="text-danger font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/parachute.svg')}}" alt="Parachute svg" />
-                                                    </div>
+                                            </td>
+                                            <td class="text-nowrap">
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bolder mb-25">{{sv.ca}} €</span>
                                                 </div>
-                                                <div>
-                                                    <div class="fw-bolder">Motels</div>
-                                                    <div class="font-small-2 text-muted">vecav@hodzi.co.uk</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-success me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="coffee" class="font-medium-3"></i>
-                                                    </div>
-                                                </div>
-                                                <span>Épicerie</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">78k</span>
-                                                <span class="font-small-2 text-muted">in 2 days</span>
-                                            </div>
-                                        </td>
-                                        <td>$668.51</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">97%</span>
-                                                <i data-feather="trending-up" class="text-success font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/brush.svg')}}" alt="Brush svg" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bolder">Zipcar</div>
-                                                    <div class="font-small-2 text-muted">davcilse@is.gov</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-warning me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="watch" class="font-medium-3"></i>
-                                                    </div>
-                                                </div>
-                                                <span>Mode</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">162</span>
-                                                <span class="font-small-2 text-muted">in 5 days</span>
-                                            </div>
-                                        </td>
-                                        <td>$522.29</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">62%</span>
-                                                <i data-feather="trending-up" class="text-success font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/star.svg')}}" alt="Star svg" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bolder">Posséder</div>
-                                                    <div class="font-small-2 text-muted">us@cuhil.gov</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-primary me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="monitor" class="font-medium-3"></i>
-                                                    </div>
-                                                </div>
-                                                <span>Technologie</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">214</span>
-                                                <span class="font-small-2 text-muted">en 24 heures</span>
-                                            </div>
-                                        </td>
-                                        <td>$291.01</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">88%</span>
-                                                <i data-feather="trending-up" class="text-success font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/book.svg')}}" alt="Book svg" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bolder">Cafés</div>
-                                                    <div class="font-small-2 text-muted">pudais@jife.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-success me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="coffee" class="font-medium-3"></i>
-                                                    </div>
-                                                </div>
-                                                <span>Épicerie</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">208</span>
-                                                <span class="font-small-2 text-muted">en 1 semaine</span>
-                                            </div>
-                                        </td>
-                                        <td>$783.93</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">16%</span>
-                                                <i data-feather="trending-down" class="text-danger font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/rocket.svg')}}" alt="Rocket svg" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bolder">Kmart</div>
-                                                    <div class="font-small-2 text-muted">bipri@cawiw.com</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-warning me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="watch" class="font-medium-3"></i>
-                                                    </div>
-                                                </div>
-                                                <span>Mode</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">990</span>
-                                                <span class="font-small-2 text-muted">en 1 mois</span>
-                                            </div>
-                                        </td>
-                                        <td>$780.05</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">78%</span>
-                                                <i data-feather="trending-up" class="text-success font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar rounded">
-                                                    <div class="avatar-content">
-                                                        <img src="{{asset('assets/vuexy/images/icons/speaker.svg')}}" alt="Speaker svg" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bolder">Payeurs</div>
-                                                    <div class="font-small-2 text-muted">luk@izug.io</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar bg-light-warning me-1">
-                                                    <div class="avatar-content">
-                                                        <i data-feather="watch" class="font-medium-3"></i>
-                                                    </div>
-                                                </div>
-                                                <span>Mode</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-nowrap">
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-bolder mb-25">12.9k</span>
-                                                <span class="font-small-2 text-muted">en 12 heures</span>
-                                            </div>
-                                        </td>
-                                        <td>$531.49</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bolder me-1">42%</span>
-                                                <i data-feather="trending-up" class="text-success font-medium-1"></i>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td>{{sv.nbr_ventes}}</td>
+                                        </tr>                                        
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>

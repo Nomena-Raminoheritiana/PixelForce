@@ -29,6 +29,38 @@ class StatCoachService
         return $result[0];
     }
 
+    public function getAllStatVente()
+    {
+        $conn = $this->entityManager->getConnection();
+
+        $sql = '
+            SELECT * FROM stat_vente_secteur ORDER BY ca DESC
+        ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $result = (array)$resultSet->fetchAllAssociative();
+
+        return $result;
+    }
+
+    public function getBestStatVente(){
+        $ca = [
+            'ca' => 0,
+            'secteur_id' => 0
+        ];
+
+        $allStatVente = $this->getAllStatVente();
+        
+        foreach ($allStatVente as $sv) {
+            if ($ca['ca'] < $sv['ca']) {
+                $ca['secteur_id'] = $sv['secteur_id'];
+                $ca['ca'] = $sv['ca'];
+            }
+        }
+
+        return $ca;
+    }
+
     
     public function getNbrClients($secteurId){
         $conn = $this->entityManager->getConnection();
