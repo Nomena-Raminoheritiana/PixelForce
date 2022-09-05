@@ -52,7 +52,7 @@ class StatCoachService
         $allStatVente = $this->getAllStatVente();
         
         foreach ($allStatVente as $sv) {
-            if ($ca['ca'] < $sv['ca']) {
+            if ($ca['ca'] <= $sv['ca']) {
                 $ca['secteur_id'] = $sv['secteur_id'];
                 $ca['ca'] = $sv['ca'];
             }

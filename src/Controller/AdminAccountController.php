@@ -47,8 +47,11 @@ class AdminAccountController extends AbstractController
         $upcomingEvents = $this->calendarEventRepository->findBy([], ['id' => 'DESC'], 3);
         $eventsOfTheDay = $this->calendarEventRepository->findBy([], ['id' => 'DESC'], 3);
         
+        $moisActuel = intval(date('m'));
         $bestStatVente = $statCoachService->getBestStatVente();
         $allStatsVente = $statCoachService->getAllStatVente();
+        $revenuAnneeMoisBest = $statAgentService->getRevenuAnneeMois($anneeActuelle, $moisActuel, $bestStatVente['secteur_id'], -1);
+        $bestStatVente['percent'] = $bestStatVente['ca']*100 / $statVente['ca'];
 
         return $this->render('user_category/admin/admin_dashboard.html.twig', [
             'statVente' => $statVente,
@@ -64,7 +67,8 @@ class AdminAccountController extends AbstractController
             'eventsOfTheDay'=> $eventsOfTheDay,
             'bestStatVente'=> $bestStatVente,
             'repoSecteur' => $this->repoSecteur,
-            'allStatsVente' => $allStatsVente
+            'allStatsVente' => $allStatsVente,
+            'revenuAnneeMoisBest' => $revenuAnneeMoisBest
         ]);
     }
 }

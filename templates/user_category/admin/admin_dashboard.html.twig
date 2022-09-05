@@ -135,9 +135,9 @@
                                     <div class="col-6">
                                         <h4 class="card-title mb-1">Gains</h4>
                                         <div class="font-small-2">Ce mois-ci</div>
-                                        <h5 class="mb-1">$4055.56</h5>
+                                        <h5 class="mb-1">{{revenuAnneeMoisBest.montant | number_format(2, ',', ' ')}} €</h5>
                                         <p class="card-text text-muted font-small-2">
-                                            <span class="fw-bolder">68.2%</span><span> plus de revenus que le mois dernier.</span>
+                                            <span class="fw-bolder">{{bestStatVente.percent|number_format(2, ',', ' ')}} %</span><span> du revenu total est généré par ce secteur.</span>
                                         </p>
                                     </div>
                                     <div class="col-6">
@@ -235,6 +235,7 @@
                                 </thead>
                                 <tbody>
                                     {% for sv in allStatsVente %}
+                                        {% set secteur = repoSecteur.findOneBy({'id' : sv.secteur_id }) %}
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
@@ -244,7 +245,7 @@
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bolder">{{ repoSecteur.findOneBy({'id' : sv.secteur_id }).nom }}</div>
+                                                        <div class="fw-bolder">{{ secteur.nom }}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -255,7 +256,7 @@
                                                             <i data-feather="monitor" class="font-medium-3"></i>
                                                         </div>
                                                     </div>
-                                                    <span>Technologie</span>
+                                                    <span>{{secteur.type.nom}}</span>
                                                 </div>
                                             </td>
                                             <td class="text-nowrap">
