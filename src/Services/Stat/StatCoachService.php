@@ -44,21 +44,17 @@ class StatCoachService
     }
 
     public function getBestStatVente(){
-        $ca = [
-            'ca' => 0,
-            'secteur_id' => 0
-        ];
+        $conn = $this->entityManager->getConnection();
 
-        $allStatVente = $this->getAllStatVente();
+        $sql = '
+            SELECT *, MAX(ca) FROM stat_vente_secteur
+        ';
         
-        foreach ($allStatVente as $sv) {
-            if ($ca['ca'] <= $sv['ca']) {
-                $ca['secteur_id'] = $sv['secteur_id'];
-                $ca['ca'] = $sv['ca'];
-            }
-        }
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+        $result = (array)$resultSet->fetchAllAssociative();
 
-        return $ca;
+        return $result[0];
     }
 
     
