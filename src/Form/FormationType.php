@@ -24,10 +24,10 @@ class FormationType extends AbstractType
             ->add('description', TextareaType::class, [
                 'required' => true,
             ])
-            ->add('description_deblocage', TextareaType::class, [
-                'required' => false,
-                'label' => 'Description déblocage'
-            ])
+            // ->add('description_deblocage', TextareaType::class, [
+            //     'required' => false,
+            //     'label' => 'Description déblocage'
+            // ])
             ->add('contenu', CKEditorType::class, [
                 'config' => [
                     'uiColor' => '#cccccc',
