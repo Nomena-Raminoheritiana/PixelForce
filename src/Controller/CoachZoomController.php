@@ -103,7 +103,7 @@ class CoachZoomController extends AbstractController
                     $secteur
                 );
             }
-            $this->addFlash('success', 'Planification de la réunion terminer');
+            $this->addFlash('success', 'Planification de la réunion terminée avec succès');
         } else {
             $this->addFlash('danger', 'Vous devez entrer au moin un agent');
         }
