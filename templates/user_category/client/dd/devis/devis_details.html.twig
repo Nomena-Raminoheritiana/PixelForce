@@ -144,63 +144,54 @@
                         <div id="place-order" class="list-view product-checkout">
                             <!-- Checkout Place Order Left starts -->
                             <div class="checkout-items">
-                                <div class="card ecommerce-card">
-                                    <div class="item-img">
-                                        <i class="fa-solid fa-diagram-project fa-4x"></i>
-                                    </div>
+                                <div class="card">
                                     <div class="card-body">
-                                        <div class="item-name">
-                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">{{devis.title}}</span></a></h6>
-                                        </div>
-                                        <div class="item-name my-2 mb-5">
-                                            <h6 class="mb-0"><a href="#" class="text-body"> <span class="fw-bolder">Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
-                                        </div>
-                                        {# {% if devis.status == DEVIS_STATUS["CREATED"] %}
-                                            {{ form_start(formDevis) }}
-                                                <p class="card-text">
-                                                    <span class="fw-bolder h3">Description :</span> <br>
-                                                    {{form_widget(formDevis.content, {'attr': {'rows':'7', 'cols':'50'}})}}
-                                                </p>
-                                                <p class="card-text">
-                                                    <button class="btn btn-primary" type="submit">Modifier le devis <i class="fa-solid fa-floppy-disk ms-2"></i></button>
-                                                </p>
-                                            {{form_end(formDevis)}}
-                                        {% else %} #}
-                                            <p class="card-text">
-                                                <span class="fw-bolder h3">Description :</span> <br>
-                                                {{ devis.content|raw}}
-                                            </p>
-                                        {# {% endif %} #}
-                                    </div>
-                                    <div class="item-options text-center">
-                                        {% if (devis.status == DEVIS_STATUS["CREATED"] and not dd.paidDevis )  %}
-                                            <div class="item-options text-center">
-                                                <a href="{{ path('agent_client_devis_reject', {'token' : token, 'dd': dd.id, 'devis': devis.id}) }}" class="btn btn-light mt-1" onclick="return confirm('Êtes vous vraiment sûr de rejeter ce devis ?')">
-                                                    <span class="text-warning fw-bolder">Rejeter <i class="fa-solid fa-trash-can"></i></span>
-                                                </a>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="item-name">
+                                                    <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">{{devis.title}}</span></a></h6>
+                                                </div>
+                                                <div class="item-name my-2 mb-5">
+                                                    <h6 class="mb-0"><a href="#" class="text-body"> <span class="fw-bolder">Date :</span> {{devis.createdAt|date('d/m/Y')}}</a></h6>
+                                                </div>
                                             </div>
-                                        {% else %}
-                                            <div class="item-options text-center">
-                                                {% if devis.status == DEVIS_STATUS["REJECTED"] %}
-                                                    <span class="text-danger fw-bolder">Rejeté !</span>
-                                                {% elseif devis.status == DEVIS_STATUS["CREATED"] %}
-                                                    <span class="text-warning fw-bolder">Créé !</span>    
-                                                {% elseif devis.status == DEVIS_STATUS["PAID"] %}
-                                                    <span class="text-success fw-bolder">Payé <i class="fa-solid fa-circle-check ms-2"></i></span>
-                                                {% endif %}
+                                            <div class="col">
+                                                <div class="float-end">
+                                                    {% if devis.statusInt == DEVIS_STATUS_INT["REJECTED"] %}
+                                                        <span class="text-danger fw-bolder h5">Rejeté !</span>  
+                                                    {% elseif devis.statusInt == DEVIS_STATUS_INT["PAID"] %}
+                                                        <span class="text-success fw-bolder h5">Payé <i class="fa-solid fa-circle-check ms-2"></i></span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="card-text">
+                                            <span class="fw-bolder h3">Description :</span> <br>
+                                            {{ devis.content|raw}}
+                                        </p>
+                                     
+                                    </div>
+                                    <hr>
+                                    <div class="item-options d-flex aligns-items-center justify-content-center pb-2">
+                                        {% if (devis.statusInt == DEVIS_STATUS_INT["CREATED"] and not dd.paidDevis )  %}
+                                            <div class="item-options">
+                                                <a href="{{ path('agent_client_devis_reject', {'token' : token, 'dd': dd.id, 'devis': devis.id}) }}" class="btn btn-light mt-1" onclick="return confirm('Êtes vous vraiment sûr de rejeter ce devis ?')">
+                                                    <span class="text-warning fw-bolder h4">Rejeter <i class="fa-solid fa-trash-can"></i></span>
+                                                </a>
                                             </div>
                                         {% endif %}
                                     </div>
                                 </div>                                
                             </div>
-                            {% if devis.status != DEVIS_STATUS["REJECTED"] %}
+                            {% if devis.statusInt != DEVIS_STATUS_INT["REJECTED"] %}
                                 <div class="checkout-options">
                                     <div class="card">
                                         <div class="card-body">
                                             <label class="section-label form-label mb-1">{{devis.title}}</label>
                                             <hr />
                                             <div class="price-details">
-                                                {% if devis.status == DEVIS_STATUS["PAID"] %}
+                                                {% if devis.statusInt == DEVIS_STATUS_INT["PAID"] %}
                                                     {% if devis.contratFileName %}
                                                         <a href="/files/{{devis.contratFileName}}" download  class="btn btn-primary w-100 btn-next place-order">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
                                                     {% endif %}
