@@ -78,7 +78,7 @@ class ClientDevisController extends AbstractController
             'token' => $token,
             'filesDirectory' => $this->getParameter('files_directory_relative'),
             'formDevis' => $formDevis->createView(),
-            'DEVIS_STATUS' => Devis::DEVIS_STATUS
+            'DEVIS_STATUS_INT' => Devis::DEVIS_STATUS_INT
         ]);
     }
 
