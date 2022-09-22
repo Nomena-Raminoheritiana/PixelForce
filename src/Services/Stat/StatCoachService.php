@@ -46,9 +46,7 @@ class StatCoachService
     public function getBestStatVente(){
         $conn = $this->entityManager->getConnection();
 
-        $sql = '
-            SELECT *, MAX(ca) FROM stat_vente_secteur
-        ';
+        $sql = 'SELECT * FROM stat_vente_secteur WHERE ca = (SELECT MAX(ca) FROM stat_vente_secteur) LIMIT 1' ;
         
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
