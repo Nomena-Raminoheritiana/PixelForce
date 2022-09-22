@@ -1,0 +1,10 @@
+<html>
+  <head>
+    <title>your_domain website</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+
+    <p>This is the landing page of <strong>your_domain</strong>.</p>
+  </body>
+</html>
