@@ -143,14 +143,15 @@ class Meeting implements JsonSerializable
         $vars = get_object_vars($this);
         return $vars;
     }
-    public function toCalendarEvent(): ?CalendarEvent
+    public function toCalendarEvent(bool $is_coach=false): ?CalendarEvent
     {
+        $firstUrl = $is_coach ? 'coach' : 'agent';
         $event = new CalendarEvent();
         $event->setTitle($this->getTitle());
         $event->setStart($this->getStart());
         $event->setEnd($this->getEnd());
         $event->setAllDay(false);
-        $event->setUrl("/meeting/fiche/".$this->getId());
+        $event->setUrl("/".$firstUrl."/contact/meeting/".$this->getId()."/fiche");
         return $event;
     }
     public function clone(): ?Meeting
