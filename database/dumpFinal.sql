@@ -2721,54 +2721,6 @@ LOCK TABLES `video_formation` WRITE;
 UNLOCK TABLES;
 
 --
--- Dumping routines for database 'pixelfocedev_bdd'
---
-/*!50003 DROP PROCEDURE IF EXISTS `getRevenuAnneeAll` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE  PROCEDURE `getRevenuAnneeAll`(agentIdParam INT, secteurIdParam INT, anneeParam INT )
-BEGIN  
-   select m.*, coalesce(t.montant, 0) as montant, coalesce(t.nbr, 0) as nbr
-from les_mois m left join 
-(select mois, sum(montant) as montant, count(agent_id) as nbr
-from all_type_order_valide_mois_annee where annee = anneeParam and (secteur_id = secteurIdParam or secteurIdParam <= 0 ) and (agent_id = agentIdParam or agentIdParam <= 0 ) group by mois) t on m.mois = t.mois order by m.mois
-   ;  
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `getRevenuAnneeMois` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE  PROCEDURE `getRevenuAnneeMois`(agentIdParam INT, secteurIdParam INT, anneeParam INT, moisParam INT)
-BEGIN  
-select sum(montant) as montant, count(agent_id) as nbr
-from all_type_order_valide_mois_annee where (annee = anneeParam or anneeParam <= 0) and (mois = moisParam or moisParam <= 0) and (secteur_id = secteurIdParam or secteurIdParam <= 0 ) and (agent_id = agentIdParam or agentIdParam <= 0 ) 
-   ;  
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-
---
 -- Final view structure for view `active_agent`
 --
 
@@ -2780,7 +2732,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `active_agent` AS select `active_user`.`id` AS `id`,`active_user`.`contact_client_id` AS `contact_client_id`,`active_user`.`client_agent_id` AS `client_agent_id`,`active_user`.`email` AS `email`,`active_user`.`username` AS `username`,`active_user`.`roles` AS `roles`,`active_user`.`password` AS `password`,`active_user`.`nom` AS `nom`,`active_user`.`prenom` AS `prenom`,`active_user`.`date_naissance` AS `date_naissance`,`active_user`.`adresse` AS `adresse`,`active_user`.`numero_securite` AS `numero_securite`,`active_user`.`rib` AS `rib`,`active_user`.`photo` AS `photo`,`active_user`.`six_digit_code` AS `six_digit_code`,`active_user`.`forgotten_pass_token` AS `forgotten_pass_token`,`active_user`.`active` AS `active`,`active_user`.`api_token` AS `api_token`,`active_user`.`telephone` AS `telephone`,`active_user`.`created_at` AS `created_at`,`active_user`.`code_postal` AS `code_postal`,`active_user`.`lien_calendly` AS `lien_calendly`,`active_user`.`stripe_data` AS `stripe_data`,`active_user`.`account_status` AS `account_status`,`active_user`.`account_start_date` AS `account_start_date`,`active_user`.`stripe_customer_id` AS `stripe_customer_id` from `active_user` where json_contains(`active_user`.`roles`,'"ROLE_AGENT"','$') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2798,7 +2750,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `active_clients` AS select `active_user`.`id` AS `id`,`active_user`.`contact_client_id` AS `contact_client_id`,`active_user`.`client_agent_id` AS `client_agent_id`,`active_user`.`email` AS `email`,`active_user`.`username` AS `username`,`active_user`.`roles` AS `roles`,`active_user`.`password` AS `password`,`active_user`.`nom` AS `nom`,`active_user`.`prenom` AS `prenom`,`active_user`.`date_naissance` AS `date_naissance`,`active_user`.`adresse` AS `adresse`,`active_user`.`numero_securite` AS `numero_securite`,`active_user`.`rib` AS `rib`,`active_user`.`photo` AS `photo`,`active_user`.`six_digit_code` AS `six_digit_code`,`active_user`.`forgotten_pass_token` AS `forgotten_pass_token`,`active_user`.`active` AS `active`,`active_user`.`api_token` AS `api_token`,`active_user`.`telephone` AS `telephone`,`active_user`.`created_at` AS `created_at`,`active_user`.`code_postal` AS `code_postal`,`active_user`.`lien_calendly` AS `lien_calendly`,`active_user`.`stripe_data` AS `stripe_data`,`active_user`.`account_status` AS `account_status`,`active_user`.`account_start_date` AS `account_start_date`,`active_user`.`stripe_customer_id` AS `stripe_customer_id` from `active_user` where json_contains(`active_user`.`roles`,'"ROLE_CLIENT"','$') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2816,7 +2768,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `active_coach` AS select `active_user`.`id` AS `id`,`active_user`.`contact_client_id` AS `contact_client_id`,`active_user`.`client_agent_id` AS `client_agent_id`,`active_user`.`email` AS `email`,`active_user`.`username` AS `username`,`active_user`.`roles` AS `roles`,`active_user`.`password` AS `password`,`active_user`.`nom` AS `nom`,`active_user`.`prenom` AS `prenom`,`active_user`.`date_naissance` AS `date_naissance`,`active_user`.`adresse` AS `adresse`,`active_user`.`numero_securite` AS `numero_securite`,`active_user`.`rib` AS `rib`,`active_user`.`photo` AS `photo`,`active_user`.`six_digit_code` AS `six_digit_code`,`active_user`.`forgotten_pass_token` AS `forgotten_pass_token`,`active_user`.`active` AS `active`,`active_user`.`api_token` AS `api_token`,`active_user`.`telephone` AS `telephone`,`active_user`.`created_at` AS `created_at`,`active_user`.`code_postal` AS `code_postal`,`active_user`.`lien_calendly` AS `lien_calendly`,`active_user`.`stripe_data` AS `stripe_data`,`active_user`.`account_status` AS `account_status`,`active_user`.`account_start_date` AS `account_start_date`,`active_user`.`stripe_customer_id` AS `stripe_customer_id` from `active_user` where json_contains(`active_user`.`roles`,'"ROLE_COACH"','$') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2834,7 +2786,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `active_user` AS select `user`.`id` AS `id`,`user`.`contact_client_id` AS `contact_client_id`,`user`.`client_agent_id` AS `client_agent_id`,`user`.`email` AS `email`,`user`.`username` AS `username`,`user`.`roles` AS `roles`,`user`.`password` AS `password`,`user`.`nom` AS `nom`,`user`.`prenom` AS `prenom`,`user`.`date_naissance` AS `date_naissance`,`user`.`adresse` AS `adresse`,`user`.`numero_securite` AS `numero_securite`,`user`.`rib` AS `rib`,`user`.`photo` AS `photo`,`user`.`six_digit_code` AS `six_digit_code`,`user`.`forgotten_pass_token` AS `forgotten_pass_token`,`user`.`active` AS `active`,`user`.`api_token` AS `api_token`,`user`.`telephone` AS `telephone`,`user`.`created_at` AS `created_at`,`user`.`code_postal` AS `code_postal`,`user`.`lien_calendly` AS `lien_calendly`,`user`.`stripe_data` AS `stripe_data`,`user`.`account_status` AS `account_status`,`user`.`account_start_date` AS `account_start_date`,`user`.`stripe_customer_id` AS `stripe_customer_id` from `user` where `user`.`active` <> 0 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2852,7 +2804,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `agent_secteur_client_valide` AS select `a`.`agent_id` AS `agent_id`,`a`.`secteur_id` AS `secteur_id`,`ac`.`id` AS `client_id` from (`agent_secteur_valide` `a` join `active_clients` `ac` on(`a`.`agent_id` = `ac`.`client_agent_id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2870,7 +2822,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `agent_secteur_valide` AS select `ase`.`id` AS `id`,`ase`.`agent_id` AS `agent_id`,`ase`.`secteur_id` AS `secteur_id`,`ase`.`date_validation` AS `date_validation`,`ase`.`statut` AS `statut`,`s`.`type_id` AS `type_secteur_id` from ((`agent_secteur` `ase` join `secteur_active` `s` on(`ase`.`secteur_id` = `s`.`id`)) join `active_agent` `a` on(`ase`.`agent_id` = `a`.`id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2888,7 +2840,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `all_type_order_valide` AS select `order_secu_valide`.`agent_id` AS `agent_id`,`order_secu_valide`.`secteur_id` AS `secteur_id`,`order_secu_valide`.`client_id` AS `client_id`,`order_secu_valide`.`montant_ttc` AS `montant`,`order_secu_valide`.`date_commande` AS `date_commande` from `order_secu_valide` union all select `order_valide`.`agent_id` AS `agent_id`,`order_valide`.`secteur_id` AS `secteur_id`,`order_valide`.`user_id` AS `user_id`,`order_valide`.`amount` AS `amount`,`order_valide`.`order_date` AS `order_date` from `order_valide` union all select `demande_devis_valide`.`agent_id` AS `agent_id`,`demande_devis_valide`.`secteur_id` AS `secteur_id`,`demande_devis_valide`.`client_id` AS `client_id`,`demande_devis_valide`.`price` AS `price`,`demande_devis_valide`.`date_demande` AS `date_demande` from `demande_devis_valide` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2906,7 +2858,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `all_type_order_valide_all_client` AS select `a`.`agent_id` AS `agent_id`,`a`.`secteur_id` AS `secteur_id`,`a`.`client_id` AS `client_id`,coalesce(`o`.`montant`,0) AS `montant`,coalesce(`o`.`nbr`,0) AS `nbr` from (`agent_secteur_client_valide` `a` left join `all_type_order_valide_per_client` `o` on((`a`.`agent_id`,`a`.`secteur_id`,`a`.`client_id`) = (`o`.`agent_id`,`o`.`secteur_id`,`o`.`client_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2924,7 +2876,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `all_type_order_valide_gp_mois_annee` AS select `all_type_order_valide_mois_annee`.`agent_id` AS `agent_id`,`all_type_order_valide_mois_annee`.`secteur_id` AS `secteur_id`,`all_type_order_valide_mois_annee`.`mois` AS `mois`,`all_type_order_valide_mois_annee`.`annee` AS `annee`,sum(`all_type_order_valide_mois_annee`.`montant`) AS `montant`,count(`all_type_order_valide_mois_annee`.`agent_id`) AS `nbr` from `all_type_order_valide_mois_annee` group by `all_type_order_valide_mois_annee`.`agent_id`,`all_type_order_valide_mois_annee`.`secteur_id`,`all_type_order_valide_mois_annee`.`mois`,`all_type_order_valide_mois_annee`.`annee` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2942,7 +2894,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `all_type_order_valide_gp_mois_annee_secteur` AS select `all_type_order_valide_mois_annee`.`secteur_id` AS `secteur_id`,`all_type_order_valide_mois_annee`.`mois` AS `mois`,`all_type_order_valide_mois_annee`.`annee` AS `annee`,sum(`all_type_order_valide_mois_annee`.`montant`) AS `montant`,count(`all_type_order_valide_mois_annee`.`agent_id`) AS `nbr` from `all_type_order_valide_mois_annee` group by `all_type_order_valide_mois_annee`.`secteur_id`,`all_type_order_valide_mois_annee`.`mois`,`all_type_order_valide_mois_annee`.`annee` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2960,7 +2912,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `all_type_order_valide_mois_annee` AS select `a`.`agent_id` AS `agent_id`,`a`.`secteur_id` AS `secteur_id`,`a`.`client_id` AS `client_id`,`a`.`montant` AS `montant`,`a`.`date_commande` AS `date_commande`,month(`a`.`date_commande`) AS `mois`,year(`a`.`date_commande`) AS `annee` from `all_type_order_valide` `a` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2978,7 +2930,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `all_type_order_valide_per_client` AS select `all_type_order_valide`.`agent_id` AS `agent_id`,`all_type_order_valide`.`secteur_id` AS `secteur_id`,`all_type_order_valide`.`client_id` AS `client_id`,sum(`all_type_order_valide`.`montant`) AS `montant`,count(`all_type_order_valide`.`client_id`) AS `nbr` from `all_type_order_valide` group by `all_type_order_valide`.`agent_id`,`all_type_order_valide`.`secteur_id`,`all_type_order_valide`.`client_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -2996,7 +2948,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `client_secteur_agent` AS select `a`.`agent_id` AS `agent_id`,`a`.`secteur_id` AS `secteur_id`,`a`.`client_id` AS `client_id`,`a`.`montant` AS `montant`,`a`.`nbr` AS `nbr`,`ac`.`nom` AS `nom`,`ac`.`prenom` AS `prenom`,`ac`.`email` AS `email`,`ac`.`username` AS `username` from (`all_type_order_valide_all_client` `a` join `active_clients` `ac` on(`a`.`client_id` = `ac`.`id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3014,7 +2966,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `demande_devis_valide` AS select `dd`.`id` AS `id`,`dd`.`client_id` AS `client_id`,`dd`.`agent_id` AS `agent_id`,`dd`.`secteur_id` AS `secteur_id`,`dd`.`produit_id` AS `produit_id`,`dd`.`nom` AS `nom`,`dd`.`prenom` AS `prenom`,`dd`.`telephone` AS `telephone`,`dd`.`email` AS `email`,`dd`.`description` AS `description`,`dd`.`statut` AS `statut`,`dd`.`date_demande` AS `date_demande`,`dd`.`files` AS `files`,`dd`.`whatsapp` AS `whatsapp`,`d`.`price` AS `price`,`d`.`id` AS `devis_id`,`d`.`contrat_file_name` AS `contrat_file_name` from (`demande_devis` `dd` join `devis` `d` on(`dd`.`id` = `d`.`demande_devis_id` and `d`.`status_int` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3032,7 +2984,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `dernier_date_inventaire` AS select `inventaire_fille_details_valid`.`produit_id` AS `produit_id`,max(`inventaire_fille_details_valid`.`date_inventaire`) AS `dernier_date` from `inventaire_fille_details_valid` group by `inventaire_fille_details_valid`.`produit_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3050,7 +3002,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `dernier_inventaire` AS select `i`.`id` AS `id`,`i`.`mere_id` AS `mere_id`,`i`.`produit_id` AS `produit_id`,`i`.`qte` AS `qte`,`i`.`statut` AS `statut`,`i`.`date_inventaire` AS `date_inventaire` from (`dernier_date_inventaire` `d` join `inventaire_fille_details_valid` `i` on(`d`.`produit_id` = `i`.`produit_id` and `d`.`dernier_date` = `i`.`date_inventaire`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3068,7 +3020,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `inventaire_fille_details` AS select `f`.`id` AS `id`,`f`.`mere_id` AS `mere_id`,`f`.`produit_id` AS `produit_id`,`f`.`qte` AS `qte`,`f`.`statut` AS `statut`,`i`.`date_inventaire` AS `date_inventaire` from (`inventaire_fille` `f` join `inventaire_mere` `i` on(`f`.`mere_id` = `i`.`id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3086,7 +3038,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `inventaire_fille_details_valid` AS select `inventaire_fille_details`.`id` AS `id`,`inventaire_fille_details`.`mere_id` AS `mere_id`,`inventaire_fille_details`.`produit_id` AS `produit_id`,`inventaire_fille_details`.`qte` AS `qte`,`inventaire_fille_details`.`statut` AS `statut`,`inventaire_fille_details`.`date_inventaire` AS `date_inventaire` from `inventaire_fille_details` where `inventaire_fille_details`.`statut` is null or `inventaire_fille_details`.`statut` <> 0 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3104,8 +3056,8 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
-/*!50001 VIEW `les_mois` AS select 1 AS `mois`,'Janvier' AS `mois_str` union all select 2 AS `mois`,'Fï¿½vrier' AS `mois_str` union all select 3 AS `mois`,'Mars' AS `mois_str` union all select 4 AS `mois`,'Avril' AS `mois_str` union all select 5 AS `mois`,'Mai' AS `mois_str` union all select 6 AS `mois`,'Juin' AS `mois_str` union all select 7 AS `mois`,'Juillet' AS `mois_str` union all select 8 AS `mois`,'Aoï¿½t' AS `mois_str` union all select 9 AS `mois`,'Septembre' AS `mois_str` union all select 10 AS `mois`,'Octobre' AS `mois_str` union all select 11 AS `mois`,'Novembre' AS `mois_str` union all select 12 AS `mois`,'Dï¿½cembre' AS `mois_str` */;
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `les_mois` AS select 1 AS `mois`,'Janvier' AS `mois_str` union all select 2 AS `mois`,'F‚vrier' AS `mois_str` union all select 3 AS `mois`,'Mars' AS `mois_str` union all select 4 AS `mois`,'Avril' AS `mois_str` union all select 5 AS `mois`,'Mai' AS `mois_str` union all select 6 AS `mois`,'Juin' AS `mois_str` union all select 7 AS `mois`,'Juillet' AS `mois_str` union all select 8 AS `mois`,'Ao–t' AS `mois_str` union all select 9 AS `mois`,'Septembre' AS `mois_str` union all select 10 AS `mois`,'Octobre' AS `mois_str` union all select 11 AS `mois`,'Novembre' AS `mois_str` union all select 12 AS `mois`,'D‚cembre' AS `mois_str` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3122,7 +3074,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `mouvement_valid` AS select `mouvement`.`id` AS `id`,`mouvement`.`produit_id` AS `produit_id`,`mouvement`.`date_mouvement` AS `date_mouvement`,`mouvement`.`entree` AS `entree`,`mouvement`.`sortie` AS `sortie`,`mouvement`.`statut` AS `statut` from `mouvement` where `mouvement`.`statut` is null or `mouvement`.`statut` <> 0 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3140,7 +3092,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `order_secu_valide` AS select `os`.`id` AS `id`,`os`.`produit_id` AS `produit_id`,`os`.`type_abonnement_id` AS `type_abonnement_id`,`os`.`agent_id` AS `agent_id`,`os`.`client_id` AS `client_id`,`os`.`code_promo` AS `code_promo`,`os`.`prix_produit` AS `prix_produit`,`os`.`statut` AS `statut`,`os`.`type_installation_id` AS `type_installation_id`,`os`.`secteur_id` AS `secteur_id`,`os`.`date_commande` AS `date_commande`,`os`.`installation_frais` AS `installation_frais`,`os`.`accomp_montant` AS `accomp_montant`,`os`.`charge_id` AS `charge_id`,`os`.`contrat_rempli` AS `contrat_rempli`,`os`.`contrat_signed` AS `contrat_signed`,`os`.`sepa` AS `sepa`,`os`.`kitbase_id` AS `kitbase_id`,`os`.`tva_id` AS `tva_id`,`os`.`tva_pourcentage` AS `tva_pourcentage`,(`os`.`accomp_montant` + `os`.`prix_produit`) * (1 + `os`.`tva_pourcentage` / 100) AS `montant_ttc` from `order_secu` `os` where `os`.`statut` = 2 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3158,7 +3110,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `order_valide` AS select `order`.`id` AS `id`,`order`.`user_id` AS `user_id`,`order`.`address_id` AS `address_id`,`order`.`agent_id` AS `agent_id`,`order`.`secteur_id` AS `secteur_id`,`order`.`order_date` AS `order_date`,`order`.`amount` AS `amount`,`order`.`status` AS `status`,`order`.`charge_id` AS `charge_id` from `order` where `order`.`status` = 2 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3176,7 +3128,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `produit_et_dernier_inventaire` AS select `p`.`id` AS `id`,`d`.`date_inventaire` AS `date_inventaire`,coalesce(`d`.`qte`,0) AS `qte` from (`produit` `p` left join `dernier_inventaire` `d` on(`p`.`id` = `d`.`produit_id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3194,7 +3146,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `produit_qte_stock` AS select `p`.`id` AS `id`,`p`.`id` AS `produit_id`,`p`.`qte` + coalesce(`qm`.`qte_mouvement`,0) AS `qte_stock` from (`produit_et_dernier_inventaire` `p` left join `qte_mouvement_apres_dernier_inventaire` `qm` on(`p`.`id` = `qm`.`id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3212,7 +3164,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `qte_mouvement_apres_dernier_inventaire` AS select `p`.`id` AS `id`,sum(coalesce(`m`.`entree`,0) - coalesce(`m`.`sortie`,0)) AS `qte_mouvement` from (`produit_et_dernier_inventaire` `p` join `mouvement_valid` `m` on(`p`.`id` = `m`.`produit_id` and (`p`.`date_inventaire` is null or `m`.`date_mouvement` > `p`.`date_inventaire`))) group by `p`.`id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3230,7 +3182,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `secteur_active` AS select `secteur`.`id` AS `id`,`secteur`.`type_id` AS `type_id`,`secteur`.`nom` AS `nom`,`secteur`.`description` AS `description`,`secteur`.`active` AS `active` from `secteur` where `secteur`.`active` <> 0 */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3248,7 +3200,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_admin` AS select sum(`stat_vente_agent`.`nbr_ventes`) AS `nbr_ventes`,sum(`stat_vente_agent`.`ca`) AS `ca` from `stat_vente_agent` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3266,7 +3218,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_agent` AS select `stat_vente_secu_agent`.`agent_id` AS `agent_id`,`stat_vente_secu_agent`.`secteur_id` AS `secteur_id`,`stat_vente_secu_agent`.`nbr_ventes` AS `nbr_ventes`,`stat_vente_secu_agent`.`ca` AS `ca` from `stat_vente_secu_agent` union all select `stat_vente_ecommerce_agent`.`agent_id` AS `agent_id`,`stat_vente_ecommerce_agent`.`secteur_id` AS `secteur_id`,`stat_vente_ecommerce_agent`.`nbr_ventes` AS `nbr_ventes`,`stat_vente_ecommerce_agent`.`ca` AS `ca` from `stat_vente_ecommerce_agent` union all select `stat_vente_dd_agent`.`agent_id` AS `agent_id`,`stat_vente_dd_agent`.`secteur_id` AS `secteur_id`,`stat_vente_dd_agent`.`nbr_ventes` AS `nbr_ventes`,`stat_vente_dd_agent`.`ca` AS `ca` from `stat_vente_dd_agent` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3284,7 +3236,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_dd_agent` AS select `demande_devis_valide`.`agent_id` AS `agent_id`,`demande_devis_valide`.`secteur_id` AS `secteur_id`,count(`demande_devis_valide`.`id`) AS `nbr_ventes`,sum(`demande_devis_valide`.`price`) AS `ca` from `demande_devis_valide` group by `demande_devis_valide`.`agent_id`,`demande_devis_valide`.`secteur_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3302,7 +3254,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_dd_tout_agent` AS select `ase`.`id` AS `id`,`ase`.`agent_id` AS `agent_id`,`ase`.`secteur_id` AS `secteur_id`,coalesce(`sv`.`nbr_ventes`,0) AS `nbr_ventes`,coalesce(`sv`.`ca`,0) AS `ca`,`ase`.`type_secteur_id` AS `type_secteur_id` from ((select `agent_secteur_valide`.`id` AS `id`,`agent_secteur_valide`.`agent_id` AS `agent_id`,`agent_secteur_valide`.`secteur_id` AS `secteur_id`,`agent_secteur_valide`.`date_validation` AS `date_validation`,`agent_secteur_valide`.`statut` AS `statut`,`agent_secteur_valide`.`type_secteur_id` AS `type_secteur_id` from `pixelfocedev_bdd`.`agent_secteur_valide` where `agent_secteur_valide`.`type_secteur_id` = 2) `ase` left join `pixelfocedev_bdd`.`stat_vente_dd_agent` `sv` on((`ase`.`agent_id`,`ase`.`secteur_id`) = (`sv`.`agent_id`,`sv`.`secteur_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3320,7 +3272,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_ecommerce_agent` AS select `order_valide`.`agent_id` AS `agent_id`,`order_valide`.`secteur_id` AS `secteur_id`,count(`order_valide`.`id`) AS `nbr_ventes`,sum(`order_valide`.`amount`) AS `ca` from `order_valide` group by `order_valide`.`agent_id`,`order_valide`.`secteur_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3338,7 +3290,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_ecommerce_tout_agent` AS select `ase`.`id` AS `id`,`ase`.`agent_id` AS `agent_id`,`ase`.`secteur_id` AS `secteur_id`,coalesce(`sv`.`nbr_ventes`,0) AS `nbr_ventes`,coalesce(`sv`.`ca`,0) AS `ca`,`ase`.`type_secteur_id` AS `type_secteur_id` from ((select `agent_secteur_valide`.`id` AS `id`,`agent_secteur_valide`.`agent_id` AS `agent_id`,`agent_secteur_valide`.`secteur_id` AS `secteur_id`,`agent_secteur_valide`.`date_validation` AS `date_validation`,`agent_secteur_valide`.`statut` AS `statut`,`agent_secteur_valide`.`type_secteur_id` AS `type_secteur_id` from `pixelfocedev_bdd`.`agent_secteur_valide` where `agent_secteur_valide`.`type_secteur_id` = 1) `ase` left join `pixelfocedev_bdd`.`stat_vente_ecommerce_agent` `sv` on((`ase`.`agent_id`,`ase`.`secteur_id`) = (`sv`.`agent_id`,`sv`.`secteur_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3356,7 +3308,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_secteur` AS select `s`.`id` AS `secteur_id`,coalesce(`t`.`nbr_ventes`,0) AS `nbr_ventes`,coalesce(`t`.`ca`,0) AS `ca` from (`pixelfocedev_bdd`.`secteur_active` `s` left join (select `stat_vente_agent`.`secteur_id` AS `secteur_id`,sum(`stat_vente_agent`.`nbr_ventes`) AS `nbr_ventes`,sum(`stat_vente_agent`.`ca`) AS `ca` from `pixelfocedev_bdd`.`stat_vente_agent` group by `stat_vente_agent`.`secteur_id`) `t` on(`s`.`id` = `t`.`secteur_id`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3374,7 +3326,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_secu_agent` AS select `order_secu_valide`.`agent_id` AS `agent_id`,`order_secu_valide`.`secteur_id` AS `secteur_id`,count(`order_secu_valide`.`id`) AS `nbr_ventes`,sum(`order_secu_valide`.`montant_ttc`) AS `ca` from `order_secu_valide` group by `order_secu_valide`.`agent_id`,`order_secu_valide`.`secteur_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3392,7 +3344,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_secu_tout_agent` AS select `ase`.`id` AS `id`,`ase`.`agent_id` AS `agent_id`,`ase`.`secteur_id` AS `secteur_id`,coalesce(`sv`.`nbr_ventes`,0) AS `nbr_ventes`,coalesce(`sv`.`ca`,0) AS `ca`,`ase`.`type_secteur_id` AS `type_secteur_id` from ((select `agent_secteur_valide`.`id` AS `id`,`agent_secteur_valide`.`agent_id` AS `agent_id`,`agent_secteur_valide`.`secteur_id` AS `secteur_id`,`agent_secteur_valide`.`date_validation` AS `date_validation`,`agent_secteur_valide`.`statut` AS `statut`,`agent_secteur_valide`.`type_secteur_id` AS `type_secteur_id` from `pixelfocedev_bdd`.`agent_secteur_valide` where `agent_secteur_valide`.`type_secteur_id` = 3) `ase` left join `pixelfocedev_bdd`.`stat_vente_secu_agent` `sv` on((`ase`.`agent_id`,`ase`.`secteur_id`) = (`sv`.`agent_id`,`sv`.`secteur_id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3410,7 +3362,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = cp850 */;
 /*!50001 SET collation_connection      = cp850_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013  SQL SECURITY DEFINER */
+/*!50013 DEFINER=`278144`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `stat_vente_tout_agent` AS select `stat_vente_secu_tout_agent`.`id` AS `id`,`stat_vente_secu_tout_agent`.`agent_id` AS `agent_id`,`stat_vente_secu_tout_agent`.`secteur_id` AS `secteur_id`,`stat_vente_secu_tout_agent`.`nbr_ventes` AS `nbr_ventes`,`stat_vente_secu_tout_agent`.`ca` AS `ca`,`stat_vente_secu_tout_agent`.`type_secteur_id` AS `type_secteur_id` from `pixelfocedev_bdd`.`stat_vente_secu_tout_agent` union all select `stat_vente_ecommerce_tout_agent`.`id` AS `id`,`stat_vente_ecommerce_tout_agent`.`agent_id` AS `agent_id`,`stat_vente_ecommerce_tout_agent`.`secteur_id` AS `secteur_id`,`stat_vente_ecommerce_tout_agent`.`nbr_ventes` AS `nbr_ventes`,`stat_vente_ecommerce_tout_agent`.`ca` AS `ca`,`stat_vente_ecommerce_tout_agent`.`type_secteur_id` AS `type_secteur_id` from `pixelfocedev_bdd`.`stat_vente_ecommerce_tout_agent` union all select `stat_vente_dd_tout_agent`.`id` AS `id`,`stat_vente_dd_tout_agent`.`agent_id` AS `agent_id`,`stat_vente_dd_tout_agent`.`secteur_id` AS `secteur_id`,`stat_vente_dd_tout_agent`.`nbr_ventes` AS `nbr_ventes`,`stat_vente_dd_tout_agent`.`ca` AS `ca`,`stat_vente_dd_tout_agent`.`type_secteur_id` AS `type_secteur_id` from `pixelfocedev_bdd`.`stat_vente_dd_tout_agent` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -3425,4 +3377,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-09-22 13:44:43
+-- Dump completed on 2022-09-22 14:34:53
