@@ -25,7 +25,7 @@ class MeetingService
     private $entityManager;
     private $meetingStateRepository;
     private $meetingRepository;
-    private $calendarEventLabelRepository;   
+    private $calendarEventLabelRepository;
 
     public function __construct(EntityManagerInterface $entityManager, MeetingRepository $meetingRepository ,MeetingStateRepository $meetingStateRepository , CalendarEventLabelRepository $calendarEventLabelRepository)
     {
@@ -43,14 +43,15 @@ class MeetingService
         $this->entityManager->persist($meeting);
         $this->entityManager->flush();
 
-        
-        
+
+
     }
     public function saveMeetingEvent(Meeting $meeting, User $user, $meetingCalendarEventLabel = null){
         if($meetingCalendarEventLabel == null) $meetingCalendarEventLabel = $this->calendarEventLabelRepository->findOneBy(["value"=>"meeting"]);
         if($meetingCalendarEventLabel == null) throw new \Exception('Calendar event "meeting" is missing in the database.');
 
-        $event = $meeting->toCalendarEvent();
+        $is_coach = in_array(User::ROLE_COACH, $user->getRoles());
+        $event = $meeting->toCalendarEvent($is_coach);
         $event->setCalendarEventLabel($meetingCalendarEventLabel);
         $event->setUser($user);
         $this->entityManager->persist($event);
