@@ -110,14 +110,14 @@
                                 {% endfor %}
 
                             </td>
-                            <td >
+                            <td class="d-flex justify-content-center">
                                 <a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="btn btn-secondary">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="{{ path('agent_contact_info_edit', {'id': information.id}) }}" class="btn btn-success">
+                                <a href="{{ path('agent_contact_info_edit', {'id': information.id}) }}" class="btn btn-success ms-1">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form method="post" action="{{path('agent_contact_info_delete', {id: contact.id})}}" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer ce contact ?')">
+                                <form method="post" action="{{path('agent_contact_info_delete', {id: contact.id})}}" class="ms-1" style="display: inline-block;" onsubmit="return confirm('Êtes vous vraiment sûr de supprimer ce contact ?')">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
                                     <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
@@ -130,12 +130,18 @@
 		</div>
 
         <div class="row my-2">
-            <div class="d-flex flex-wrap align-items-center">
-                <a href="{{path('agent_contact_export_excel')}}" class="btn btn-success btn-sm mx-2"><i class="fa fa-file-text"></i>&nbsp;Exporter excel</a>
-                <a href="{{path('agent_contact_export_pdf')}}" class="btn btn-danger btn-sm mx-2"><i class="fa fa-file-text"></i>&nbsp;Exporter pdf</a>
-                <a href="{{path('agent_contact_import_export_mobile')}}" class="btn btn-secondary btn-sm mx-2"><i class="fa-solid fa-mobile-screen-button"></i>&nbsp;Importer/Exportation mobile</a>
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 ">
+                    <div class="row">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <a href="{{path('agent_contact_export_excel')}}" class=" mt-2 btn btn-success btn-sm mx-2"><i class="fa fa-file-text"></i> <span class="ms-1">Exporter excel</span></a>
+                            <a href="{{path('agent_contact_export_pdf')}}" class=" mt-2 btn btn-danger btn-sm mx-2"><i class="fa fa-file-text"></i> <span class="ms-1"> Exporter pdf</span></a>
+                            <a href="{{path('agent_contact_import_export_mobile')}}" class="mt-2 btn btn-secondary btn-sm mx-2"><i class="fa-solid fa-mobile-screen-button"></i><span class="imp-exp-text-js ms-1">Importer/Exportation mobile</sapn></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col"></div>
             </div>
-            
 		</div>
 
 		<div class="pagination d-flex justify-content-center">
@@ -145,3 +151,18 @@
 
     
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+         $(window).resize(function() {
+            if ($(window).width() < 530) {
+                $('.imp-exp-text-js').text('Imp/Exp mobile');
+            }else {
+                $('.imp-exp-text-js').text('Import/Export mobile');
+            }
+        });
+    </script>
+{% endblock %}
+

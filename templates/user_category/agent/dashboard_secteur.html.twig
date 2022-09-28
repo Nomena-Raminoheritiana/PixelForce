@@ -244,14 +244,13 @@
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
-                                        <tr >
+                                        <tr class="text-center">
                                             <th scope="col" class="p-3"></th>
                                             <th scope="col" class="p-3">Prénoms</th>
                                             <th scope="col" class="p-3">Email</th>
                                             <th scope="col" class="p-3">Téléphone</th>
                                             <th scope="col" class="p-3">Adresse</th>
                                             <th scope="col" class="p-3">Tags</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -262,13 +261,13 @@
                                         {% else %}
                                             {% for contact in contacts %}
                                             {% set information = contact.information %}
-                                                <tr>
+                                                <tr class="text-center">
                                                     <td class="text-center"><i class="fa-solid fa-address-card"></i></td>
                                                     <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black"> {{ information.lastname }}</a></td>
                                                     <td><a href="{{ path('agent_contact_view', {'id': contact.id}) }}" class="text-black" > {{ information.email }}</a></td>
                                                     <td>{{ information.phone }}</td>
                                                     <td>{{ information.address }}</td>
-                                                    <td>
+                                                    <td class="justify-content-center d-flex">
                                                         {% set tags = information.contact.tags.toArray %}
                                                         {% for tag in tags %}
                                                             <div class="caret caret-shadow caret-hoverable rounded-3 d-inline-block bg-{{ tag.couleur }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="{{ tag.libelle }}"></div>
@@ -329,7 +328,7 @@
                                 </div>
                             </div> #}
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-1">
                             {% for client in topClients %}
                             <div class="transaction-item">
                                 <div class="d-flex">
