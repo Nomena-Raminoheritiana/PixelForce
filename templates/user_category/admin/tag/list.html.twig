@@ -70,24 +70,24 @@
         <div class="table-responsive">
             <table class="table table-striped table-hover  sortable">
                 <thead>
-                <tr >
-                    <th scope="col">#</th>
-                    <th scope="col">Libellé</th>
-                    <th scope="col">Déscription</th>
-                    <th scope="col">Couleur</th>
-                    <th scope="col" class="table-th-notSortable">ACTION</th>
+                <tr style="white-space:nowrap">
+                    <th scope="col" class="text-center">#</th>
+                    <th scope="col" class="text-center">Libellé</th>
+                    <th scope="col" class="text-center">Déscription</th>
+                    <th scope="col" class="text-center">Couleur</th>
+                    <th scope="col" class="text-center table-th-notSortable">ACTION</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for tag in tags %}
-                    <tr>
+                    <tr class="text-center">
                         <td>{{ tag.id }}</td>
                         <td>{{ tag.libelle }}</td>
                         <td>{{ tag.description }}</td>
                         <td>
                             <div class="caret rounded-3 w-75 bg-{{ tag.couleur }}"></div>
                         </td>
-                        <td >
+                        <td style="white-space:nowrap">
                             <a href="{{ path('admin_tag_edit', {'id': tag.id}) }}" class="btn btn-success">
                                 <i class="fas fa-edit"></i>
                             </a>

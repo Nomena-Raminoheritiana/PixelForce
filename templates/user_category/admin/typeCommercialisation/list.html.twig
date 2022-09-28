@@ -35,7 +35,7 @@
     <div class="table-responsive">
         <table class="table table-striped table-hover text-center sortable">
             <thead>
-            <tr>
+            <tr style="white-space:nowrap">
                 <th scope="col" class="text-center">#</th>
                 <th scope="col" class="text-center">Nom</th>
                 <th scope="col" class="text-center table-th-notSortable">ACTION</th>
@@ -46,7 +46,7 @@
                 <tr>
                     <td>{{ typeSecteur.id }}</td>
                     <td>{{ typeSecteur.nom }}</td>
-                    <td>
+                    <td style="white-space:nowrap">
                         <a href="{{ path('admin_typeCommercialisation_edit', {'id': typeSecteur.id}) }}" class="btn btn-success">
                             <i class="fas fa-edit"></i>
                         </a>

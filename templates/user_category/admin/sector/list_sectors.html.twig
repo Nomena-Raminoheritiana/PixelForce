@@ -51,12 +51,12 @@
         <div class="table-responsive">
 			<table class="table table-striped table-hover text-center sortable">
 				<thead>
-					<tr>
-						<th scope="col">Nom</th>
-						<th scope="col">Description</th>
-						<th scope="col">Type</th>
-                        <th scope="col">état secteur</th>
-						<th scope="col" class="table-th-notSortable">ACTION</th>
+					<tr style="white-space:nowrap">
+						<th scope="col" class="text-center">Nom</th>
+						<th scope="col" class="text-center">Description</th>
+						<th scope="col" class="text-center">Type</th>
+                        <th scope="col" class="text-center">état secteur</th>
+						<th scope="col" class="text-center table-th-notSortable">ACTION</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -76,7 +76,7 @@
                             <td>
                                 <div class="m-auto {{ sector.active == 1 ? 'bg-success' : (sector.active == -1 ? 'bg-danger' : 'bg-primary') }} rounded-circle caret"><span class="d-none">{{  sector.active }}</span></div>
                             </td>
-                            <td >
+                            <td style="white-space:nowrap">
                                 <a href="{{ path('admin_sector_edit', {'id': sector.id}) }}" class="btn btn-success">
                                     <i class="fas fa-edit"></i>
                                 </a>

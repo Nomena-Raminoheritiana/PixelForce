@@ -59,12 +59,12 @@
         <div class="table-responsive ">
 			<table class="table table-striped table-hover sortable text-center">
 				<thead>
-					<tr>
-						<th scope="col">Nom</th>
-						<th scope="col">Description</th>
-						<th scope="col">Ordre</th>
-						<th scope="col">Statut</th>
-						<th scope="col" class="table-th-notSortable">ACTION</th>
+					<tr style="white-space:nowrap">
+						<th scope="col" class="text-center">Nom</th>
+						<th scope="col" class="text-center">Description</th>
+						<th scope="col" class="text-center">Ordre</th>
+						<th scope="col" class="text-center">Statut</th>
+						<th scope="col" class="text-center table-th-notSortable">ACTION</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -74,7 +74,7 @@
                             <td>{{ categorie.description|slice(0, 50)|raw }}...</td>
                             <td>{{ categorie.ordreCatFormation }}</td>
                             <td>{{ categorie.statutType }}</td>
-                            <td >
+                            <td style="white-space:nowrap">
                                 {% if categorie.statut == 1 %}
                                     <a href="{{ path('admin_formation_categorie_edit', {'id': categorie.id}) }}" class="btn btn-success">
                                         <i class="fas fa-edit"></i>
