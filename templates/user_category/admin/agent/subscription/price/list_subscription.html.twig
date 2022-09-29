@@ -6,24 +6,39 @@
 
 {% block body %}
 
-    {% if planAgentAccount|length <= 0 %}
+    {% if allPlanAgentAccount|length <= 0 %}
         <h2 class="text-center mt-3"><a href="{{ path('admin_agent_subscription_price_create_page') }}"><i class="fa-solid fa-plus"></i> Créer un prix (Abonnement)</a></h2>
     {% else %}
         <h2 class="text-center mt-3"><a href="{{ path('admin_agent_subscription_price_create_page') }}"><i class="fa-solid fa-plus"></i> Créer un prix (Abonnement)</a></h2>
 
         <div class="d-flex justify-content-center mt-5">
-            {% for plan in planAgentAccount %}
+            {% for plan in newAllPlanAgentAccount_notInChange %}
                 <div class="card card text-center me-5" style="width: 18rem;">
                     <div class="p-3">
                         <img src="{{ asset('assets/img/price.png') }}" class="card-img-top" alt="...">
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{plan.amount}} €</h5>
-                        <p class="card-text">{{plan.description}}</p>
-                        {# {{plan.stripePriceNma}}
-                        {{plan.stripePriceNma}} #}
+                        <div class="view_detail mb-4">
+                            <a href="{{ path('admin_agent_subscription_price_view', {id: plan.id}) }}" class="btn btn-primary"><i class="fa-solid fa-eye"></i> Voir détail</a>
+                        </div>
 
-                        {# <button type="submit" class="btn btn-primary mt-2"> Créer </button> #}
+                        {% if plan.statusChange == STATUS_CHANGE['CHANGING'] %}
+                            <p class="alert alert-warning">
+                                Cet abonnement a été mis à niveau vers un autre abonnement
+                            </p>
+                        {% endif %}
+                       
+                        <h3 class="fw-bolder" >{{plan.amount}} €</h3>
+                        <p class="card-text">{{plan.description}}</p>
+
+                         {% if plan.priceMetadata and plan.priceMetadata['old_price_id'] is defined %}
+                            <div class="alert alert-secondary text-center">
+                                {% set oldPlan = repoPlan.findOneBy({'stripePriceId' : plan.priceMetadata['old_price_id']}) %}
+
+                                <p><a href="{{ path('admin_agent_subscription_price_view', {id: oldPlan.id}) }}"> Ancien prix : {{ plan.priceMetadata['old_price_amount'] }} </a></p>
+                                <p>Cet ancien tarification s'applique encore pour les abonnés qui n'a pas encore terminé sa période</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

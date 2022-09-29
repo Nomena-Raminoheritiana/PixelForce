@@ -18,10 +18,19 @@
 {% block body %}
 	<div class="p-4">
 		<h2 class="text-center fw-bolder mb-2">Importation/Exportation contacts depuis smartphone</h2>
-		<h5 class="mt-5">1- Veuillez patienter, que la page a bien été chargée</h5>
-		<h5>2- Cliquer sur le bouton "Récupérer", qui va appraître après le chargement</h5>
-		<h5>3- Connecter vous à votre compte google</h5>
-		<h5>3- Cocher les contacts à importer/exporter</h5>
+		<div class="alert alert-primary mt-5">
+			<div class="row">
+				<div class="col-2 col-md-1 d-flex align-items-center justify-content-center">
+					<i class="fa-solid fa-circle-info fa-2x"></i>
+				</div>
+				<div class="col-10 col-md-11">
+					<h5>1- Veuillez patienter, que la page a bien été chargée</h5>
+					<h5>2- Cliquer sur le bouton "Récupérer", qui va appraître après le chargement</h5>
+					<h5>3- Connecter vous à votre compte google</h5>
+					<h5>4- Cocher les contacts à importer/exporter</h5>
+				</div>
+			</div>
+		</div>
 
 		<!--Add buttons to initiate auth sequence and sign out-->
 		{# <a href="{{ path('agent_contact_dump')}}" class="btn btn-primary">Importer PHP</a> #}

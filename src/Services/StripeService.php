@@ -34,6 +34,10 @@ class StripeService
         'ACTIVE' =>  'active'
     ];
 
+    const STATUS_CHANGE = [
+        'CHANGING' => 'En Changement'
+    ];
+
     const INTERVAL_UNIT_TO_FRENCH = [
         self::INTERVAL_UNIT_DAY => 'Jour',
         self::INTERVAL_UNIT_WEEK => 'Semaine',
@@ -70,6 +74,16 @@ class StripeService
         $this->session = $session;
         $this->repoUser = $repoUser;
         $this->em = $em;
+    }
+
+    public function getIntervalUnitToEnglish($FrenchIntervalUnit)
+    {
+        $interval_unit_to_english = [];
+        foreach (self::INTERVAL_UNIT_TO_FRENCH as $key => $value) {
+            $interval_unit_to_english[$value] = $key;
+        }
+
+        return $interval_unit_to_english[$FrenchIntervalUnit];
     }
 
     public function createCharge($token, $amount, $params): ?string
@@ -236,6 +250,52 @@ class StripeService
     
     }
 
+    public function createPrice($amount, $interval_unit, $priceName, string $productId, array $metadata = [])
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $price = $stripe->prices->create([
+            'unit_amount' => $amount * 100,
+            'currency' => 'eur',
+            'recurring' => [
+                'interval' => $interval_unit
+            ],
+            'nickname' => $priceName,
+            'product' => $productId
+        ]);
+
+        
+        if (count($metadata) > 0) {
+            $this->updatePrice($price['id'], $metadata);
+        }
+
+        return $price;
+    }
+
+    public function getPrice(string $priceId)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        $price = $stripe->prices->retrieve(
+            $priceId,
+            []
+        );
+
+        return $price;
+    }
+
+    public function updatePrice($priceId, object|array $metadata)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        return $stripe->prices->update(
+            $priceId,
+            [
+                'metadata' => $metadata
+            ]
+        );
+    }
+
 
     /**
      * Permet de créer à la fois un Product et un Price (Qui conduit à un plan d'abonnement)
@@ -334,5 +394,70 @@ class StripeService
 
     public function getSecretKey(){
         return $this->secretKey;
+    }
+
+
+    /**
+     * Explication Prorata : https://stripe.com/docs/billing/subscriptions/prorations
+     */
+    public function updateSubscriptionByPrice($subscriptionId, $newPriceId, $oldPriceId)
+    {
+        \Stripe\Stripe::setApiKey($this->secretKey);
+
+        $subscription = \Stripe\Subscription::retrieve($subscriptionId);
+        \Stripe\Subscription::update(
+            $subscriptionId, 
+            [
+                'payment_behavior' => 'pending_if_incomplete', // Attendre que la période de l'ancien abonnement se termine pour appliquer le nouveau changement
+                'proration_behavior' => 'none', //désactiver le calcule du prorata
+                // [
+                //     'metadata' => [
+                //         'description' => 'Migration vers un autre abonnement',
+                //         'old_price_id' => $oldPriceId,
+                //         'new_price_id' => $newPriceId
+                //     ]
+                // ],
+                'items' => [
+                    [
+                        'id' => $subscription->items->data[0]->id,
+                        'price' => $newPriceId,
+                    ],
+                ]
+            ]
+        );
+    }
+
+    /**
+     * Permet de récupérer une facture à venir pour prévisualiser les modifications apportées à un abonnement
+     *
+     * @param string $subscriptionId
+     * @param string $customerId
+     * @param string $newPriceId
+     */
+    public function getProrationInfo(string $subscriptionId, string $customerId, string $newPriceId)
+    {
+        \Stripe\Stripe::setApiKey($this->secretKey);
+
+        // Set proration date to this moment:
+        // Explication Prorata : https://stripe.com/docs/billing/subscriptions/prorations
+        $proration_date = time();
+
+        $subscription = \Stripe\Subscription::retrieve($subscriptionId);
+
+        // See what the next invoice would look like with a price switch
+        // and proration set:
+        $items = [
+            [
+                'id' => $subscription->items->data[0]->id,
+                'price' => $newPriceId, # Switch to new price
+            ],
+        ];
+
+        $invoice = \Stripe\Invoice::upcoming([
+            'customer' => $customerId,
+            'subscription' => $subscriptionId,
+            'subscription_items' => $items,
+            'subscription_proration_date' => $proration_date,
+        ]);
     }
 }

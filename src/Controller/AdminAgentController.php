@@ -18,6 +18,7 @@ use App\Form\MultipleSecteurType;
 use App\Form\PlanAgentAccountType;
 use App\Form\UserType;
 use App\Manager\EntityManager;
+use App\Manager\StripeManager;
 use App\Manager\UserManager;
 use App\Repository\CoachAgentRepository;
 use App\Repository\SecteurRepository;
@@ -25,6 +26,7 @@ use App\Repository\UserRepository;
 use App\Repository\AgentSecteurRepository;
 use App\Repository\CoachSecteurRepository;
 use App\Repository\PlanAgentAccountRepository;
+use App\Repository\SubscriptionPlanAgentAccountRepository;
 use App\Services\AgentSecteurService;
 use App\Services\StripeService;
 use App\Services\User\AgentService;
@@ -53,7 +55,9 @@ class AdminAgentController extends AbstractController
     protected $stripeService;
     protected $agentService;
     protected $repoPlanAgentAccount;
-
+    protected $stripeManager;
+    protected $repoSubscriptionPlanAgentAccount;
+    
     public function __construct(UserRepository $repoUser,
                                 EntityManager $entityManager,
                                 UserManager $userManager,
@@ -64,7 +68,9 @@ class AdminAgentController extends AbstractController
                                 CoachSecteurRepository $repoCoachSecteur,
                                 StripeService $stripeService,
                                 AgentService $agentService,
-                                PlanAgentAccountRepository $repoPlanAgentAccount
+                                PlanAgentAccountRepository $repoPlanAgentAccount,
+                                StripeManager $stripeManager,
+                                SubscriptionPlanAgentAccountRepository $repoSubscriptionPlanAgentAccount
     )
     {
         $this->repoUser = $repoUser;
@@ -78,6 +84,8 @@ class AdminAgentController extends AbstractController
         $this->stripeService = $stripeService;
         $this->agentService = $agentService;
         $this->repoPlanAgentAccount = $repoPlanAgentAccount;
+        $this->stripeManager = $stripeManager;
+        $this->repoSubscriptionPlanAgentAccount = $repoSubscriptionPlanAgentAccount;
     }
 
     /**
@@ -362,10 +370,53 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_subscription_price_list(): Response
     {
-        $planAgentAccount = $this->repoPlanAgentAccount->findBy(['status' => 'active']);
+        $allPlanAgentAccount = $this->repoPlanAgentAccount->findBy(['status' => 'active'] );
+        $newAllPlanAgentAccount_notInChange = [];
+        /** @var PlanAgentAccount $plan */
+        foreach ($allPlanAgentAccount as $plan) {
+            if ($plan->getStatusChange() !== StripeService::STATUS_CHANGE['CHANGING']) {
+                $newAllPlanAgentAccount_notInChange[] = $plan;
+            }
+        }
         
         return $this->render('user_category/admin/agent/subscription/price/list_subscription.html.twig', [
-            'planAgentAccount' => $planAgentAccount
+            'allPlanAgentAccount' => $allPlanAgentAccount,
+            'newAllPlanAgentAccount_notInChange' => $newAllPlanAgentAccount_notInChange,
+            'STATUS_CHANGE' => StripeService::STATUS_CHANGE,
+            'repoPlan' => $this->repoPlanAgentAccount
+        ]);
+    }
+
+    /**
+     * @Route("/admin/agent/subscription/{id}/price/view", name="admin_agent_subscription_price_view")
+     */
+    public function admin_agent_subscription_price_view(PlanAgentAccount $planAgentAccount, Request $request)
+    {   
+        $allSubscriptionsInOldPrice = $this->repoSubscriptionPlanAgentAccount->findBy(['stripePriceId' => $planAgentAccount->getStripePriceId()]);
+
+        $formStripe = $this->createForm(PlanAgentAccountType::class)
+            ->remove('priceName')
+            ->remove('planDescription')
+        ;
+        $formStripe->handleRequest($request);
+        if ($formStripe->isSubmitted() && $formStripe->isValid()) {
+            $amount = $_POST['plan_agent_account']['amount'];
+            $interval_unit = $this->stripeService->getIntervalUnitToEnglish($planAgentAccount->getPriceIntervalUnit());
+            // $planDescription = $_POST['plan_agent_account']['planDescription'];
+            // $this->agentService->create_PlanAgentAccount($amount, StripeService::INTERVAL_UNIT_MONTH, $priceName, $planDescription);
+            
+            $newPlanAgentAccount = $this->stripeManager->persistMigrateAbonnement($amount, $interval_unit, $planAgentAccount->getStripePriceName(), $planAgentAccount->getDescription(), $planAgentAccount->getStipeProductId(), $planAgentAccount->getStripePriceId(), $planAgentAccount);
+            $this->addFlash('success', "Modification réussie. </br> L'abonnement ". $planAgentAccount->getAmount(). " € a été mis à niveau de " . $amount ." €");
+            return $this->redirectToRoute('admin_agent_subscription_price_view', ['id' => $newPlanAgentAccount->getId()]);    
+        }
+
+        return $this->render('user_category/admin/agent/subscription/price/view_price.html.twig', [
+            'planAgentAccount' => $planAgentAccount,
+            'formStripe' => $formStripe->createView(),
+            'allSubscriptionsInOldPrice' => $allSubscriptionsInOldPrice,
+            'repoUser' => $this->repoUser,
+            'STATUS_CHANGE' => StripeService::STATUS_CHANGE,
+            'repoPlan' => $this->repoPlanAgentAccount
         ]);
     }
 
