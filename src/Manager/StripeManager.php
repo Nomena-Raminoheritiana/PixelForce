@@ -27,6 +27,24 @@ class StripeManager {
  
 
     /**
+     * Permet de repositionner vers le nouveau prix d'abonnement si l'abonnement actuel est déjà abondonné 
+     * @return PlanAgentAccount 
+     */
+    public function getNewPrice($planAgentAccounts)
+    {
+        $newPlanAgentAccount = null;
+
+        /** @var PlanAgentAccount $plan */
+        foreach ($planAgentAccounts as $plan) {
+            if ($plan->getStatusChange() !== StripeService::STATUS_CHANGE['CHANGING']) {
+                $newPlanAgentAccount = $plan;
+            }
+        }
+     
+        return $newPlanAgentAccount;
+    }
+
+    /**
      * Permet de récupérer les datas obtenus après le paiement
      */
     public function persistPayment(User $user, $stripeParameter)
@@ -167,6 +185,7 @@ class StripeManager {
         $planAgentAccount->setPriceIntervalUnit(StripeService::INTERVAL_UNIT_TO_FRENCH[$interval_unit]);
         $planAgentAccount->setStatus(StripeService::PLAN_STATUS['ACTIVE']);
         $planAgentAccount->setPriceMetadata($newPriceMetadata);
+        $planAgentAccount->setOldStripePriceId($oldPrice['id']);
 
         $this->em->persist($planAgentAccount);
         $this->em->flush();
@@ -182,7 +201,14 @@ class StripeManager {
         if (count($allSubscriptionsInOldPrice) > 0) {
             /** @var SubscriptionPlanAgentAccount $subscription  */
             foreach ($allSubscriptionsInOldPrice as $subscription) {
-                $this->stripeService->updateSubscriptionByPrice($subscription->getStripeSubscriptionId(), $newPrice['id'], $oldPriceId);
+                $this->stripeService->updateSubscriptionByPrice($subscription->getStripeSubscriptionId(), $newPrice['id'], $oldPriceId);          
+                $subscription->setStripePriceId($newPrice['id']);
+                $subscription->setAmount(intval($newPrice['unit_amount']) / 100);
+                $subscription->setTypeChange($type_change);
+                $subscription->setOldPriceAmount($oldPriceAmount);
+                $subscription->setOldStripePriceId($oldPriceId);
+                $this->em->persist($subscription);
+                $this->em->flush();
             }
         }
 

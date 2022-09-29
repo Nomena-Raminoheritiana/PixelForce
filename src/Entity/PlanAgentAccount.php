@@ -69,6 +69,11 @@ class PlanAgentAccount
      */
     private $priceMetadata = [];
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $oldStripePriceId;
+
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
@@ -213,6 +218,18 @@ class PlanAgentAccount
     public function setPriceMetadata(?array $priceMetadata): self
     {
         $this->priceMetadata = $priceMetadata;
+
+        return $this;
+    }
+
+    public function getOldStripePriceId(): ?string
+    {
+        return $this->oldStripePriceId;
+    }
+
+    public function setOldStripePriceId(?string $oldStripePriceId): self
+    {
+        $this->oldStripePriceId = $oldStripePriceId;
 
         return $this;
     }

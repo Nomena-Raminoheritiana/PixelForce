@@ -14,14 +14,22 @@
                     <img src="{{ asset('assets/img/price.png') }}" class="card-img-top" alt="...">
                 </div>
                 <div class="card-body">
-                    {% if planAgentAccount.priceMetadata and planAgentAccount.priceMetadata['old_price_id'] is defined %}
-                            <div class="alert alert-secondary text-center">
-                                {% set oldPlan = repoPlan.findOneBy({'stripePriceId' : planAgentAccount.priceMetadata['old_price_id']}) %}
-
-                                <p><a href="{{ path('admin_agent_subscription_price_view', {id: oldPlan.id}) }}"> Ancien prix : {{ planAgentAccount.priceMetadata['old_price_amount'] }} </a></p>
-                                <p>Cet ancien tarification s'applique encore pour les abonnés qui n'a pas encore terminé sa période</p>
+                    <div class="old_price text-center mb-4">
+                        {% if planAgentAccount.oldStripePriceId %}
+                        <a href="#" id="show_old_price" class="btn btn-secondary btn-sm">Voir ancien prix</a>
+                        <div class="alert_old_price d-none">
+                                <div class="alert alert-secondary text-center">
+                                    {% set oldPlan = repoPlan.findOneBy({'stripePriceId' : planAgentAccount.oldStripePriceId}) %}
+    
+                                    <p><a href="{{ path('admin_agent_subscription_price_view', {id: oldPlan.id}) }}"> Ancien prix : {{ oldPlan.amount }} € </a></p>
+                                    <p>Cet ancien tarification s'applique encore pour les abonnés qui n'a pas encore terminé sa période</p>
+                                </div>
                             </div>
-                    {% endif %}
+                        {% endif %}
+                    
+                    </div>
+
+                    
                     {% if planAgentAccount.statusChange == STATUS_CHANGE['CHANGING'] %}
                         {% set newPlan = repoPlan.findOneBy({'stripePriceId' : planAgentAccount.priceMetadata['new_price_id']}) %}
                         
@@ -45,7 +53,7 @@
                     {% if planAgentAccount.statusChange == STATUS_CHANGE['CHANGING'] %}
                     {% else %}
                         <div class="text-center">
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-price" class="btn btn-primary my-4 me-4"><i class="fa-solid fa-pen-to-square"></i> Mettre à niveau</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-price" class="btn btn-primary my-4 me-4 btn-lg"><i class="fa-solid fa-pen-to-square"></i> Mettre à niveau</a>
                         </div>
                     {% endif %}
                 </div>
@@ -122,3 +130,18 @@
 {% endblock %}
 
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#show_old_price').on('click', function(){
+            var _block_old_price = $('.alert_old_price');
+            if (_block_old_price.hasClass('d-none')) {
+                _block_old_price.removeClass('d-none')
+                _block_old_price.addClass('d-block')
+            } else if(_block_old_price.hasClass('d-block')) {
+                _block_old_price.removeClass('d-block')
+                _block_old_price.addClass('d-none')
+            }
+        })
+    </script>
+{% endblock %}
