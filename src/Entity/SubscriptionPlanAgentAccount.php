@@ -92,6 +92,21 @@ class SubscriptionPlanAgentAccount
      */
     private $stripeData = [];
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $oldPriceAmount;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $typeChange;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $oldStripePriceId;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
@@ -278,6 +293,42 @@ class SubscriptionPlanAgentAccount
     public function setStripeData(array $stripeData): self
     {
         $this->stripeData = $stripeData;
+
+        return $this;
+    }
+
+    public function getOldPriceAmount(): ?float
+    {
+        return $this->oldPriceAmount;
+    }
+
+    public function setOldPriceAmount(?float $oldPriceAmount): self
+    {
+        $this->oldPriceAmount = $oldPriceAmount;
+
+        return $this;
+    }
+
+    public function getTypeChange(): ?string
+    {
+        return $this->typeChange;
+    }
+
+    public function setTypeChange(?string $typeChange): self
+    {
+        $this->typeChange = $typeChange;
+
+        return $this;
+    }
+
+    public function getOldStripePriceId(): ?string
+    {
+        return $this->oldStripePriceId;
+    }
+
+    public function setOldStripePriceId(?string $oldStripePriceId): self
+    {
+        $this->oldStripePriceId = $oldStripePriceId;
 
         return $this;
     }
