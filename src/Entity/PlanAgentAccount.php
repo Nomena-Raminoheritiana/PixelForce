@@ -59,6 +59,16 @@ class PlanAgentAccount
      */
     private $subscriptions;
 
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $statusChange;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $priceMetadata = [];
+
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
@@ -179,6 +189,30 @@ class PlanAgentAccount
                 $subscription->setPlanAgentAccount(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatusChange(): ?string
+    {
+        return $this->statusChange;
+    }
+
+    public function setStatusChange(?string $statusChange): self
+    {
+        $this->statusChange = $statusChange;
+
+        return $this;
+    }
+
+    public function getPriceMetadata(): ?array
+    {
+        return $this->priceMetadata;
+    }
+
+    public function setPriceMetadata(?array $priceMetadata): self
+    {
+        $this->priceMetadata = $priceMetadata;
 
         return $this;
     }

@@ -5,6 +5,7 @@ use App\Entity\PlanAgentAccount;
 use App\Entity\SubscriptionPlanAgentAccount;
 use App\Entity\User;
 use App\Repository\PlanAgentAccountRepository;
+use App\Repository\SubscriptionPlanAgentAccountRepository;
 use App\Services\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Google\Service\Reseller\SubscriptionPlan;
@@ -13,12 +14,14 @@ class StripeManager {
     private $em;
     private $stripeService;
     private $repoPlanAgentAccount;
+    private $repoSubscriptionPlanAgentAccount;
 
-    public function __construct(EntityManagerInterface $em, StripeService $stripeService, PlanAgentAccountRepository $repoPlanAgentAccount)
+    public function __construct(EntityManagerInterface $em, StripeService $stripeService, PlanAgentAccountRepository $repoPlanAgentAccount, SubscriptionPlanAgentAccountRepository $repoSubscriptionPlanAgentAccount)
     {
         $this->em = $em;
         $this->stripeService = $stripeService;
         $this->repoPlanAgentAccount = $repoPlanAgentAccount;
+        $this->repoSubscriptionPlanAgentAccount = $repoSubscriptionPlanAgentAccount;
     }
 
  
@@ -114,5 +117,75 @@ class StripeManager {
             $this->em->persist($user);
             $this->em->flush();
         }
+    }
+
+    /**
+     * Return un Price (Stripe)
+     *
+     * @param [type] $amount
+     * @param string $interval_unit
+     * @param [type] $priceName
+     * @param string $productId
+     * @param [type] $oldPriceId
+     */
+    public function persistMigrateAbonnement($amount, string $interval_unit, $priceName, $priceDescription, string $productId, $oldPriceId, PlanAgentAccount $oldPlanAgentAccount)
+    {
+        // 1 => On determine le type de changement d'abonnement (Upgrade/Downgrade)
+        $oldPrice = $this->stripeService->getPrice($oldPriceId);
+        $oldPriceAmount = $oldPrice['unit_amount'] / 100;
+        $newPriceAmount = intval($amount);
+        $type_change = $oldPriceAmount > $newPriceAmount ? "Downgrade" : "Upgrade";
+
+        // 2 => On gère les metadatas du nouveau Price
+        $newPriceMetadata = [
+            'cause_creation' => "Modification abonnement",
+            'type_change' => $type_change,
+            'old_price_id' => $oldPriceId,
+            'old_price_amount' => $oldPriceAmount . ' €'
+        ];
+        
+        // 3 => On crée un nouveau Prix
+        $newPrice = $this->stripeService->createPrice($amount, $interval_unit, $priceName, $productId, $newPriceMetadata);
+
+        // 4 => On gère les metadatas de l'ancien Price
+        $oldPriceMetadata = [
+            'status_change' => StripeService::STATUS_CHANGE['CHANGING'],
+            'type_change' => $type_change,
+            'new_price_id' => $newPrice['id'],
+            'new_price_amount' => intval($newPrice['unit_amount']) / 100 . ' €'
+        ];
+
+        $this->stripeService->updatePrice($oldPriceId, $oldPriceMetadata);
+
+        // 5 => Persit in database
+        $planAgentAccount = new PlanAgentAccount();
+        $planAgentAccount->setStipeProductId($productId);
+        $planAgentAccount->setStripePriceId($newPrice['id']);
+        $planAgentAccount->setStripePriceName($priceName);
+        $planAgentAccount->setDescription($priceDescription);
+        $planAgentAccount->setAmount($amount);
+        $planAgentAccount->setPriceIntervalUnit(StripeService::INTERVAL_UNIT_TO_FRENCH[$interval_unit]);
+        $planAgentAccount->setStatus(StripeService::PLAN_STATUS['ACTIVE']);
+        $planAgentAccount->setPriceMetadata($newPriceMetadata);
+
+        $this->em->persist($planAgentAccount);
+        $this->em->flush();
+
+        $oldPlanAgentAccount->setStatusChange(StripeService::STATUS_CHANGE['CHANGING']);
+        $oldPlanAgentAccount->setPriceMetadata($oldPriceMetadata);
+        $this->em->persist($oldPlanAgentAccount);
+        $this->em->flush();
+
+
+        // 6 => On migre les abonnés vers le nouvel abonnement 
+        $allSubscriptionsInOldPrice = $this->repoSubscriptionPlanAgentAccount->findBy(['stripePriceId' => $oldPriceId]);
+        if (count($allSubscriptionsInOldPrice) > 0) {
+            /** @var SubscriptionPlanAgentAccount $subscription  */
+            foreach ($allSubscriptionsInOldPrice as $subscription) {
+                $this->stripeService->updateSubscriptionByPrice($subscription->getStripeSubscriptionId(), $newPrice['id'], $oldPriceId);
+            }
+        }
+
+        return $planAgentAccount;
     }
 }
