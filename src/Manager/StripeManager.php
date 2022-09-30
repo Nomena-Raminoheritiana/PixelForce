@@ -86,6 +86,7 @@ class StripeManager {
         $planAgentAccount->setAmount($planParams['amount']);
         $planAgentAccount->setPriceIntervalUnit($planParams['intervallUnit']);
         $planAgentAccount->setStatus($planParams['status']);
+        $planAgentAccount->setStatusChange(StripeService::STATUS_CHANGE['ACTIVE']);
 
         $this->em->persist($planAgentAccount);
         $this->em->flush();
@@ -185,6 +186,7 @@ class StripeManager {
         $planAgentAccount->setPriceIntervalUnit(StripeService::INTERVAL_UNIT_TO_FRENCH[$interval_unit]);
         $planAgentAccount->setStatus(StripeService::PLAN_STATUS['ACTIVE']);
         $planAgentAccount->setPriceMetadata($newPriceMetadata);
+        $planAgentAccount->setStatusChange(StripeService::STATUS_CHANGE['ACTIVE']);
         $planAgentAccount->setOldStripePriceId($oldPrice['id']);
 
         $this->em->persist($planAgentAccount);
