@@ -24,26 +24,6 @@ class StripeManager {
         $this->repoSubscriptionPlanAgentAccount = $repoSubscriptionPlanAgentAccount;
     }
 
- 
-
-    /**
-     * Permet de repositionner vers le nouveau prix d'abonnement si l'abonnement actuel est déjà abondonné 
-     * @return PlanAgentAccount 
-     */
-    public function getNewPrice($planAgentAccounts)
-    {
-        $newPlanAgentAccount = null;
-
-        /** @var PlanAgentAccount $plan */
-        foreach ($planAgentAccounts as $plan) {
-            if ($plan->getStatusChange() !== StripeService::STATUS_CHANGE['CHANGING']) {
-                $newPlanAgentAccount = $plan;
-            }
-        }
-     
-        return $newPlanAgentAccount;
-    }
-
     /**
      * Permet de récupérer les datas obtenus après le paiement
      */
@@ -86,7 +66,6 @@ class StripeManager {
         $planAgentAccount->setAmount($planParams['amount']);
         $planAgentAccount->setPriceIntervalUnit($planParams['intervallUnit']);
         $planAgentAccount->setStatus($planParams['status']);
-        $planAgentAccount->setStatusChange(StripeService::STATUS_CHANGE['ACTIVE']);
 
         $this->em->persist($planAgentAccount);
         $this->em->flush();
