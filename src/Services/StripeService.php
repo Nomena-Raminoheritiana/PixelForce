@@ -35,7 +35,8 @@ class StripeService
     ];
 
     const STATUS_CHANGE = [
-        'CHANGING' => 'En Changement'
+        'CHANGING' => 'En Changement',
+        'ACTIVE' => 'Active'
     ];
 
     const INTERVAL_UNIT_TO_FRENCH = [

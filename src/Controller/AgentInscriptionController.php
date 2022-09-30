@@ -108,8 +108,7 @@ class AgentInscriptionController extends AbstractController
             $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
             $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
             /** @var PlanAgentAccount */
-            $planAgentAccounts = $this->repoPlanAgentAccount->findBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
-            $planAgentAccount = $this->stripeManager->getNewPrice($planAgentAccounts);
+            $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType, 'statusChange' => StripeService::STATUS_CHANGE['ACTIVE']]);
 
             // Gestion exeption
             if (is_null($planAgentAccount)) {

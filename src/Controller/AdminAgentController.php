@@ -370,18 +370,10 @@ class AdminAgentController extends AbstractController
      */
     public function admin_agent_subscription_price_list(): Response
     {
-        $allPlanAgentAccount = $this->repoPlanAgentAccount->findBy(['status' => 'active'] );
-        $newAllPlanAgentAccount_notInChange = [];
-        /** @var PlanAgentAccount $plan */
-        foreach ($allPlanAgentAccount as $plan) {
-            if ($plan->getStatusChange() !== StripeService::STATUS_CHANGE['CHANGING']) {
-                $newAllPlanAgentAccount_notInChange[] = $plan;
-            }
-        }
+        $allPlanAgentAccount = $this->repoPlanAgentAccount->findBy(['status' => StripeService::PLAN_STATUS['ACTIVE'], 'statusChange' => StripeService::STATUS_CHANGE['ACTIVE']] );
         
         return $this->render('user_category/admin/agent/subscription/price/list_subscription.html.twig', [
             'allPlanAgentAccount' => $allPlanAgentAccount,
-            'newAllPlanAgentAccount_notInChange' => $newAllPlanAgentAccount_notInChange,
             'STATUS_CHANGE' => StripeService::STATUS_CHANGE,
             'repoPlan' => $this->repoPlanAgentAccount
         ]);
