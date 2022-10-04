@@ -319,6 +319,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ville;
+    
+    /*
+     * @ORM\OneToMany(targetEntity=DevisCompany::class, mappedBy="agent")
+     */
+    private $devisCompanies;
 
     public function __construct()
     {
@@ -341,6 +346,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->meetingGuests = new ArrayCollection();
         $this->subscriptionPlanAgentAccounts = new ArrayCollection();
         $this->orderDigitals = new ArrayCollection();
+        $this->devisCompanies = new ArrayCollection();
 
 
     }
@@ -1347,6 +1353,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, DevisCompany>
+     */
+    public function getDevisCompanies(): Collection
+    {
+        return $this->devisCompanies;
+    }
+
+    public function addDevisCompany(DevisCompany $devisCompany): self
+    {
+        if (!$this->devisCompanies->contains($devisCompany)) {
+            $this->devisCompanies[] = $devisCompany;
+            $devisCompany->setAgent($this);
+        }
+
+        return $this;
+    }
+
     public function getVille(): ?string
     {
         return $this->ville;
@@ -1355,6 +1379,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVille(?string $ville): self
     {
         $this->ville = $ville;
+
+        return $this;
+    }
+
+    public function removeDevisCompany(DevisCompany $devisCompany): self
+    {
+        if ($this->devisCompanies->removeElement($devisCompany)) {
+            // set the owning side to null (unless already changed)
+            if ($devisCompany->getAgent() === $this) {
+                $devisCompany->setAgent(null);
+            }
+        }
 
         return $this;
     }
