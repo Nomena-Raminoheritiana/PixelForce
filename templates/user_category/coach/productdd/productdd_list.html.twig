@@ -8,7 +8,7 @@
     {{ parent() }}
 {% endblock %}
 
-{% block body %} 
+{% block body %}
     <div class="modal fade my-custom-card" id="addNewCard" tabindex="-1" aria-labelledby="addNewCardTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -21,14 +21,14 @@
 
                     <!-- form -->
                     <form id="addNewCardValidation" class="row gy-1 gx-2 mt-75">
-                        
+
                         <div class="col-12 col-md-6">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="typeFileXls" name="typeFile" value="0" checked/>
                                 <label class="form-check-label" for="typeFileXls"><i class="fa fa-file-excel fa-4x"></i> Excel</label>
                             </div>
-                            
-                            
+
+
                         </div>
 
                         <div class="col-12 col-md-6">
@@ -38,14 +38,14 @@
                             </div>
                         </div>
 
-        
+
                         <div class="col-12 mt-4">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="allData" name="typeData" value="0" checked/>
                                 <label class="form-check-label" for="allData">Toutes les données</label>
                             </div>
-                            
-                            
+
+
                         </div>
 
                         <div class="col-12">
@@ -64,7 +64,7 @@
                                 Annuler
                             </button>
                         </div>
-                    </form>    
+                    </form>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
                 </div>
             {% endif %}
             {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
-                
+
                 <div class="my-form-widget">
                     {{form_label(form.nom)}}
                     {{form_widget(form.nom)}}
@@ -156,9 +156,9 @@
                         <td>{{product.nom}}</td>
                         <td>{{product.categorie.nom}}</td>
                         <td>{{product.description | raw}}</td>
-                        <td class="text-center">
+                        <td class="text-center w-25" >
                             {% if product.photo != null %}
-                                <img class="img-fluid card-img-top ecommerce-card-img" style="height:150px !important; width:auto !important;" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
+                                <img class="img-fluid card-img-top ecommerce-card-img" style="width: auto; object-fit: cover" src="{{ asset( filesDirectory ~ product.photo) }}" alt="Image pour {{product.nom}}" />
                             {% endif %}
                         </td>
 
@@ -195,30 +195,30 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">        
+    <script type="text/javascript">
         {# function deleteProduct($id){
             let confirmed = confirm("Voulez-vous vraiment continuer ?");
             console.log($id);
             if(confirmed){
-                $.ajax({  
-                url:        '/admin/product/delete/'+$id,  
-                type:       'DELETE',   
-                dataType:   'json',  
-                async:      true,  
-                
-                success: function(data, status) {  
+                $.ajax({
+                url:        '/admin/product/delete/'+$id,
+                type:       'DELETE',
+                dataType:   'json',
+                async:      true,
+
+                success: function(data, status) {
                     console.log("Success");
                     console.log(data);
                     location.reload();
 
-                },  
-                error : function(xhr, textStatus, errorThrown) {  
+                },
+                error : function(xhr, textStatus, errorThrown) {
                     let errMessage = xhr.responseJSON.message;
                     console.log(errMessage);
-                }  
-                });  
+                }
+                });
             }
-            
+
         } #}
 
          $(document).ready(function () {

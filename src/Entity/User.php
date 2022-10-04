@@ -310,6 +310,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $orderDigitals;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $numero_rue;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ville;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -1321,6 +1331,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $orderDigital->setAgent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNumeroRue(): ?string
+    {
+        return $this->numero_rue;
+    }
+
+    public function setNumeroRue(?string $numero_rue): self
+    {
+        $this->numero_rue = $numero_rue;
+
+        return $this;
+    }
+
+    public function getVille(): ?string
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?string $ville): self
+    {
+        $this->ville = $ville;
 
         return $this;
     }
