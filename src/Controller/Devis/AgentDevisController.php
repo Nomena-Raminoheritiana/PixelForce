@@ -4,9 +4,18 @@ namespace App\Controller\Devis;
 
 use App\Entity\DemandeDevis;
 use App\Entity\Devis;
+use App\Entity\DevisCompany;
+use App\Entity\DevisCompanyDetail;
+use App\Entity\User;
+use App\Form\DevisCompanyType;
 use App\Form\DevisType;
 use App\Manager\EntityManager;
+use App\Repository\DevisCompanyRepository;
+use App\Services\FileHandler;
+use App\Services\MailerService;
 use App\Util\GenericUtil;
+use DateTime;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,10 +29,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class AgentDevisController extends AbstractController
 {
     private $entityManager;
+    private $repoDevisCompany;
+    private $mailerService;
+    private $fileHandler;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, DevisCompanyRepository $repoDevisCompany, MailerService $mailerService, FileHandler $fileHandler)
     {
         $this->entityManager = $entityManager;
+        $this->repoDevisCompany = $repoDevisCompany;
+        $this->mailerService = $mailerService;
+        $this->fileHandler = $fileHandler;
     }
 
     /**
@@ -119,4 +134,91 @@ class AgentDevisController extends AbstractController
         return $response;
 
     }
+
+    /**
+     * @Route("/company/devis/liste", name="agent_company_devis_liste")
+     */
+    public function agent_company_devis_liste(): Response
+    {
+        $agent = $this->getUser();
+        $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent]);
+        return $this->render('user_category/agent/dd/devis/list_company_devis.html.twig', [
+            'allDevisCompanies' => $allDevisCompanies
+        ]);
+    }
+
+    /**
+     * @Route("/company/devis/creation", name="agent_company_devis_create")
+     */
+    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper): Response
+    {
+        /** @var User $agent */
+        $agent = $this->getUser();
+        $devisCompany = new DevisCompany();
+        $formDevisComp = $this->createForm(DevisCompanyType::class, $devisCompany);
+        $formDevisComp->handleRequest($request);
+
+        if($formDevisComp->isSubmitted() && $formDevisComp->isValid()) {
+            $clientEmail = $formDevisComp->get('client_mail')->getData();
+            $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
+           
+            //Logo Société
+            $data = $formDevisComp->get('company_logo')->getData();
+            $logoC_filename = $this->fileHandler->upload($data, $directory);
+        
+
+            /** @var DevisCompanyDetail $devisCompanyDetail */
+            foreach ($devisCompany->getDevisCompanyDetail() as $devisCompanyDetail) {                
+                $montantHt = $devisCompanyDetail->getQuantite() * $devisCompanyDetail->getTva();
+                $devisCompanyDetail->setDevisCompany($devisCompany);
+                $devisCompanyDetail->setMontantHt($montantHt);
+                $devisCompanyDetail->setTotalTtc($montantHt + ($montantHt * $devisCompanyDetail->getTva()));
+                $this->entityManager->persist($devisCompanyDetail);
+            }
+            
+            
+            $refSequence = "PX-F-".(new \DateTime())->format('Y-m-d');
+            $devisCompany->setCompanyLogo($logoC_filename);
+            $devisCompany->setDevisRefSeq($refSequence);
+            $devisCompany->setAgent($agent);
+
+
+            //Piece jointe
+            $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
+                'devisCompany' => $devisCompany,
+                'filesDirectory' => $this->getParameter('files_directory_relative')
+            ]);
+    
+            $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
+            $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
+            $devisCompany->setPjFilename($pj_filepath);
+
+            
+            $this->entityManager->persist($devisCompany);
+            $this->entityManager->flush();
+
+            $this->mailerService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
+
+            $this->addFlash(
+               'success',
+               'Devis créé'
+            );
+            return $this->redirectToRoute('agent_company_devis_liste');
+        }
+
+        return $this->render('user_category/agent/dd/devis/create_company_devis.html.twig', [
+            'formDevisComp' => $formDevisComp->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/company/devis/{id}/detail/et/fiche", name="agent_company_devis_fiche")
+     */
+    public function agent_company_devis_fiche(DevisCompany $devisCompany): Response
+    {
+        return $this->render('user_category/agent/dd/devis/fiche_company_devis.html.twig', [
+            'devisCompany' => $devisCompany
+        ]);
+    }
+
 }

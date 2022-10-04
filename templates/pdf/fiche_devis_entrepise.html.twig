@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Devis</title>
+        <style>
+            .text-right{
+                text-align: right;
+            }
+            body{
+                padding : 12px;
+            }
+            h1{
+                font-family : 'Segoe UI';
+                margin : 0px;
+                margin-bottom: 10px;
+                color : #61071a;
+                font-weight : normal;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                text-align: center;
+            }
+            table{
+                margin : 20px auto;
+                font-size: 16px;
+            }
+            table, td, th{
+                border : none;
+            }
+            table td, table th{
+                padding : 5px;
+                border : 1px solid #eee;
+                font-family : 'Segoe UI';
+            }
+            table th{
+                background-color: #b4aeaf;
+                color : #fff;
+                font-weight : 800;
+            }
+            .header-info {
+                font-size: 13px;
+                display: grid;
+            }
+            
+        </style>
+        
+    </head>
+    
+    <body>
+        <div class="header-info">
+            <div class="company-info">
+                <img src="{{ asset( filesDirectory ~ devisCompany.companyLogo) }}" alt="Logo société" />
+                {{devisCompany.companyInfo|raw}}
+            </div>
+            <div class="client-info">
+                {{devisCompany.clientInfo|raw}}
+                Email: {{devisCompany.clientMail}}
+            </div>
+        </div>
+
+       
+       <h2 style="margin-top: 15px;"> PX-F-{{"now"|date('Y-m-d')}}</h2>
+       <table>
+        <thead>
+            <tr>
+                <th>Référence</th>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>PU Vente</th>
+                <th>TVA</th>
+                <th>Montant HT</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
+                <tr style="font-size: 13px;">
+                    <td>{{devisCompanyDetail.reference}}</td>
+                    <td>{{devisCompanyDetail.designation|raw}}</td>
+                    <td>{{devisCompanyDetail.quantite}}</td>
+                    <td>{{devisCompanyDetail.puVente}}</td>
+                    <td>{{devisCompanyDetail.tva}}</td>
+                    <td>{{devisCompanyDetail.montantHt}}</td>
+                    <td>{{devisCompanyDetail.image}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+       </table>
+
+       <p>Bon pour Accord.</p>
+       
+       <div class="header-amount">
+        <div class="cond-paiement">
+            <p>Condition de paiement</p>
+            <ul>
+                <li>{{devisCompany.PaymentCondition}} % soit 12 €</li>
+            </ul>
+        </div>
+        <div class="total-amount" style="background-color: #eee0e4; padding: 15px;">
+            <p><span> Total Ht</span> <span>{{devisCompany.PaymentCondition}} €</span></p>
+            <p><span> TVA (20 %) Ht</span> <span>{{devisCompany.PaymentCondition}} €</span></p>
+            <h3><span> Total Ht</span> <span>{{devisCompany.PaymentCondition}} €</span></h3>
+        </div>
+       </div>
+
+       <hr>
+       <p style="font-size: 7px;">CLAUSE DE RÉSERVE DE PROPRIÉTÉ : Conformément à la loi 80.335 du 12 mai 1980, nous réservons la propriété des produits et marchandises, objets des présents débits, jusqu'au paiement de l'intégralité du prix et de ses accessoires. En cas de non paiement
+        total ou partiel du prix del'échéance pour quelquecause quecesoit, deconvention expresse, nous nousréservonslafaculté, sansformalités, dereprendre matériellement possession deces produits ou marchandisesàvosfrais, risqueset périls. Pénalité deretard : 3 foisletaux d'intérêt légalaprès dateéchéance. Escompte pour règlementanticipé: 0% (sauf condition particulière définie danslesconditions derèglement) Le montant del'indemnitéforfaitaire pour frais derecouvrement prévueen douzièmealinéa del'articleL441-6 est fixéà 40 Eurosen matièrecommerciale</p>
+    </body>
+</html>

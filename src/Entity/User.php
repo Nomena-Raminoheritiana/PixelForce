@@ -310,6 +310,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $orderDigitals;
 
+    /**
+     * @ORM\OneToMany(targetEntity=DevisCompany::class, mappedBy="agent")
+     */
+    private $devisCompanies;
+
     public function __construct()
     {
         $this->coachAgents = new ArrayCollection();
@@ -331,6 +336,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->meetingGuests = new ArrayCollection();
         $this->subscriptionPlanAgentAccounts = new ArrayCollection();
         $this->orderDigitals = new ArrayCollection();
+        $this->devisCompanies = new ArrayCollection();
 
 
     }
@@ -1319,6 +1325,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($orderDigital->getAgent() === $this) {
                 $orderDigital->setAgent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DevisCompany>
+     */
+    public function getDevisCompanies(): Collection
+    {
+        return $this->devisCompanies;
+    }
+
+    public function addDevisCompany(DevisCompany $devisCompany): self
+    {
+        if (!$this->devisCompanies->contains($devisCompany)) {
+            $this->devisCompanies[] = $devisCompany;
+            $devisCompany->setAgent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDevisCompany(DevisCompany $devisCompany): self
+    {
+        if ($this->devisCompanies->removeElement($devisCompany)) {
+            // set the owning side to null (unless already changed)
+            if ($devisCompany->getAgent() === $this) {
+                $devisCompany->setAgent(null);
             }
         }
 
