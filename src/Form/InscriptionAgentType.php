@@ -119,6 +119,24 @@ class InscriptionAgentType extends AbstractType
                 ],
                 'mapped' => false
             ])
+            ->add('numero_rue', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Numéro de rue'
+                ],
+                'constraints' => [
+                    new NotNull([],'champ obligatoire')
+                ]
+            ])
+            ->add('ville', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Ville'
+                ],
+                'constraints' => [
+                    new NotNull([],'champ obligatoire')
+                ]
+            ])
             ->addEventSubscriber(new SecteurChoiceListListener())
         ;
     }
