@@ -38,7 +38,7 @@ class DevisCompanyDetailType extends AbstractType
                     'readonly' => true
                 ]
             ])
-            ->add('montant_ht', IntegerType::class, ['label' => false])
+            // ->add('montant_ht', IntegerType::class, ['label' => false])
             ->add('image', FileType::class, [
                 "label" => 'Logo société',
                 'mapped' => false,

@@ -77,6 +77,18 @@ class DevisCompany
      */
     private $payment_condition;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $devis_total_ht;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $devis_total_ttc;
+
+
+
     public function __construct()
     {
         $this->created_at = new DateTime();
@@ -226,4 +238,29 @@ class DevisCompany
 
         return $this;
     }
+
+    public function getDevisTotalHt(): ?float
+    {
+        return $this->devis_total_ht;
+    }
+
+    public function setDevisTotalHt(float $devis_total_ht): self
+    {
+        $this->devis_total_ht = $devis_total_ht;
+
+        return $this;
+    }
+
+    public function getDevisTotalTtc(): ?float
+    {
+        return $this->devis_total_ttc;
+    }
+
+    public function setDevisTotalTtc(float $devis_total_ttc): self
+    {
+        $this->devis_total_ttc = $devis_total_ttc;
+
+        return $this;
+    }
+
 }

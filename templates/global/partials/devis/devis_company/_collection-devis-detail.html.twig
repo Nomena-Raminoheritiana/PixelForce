@@ -24,7 +24,8 @@
             <td>{{ form_widget(form.quantite) }}</td>
             <td>{{ form_widget(form.pu_vente) }}</td>
             <td>{{ form_widget(form.tva) }}</td>
-            <td>{{ form_widget(form.montant_ht) }}</td>
+            <td><input type="number" class="form-control" readonly></td>
+            {# <td>{{ form_widget(form.montant_ht) }}</td> #}
             <td>{{ form_widget(form.image) }}</td>
             <td><button type="button" class="btn btn-danger" data-action="delete" data-target="block_{{id}}" >X</button></td>
         </tr>

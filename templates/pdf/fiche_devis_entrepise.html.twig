@@ -49,7 +49,11 @@
     <body>
         <div class="header-info">
             <div class="company-info">
-                <img src="{{ asset( filesDirectory ~ devisCompany.companyLogo) }}" alt="Logo société" />
+                <pre>{{filesDirAbsolute ~ devisCompany.companyLogo}}</pre>
+                <img src="{{ asset( filesDirAbsolute ~ devisCompany.companyLogo) }}" alt="Logo société" />
+                <img src="https://www.w3schools.com/images/w3lynx_200.png" />
+                <img src="{{ '/public/files/digital/' ~ devisCompany.companyLogo }}" />
+                
                 {{devisCompany.companyInfo|raw}}
             </div>
             <div class="client-info">
@@ -58,6 +62,7 @@
             </div>
         </div>
 
+        <img src="{{filesDirAbsolute ~ devisCompany.companyLogo }}" alt="Logo" />
        
        <h2 style="margin-top: 15px;"> PX-F-{{"now"|date('Y-m-d')}}</h2>
        <table>
@@ -93,13 +98,20 @@
         <div class="cond-paiement">
             <p>Condition de paiement</p>
             <ul>
-                <li>{{devisCompany.PaymentCondition}} % soit 12 €</li>
+                {% set conditionValue = devisCompany.PaymentCondition %}
+                {% set repeatLi = 100  / conditionValue %}
+                <li>{{devisCompany.PaymentCondition}} % soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
+                {% if repeatLi > 1 %}
+                    {% for i in 2..repeatLi %}
+                        <li>{{devisCompany.PaymentCondition}} % soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} €</li>
+                    {% endfor %}
+                {% endif %}
             </ul>
         </div>
         <div class="total-amount" style="background-color: #eee0e4; padding: 15px;">
-            <p><span> Total Ht</span> <span>{{devisCompany.PaymentCondition}} €</span></p>
-            <p><span> TVA (20 %) Ht</span> <span>{{devisCompany.PaymentCondition}} €</span></p>
-            <h3><span> Total Ht</span> <span>{{devisCompany.PaymentCondition}} €</span></h3>
+            <p><span> Total Ht : </span> <span>{{devisCompany.devisTotalHt}} €</span></p>
+            <p><span> TVA (20 %) : </span> <span>{{(devisCompany.devisTotalHt * 20) / 100}} €</span></p>
+            <h3><span> Total Ht : </span> <span>{{devisCompany.devisTotalttc}} €</span></h3>
         </div>
        </div>
 

@@ -17,6 +17,7 @@ use App\Util\GenericUtil;
 use DateTime;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,13 +33,15 @@ class AgentDevisController extends AbstractController
     private $repoDevisCompany;
     private $mailerService;
     private $fileHandler;
+    private $parameterBag;
 
-    public function __construct(EntityManager $entityManager, DevisCompanyRepository $repoDevisCompany, MailerService $mailerService, FileHandler $fileHandler)
+    public function __construct(EntityManager $entityManager, DevisCompanyRepository $repoDevisCompany, MailerService $mailerService, FileHandler $fileHandler, ParameterBagInterface $parameterBag)
     {
         $this->entityManager = $entityManager;
         $this->repoDevisCompany = $repoDevisCompany;
         $this->mailerService = $mailerService;
         $this->fileHandler = $fileHandler;
+        $this->parameterBag = $parameterBag;
     }
 
     /**
@@ -163,33 +166,46 @@ class AgentDevisController extends AbstractController
             $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
            
             //Logo Société
-            $data = $formDevisComp->get('company_logo')->getData();
-            $logoC_filename = $this->fileHandler->upload($data, $directory);
+            $logo = $formDevisComp->get('company_logo')->getData();
+            
+            if ($logo !== null) {
+                $logoC_filename = $this->fileHandler->upload($logo, $directory);
+                $devisCompany->setCompanyLogo($logoC_filename);
+            }
         
+
+            $totalHt = 0;
 
             /** @var DevisCompanyDetail $devisCompanyDetail */
             foreach ($devisCompany->getDevisCompanyDetail() as $devisCompanyDetail) {                
-                $montantHt = $devisCompanyDetail->getQuantite() * $devisCompanyDetail->getTva();
+                $montantHt = $devisCompanyDetail->getQuantite() * $devisCompanyDetail->getPuVente();
+                $totalHt = $totalHt + $montantHt;
+
                 $devisCompanyDetail->setDevisCompany($devisCompany);
                 $devisCompanyDetail->setMontantHt($montantHt);
-                $devisCompanyDetail->setTotalTtc($montantHt + ($montantHt * $devisCompanyDetail->getTva()));
+                $devisCompanyDetail->setTotalTtc($montantHt + ($montantHt * 20));
                 $this->entityManager->persist($devisCompanyDetail);
             }
             
-            
+            $totalTVA = ($totalHt * 20)/100;
+            $totalTTC = $totalHt + $totalTVA;
+
             $refSequence = "PX-F-".(new \DateTime())->format('Y-m-d');
-            $devisCompany->setCompanyLogo($logoC_filename);
             $devisCompany->setDevisRefSeq($refSequence);
             $devisCompany->setAgent($agent);
+
+            $devisCompany->setDevisTotalHt($totalHt);
+            $devisCompany->setDevisTotalTtc($totalTTC);
 
 
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
+                'filesDirAbsolute' => $this->parameterBag->get('kernel.project_dir').'/public/files/',
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative')
             ]);
     
-            $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
+            $binary = $wrapper->getPdf($html);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
             $devisCompany->setPjFilename($pj_filepath);
 
