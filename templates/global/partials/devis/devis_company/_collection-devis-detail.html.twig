@@ -1,0 +1,32 @@
+{% block _devis_company_devis_company_detail_widget %}
+    
+    {{ form_widget(form)}}
+
+    <input type="hidden" id="widgets-counter" value="0">
+    <div class="form-group mb-3">
+        <button type="button" id="add-devis-detail" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i>  Ajouter
+        </button>        
+    </div>
+{% endblock %}
+
+
+{% block _devis_company_devis_company_detail_row %}
+    {{ form_widget(form)}}
+{% endblock %}
+
+
+{% block _devis_company_devis_company_detail_entry_widget %}
+    <div class="form-group" id="block_{{id}}">
+        <tr>
+            <td>{{ form_errors(form.reference) }}{{ form_widget(form.reference) }}</td>
+            <td>{{ form_widget(form.designation) }}</td>
+            <td>{{ form_widget(form.quantite) }}</td>
+            <td>{{ form_widget(form.pu_vente) }}</td>
+            <td>{{ form_widget(form.tva) }}</td>
+            <td>{{ form_widget(form.montant_ht) }}</td>
+            <td>{{ form_widget(form.image) }}</td>
+            <td><button type="button" class="btn btn-danger" data-action="delete" data-target="block_{{id}}" >X</button></td>
+        </tr>
+    </div>
+{% endblock %}

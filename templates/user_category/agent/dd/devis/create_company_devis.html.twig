@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Création devis (Société)
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block body %}  
+{% form_theme formDevisComp '/global/partials/devis/devis_company/_collection-devis-detail.html.twig' %}
+
+    <!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                       
+                    </div>
+                </div>
+
+            </div>
+            {{ form_start(formDevisComp) }}
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h1 class="block__text block__text--center mt-2" >Création devis :</h1>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h2 class="block__text block__text--center mt-2" >Information société</h2>
+                                <div class="row">
+                                    <div class="col-12 col-md-9">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.company_info)}}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.company_logo)}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h2 class="block__text block__text--center mt-2" >Information Client</h2>
+                                
+                                <div class="my-form-widget">
+                                    {{form_row(formDevisComp.client_mail)}}
+                                </div>
+                                <div class="my-form-widget">
+                                    {{form_row(formDevisComp.client_info)}}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h2 class="block__text block__text--center mt-2" >Détail devis</h2>
+                                {# <button type="button" class="add-another-collection-widget btn btn-primary" data-list-selector="#email-fields-list"><i class="fa-solid fa-circle-plus"></i> Ajouter nouveau</button> #}
+
+                                <div class="my-form-widget">
+                                    {{ form_errors(formDevisComp.devis_company_detail) }}
+                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover text-center" 
+                                                >
+                                            <thead>
+                                                <tr style="white-space:nowrap">
+                                                    <th scope="col" class="text-center">Référence</th>
+                                                    <th scope="col" class="text-center">Désignation</th>
+                                                    <th scope="col" class="text-center">Quantité</th>
+                                                    <th scope="col" class="text-center">PU vente</th>
+                                                    <th scope="col" class="text-center">TVA</th>
+                                                    <th scope="col" class="text-center">Montant HT</th>
+                                                    <th scope="col" class="text-center">Image</th>
+                                                    <th scope="col" class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{ form_widget(formDevisComp.devis_company_detail, {'label' : false})}}</h6>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                   
+                                </div>
+                                
+                                <div class="my-form-widget mt-5">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            {{form_row(formDevisComp.payment_condition)}}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </section>
+                        <section class="mb-3">
+                            <div class="btn-wrap">
+                                <button class="btn btn-success" id="create_devis_company" type="submit">Enregistrer<i data-feather="send"></i></button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+            {{ form_end(formDevisComp) }}
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $( document ).ready(function() {
+            $('#add-devis-detail').click(function(){
+                const index = +$('#widgets-counter').val();
+                const tmpl = $('#devis_company_devis_company_detail').data('prototype').replace(/__name__/g, index);
+                $('#devis_company_devis_company_detail').append(tmpl);
+                $('#widgets-counter').val(index + 1);
+
+                handleDeleteButton()
+            })
+
+            //suppression de block
+            function handleDeleteButton() {
+                $('button[data-action="delete"]').click(function() {
+                    const target = this.dataset.target;
+                    $('#' + target).remove()
+                })
+            }
+
+            // To fix update CkEditor
+            function updateFieldCkeditor(fields) {
+                $.each(fields, function (key, value) {
+                    $('#' + key).val(value.getData());
+                });
+            }
+            $('#create_devis_company').on('click',  function(e){
+                updateFieldCkeditor(CKEDITOR.instances)
+
+            });
+        });
+    </script>
+    {{ encore_entry_script_tags('ckeditorForm')}}
+
+{% endblock %}
