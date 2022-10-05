@@ -44,13 +44,6 @@ class DevisCompanyDetailType extends AbstractType
                     'class' => 'js-pu_vente'
                 ]
             ])
-            ->add('tva', IntegerType::class, [
-                'data' => $this->tvaDefault,
-                'label' => false,
-                'attr' => [
-                    'readonly' => true
-                ]
-            ])
             // ->add('montant_ht', IntegerType::class, ['label' => false])
             ->add('image', FileType::class, [
                 "label" => 'Logo société',
