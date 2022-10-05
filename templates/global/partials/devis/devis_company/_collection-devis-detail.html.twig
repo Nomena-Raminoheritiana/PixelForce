@@ -30,7 +30,7 @@
             <div class="col-1 col-border-devis-d py-3">{{ form_widget(form.tva) }}</div>
             <div class="col-1 col-border-devis-d py-3"><input type="number" class="form-control montant-ht-js" readonly></div>
             <div class="col-2 col-border-devis-d py-3">{{ form_widget(form.image) }}</div>
-            <div class="col-1 col-border-devis-d py-3 center-horizontal-vertical"><button type="button" class="btn btn-danger" data-action="delete" data-target="block_{{id}}" ><i class="fa-solid fa-trash-can"></i></button></div>
+            <div class="col-1 col-border-devis-d py-3 center-horizontal-vertical"><button type="button" class="btn btn-danger" id="delete_btn_{{id}}" data-action="delete" data-target="block_{{id}}" ><i class="fa-solid fa-trash-can"></i></button></div>
         </div>
     </div>
 {% endblock %}

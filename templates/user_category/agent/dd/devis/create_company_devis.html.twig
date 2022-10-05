@@ -34,6 +34,12 @@
             align-items: flex-start !important;
             display: flex !important;
         }
+
+        @media (max-width: 400px) {
+            #head-row-devis-detail, .row-devis-detail{
+                width: 100vh;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -90,10 +96,32 @@
                         <section class="app-ecommerce-details">
                             <div class="block block--bordered block--rounded">
                                 <h2 class="block__text block__text--center mt-2" >Information Client</h2>
-                                
-                                <div class="my-form-widget">
-                                    {{form_row(formDevisComp.client_mail)}}
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_lastname)}}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_firstname)}}
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_mail)}}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_rdv)}}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="my-form-widget">
                                     {{form_row(formDevisComp.client_info)}}
                                 </div>
@@ -128,7 +156,7 @@
                                 
                                 <div class="my-form-widget mt-5">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-12 col-md-3">
                                             {{form_row(formDevisComp.payment_condition)}}
                                         </div>
                                     </div>
@@ -138,7 +166,7 @@
                         </section>
                         <section class="mb-3">
                             <div class="btn-wrap">
-                                <button class="btn btn-success" id="create_devis_company" type="submit">Enregistrer<i data-feather="send"></i></button>
+                                <button class="btn btn-success" id="create_devis_company" type="submit">Créer <i class="fa-solid fa-check"></i></button>
                             </div>
                         </section>
                     </div>
@@ -171,7 +199,10 @@
                 const tmpl_select = $('#'+tmpl_index);
                
                 changeMontantHt(tmpl_select)
-                handleDeleteButton()
+
+                const delete_btn = 'delete_btn_devis_company_devis_company_detail_'+index
+                const delete_btn_select = $('#'+delete_btn);
+                handleDeleteButton(delete_btn_select)
             })
 
             // Automatisation calcul
@@ -189,10 +220,13 @@
             }
 
             //suppression de block
-            function handleDeleteButton() {
-                $('button[data-action="delete"]').click(function() {
-                    const target = this.dataset.target;
-                    $('#' + target).remove()
+            function handleDeleteButton(delete_btn_select) {
+                delete_btn_select.click(function(){
+                    var _confirm = confirm("Êtes-vous vraiment sûr de supprimer cette ligne?");
+                    if (_confirm) {
+                        const target = this.dataset.target;
+                        $('#' + target).remove()
+                    }
                 })
             }
 
@@ -207,12 +241,6 @@
 
             });
 
-
-           
-            // _montant_ht.forEach(element => {
-                
-            // });
-            
         });
     </script>
     {{ encore_entry_script_tags('ckeditorForm')}}

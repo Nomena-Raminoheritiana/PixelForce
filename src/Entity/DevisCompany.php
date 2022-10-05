@@ -87,6 +87,21 @@ class DevisCompany
      */
     private $devis_total_ttc;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $client_firstname;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $client_lastname;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $client_rdv;
+
 
 
     public function __construct()
@@ -259,6 +274,42 @@ class DevisCompany
     public function setDevisTotalTtc(float $devis_total_ttc): self
     {
         $this->devis_total_ttc = $devis_total_ttc;
+
+        return $this;
+    }
+
+    public function getClientFirstname(): ?string
+    {
+        return $this->client_firstname;
+    }
+
+    public function setClientFirstname(string $client_firstname): self
+    {
+        $this->client_firstname = $client_firstname;
+
+        return $this;
+    }
+
+    public function getClientLastname(): ?string
+    {
+        return $this->client_lastname;
+    }
+
+    public function setClientLastname(string $client_lastname): self
+    {
+        $this->client_lastname = $client_lastname;
+
+        return $this;
+    }
+
+    public function getClientRdv(): ?\DateTimeInterface
+    {
+        return $this->client_rdv;
+    }
+
+    public function setClientRdv(\DateTimeInterface $client_rdv): self
+    {
+        $this->client_rdv = $client_rdv;
 
         return $this;
     }

@@ -105,7 +105,7 @@ class MailerService
         ->subject('Devis')
         ->htmlTemplate('emails/devis/devis_entreprise.html.twig')
         ->context([
-            '$devisCompany' => $devisCompany
+            'devisCompany' => $devisCompany
         ])
         ->attachFromPath($this->parameterBag->get('kernel.project_dir')."/public/files/".$pj_pathname, null);
         $this->mailer->send($email);

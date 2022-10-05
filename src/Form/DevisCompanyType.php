@@ -7,11 +7,14 @@ use App\Entity\DevisCompanyDetail;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class DevisCompanyType extends AbstractType
 {
@@ -26,7 +29,24 @@ class DevisCompanyType extends AbstractType
                 'mapped' => false,
                 'required' => false
             ])   
-            ->add('client_mail', EmailType::class)
+            ->add('client_mail', EmailType::class, [
+                'label' => 'Adresse email du client'
+            ])
+            ->add('client_firstname', TextType::class, [
+                'label' => 'Prénom du client'
+            ])
+            ->add('client_lastname', TextType::class, [
+                'label' => 'Nom du client'
+            ])
+            ->add('client_rdv', DateTimeType::class, [
+                'label' => "Date de début",
+                'widget' => 'single_text',
+                'attr' => ['class' => 'datetime-local'],
+                "required" => true,
+                "constraints" => [
+                    new NotBlank(["message" => "Date de rendez-vous obligatoire"])
+                ]
+            ])
             ->add('client_info', CKEditorType::class, [
                 'label' => 'Information client'
             ])
