@@ -22,19 +22,19 @@ class DevisCompanyType extends AbstractType
                 "label" => "Information société"
             ])
             ->add('company_logo', FileType::class, [
-                "label" => 'Logo société',
+                'label' => 'Logo société',
                 'mapped' => false,
-                "required" => false
+                'required' => false
             ])   
             ->add('client_mail', EmailType::class)
             ->add('client_info', CKEditorType::class, [
-                "label" => "Information client"
+                'label' => 'Information client'
             ])
             ->add('devis_company_detail', CollectionType::class, [
                 'entry_type' => DevisCompanyDetailType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                "label" => false
+                'label' => false
             ])
             ->add('payment_condition', IntegerType::class, [
                 'data' => 100,

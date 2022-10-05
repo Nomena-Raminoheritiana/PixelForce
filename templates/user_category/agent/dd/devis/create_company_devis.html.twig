@@ -6,6 +6,35 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        #head-row-devis-detail{
+            background-color: #ececec; 
+            white-space: nowrap;
+            width: 200vh;
+        }
+        .border-devis-d{
+            border-style: solid;
+            border-width: 2px;
+            border-color: #cacaca;
+        }
+        .col-border-devis-d{
+            border-style: solid;
+            border-width: 1px;
+            border-color: #ececec;
+        }
+        .row-devis-detail{
+            width: 200vh;
+        }
+        .row-devis-input:hover{
+            background-color:aliceblue;
+        }
+
+        .center-horizontal-vertical{
+            justify-content: center !important;
+            align-items: flex-start !important;
+            display: flex !important;
+        }
+    </style>
 {% endblock %}
 
 
@@ -79,30 +108,22 @@
                                 <h2 class="block__text block__text--center mt-2" >Détail devis</h2>
                                 {# <button type="button" class="add-another-collection-widget btn btn-primary" data-list-selector="#email-fields-list"><i class="fa-solid fa-circle-plus"></i> Ajouter nouveau</button> #}
 
-                                <div class="my-form-widget">
+                                <div class="my-form-widget table-responsive px-4">
                                     {{ form_errors(formDevisComp.devis_company_detail) }}
                                     
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover text-center" 
-                                                >
-                                            <thead>
-                                                <tr style="white-space:nowrap">
-                                                    <th scope="col" class="text-center">Référence</th>
-                                                    <th scope="col" class="text-center">Désignation</th>
-                                                    <th scope="col" class="text-center">Quantité</th>
-                                                    <th scope="col" class="text-center">PU vente</th>
-                                                    <th scope="col" class="text-center">TVA</th>
-                                                    <th scope="col" class="text-center">Montant HT</th>
-                                                    <th scope="col" class="text-center">Image</th>
-                                                    <th scope="col" class="text-center"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {{ form_widget(formDevisComp.devis_company_detail, {'label' : false})}}</h6>
-                                            </tbody>
-                                        </table>
+                                    <div id="head-row-devis-detail" class="row fw-bolder text-center d-flex justify-content-center align-items-center" >
+                                        <div class="border-devis-d col-2 py-3">Référence</div>
+                                        <div class="border-devis-d col-3 py-3">Désignation</div>
+                                        <div class="border-devis-d col-1 py-3">Quantité</div>
+                                        <div class="border-devis-d col-1 py-3">PU vente (€)</div>
+                                        <div class="border-devis-d col-1 py-3">TVA 20%</div>
+                                        <div class="border-devis-d col-1 py-3">Montant HT (€)</div>
+                                        <div class="border-devis-d col-2 py-3">Image</div>
+                                        <div class="border-devis-d col-1 py-3">Action</div>
                                     </div>
-                                   
+                                    <div class="row-devis-detail">
+                                        {{ form_widget(formDevisComp.devis_company_detail, {'label' : false})}}</h6>
+                                    </div>
                                 </div>
                                 
                                 <div class="my-form-widget mt-5">
@@ -144,9 +165,28 @@
                 const tmpl = $('#devis_company_devis_company_detail').data('prototype').replace(/__name__/g, index);
                 $('#devis_company_devis_company_detail').append(tmpl);
                 $('#widgets-counter').val(index + 1);
+                $('fieldset').removeClass('mb-3');
 
+                const tmpl_index = 'block_devis_company_devis_company_detail_'+ (index);
+                const tmpl_select = $('#'+tmpl_index);
+               
+                changeMontantHt(tmpl_select)
                 handleDeleteButton()
             })
+
+            // Automatisation calcul
+            function changeMontantHt(tmpl_select){
+                 // Automatisation calcul montant
+                let _montant_ht = tmpl_select.find('.row-devis-input .montant-ht-js');
+                let _quantity = _montant_ht.parent().parent().find('.js-quantity');
+                let _pu_vente = _montant_ht.parent().parent().find('.js-pu_vente');
+                _pu_vente.change(function() {
+                    _montant_ht.val(_pu_vente.val() * _quantity.val());
+                })
+                _quantity.change(function() {
+                    _montant_ht.val(_pu_vente.val() * _quantity.val());
+                })
+            }
 
             //suppression de block
             function handleDeleteButton() {
@@ -166,6 +206,13 @@
                 updateFieldCkeditor(CKEDITOR.instances)
 
             });
+
+
+           
+            // _montant_ht.forEach(element => {
+                
+            // });
+            
         });
     </script>
     {{ encore_entry_script_tags('ckeditorForm')}}

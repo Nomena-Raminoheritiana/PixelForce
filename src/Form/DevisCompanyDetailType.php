@@ -28,9 +28,22 @@ class DevisCompanyDetailType extends AbstractType
             ->add('reference', TextType::class, [
                 'label' => false
             ])
-            ->add('designation', CKEditorType::class, ['label' => false])
-            ->add('quantite', IntegerType::class, ['label' => false])
-            ->add('pu_vente', IntegerType::class, ['label' => false])
+            ->add('designation', CKEditorType::class, [
+                'label' => false,
+                'config' => ['toolbar' => 'note_contact_toolbar']
+            ])
+            ->add('quantite', IntegerType::class, [
+                'label' => false,
+                'attr' => [
+                    'class' => 'js-quantity'
+                ]
+            ])
+            ->add('pu_vente', IntegerType::class, [
+                'label' => false,
+                'attr' => [
+                    'class' => 'js-pu_vente'
+                ]
+            ])
             ->add('tva', IntegerType::class, [
                 'data' => $this->tvaDefault,
                 'label' => false,

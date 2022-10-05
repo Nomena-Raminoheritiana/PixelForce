@@ -205,7 +205,7 @@ class AgentDevisController extends AbstractController
                 'filesDirectory' => $this->getParameter('files_directory_relative')
             ]);
     
-            $binary = $wrapper->getPdf($html);
+            $binary = $wrapper->getPdf($html, ['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
             $devisCompany->setPjFilename($pj_filepath);
 
