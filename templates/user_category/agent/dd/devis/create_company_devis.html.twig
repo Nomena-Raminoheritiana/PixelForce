@@ -271,6 +271,28 @@
 
             });
 
+
+            let imgViewer = document.querySelector("#my_logo_societe img");
+            let companyLogoImgInput = document.getElementById("devis_company_company_logo");
+
+            function previewImage(data){
+                let input = data.target;
+                let file = input.files[0];
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
+                    let base64 = reader.result;
+                    imgViewer.src = base64;
+                    $('#my_logo_societe').removeClass('d-none');
+                    $('#my_logo_societe_input_hidden').val("");
+                };
+            }
+
+            if(companyLogoImgInput){
+                companyLogoImgInput.addEventListener("change", previewImage);
+                
+            }
+
         });
     </script>
     {{ encore_entry_script_tags('ckeditorForm')}}

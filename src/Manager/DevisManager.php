@@ -16,9 +16,12 @@ class DevisManager
         $this->entityManager = $entityManager;
     }
 
-    public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent)
+    public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup)
     {
-        if ($logo !== null) {
+        if($logoPopup && $logoPopup != ""){
+            $devisCompany->setCompanyLogo($logoPopup);
+        }
+        else if ($logo !== null) {
             $logoC_filename = $this->fileHandler->upload($logo, $directory);
             $devisCompany->setCompanyLogo($logoC_filename);
         }

@@ -168,8 +168,8 @@ class AgentDevisController extends AbstractController
             $clientEmail = $formDevisComp->get('client_mail')->getData();
             $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
             $logo = $formDevisComp->get('company_logo')->getData();
-
-            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent);
+            $logoPopup = $request->get('my_logo_societe_input_hidden');
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup);
             
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [

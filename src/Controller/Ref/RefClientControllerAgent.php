@@ -52,7 +52,7 @@ class RefClientControllerAgent extends AbstractController
         $page = $request->query->get('page', 1);
         $limit = 6;
         $criteria = [
-            ['prop' => 'nom', 'op' => 'LIKE']
+            ['prop' => 'nom', 'col' => "concat(concat(coalesce(r.prenom, ''), ' '), r.nom)", 'alias' => null, 'op' => 'LIKE']
         ];
 
         $filter = [];
@@ -105,7 +105,7 @@ class RefClientControllerAgent extends AbstractController
         $page = $request->query->get('page', 1);
         $limit = 6;
         $criteria = [
-            ['prop' => 'nom', 'op' => 'LIKE']
+            ['prop' => 'nom', 'col' => "concat(concat(coalesce(r.prenom, ''), ' '), r.nom)", 'alias' => null, 'op' => 'LIKE']
         ];
 
         $filter = [];
