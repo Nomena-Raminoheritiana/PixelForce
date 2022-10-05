@@ -44,103 +44,127 @@
         
     </head>
     
-    <body>
-        <div class="">
-            <div class="header-info mb-4 h-25">
-                {# <div class="row"> #}
-                    {# <div class="col-6"> #}
-                        <div class="company-info">
-                            {% if devisCompany.companyLogo %}
-                                <img src="{{ asset( filesDirAbsolute ~ devisCompany.companyLogo) }}" alt="Logo société" />
-                            {% endif %}                
-                            
-                            <div class="mt-2">
-                                {{devisCompany.companyInfo|raw}}
+    <body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
+        <!-- Content -->
+        <div class="app-content content ">
+            <div class="content-overlay"></div>
+            <div class="header-navbar-shadow"></div>
+            <div class="content-wrapper container-xxl p-0">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <div class="p-4">
+                        <div class="header-info mb-4 h-25">
+                            {# <div class="row"> #}
+                                {# <div class="col-6"> #}
+                                    <div class="company-info">
+                                        {% if devisCompany.companyLogo %}
+                                            <img src="{{ asset( filesDirAbsolute ~ devisCompany.companyLogo) }}" alt="Logo société" />
+                                        {% endif %}                
+                                        
+                                        <div class="mt-2">
+                                            {{devisCompany.companyInfo|raw}}
+                                        </div>
+                                    </div>
+                                {# </div> #}
+                                {# <div class="col-6"> #}
+                                    <div class="client-info">
+                                        {{devisCompany.clientInfo|raw}}
+                                        <span class="fw-bolder"> Email:</span> {{devisCompany.clientMail}}
+                                    </div>
+
+                                {# </div> #}
                             </div>
                         </div>
-                    {# </div> #}
-                    {# <div class="col-6"> #}
-                        <div class="client-info">
-                            {{devisCompany.clientInfo|raw}}
-                            <span class="fw-bolder"> Email:</span> {{devisCompany.clientMail}}
+                        
+                        <div class="table-detail p-4">
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col">
+                                    <h2 class="mt-3 float-end fw-bolder"> PX-F-{{"now"|date('Y-m-d')}}</h2>
+                                </div>
+                            </div>
+                
+                            <div class="row">
+                                <table>
+                                    <thead>
+                                        <tr style="background-color: rgb(209, 202, 202);">
+                                            <th>Référence</th>
+                                            <th>Désignation</th>
+                                            <th>Quantité</th>
+                                            <th>PU Vente</th>
+                                            <th>TVA</th>
+                                            <th>Montant HT</th>
+                                            <th>Image</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
+                                        <tr style="font-size: 13px;">
+                                            <td>{{devisCompanyDetail.reference}}</td>
+                                            <td>{{devisCompanyDetail.designation|raw}}</td>
+                                            <td>{{devisCompanyDetail.quantite}}</td>
+                                            <td>{{devisCompanyDetail.puVente}}</td>
+                                            <td>{{devisCompanyDetail.tva}}</td>
+                                            <td>{{devisCompanyDetail.montantHt}}</td>
+                                            <td>{{devisCompanyDetail.image}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                
+                        <div class="mt-4">
+                            <div class="">
+                                <p>Bon pour Accord.</p>
+                                
+                                <div class="header-amount">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="cond-paiement">
+                                                <p>Condition de paiement</p>
+                                                {% set percentCondtion =  devisCompany.PaymentCondition %}
+                                                {% set iterationPercent = iterationPercent %}
+                                                {% set resteIteration = 100 - (iterationPercent * percentCondtion) %}
 
-                    {# </div> #}
-                </div>
-            </div>
-            
-            <div class="table-detail">
-                <div class="row">
-                    <div class="col"></div>
-                    <div class="col">
-                        <h2 class="mt-3 float-end"> PX-F-{{"now"|date('Y-m-d')}}</h2>
+                                                <ul>
+                                                    {% if iterationPercent > 1 %}
+                                                        {% for i in 1..iterationPercent %}
+                                                            {% if i == 1 %}
+                                                                <li> <span class="fw-bolder"> 1er Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
+                                                            {% else %}
+                                                                <li> <span class="fw-bolder">{{i}}ème Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} €</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if resteIteration < 50 and resteIteration != 0 %}
+                                                            <li><span class="fw-bolder">Dernière tranche : </span>{{resteIteration}}% soit {{(devisCompany.devisTotalttc * resteIteration)/100 }} €</li>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <li><span class="fw-bolder">1er Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
+                                                        {% if resteIteration < 50 and resteIteration != 0 %}
+                                                            <li><span class="fw-bolder">2ème Tranche : </span>{{resteIteration}}% soit {{(devisCompany.devisTotalttc * resteIteration)/100 }} €</li>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="total-amount" style="background-color: #e4e4e4; padding: 15px; position: relative;">
+                                                <p><span> Total HT : </span> <span>{{devisCompany.devisTotalHt}} €</span></p>
+                                                <p><span> TVA (20 %) : </span> <span>{{(devisCompany.devisTotalHt * 20) / 100}} €</span></p>
+                                                <h3 class="fw-bolder"><span> Total TTC : </span> <span>{{devisCompany.devisTotalttc}} €</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <hr>
+                                <p style="font-size: 7px;">CLAUSE DE RÉSERVE DE PROPRIÉTÉ : Conformément à la loi 80.335 du 12 mai 1980, nous réservons la propriété des produits et marchandises, objets des présents débits, jusqu'au paiement de l'intégralité du prix et de ses accessoires. En cas de non paiement
+                                total ou partiel du prix del'échéance pour quelquecause quecesoit, deconvention expresse, nous nousréservonslafaculté, sansformalités, dereprendre matériellement possession deces produits ou marchandisesàvosfrais, risqueset périls. Pénalité deretard : 3 foisletaux d'intérêt légalaprès dateéchéance. Escompte pour règlementanticipé: 0% (sauf condition particulière définie danslesconditions derèglement) Le montant del'indemnitéforfaitaire pour frais derecouvrement prévueen douzièmealinéa del'articleL441-6 est fixéà 40 Eurosen matièrecommerciale</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-    
-                <div class="row">
-                    <table>
-                        <thead>
-                            <tr style="background-color: rgb(209, 202, 202);">
-                                <th>Référence</th>
-                                <th>Désignation</th>
-                                <th>Quantité</th>
-                                <th>PU Vente</th>
-                                <th>TVA</th>
-                                <th>Montant HT</th>
-                                <th>Image</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
-                            <tr style="font-size: 13px;">
-                                <td>{{devisCompanyDetail.reference}}</td>
-                                <td>{{devisCompanyDetail.designation|raw}}</td>
-                                <td>{{devisCompanyDetail.quantite}}</td>
-                                <td>{{devisCompanyDetail.puVente}}</td>
-                                <td>{{devisCompanyDetail.tva}}</td>
-                                <td>{{devisCompanyDetail.montantHt}}</td>
-                                <td>{{devisCompanyDetail.image}}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-    
-            <div class="mt-4">
-                <div class="">
-                    <p>Bon pour Accord.</p>
-                    
-                    <div class="header-amount">
-                         <div class="row">
-                             <div class="col-6">
-                                 <div class="cond-paiement">
-                                     <p>Condition de paiement</p>
-                                     <ul>
-                                         {% set conditionValue = devisCompany.PaymentCondition %}
-                                         {% set repeatLi = 100  / conditionValue %}
-                                         <li>{{devisCompany.PaymentCondition}} % soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
-                                         {% if repeatLi > 1 %}
-                                             {% for i in 2..repeatLi %}
-                                                 <li>{{devisCompany.PaymentCondition}} % soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} €</li>
-                                             {% endfor %}
-                                         {% endif %}
-                                     </ul>
-                                 </div>
-                             </div>
-                             <div class="col-6">
-                                 <div class="total-amount" style="background-color: #e4e4e4; padding: 15px;">
-                                     <p><span> Total HT : </span> <span>{{devisCompany.devisTotalHt}} €</span></p>
-                                     <p><span> TVA (20 %) : </span> <span>{{(devisCompany.devisTotalHt * 20) / 100}} €</span></p>
-                                     <h3 class="fw-bolder"><span> Total TTC : </span> <span>{{devisCompany.devisTotalttc}} €</span></h3>
-                                 </div>
-                             </div>
-                         </div>
-                    </div>
-             
-                    <hr>
-                    <p style="font-size: 7px;">CLAUSE DE RÉSERVE DE PROPRIÉTÉ : Conformément à la loi 80.335 du 12 mai 1980, nous réservons la propriété des produits et marchandises, objets des présents débits, jusqu'au paiement de l'intégralité du prix et de ses accessoires. En cas de non paiement
-                     total ou partiel du prix del'échéance pour quelquecause quecesoit, deconvention expresse, nous nousréservonslafaculté, sansformalités, dereprendre matériellement possession deces produits ou marchandisesàvosfrais, risqueset périls. Pénalité deretard : 3 foisletaux d'intérêt légalaprès dateéchéance. Escompte pour règlementanticipé: 0% (sauf condition particulière définie danslesconditions derèglement) Le montant del'indemnitéforfaitaire pour frais derecouvrement prévueen douzièmealinéa del'articleL441-6 est fixéà 40 Eurosen matièrecommerciale</p>
                 </div>
             </div>
         </div>

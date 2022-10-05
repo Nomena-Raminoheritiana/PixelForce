@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class DevisCompanyType extends AbstractType
 {
@@ -39,7 +40,7 @@ class DevisCompanyType extends AbstractType
                 'label' => 'Nom du client'
             ])
             ->add('client_rdv', DateTimeType::class, [
-                'label' => "Date de début",
+                'label' => "Date de rendez-vous",
                 'widget' => 'single_text',
                 'attr' => ['class' => 'datetime-local'],
                 "required" => true,
@@ -54,7 +55,9 @@ class DevisCompanyType extends AbstractType
                 'entry_type' => DevisCompanyDetailType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'label' => false
+                'label' => false,
+                'constraints' =>  new NotNull(['groups' => ['create']]),
+                'required'  => true
             ])
             ->add('payment_condition', IntegerType::class, [
                 'data' => 100,

@@ -149,7 +149,7 @@
                                         <div class="border-devis-d col-1 py-3">Action</div>
                                     </div>
                                     <div class="row-devis-detail">
-                                        {{ form_widget(formDevisComp.devis_company_detail, {'label' : false})}}</h6>
+                                        {{ form_widget(formDevisComp.devis_company_detail) }}</h6>
                                     </div>
                                 </div>
                                 
@@ -203,6 +203,8 @@
                 const delete_btn_select = $('#'+delete_btn);
                 handleDeleteButton(delete_btn_select)
             })
+            // Simuler un ajout de première ligne
+            $('#add-devis-detail').click();
 
             // Automatisation calcul
             function changeMontantHt(tmpl_select){

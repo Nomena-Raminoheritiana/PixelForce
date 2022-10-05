@@ -9,6 +9,7 @@ use App\Entity\DevisCompanyDetail;
 use App\Entity\User;
 use App\Form\DevisCompanyType;
 use App\Form\DevisType;
+use App\Manager\DevisManager;
 use App\Manager\EntityManager;
 use App\Repository\DevisCompanyRepository;
 use App\Services\FileHandler;
@@ -34,14 +35,16 @@ class AgentDevisController extends AbstractController
     private $mailerService;
     private $fileHandler;
     private $parameterBag;
+    private $devisManager;
 
-    public function __construct(EntityManager $entityManager, DevisCompanyRepository $repoDevisCompany, MailerService $mailerService, FileHandler $fileHandler, ParameterBagInterface $parameterBag)
+    public function __construct(EntityManager $entityManager, DevisCompanyRepository $repoDevisCompany, MailerService $mailerService, FileHandler $fileHandler, ParameterBagInterface $parameterBag, DevisManager $devisManager)
     {
         $this->entityManager = $entityManager;
         $this->repoDevisCompany = $repoDevisCompany;
         $this->mailerService = $mailerService;
         $this->fileHandler = $fileHandler;
         $this->parameterBag = $parameterBag;
+        $this->devisManager = $devisManager;
     }
 
     /**
@@ -164,45 +167,16 @@ class AgentDevisController extends AbstractController
         if($formDevisComp->isSubmitted() && $formDevisComp->isValid()) {
             $clientEmail = $formDevisComp->get('client_mail')->getData();
             $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
-           
-            //Logo Société
             $logo = $formDevisComp->get('company_logo')->getData();
+
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent);
             
-            if ($logo !== null) {
-                $logoC_filename = $this->fileHandler->upload($logo, $directory);
-                $devisCompany->setCompanyLogo($logoC_filename);
-            }
-        
-
-            $totalHt = 0;
-
-            /** @var DevisCompanyDetail $devisCompanyDetail */
-            foreach ($devisCompany->getDevisCompanyDetail() as $devisCompanyDetail) {                
-                $montantHt = $devisCompanyDetail->getQuantite() * $devisCompanyDetail->getPuVente();
-                $totalHt = $totalHt + $montantHt;
-
-                $devisCompanyDetail->setDevisCompany($devisCompany);
-                $devisCompanyDetail->setMontantHt($montantHt);
-                $devisCompanyDetail->setTotalTtc($montantHt + ($montantHt * 20));
-                $this->entityManager->persist($devisCompanyDetail);
-            }
-            
-            $totalTVA = ($totalHt * 20)/100;
-            $totalTTC = $totalHt + $totalTVA;
-
-            $refSequence = "PX-F-".(new \DateTime())->format('Y-m-d');
-            $devisCompany->setDevisRefSeq($refSequence);
-            $devisCompany->setAgent($agent);
-
-            $devisCompany->setDevisTotalHt($totalHt);
-            $devisCompany->setDevisTotalTtc($totalTTC);
-
-
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'filesDirAbsolute' => $this->parameterBag->get('kernel.project_dir').'/public/files/',
                 'devisCompany' => $devisCompany,
-                'filesDirectory' => $this->getParameter('files_directory_relative')
+                'filesDirectory' => $this->getParameter('files_directory_relative'),
+                'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition()) 
             ]);
     
             $binary = $wrapper->getPdf($html, ['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
@@ -212,13 +186,8 @@ class AgentDevisController extends AbstractController
             
             $this->entityManager->persist($devisCompany);
             $this->entityManager->flush();
-
             $this->mailerService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
-
-            $this->addFlash(
-               'success',
-               'Devis créé'
-            );
+            $this->addFlash('success', 'Devis créé');
             return $this->redirectToRoute('agent_company_devis_liste');
         }
 
