@@ -103,7 +103,11 @@
                     <div class="col-12">
                         <section class="app-ecommerce-details">
                             <div class="block block--bordered block--rounded">
-                                <h2 class="block__text block__text--center mt-2" >Information Client</h2>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h2 class="block__text block__text--center mt-2" >Information Client</h2>
+                                    <button class="btn btn-primary" onclick="openPopup('{{path('agent_refclient_popup')}}', 'devis_company_client_lastname;devis_company_client_firstname;devis_company_client_mail;hidden_cke___devis_company_client_info', 'nom;prenom;mail;description')" type="button">Choisir parmi les références</button>
+                                </div>
+                                
                                 <div class="row">
                                     <div class="col">
                                         <div class="my-form-widget">
@@ -210,7 +214,7 @@
             realImg.attr('src', src);
             logoContainer.removeClass('d-none');
         }
-        
+
         $( document ).ready(function() {
             $('#add-devis-detail').click(function(){
                 const index = +$('#widgets-counter').val();

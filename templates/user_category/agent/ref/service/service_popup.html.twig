@@ -116,7 +116,15 @@
                 .change(function (e){
                     Object.keys(mapPopup)
                     .forEach((key) => {
-                        window.opener.document.getElementById(key).value = elmt.find('.'+mapPopup[key]).attr('data-popup');
+                        const val = elmt.find('.'+mapPopup[key]).attr('data-popup');
+                        const keySplit = key.split("___");
+                        const openerElmt = window.opener.document.getElementById(keySplit[0]);
+                        if(keySplit.length > 1){
+                            openerElmt.dataset.myTarget = keySplit[1];
+                        }
+                        
+                        openerElmt.value = val;
+                        $( openerElmt ).trigger( "change" );
                     });
                     window.close();
                 });
