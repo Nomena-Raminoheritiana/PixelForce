@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Liste des clients
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .img-product{
+            height: 150px;
+            width: auto;
+        }
+
+    </style>
+
+{% endblock %}
+
+{% block body %} 
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
+        <div class="filter-wrap">
+            {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
+                
+                <div class="my-form-widget me-2">
+                    {{form_label(form.nom)}}
+                    {{form_widget(form.nom)}}
+                    {{form_errors(form.nom)}}
+                </div>
+                <div class="my-form-widget me-2">
+                    {{form_label(form.sort)}}
+                    {{form_widget(form.sort)}}
+                    {{form_errors(form.sort)}}
+                </div>
+                <div class="my-form-widget me-2">
+                    {{form_label(form.direction)}}
+                    {{form_widget(form.direction)}}
+                    {{form_errors(form.direction)}}
+                </div>
+                <div class="my-form-widget me-2">
+                    <div class="btn-wrap">
+                        <button class="btn btn-primary" type="submit"><i data-feather="filter"></i>Filtrer</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+    <div class="block block--bordered block--rounded">
+        
+        <div class="block__header mb-1" >
+            <h1 class="block__title">Liste des clients :</h1>
+            <div class="fab-btn-wrap">
+                <a  href="{{path('agent_refclient_new')}}" class="btn btn-primary btn--rounded fab-btn"><i data-feather="plus"></i>Nouveau client</a>
+            </div>
+        </div>
+        {% if refList|length ==0 %}
+                <div class="alert alert-primary p-3 text-center" role="alert">
+                    <div class="alert-body">
+                        Aucun client disponible pour le moment.
+                    </div>
+                </div>
+        {% endif %}
+        {% if refList|length !=0 %}
+        <div class="table-responsive mb-1">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th></th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ref in refList %}
+                    <tr>
+                        <td>{{ref.id}}</td>
+                        <td>{{ref.nom}}</td>
+                        <td>{{ref.description | raw}}</td>
+                        
+                        <td class="col-action col-action--edit">
+                            <a href="{{path('agent_refclient_edit', {'id': ref.id})}}">
+                                 <i data-feather="edit"></i>
+                            </a>
+                        </td>
+                        <td class="col-action col-action--remove">
+                            <a href="{{path('agent_refclient_delete', {'id': ref.id})}}">
+                                 <i data-feather="trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            
+        </div>
+        <div class="d-flex justify-content-center scale-up-center">
+            {{ knp_pagination_render(refList) }}
+        <div>
+        {% endif %}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">        
+        
+
+         $(document).ready(function () {
+            
+         });
+    </script>
+{% endblock %}
+

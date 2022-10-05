@@ -25,6 +25,18 @@
         {% elseif app.session.get('typeSecteurId') == 2 %}
             <li class=" nav-item"><a class="d-flex align-items-center" href="{{path('agent_demandedevis_list')}}"><i data-feather="eye"></i><span class="menu-title text-truncate" data-i18n="Calendar">Demandes de devis</span></a></li>
             <li class=" nav-item"><a class="d-flex align-items-center" href="{{path('agent_company_devis_liste')}}"><i class="fa-regular fa-file"></i><span class="menu-title text-truncate" data-i18n="Calendar">Devis</span></a></li>
+            <li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="settings"></i><span class="menu-title text-truncate" data-i18n="Components">Paramètre</span></a>
+                <ul class="menu-content">
+                    <li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Référence</span></a>
+                        <ul class="menu-content">
+                            <li><a class="d-flex align-items-center" href="{{path('agent_refsociete_list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Société</span></a></li>
+                            <li><a class="d-flex align-items-center" href="{{path('agent_refclient_list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Client</span></a></li>
+                            <li><a class="d-flex align-items-center" href="{{path('agent_refservice_list')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Service</span></a></li>
+                        </ul>
+                    </li>
+                    
+                </ul>
+            </li>
         {% else %}
             <li class=" nav-item"><a class="d-flex align-items-center" href="{{path('admin_ordersecu_list')}}"><i data-feather="eye"></i><span class="menu-title text-truncate" data-i18n="Calendar">Ventes</span></a></li>
         {% endif %}

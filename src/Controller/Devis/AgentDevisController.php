@@ -193,6 +193,7 @@ class AgentDevisController extends AbstractController
 
         return $this->render('user_category/agent/dd/devis/create_company_devis.html.twig', [
             'formDevisComp' => $formDevisComp->createView(),
+            'filesDirectory' => $this->getParameter('files_directory_relative')
         ]);
     }
 

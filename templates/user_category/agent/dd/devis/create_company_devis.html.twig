@@ -60,7 +60,7 @@
                 </div>
 
             </div>
-            {{ form_start(formDevisComp) }}
+            {{ form_start(formDevisComp, {'attr': {'class': 'my-form'}}) }}
 
             <div class="content-body">
                 <div class="row">
@@ -76,17 +76,25 @@
                     <div class="col-12">
                         <section class="app-ecommerce-details">
                             <div class="block block--bordered block--rounded">
-                                <h2 class="block__text block__text--center mt-2" >Information société</h2>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h2 class="block__text block__text--center mt-2" >Information société</h2>
+                                    <button class="btn btn-primary" onclick="openPopup('{{path('agent_refsociete_popup')}}', 'hidden_cke___devis_company_company_info;my_logo_societe_input_hidden', 'description;logo')" type="button">Choisir parmi les références</button>
+                                </div>
                                 <div class="row">
                                     <div class="col-12 col-md-9">
                                         <div class="my-form-widget">
                                             {{form_row(formDevisComp.company_info)}}
                                         </div>
+                                        <input type="hidden" name="hidden_cke" id="hidden_cke" data-my-target="" onchange="changePopupCkeValue(this)" /> 
                                     </div>
                                     <div class="col-12 col-md-3">
                                         <div class="my-form-widget">
                                             {{form_row(formDevisComp.company_logo)}}
                                         </div>
+                                        <div class="my-form-img-preview-container d-none" id="my_logo_societe">
+                                            <img class="my-form-img-preview" id="my-form-img-preview" data-prototype="{{ asset( filesDirectory ~ '__real_path__') }}" src="" />
+                                        </div>
+                                        <input type="hidden" name="my_logo_societe_input_hidden" id="my_logo_societe_input_hidden" onchange="changeLogoSociete(this)">
                                     </div>
                                 </div>
                             </div>
@@ -186,6 +194,23 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        function openPopup(path, opener, popup, queryString = ''){
+            var options = "resizable=yes,scrollbars=yes,location=no,width=1000,height=500,top=0,left=0";
+            window.open(path+'?'+queryString+"&opener="+opener+"&popup="+popup, 'popUpWindow', options).focus();
+        } 
+
+        function changePopupCkeValue(elmt, target){
+            CKEDITOR.instances[elmt.dataset.myTarget].setData(elmt.value);
+        }
+
+        function changeLogoSociete(elmt){
+            let logoContainer = $('#my_logo_societe');
+            let realImg = logoContainer.find('img');
+            let src = realImg[0].dataset.prototype.replace('__real_path__', elmt.value); 
+            realImg.attr('src', src);
+            logoContainer.removeClass('d-none');
+        }
+        
         $( document ).ready(function() {
             $('#add-devis-detail').click(function(){
                 const index = +$('#widgets-counter').val();
