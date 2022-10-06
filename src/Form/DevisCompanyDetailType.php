@@ -38,10 +38,11 @@ class DevisCompanyDetailType extends AbstractType
                     'class' => 'js-quantity'
                 ]
             ])
-            ->add('pu_vente', IntegerType::class, [
+            ->add('pu_vente', null, [
                 'label' => false,
                 'attr' => [
-                    'class' => 'js-pu_vente'
+                    'class' => 'js-pu_vente',
+                    'step' => 'any'
                 ]
             ])
             // ->add('montant_ht', IntegerType::class, ['label' => false])

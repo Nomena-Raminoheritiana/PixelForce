@@ -14,19 +14,19 @@
         }
         .border-devis-d{
             border-style: solid;
-            border-width: 2px;
+            border-width: 0.5px;
             border-color: #cacaca;
         }
         .col-border-devis-d{
             border-style: solid;
-            border-width: 1px;
-            border-color: #ececec;
+            border-width: 0.5px;
+            border-color: #cacaca;
         }
         .row-devis-detail{
             width: 200vh;
         }
         .row-devis-input:hover{
-            background-color:aliceblue;
+            background-color:#f9f9f9;
         }
 
         .center-horizontal-vertical{
@@ -156,7 +156,7 @@
                                         <div class="border-devis-d col-4 py-3">Désignation</div>
                                         <div class="border-devis-d col-1 py-3">Quantité</div>
                                         <div class="border-devis-d col-1 py-3">PU vente (€)</div>
-                                        <div class="border-devis-d col-1 py-3">Montant HT (€)</div>
+                                        <div class="border-devis-d col-1 py-3">Montant HT</div>
                                         <div class="border-devis-d col-2 py-3">Image</div>
                                         <div class="border-devis-d col-1 py-3">Action</div>
                                     </div>
@@ -167,7 +167,7 @@
 
                                 <div class="my-form-widget mt-5">
                                     <div class="row">
-                                        <div class="col-12 col-md-3">
+                                        <div class="col-12 col-md-5">
                                             {{form_row(formDevisComp.payment_condition)}}
                                         </div>
                                     </div>
@@ -247,6 +247,11 @@
                 _quantity.change(function() {
                     _montant_ht.val(_pu_vente.val() * _quantity.val());
                 })
+
+                //Gestion virgule dans l'input
+                _pu_vente.keydown(function(event) {
+                    $(this).val($(this).val().replace(/\,/g, '.'));
+                });
             }
 
             //suppression de block
