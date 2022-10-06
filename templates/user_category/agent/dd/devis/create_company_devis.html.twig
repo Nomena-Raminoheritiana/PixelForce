@@ -247,6 +247,11 @@
                 _quantity.change(function() {
                     _montant_ht.val(_pu_vente.val() * _quantity.val());
                 })
+
+                //Gestion virgule dans l'input
+                _pu_vente.keydown(function(event) {
+                    $(this).val($(this).val().replace(/\,/g, '.'));
+                });
             }
 
             //suppression de block
