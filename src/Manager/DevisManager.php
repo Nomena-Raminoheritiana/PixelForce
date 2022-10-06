@@ -6,14 +6,17 @@ namespace App\Manager;
 use App\Entity\DevisCompany;
 use App\Entity\DevisCompanyDetail;
 use App\Entity\User;
+use App\Services\FileHandler;
 
 class DevisManager
 {
     private $entityManager;
+    private $fileHandler;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, FileHandler $fileHandler)
     {
         $this->entityManager = $entityManager;
+        $this->fileHandler = $fileHandler;
     }
 
     public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup)

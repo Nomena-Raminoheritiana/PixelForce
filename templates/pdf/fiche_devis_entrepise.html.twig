@@ -132,7 +132,7 @@
                                                     {% if iterationPercent > 1 %}
                                                         {% for i in 1..iterationPercent %}
                                                             {% if i == 1 %}
-                                                                <li> <span class="fw-bolder"> 1er Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
+                                                                <li> <span class="fw-bolder"> 1ère Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
                                                             {% else %}
                                                                 <li> <span class="fw-bolder">{{i}}ème Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} €</li>
                                                             {% endif %}
@@ -141,7 +141,7 @@
                                                             <li><span class="fw-bolder">Dernière tranche : </span>{{resteIteration}}% soit {{(devisCompany.devisTotalttc * resteIteration)/100 }} €</li>
                                                         {% endif %}
                                                     {% else %}
-                                                        <li><span class="fw-bolder">1er Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
+                                                        <li><span class="fw-bolder">1ère Tranche : </span>{{devisCompany.PaymentCondition}}% soit {{(devisCompany.devisTotalttc * devisCompany.PaymentCondition)/100 }} € : Paiement comptant</li>
                                                         {% if resteIteration < 50 and resteIteration != 0 %}
                                                             <li><span class="fw-bolder">2ème Tranche : </span>{{resteIteration}}% soit {{(devisCompany.devisTotalttc * resteIteration)/100 }} €</li>
                                                         {% endif %}
@@ -150,10 +150,11 @@
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="total-amount" style="background-color: #e4e4e4; padding: 15px; position: relative;">
+                                            <div class="total-amount" style="background-color: #e4e4e4; padding: 8px;">
                                                 <p><span> Total HT : </span> <span>{{devisCompany.devisTotalHt}} €</span></p>
                                                 <p><span> TVA (20 %) : </span> <span>{{(devisCompany.devisTotalHt * 20) / 100}} €</span></p>
-                                                <h3 class="fw-bolder"><span> Total TTC : </span> <span>{{devisCompany.devisTotalttc}} €</span></h3>
+                                                <p class="fw-bolder h3"><span> Total TTC : </span> <span>{{devisCompany.devisTotalttc}} €</span></p>
+                                                {# <h3 class="fw-bolder"><span> Total TTC : </span> <span>{{devisCompany.devisTotalttc}} €</span></h3> #}
                                             </div>
                                         </div>
                                     </div>
