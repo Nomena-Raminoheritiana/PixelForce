@@ -70,11 +70,15 @@ class AgentInscriptionController extends AbstractController
             $this->userManager->setUserPasword($user, $request->request->get('inscription_agent')['password']['first'], '', false);
             $user->setRoles([ User::ROLE_AGENT ]);
             $user->setActive(1);
-            $user->setAccountStatus(User::ACCOUNT_STATUS['UNPAID']);
+            // $user->setAccountStatus(User::ACCOUNT_STATUS['UNPAID']);
+            $user->setAccountStatus(User::ACCOUNT_STATUS['ACTIVE']); // On met temporairement le statut comme ACTIVE
             $this->entityManager->save($user);
             $this->session->set('agentId', $user->getId());
-           
-            return $this->redirectToRoute('agent_register_payment_intent');
+            $this->addFlash(
+               'success',
+               'Votre inscription sur Pixelforce a été effectuée avec succès'
+            );
+            return $this->redirectToRoute('app_login');
         }
 
             return $this->render('security/inscription/form.html.twig', [

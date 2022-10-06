@@ -96,7 +96,7 @@ class AgentAccountController extends AbstractController
             $agentSecteurs = $this->repoAgentSecteur->findBy(['agent' => $agent]);
             $planAgentAccountType = $agent->typePlanAccountBySecteurChoice($agentSecteurs);
             /** @var PlanAgentAccount */
-            $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType]);
+            $planAgentAccount = $this->repoPlanAgentAccount->findOneBy(['status' => 'active', 'stripePriceName' => $planAgentAccountType, 'statusChange' => StripeService::STATUS_CHANGE['ACTIVE']]);
             
             // Gestion exeption
             if (is_null($planAgentAccount)) {
