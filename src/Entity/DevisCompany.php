@@ -87,10 +87,10 @@ class DevisCompany
      */
     private $devis_total_ttc;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $client_firstname;
+//    /**
+//     * @ORM\Column(type="string", length=255)
+//     */
+//    private $client_firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -278,17 +278,17 @@ class DevisCompany
         return $this;
     }
 
-    public function getClientFirstname(): ?string
-    {
-        return $this->client_firstname;
-    }
-
-    public function setClientFirstname(string $client_firstname): self
-    {
-        $this->client_firstname = $client_firstname;
-
-        return $this;
-    }
+//    public function getClientFirstname(): ?string
+//    {
+//        return $this->client_firstname;
+//    }
+//
+//    public function setClientFirstname(string $client_firstname): self
+//    {
+//        $this->client_firstname = $client_firstname;
+//
+//        return $this;
+//    }
 
     public function getClientLastname(): ?string
     {

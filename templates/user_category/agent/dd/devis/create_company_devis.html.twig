@@ -8,7 +8,7 @@
     {{ parent() }}
     <style>
         #head-row-devis-detail{
-            background-color: #ececec; 
+            background-color: #ececec;
             white-space: nowrap;
             width: 200vh;
         }
@@ -44,7 +44,7 @@
 {% endblock %}
 
 
-{% block body %}  
+{% block body %}
 {% form_theme formDevisComp '/global/partials/devis/devis_company/_collection-devis-detail.html.twig' %}
 
     <!-- BEGIN: Content-->
@@ -55,7 +55,7 @@
             <div class="content-header row">
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
-                       
+
                     </div>
                 </div>
 
@@ -85,7 +85,7 @@
                                         <div class="my-form-widget">
                                             {{form_row(formDevisComp.company_info)}}
                                         </div>
-                                        <input type="hidden" name="hidden_cke" id="hidden_cke" data-my-target="" onchange="changePopupCkeValue(this)" /> 
+                                        <input type="hidden" name="hidden_cke" id="hidden_cke" data-my-target="" onchange="changePopupCkeValue(this)" />
                                     </div>
                                     <div class="col-12 col-md-3">
                                         <div class="my-form-widget">
@@ -107,18 +107,18 @@
                                     <h2 class="block__text block__text--center mt-2" >Information Client</h2>
                                     <button class="btn btn-primary" onclick="openPopup('{{path('agent_refclient_popup')}}', 'devis_company_client_lastname;devis_company_client_firstname;devis_company_client_mail;hidden_cke___devis_company_client_info', 'nom;prenom;mail;description')" type="button">Choisir parmi les références</button>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col">
                                         <div class="my-form-widget">
                                             {{form_row(formDevisComp.client_lastname)}}
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <div class="my-form-widget">
-                                            {{form_row(formDevisComp.client_firstname)}}
-                                        </div>
-                                    </div>
+{#                                    <div class="col">#}
+{#                                        <div class="my-form-widget">#}
+{#                                            {{form_row(formDevisComp.client_firstname)}}#}
+{#                                        </div>#}
+{#                                    </div>#}
                                 </div>
 
                                 <div class="row">
@@ -150,7 +150,7 @@
 
                                 <div class="my-form-widget table-responsive px-4">
                                     {{ form_errors(formDevisComp.devis_company_detail) }}
-                                    
+
                                     <div id="head-row-devis-detail" class="row fw-bolder text-center d-flex justify-content-center align-items-center" >
                                         <div class="border-devis-d col-2 py-3">Référence</div>
                                         <div class="border-devis-d col-4 py-3">Désignation</div>
@@ -164,7 +164,7 @@
                                         {{ form_widget(formDevisComp.devis_company_detail) }}</h6>
                                     </div>
                                 </div>
-                                
+
                                 <div class="my-form-widget mt-5">
                                     <div class="row">
                                         <div class="col-12 col-md-3">
@@ -172,7 +172,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </section>
                         <section class="mb-3">
@@ -201,7 +201,7 @@
         function openPopup(path, opener, popup, queryString = ''){
             var options = "resizable=yes,scrollbars=yes,location=no,width=1000,height=500,top=0,left=0";
             window.open(path+'?'+queryString+"&opener="+opener+"&popup="+popup, 'popUpWindow', options).focus();
-        } 
+        }
 
         function changePopupCkeValue(elmt, target){
             CKEDITOR.instances[elmt.dataset.myTarget].setData(elmt.value);
@@ -210,7 +210,7 @@
         function changeLogoSociete(elmt){
             let logoContainer = $('#my_logo_societe');
             let realImg = logoContainer.find('img');
-            let src = realImg[0].dataset.prototype.replace('__real_path__', elmt.value); 
+            let src = realImg[0].dataset.prototype.replace('__real_path__', elmt.value);
             realImg.attr('src', src);
             logoContainer.removeClass('d-none');
         }
@@ -225,7 +225,7 @@
 
                 const tmpl_index = 'block_devis_company_devis_company_detail_'+ (index);
                 const tmpl_select = $('#'+tmpl_index);
-               
+
                 changeMontantHt(tmpl_select)
 
                 const delete_btn = 'delete_btn_devis_company_devis_company_detail_'+index
@@ -290,7 +290,7 @@
 
             if(companyLogoImgInput){
                 companyLogoImgInput.addEventListener("change", previewImage);
-                
+
             }
 
         });

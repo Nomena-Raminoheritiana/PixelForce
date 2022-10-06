@@ -29,15 +29,15 @@ class DevisCompanyType extends AbstractType
                 'label' => 'Logo société',
                 'mapped' => false,
                 'required' => false
-            ])   
+            ])
             ->add('client_mail', EmailType::class, [
                 'label' => 'Adresse email du client'
             ])
-            ->add('client_firstname', TextType::class, [
-                'label' => 'Prénom du client'
-            ])
+//            ->add('client_firstname', TextType::class, [
+//                'label' => 'Prénom du client'
+//            ])
             ->add('client_lastname', TextType::class, [
-                'label' => 'Nom du client'
+                'label' => 'Nom(s) et prénom(s) ou nom de la société'
             ])
             ->add('client_rdv', DateTimeType::class, [
                 'label' => "Date de rendez-vous",
@@ -61,7 +61,7 @@ class DevisCompanyType extends AbstractType
             ])
             ->add('payment_condition', IntegerType::class, [
                 'data' => 100,
-                'label' => 'Condition de paiement (%)', 
+                'label' => 'Condition de paiement (%)',
                 'attr' => [
                     'min' => 1,
                     'max' => 100
