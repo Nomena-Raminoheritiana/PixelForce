@@ -144,7 +144,7 @@
                 <div class="row">
                     <div class="col-12">
                         <section class="app-ecommerce-details">
-                            <div class="block block--bordered block--rounded">
+                            <div class="block block--bordered block--rounded" id="__detail_devis_row">
                                 <h2 class="block__text block__text--center mt-2" >Détail devis</h2>
                                 {# <button type="button" class="add-another-collection-widget btn btn-primary" data-list-selector="#email-fields-list"><i class="fa-solid fa-circle-plus"></i> Ajouter nouveau</button> #}
 
@@ -232,8 +232,15 @@
                 const delete_btn_select = $('#'+delete_btn);
                 handleDeleteButton(delete_btn_select)
             })
+                
             // Simuler un ajout de première ligne
-            $('#add-devis-detail').click();
+            window.onload = () => {
+                let block_devis_length = $('#__detail_devis_row fieldset').length;
+                if (block_devis_length < 1) {
+                    $('#add-devis-detail').click();
+                }
+            }
+         
 
             // Automatisation calcul
             function changeMontantHt(tmpl_select){
@@ -299,6 +306,8 @@
             }
 
         });
+
+        
     </script>
     {{ encore_entry_script_tags('ckeditorForm')}}
 
