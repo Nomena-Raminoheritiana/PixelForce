@@ -169,21 +169,21 @@ class AgentDevisController extends AbstractController
             $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
             $logo = $formDevisComp->get('company_logo')->getData();
             $logoPopup = $request->get('my_logo_societe_input_hidden');
-            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup);
+            $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute);
             
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
-                'filesDirAbsolute' => $this->parameterBag->get('kernel.project_dir').'/public/files/',
+                'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative'),
                 'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition()) 
             ]);
-    
-            $binary = $wrapper->getPdf($html, ['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+            $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
             $devisCompany->setPjFilename($pj_filepath);
-
-            
+                        
             $this->entityManager->persist($devisCompany);
             $this->entityManager->flush();
             $this->mailerService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);

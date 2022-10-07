@@ -31,6 +31,8 @@ class DevisCompany
      */
     private $company_logo;
 
+    private $company_logo_encode_img_base64;
+
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -314,4 +316,24 @@ class DevisCompany
         return $this;
     }
 
+
+    /**
+     * Get the value of company_logo_encode_img_base64
+     */ 
+    public function getCompany_logo_encode_img_base64()
+    {
+        return $this->company_logo_encode_img_base64;
+    }
+
+    /**
+     * Set the value of company_logo_encode_img_base64
+     *
+     * @return  self
+     */ 
+    public function setCompany_logo_encode_img_base64($company_logo_encode_img_base64)
+    {
+        $this->company_logo_encode_img_base64 = $company_logo_encode_img_base64;
+
+        return $this;
+    }
 }

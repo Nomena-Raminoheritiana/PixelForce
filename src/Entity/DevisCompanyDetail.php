@@ -45,6 +45,9 @@ class DevisCompanyDetail
     private $tva;
 
 
+    private $image_encode_img_base64;
+
+
     /**
      * @Assert\Image()
      *
@@ -192,6 +195,26 @@ class DevisCompanyDetail
     public function setTotalTtc(float $total_ttc): self
     {
         $this->total_ttc = $total_ttc;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of image_encode_img_base64
+     */ 
+    public function getImage_encode_img_base64()
+    {
+        return $this->image_encode_img_base64;
+    }
+
+    /**
+     * Set the value of image_encode_img_base64
+     *
+     * @return  self
+     */ 
+    public function setImage_encode_img_base64($image_encode_img_base64)
+    {
+        $this->image_encode_img_base64 = $image_encode_img_base64;
 
         return $this;
     }

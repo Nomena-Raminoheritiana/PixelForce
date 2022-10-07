@@ -52,7 +52,8 @@ class DevisCompanyDetailType extends AbstractType
                 ], 
                 'attr' => [
                     'class' => 'input_file'
-                ]
+                ],
+                'required' => false
             ]);
 
         ;
