@@ -7,6 +7,7 @@ use App\Entity\DevisCompany;
 use App\Entity\DevisCompanyDetail;
 use App\Entity\User;
 use App\Services\FileHandler;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class DevisManager
 {
@@ -40,6 +41,10 @@ class DevisManager
             $devisCompanyDetail->setMontantHt($montantHt);
             $devisCompanyDetail->setTotalTtc($montantHt + ($montantHt * 20));
             $devisCompanyDetail->setTva(20);
+
+            $uploadedFIle = $devisCompanyDetail->getFileImage();
+            $image_filename = $this->fileHandler->upload($uploadedFIle, $directory);
+            $devisCompanyDetail->setImage($image_filename);
             $this->entityManager->persist($devisCompanyDetail);
         }
         

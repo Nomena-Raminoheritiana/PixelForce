@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class DevisCompanyDetailType extends AbstractType
 {
@@ -45,12 +46,15 @@ class DevisCompanyDetailType extends AbstractType
                     'step' => 'any'
                 ]
             ])
-            // ->add('montant_ht', IntegerType::class, ['label' => false])
-            ->add('image', FileType::class, [
-                "label" => 'Logo société',
-                'mapped' => false,
-                "required" => false
-            ])   
+            ->add('file_image', FileType::class,[
+                'label_attr' => [
+                    'class' => 'label_file'
+                ], 
+                'attr' => [
+                    'class' => 'input_file'
+                ]
+            ]);
+
         ;
     }
 

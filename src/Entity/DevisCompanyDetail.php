@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\DevisCompanyDetailRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=DevisCompanyDetailRepository::class)
@@ -42,6 +44,13 @@ class DevisCompanyDetail
      */
     private $tva;
 
+
+    /**
+     * @Assert\Image()
+     *
+     */
+    public $fileImage;
+    
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -127,6 +136,17 @@ class DevisCompanyDetail
 
         return $this;
     }
+
+    public function setFileImage(UploadedFile $fileImage = null)
+    {
+        $this->fileImage = $fileImage;
+    }
+ 
+    public function getFileImage()
+    {
+        return $this->fileImage;
+    }
+
 
     public function getImage(): ?string
     {
