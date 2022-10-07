@@ -28,11 +28,6 @@ class RefClientFormType extends AbstractType
                     new NotBlank(["message" => "Nom obligatoire"])
                 ]
             ])
-            ->add('prenom', TextType::class, [
-                "label" => "Prénom(s)",
-                "trim" => true,
-                "required" => false,
-            ])
             ->add('mail', TextType::class, [
                 "label" => "Adresse email",
                 "trim" => true,
