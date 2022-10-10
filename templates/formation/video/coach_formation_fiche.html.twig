@@ -42,7 +42,12 @@
                         <iframe src="https://player.vimeo.com/video/{{ formation.videoId }}" style="width:100%; height:400px" class="m-auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                     </div>
                     <div class="my-3" id="formation-video">
-                        <buton class="btn btn-primary btn-sm" id="btn-add-video"><i class="fa fa-plus"></i> Ajouter une nouvelle video</buton>
+                        <button class="btn btn-primary btn-sm" id="btn-add-video"><i class="fa fa-plus"></i> Ajouter une nouvelle video</button>
+                        <br/>
+                        <a href="#">Insérer directement le lien de la video</a>
+                        <br/>
+                        <input type="checkbox" id="check_url" onchange="toggleInputUrl(event)" />
+                        <input type="text" class="form-control" id="input-url-video" disabled="disabled" placeholder="Veuillez collez ici l'url de la video (Vimeo)" />
                         <div>
                             <span id="video-upload-name" class="badge bg-light-info text-dark mt-2 d-none"><i class="fa-solid fa-video me-2"></i></span>
                         </div>
@@ -124,4 +129,16 @@
     {{ parent() }}
     {{ encore_entry_script_tags('formationForm')}}
     {{ encore_entry_script_tags('ckeditorForm')}}
+    <script>
+        function toggleInputUrl(e)
+        {
+            if(e.target.checked) {
+                $('#input-url-video').removeAttr('disabled');
+                $('#btn-add-video').attr('disabled','disabled');
+            } else {
+                $('#input-url-video').attr('disabled','disabled');
+                $('#btn-add-video').removeAttr('disabled');
+            }
+        }
+    </script>
 {% endblock %}

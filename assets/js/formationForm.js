@@ -10,35 +10,28 @@ $(document).ready(function () {
     // etap 2 : submit formulaire (symfony : upload + flush Data)
     $(this).on('click','#submit-formation',async function(e) {
         e.preventDefault();
-        validationFormulaire(function() {
+        validationFormulaire(async function() {
             progressionBar(0);
-            sendVideoToVimeo({
-                selector:$('#inputVideo'),
-                titre:$('#video-upload-name').text(),
-                description:'',
-                error: function(data) {
-                    alert('erreur lors du téléchargement video '+data)
-                },
-                progress: function(pourcentage) {
-                    progressionBar(pourcentage);
-                },
-                complete: async function(videoId, url, prettyData) {
-                    await saveData(videoId);
-                    progressionContainer.remove()
-                    progressionLabel.html(
-                        '<div class="text-center">' +
-                        '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
-                        '   <strong>Formation ajouté avec succès</strong> ' +
-                        '</div>');
-                    setTimeout(function() {
-                        progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
-                        setTimeout(function() {
-                            location.href = Routing.generate('coach_formation_list')
-                        },1000)
-                    },1000)
+            if(!$('#check_url')[0].checked) {
+                sendVideoToVimeo({
+                    selector:$('#inputVideo'),
+                    titre:$('#video-upload-name').text(),
+                    description:'',
+                    error: function(data) {
+                        alert('erreur lors du téléchargement video '+data)
+                    },
+                    progress: function(pourcentage) {
+                        progressionBar(pourcentage);
+                    },
+                    complete: async function(videoId, url, prettyData) {
+                        await save(videoId)
+                    }
+                })
+            } else {
+                const videoId = getIdVideoByUrl($('#input-url-video').val())
+                await save(videoId)
+            }
 
-                }
-            })
         });
     });
 
@@ -164,7 +157,7 @@ $(document).ready(function () {
                 fileDeleted.append('deleted_media[]', $(this).val())
             });
             (await axios.post(Routing.generate('coach_formation_deleteMedia'),fileDeleted))
-             if(addVideo) {
+             if(addVideo && !$('#check_url')[0].checked) {
                  $('.hiddenVideoData').remove();
                  sendVideoToVimeo({
                      selector:$('#inputVideo'),
@@ -193,7 +186,8 @@ $(document).ready(function () {
                      }
                  })
              } else {
-                 await saveData();
+                 const videoId = getIdVideoByUrl($('#input-url-video').val())
+                 await saveData(videoId);
                  progressionContainer.remove()
                  progressionLabel.html(
                      '<div class="text-center">' +
@@ -214,6 +208,23 @@ $(document).ready(function () {
 
 
 });
+
+async function save(videoId='')
+{
+    await saveData(videoId);
+    progressionContainer.remove()
+    progressionLabel.html(
+        '<div class="text-center">' +
+        '   <h1 class="text-success"><i class="fa fa-circle-check"></i></h1>     ' +
+        '   <strong>Formation ajouté avec succès</strong> ' +
+        '</div>');
+    setTimeout(function() {
+        progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
+        setTimeout(function() {
+            location.href = Routing.generate('coach_formation_list')
+        },1000)
+    },1000)
+}
 
 async function saveData(videoId = '')
 {
@@ -337,20 +348,34 @@ function validationFormulaire(callback)
             'formation[contenu]' : '<i class=\'fa fa-warning\'></i> Veuillez entrer le contenu de la formation'
         },
         submitHandler: function() {
-
-            if($('#inputVideo').length === 0) {
-                const alert = '<div class="alert alert-danger my-2" role="alert">\n' +
-                    '  La vidéo est obligatoire\n' +
-                    '</div>';
-                $('#formation').prepend(alert);
-
-            } else {
-                callback();
+            const alert = '<div class="alert alert-danger my-2" role="alert">\n' +
+                '  La vidéo est obligatoire\n' +
+                '</div>';
+            if(!$('#btn-add-video')[0].disabled) {
+                if($('#inputVideo').length === 0) {
+                    $('#formation').prepend(alert);
+                } else {
+                    callback();
+                }
+            } else if (!$('#input-url-video')[0].disabled) {
+                if($('#input-url-video').val() === '') {
+                    $('#formation').prepend(alert);
+                } else {
+                    callback();
+                }
             }
+
         }
     });
     $('#formation, #formation-fiche').submit();
 }
+
+function getIdVideoByUrl(url)
+{
+    let partUrl = url.split('/')
+    return partUrl.length > 0 ? partUrl[partUrl.length - 1] : '';
+}
+
 (function(i, s, o, g, r, a, m) {
     i['GoogleAnalyticsObject'] = r;
     i[r] = i[r] || function() {
