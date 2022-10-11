@@ -43,6 +43,7 @@ security:
             - { path: ^/admin, roles: ROLE_ADMINISTRATEUR }
             - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/user/addClient, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { path: ^/anonymous, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/forgetPassword.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/inscription.*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/client, roles: ROLE_CLIENT }

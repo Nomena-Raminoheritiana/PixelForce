@@ -14,6 +14,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class DevisCompany
 {
+    const DEVIS_STATUS_INT = [
+        'CREATED' => 0,
+        'REJECTED' => -1,
+        'SIGNED' => 1
+    ];
+
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -104,6 +111,11 @@ class DevisCompany
      */
     private $client_rdv;
 
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $status;
+
 
 
     public function __construct()
@@ -111,6 +123,7 @@ class DevisCompany
         $this->created_at = new DateTime();
         $this->devis_company_detail = new ArrayCollection();
         $this->payment_condition = 100;
+        $this->status = self::DEVIS_STATUS_INT['CREATED'];
     }
 
     public function getId(): ?int
@@ -335,5 +348,34 @@ class DevisCompany
         $this->company_logo_encode_img_base64 = $company_logo_encode_img_base64;
 
         return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatusColor()
+    {
+        switch ($this->status) {
+            case self::DEVIS_STATUS_INT['CREATED'] :
+                $color = 'primary';
+                break;
+            case self::DEVIS_STATUS_INT['REJECTED'] :
+                $color = 'danger';
+                break;
+            case self::DEVIS_STATUS_INT['SIGNED'] :
+                $color = 'success';
+                break;
+        }
+        
+        return $color;
     }
 }
