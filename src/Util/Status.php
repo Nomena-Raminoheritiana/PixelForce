@@ -1,5 +1,5 @@
 <?php 
-namespace App\Util\Status;
+namespace App\Util;
 
 class Status{
     public const VALID = 1;
