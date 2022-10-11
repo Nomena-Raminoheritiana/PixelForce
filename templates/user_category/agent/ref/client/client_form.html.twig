@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Formulaire Client
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %} 
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Formulaire Client :</h1>
+            
+            {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
+                
+                <div class="my-form-widget">
+                    {{form_label(form.nom)}}
+                    {{form_widget(form.nom)}}
+                    {{form_errors(form.nom)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.mail)}}
+                    {{form_widget(form.mail)}}
+                    {{form_errors(form.mail)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.description)}}
+                    {{form_widget(form.description)}}
+                    {{form_errors(form.description)}}
+                </div>
+                
+               
+                <div class="btn-wrap">
+                    <button class="btn btn-primary" type="submit"><i data-feather="save"></i>{{ isEdit ? 'Enregistrer les modifications' : 'Créer' }}</button>
+                </div>
+            {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        window.onload = () => {
+            
+
+        };
+    </script>
+
+{% endblock %}
+

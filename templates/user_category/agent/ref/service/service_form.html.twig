@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Formulaire Service
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %} 
+    <div class="block block--bordered block--rounded">
+        <h1 class="block__text block__text--center mt-2" >Formulaire Service :</h1>
+            
+            {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'category-form'}}) }}
+                
+                <div class="my-form-widget">
+                    {{form_label(form.ref)}}
+                    {{form_widget(form.ref)}}
+                    {{form_errors(form.ref)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.designation)}}
+                    {{form_widget(form.designation)}}
+                    {{form_errors(form.designation)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.prix)}}
+                    {{form_widget(form.prix)}}
+                    {{form_errors(form.prix)}}
+                </div>
+                
+               
+                <div class="btn-wrap">
+                    <button class="btn btn-primary" type="submit"><i data-feather="save"></i>{{ isEdit ? 'Enregistrer les modifications' : 'Créer' }}</button>
+                </div>
+            {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        window.onload = () => {
+            
+
+        };
+    </script>
+
+{% endblock %}
+

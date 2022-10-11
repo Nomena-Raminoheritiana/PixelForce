@@ -1,0 +1,314 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Création devis (Société)
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #head-row-devis-detail{
+            background-color: #ececec;
+            white-space: nowrap;
+            width: 200vh;
+        }
+        .border-devis-d{
+            border-style: solid;
+            border-width: 0.5px;
+            border-color: #cacaca;
+        }
+        .col-border-devis-d{
+            border-style: solid;
+            border-width: 0.5px;
+            border-color: #cacaca;
+        }
+        .row-devis-detail{
+            width: 200vh;
+        }
+        .row-devis-input:hover{
+            background-color:#f9f9f9;
+        }
+
+        .center-horizontal-vertical{
+            justify-content: center !important;
+            align-items: flex-start !important;
+            display: flex !important;
+        }
+
+        @media (max-width: 400px) {
+            #head-row-devis-detail, .row-devis-detail{
+                width: 100vh;
+            }
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+{% form_theme formDevisComp '/global/partials/devis/devis_company/_collection-devis-detail.html.twig' %}
+
+    <!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+
+                    </div>
+                </div>
+
+            </div>
+            {{ form_start(formDevisComp, {'attr': {'class': 'my-form'}}) }}
+
+            <div class="content-body">
+                <div class="row">
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <h1 class="block__text block__text--center mt-2" >Création devis :</h1>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h2 class="block__text block__text--center mt-2" >Information société</h2>
+                                    <button class="btn btn-primary" onclick="openPopup('{{path('agent_refsociete_popup')}}', 'hidden_cke___devis_company_company_info;my_logo_societe_input_hidden', 'description;logo')" type="button">Choisir parmi les références</button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-9">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.company_info)}}
+                                        </div>
+                                        <input type="hidden" name="hidden_cke" id="hidden_cke" data-my-target="" onchange="changePopupCkeValue(this)" />
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.company_logo)}}
+                                        </div>
+                                        <div class="my-form-img-preview-container d-none" id="my_logo_societe">
+                                            <img class="my-form-img-preview" id="my-form-img-preview" data-prototype="{{ asset( filesDirectory ~ '__real_path__') }}" src="" />
+                                        </div>
+                                        <input type="hidden" name="my_logo_societe_input_hidden" id="my_logo_societe_input_hidden" onchange="changeLogoSociete(this)">
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h2 class="block__text block__text--center mt-2" >Information Client</h2>
+                                    <button class="btn btn-primary" onclick="openPopup('{{path('agent_refclient_popup')}}', 'devis_company_client_lastname;devis_company_client_mail;hidden_cke___devis_company_client_info', 'nom;mail;description')" type="button">Choisir parmi les références</button>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_lastname)}}
+                                        </div>
+                                    </div>
+{#                                    <div class="col">#}
+{#                                        <div class="my-form-widget">#}
+{#                                            {{form_row(formDevisComp.client_firstname)}}#}
+{#                                        </div>#}
+{#                                    </div>#}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_mail)}}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="my-form-widget">
+                                            {{form_row(formDevisComp.client_rdv)}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="my-form-widget">
+                                    {{form_row(formDevisComp.client_info)}}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <section class="app-ecommerce-details">
+                            <div class="block block--bordered block--rounded" id="__detail_devis_row">
+                                <h2 class="block__text block__text--center mt-2" >Détail devis</h2>
+                                {# <button type="button" class="add-another-collection-widget btn btn-primary" data-list-selector="#email-fields-list"><i class="fa-solid fa-circle-plus"></i> Ajouter nouveau</button> #}
+
+                                <div class="my-form-widget table-responsive px-4">
+                                    {{ form_errors(formDevisComp.devis_company_detail) }}
+
+                                    <div id="head-row-devis-detail" class="row fw-bolder text-center d-flex justify-content-center align-items-center" >
+                                        <div class="border-devis-d col-2 py-3">Référence</div>
+                                        <div class="border-devis-d col-4 py-3">Désignation</div>
+                                        <div class="border-devis-d col-1 py-3">Quantité</div>
+                                        <div class="border-devis-d col-1 py-3">PU vente (€)</div>
+                                        <div class="border-devis-d col-1 py-3">Montant HT</div>
+                                        <div class="border-devis-d col-2 py-3">Image</div>
+                                        <div class="border-devis-d col-1 py-3">Action</div>
+                                    </div>
+                                    <div class="row-devis-detail">
+                                        {{ form_widget(formDevisComp.devis_company_detail) }}</h6>
+                                    </div>
+                                </div>
+
+                                <div class="my-form-widget mt-5">
+                                    <div class="row">
+                                        <div class="col-12 col-md-5">
+                                            {{form_row(formDevisComp.payment_condition)}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </section>
+                        <section class="mb-3">
+                            <div class="btn-wrap">
+                                <button class="btn btn-success" id="create_devis_company" type="submit">Créer <i class="fa-solid fa-check"></i></button>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+            {{ form_end(formDevisComp) }}
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function openPopup(path, opener, popup, queryString = ''){
+            var options = "resizable=yes,scrollbars=yes,location=no,width=1000,height=500,top=0,left=0";
+            window.open(path+'?'+queryString+"&opener="+opener+"&popup="+popup, 'popUpWindow', options).focus();
+        }
+
+        function changePopupCkeValue(elmt, target){
+            CKEDITOR.instances[elmt.dataset.myTarget].setData(elmt.value);
+        }
+
+        function changeLogoSociete(elmt){
+            let logoContainer = $('#my_logo_societe');
+            let realImg = logoContainer.find('img');
+            let src = realImg[0].dataset.prototype.replace('__real_path__', elmt.value);
+            realImg.attr('src', src);
+            logoContainer.removeClass('d-none');
+        }
+
+        $( document ).ready(function() {
+            $('#add-devis-detail').click(function(){
+                const index = +$('#widgets-counter').val();
+                const tmpl = $('#devis_company_devis_company_detail').data('prototype').replace(/__name__/g, index);
+                $('#devis_company_devis_company_detail').append(tmpl);
+                $('#widgets-counter').val(index + 1);
+                $('fieldset').removeClass('mb-3');
+
+                const tmpl_index = 'block_devis_company_devis_company_detail_'+ (index);
+                const tmpl_select = $('#'+tmpl_index);
+
+                changeMontantHt(tmpl_select)
+
+                const delete_btn = 'delete_btn_devis_company_devis_company_detail_'+index
+                const delete_btn_select = $('#'+delete_btn);
+                handleDeleteButton(delete_btn_select)
+            })
+                
+            // Simuler un ajout de première ligne
+            window.onload = () => {
+                let block_devis_length = $('#__detail_devis_row fieldset').length;
+                if (block_devis_length < 1) {
+                    $('#add-devis-detail').click();
+                }
+            }
+         
+
+            // Automatisation calcul
+            function changeMontantHt(tmpl_select){
+                 // Automatisation calcul montant
+                let _montant_ht = tmpl_select.find('.row-devis-input .montant-ht-js');
+                let _quantity = _montant_ht.parent().parent().find('.js-quantity');
+                let _pu_vente = _montant_ht.parent().parent().find('.js-pu_vente');
+                _pu_vente.change(function() {
+                    _montant_ht.val(_pu_vente.val() * _quantity.val());
+                })
+                _quantity.change(function() {
+                    _montant_ht.val(_pu_vente.val() * _quantity.val());
+                })
+
+                //Gestion virgule dans l'input
+                _pu_vente.keydown(function(event) {
+                    $(this).val($(this).val().replace(/\,/g, '.'));
+                });
+            }
+
+            //suppression de block
+            function handleDeleteButton(delete_btn_select) {
+                delete_btn_select.click(function(){
+                    var _confirm = confirm("Êtes-vous vraiment sûr de supprimer cette ligne?");
+                    if (_confirm) {
+                        const target = this.dataset.target;
+                        $('#' + target).remove()
+                    }
+                })
+            }
+
+            // To fix update CkEditor
+            function updateFieldCkeditor(fields) {
+                $.each(fields, function (key, value) {
+                    $('#' + key).val(value.getData());
+                });
+            }
+            $('#create_devis_company').on('click',  function(e){
+                updateFieldCkeditor(CKEDITOR.instances)
+
+            });
+
+
+            let imgViewer = document.querySelector("#my_logo_societe img");
+            let companyLogoImgInput = document.getElementById("devis_company_company_logo");
+
+            function previewImage(data){
+                let input = data.target;
+                let file = input.files[0];
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
+                    let base64 = reader.result;
+                    imgViewer.src = base64;
+                    $('#my_logo_societe').removeClass('d-none');
+                    $('#my_logo_societe_input_hidden').val("");
+                };
+            }
+
+            if(companyLogoImgInput){
+                companyLogoImgInput.addEventListener("change", previewImage);
+
+            }
+
+        });
+
+        
+    </script>
+    {{ encore_entry_script_tags('ckeditorForm')}}
+
+{% endblock %}

@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Entity\Formation;
 use App\Entity\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -20,12 +21,14 @@ class MailerService
     private $mailer;
     private $from;
     private $from_name;
+    private $parameterBag;
 
-    public function __construct(MailerInterface $mailer)
+    public function __construct(MailerInterface $mailer, ParameterBagInterface $parameterBag)
     {
         $this->mailer = $mailer;
         $this->from =  $_ENV['MAILER_SEND_FROM'];
         $this->from_name = $_ENV['MAILER_SEND_FROM_NAME'];
+        $this->parameterBag = $parameterBag;
     }
 
     public function sendMailInscriptionUser($email)
@@ -94,6 +97,32 @@ class MailerService
         ]);       
     }
 
+    public function SendDevisToCompany($recipient, $devisCompany, $pj_pathname)
+    {
+        $email = (new TemplatedEmail())
+        ->from(new Address($this->from, $this->from_name))
+        ->to($recipient)
+        ->subject('Devis')
+        ->htmlTemplate('emails/devis/devis_entreprise.html.twig')
+        ->context([
+            'devisCompany' => $devisCompany
+        ])
+        ->attachFromPath($this->parameterBag->get('kernel.project_dir')."/public/files/".$pj_pathname, null);
+        $this->mailer->send($email);
+    ;
+
+        // $this->sendMail([
+        //     'subject' => 'Devis',
+        //     'from' => $this->from,
+        //     'from_name' => $this->from_name,
+        //     'to' => [
+        //         $recipient
+        //     ],
+        //     'template' => 'devis/devis_entreprise.html.twig',
+        // ]);
+    }
+
+
     public function sendMail($parameters)
     {
         $email = (new TemplatedEmail())
@@ -119,6 +148,10 @@ class MailerService
 
         // passez les variables
         $email = $email->context(isset($parameters['template_vars']) ? $parameters['template_vars'] : []);
+
+        // piece_jointe
+        // $email = $email->attachFromPath(  $this->parameterBag->get('kernel.project_dir')."/public/files/piece-jointe/livret_d_accueil_formation_officielle_entreprendre_en_2022.pdf", null)  
+
 
         try{
             $this->mailer->send($email);

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Devis Entreprise détail
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+<!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class="active dstepper-block" role="tabpanel" >
+                        <div id="place-order" class="list-view product-checkout">
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Société</label>
+                                        <hr />
+                                        <div class="company-info">
+                                            <div class="company-logo">
+                                                {% if devisCompany.companyLogo %}
+                                                    {{devisCompany.companyLogo}}
+                                                {% endif %}
+                                            </div>
+                                            <div class="company_info_detail mt-4">
+                                                <h6 class="fw-bolder">Information Société</h6>
+                                                {{devisCompany.companyInfo|raw}}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <a href="{{ asset('/files/'~devisCompany.pjFilename) }}" download class="btn btn-primary"><i class="fa fa-download"></i> Télécharger le devis</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Détails | Client</label>
+                                        <hr />
+                                         <div class="client-info">
+                                            <div class="client-email">
+                                                <h6 class="fw-bolder">Client Email</h6>
+                                                {{devisCompany.clientMail}}
+                                            </div>
+                                            <div class="client mt-5">
+                                                <h6 class="fw-bolder">Information Client</h6>
+                                                {{devisCompany.clientInfo|raw}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+{% endblock %}
+
+
