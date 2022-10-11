@@ -171,19 +171,19 @@ class AgentDevisController extends AbstractController
             $logoPopup = $request->get('my_logo_societe_input_hidden');
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
             $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute);
-            
+
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative'),
-                'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition()) 
+                'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
             ]);
 
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
             $devisCompany->setPjFilename($pj_filepath);
-                        
+
             $this->entityManager->persist($devisCompany);
             $this->entityManager->flush();
             $this->mailerService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
@@ -207,5 +207,23 @@ class AgentDevisController extends AbstractController
             'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT
         ]);
     }
+
+//          Route pour tester la génération d'un pdf
+//    /**
+//     * @Route("/company/devis/{id}/detail/pdf", name="agent_company_detail_pdf")
+//     */
+//    public function agent_view_pdf(DevisCompany $devisCompany, DompdfWrapperInterface $wrapper)
+//    {
+//        $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
+//        //Piece jointe
+//        $html =  $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
+//            'filesDirAbsolute' => $filesDirAbsolute,
+//            'devisCompany' => $devisCompany,
+//            'filesDirectory' => $this->getParameter('files_directory_relative'),
+//            'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
+//        ]);
+//        $response = $wrapper->getStreamResponse($html, "document.pdf");
+//        $response->send();
+//    }
 
 }
