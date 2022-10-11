@@ -10,8 +10,10 @@ use App\Services\FileHandler;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -77,17 +79,26 @@ class AnonymousDevisCompanyController extends AbstractController
         $filesDirectory  =  $this->getParameter('files_directory_relative');
         
         $form = $formFactoryInterface
-        ->createNamedBuilder("sign-contrat-form", FormType::class)
-        ->add('signature', HiddenType::class, [
-            "label" => "Signature",
-            'mapped' => false,
-            "required" => true
-        ])
-        ->getForm();
+            ->createNamedBuilder("sign-contrat-form", FormType::class)
+            ->add('signature', HiddenType::class, [
+                "label" => "Signature",
+                'mapped' => false,
+                "required" => true,
+                "attr" => [
+                    "class" => "d-none"
+                ]
+            ])
+            ->add('client_name', TextType::class, ['label' => 'Nom et prénom ou Entreprise'])
+            ->add('client_mail', EmailType::class, ['label' => 'Adresse email'])
+            ->add('client_phone', TextType::class, ['label' => 'Téléphone'])
+            ->getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-           
+            $anonymousClientName = $form->get('client_name')->getData();
+            $anonymousClientMail = $form->get('client_mail')->getData();
+            $anonymousClientPhone = $form->get('client_phone')->getData();
+
             $signature = $form->get('signature')->getData();
             $photo = $this->fileHandler->saveBase64($signature, $filesDirectory.$devisCompanyDirectory.'/'.'signature.png');
             
@@ -102,8 +113,15 @@ class AnonymousDevisCompanyController extends AbstractController
             $filepath = $this->fileHandler->saveBinary($binary, 'devis_avec_signature.pdf', $devisCompanyDirectory);
             $this->demandeDevisService->signContrat($filesDirectory.$filepath, $photo);
             $devisCompany->setPjFilename($filepath);
+            $devisCompany->setDateSignature(new \DateTime());
             $devisCompany->setStatus(DevisCompany::DEVIS_STATUS_INT['SIGNED']);
             
+            $devisCompany->setAnonymousClientName($anonymousClientName);
+            $devisCompany->setAnonymousClientMail($anonymousClientMail);
+            $devisCompany->setAnonymousClientPhone($anonymousClientPhone);
+
+            
+
             $this->entityManager->persist($devisCompany);
             $this->entityManager->flush();
             $this->addFlash(

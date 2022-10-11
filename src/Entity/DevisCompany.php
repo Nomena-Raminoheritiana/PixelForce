@@ -116,6 +116,26 @@ class DevisCompany
      */
     private $status;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateSignature;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $anonymous_client_name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $anonymous_client_mail;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $anonymous_client_phone;
+
 
 
     public function __construct()
@@ -377,5 +397,53 @@ class DevisCompany
         }
         
         return $color;
+    }
+
+    public function getDateSignature(): ?\DateTimeInterface
+    {
+        return $this->dateSignature;
+    }
+
+    public function setDateSignature(?\DateTimeInterface $dateSignature): self
+    {
+        $this->dateSignature = $dateSignature;
+
+        return $this;
+    }
+
+    public function getAnonymousClientName(): ?string
+    {
+        return $this->anonymous_client_name;
+    }
+
+    public function setAnonymousClientName(?string $anonymous_client_name): self
+    {
+        $this->anonymous_client_name = $anonymous_client_name;
+
+        return $this;
+    }
+
+    public function getAnonymousClientMail(): ?string
+    {
+        return $this->anonymous_client_mail;
+    }
+
+    public function setAnonymousClientMail(?string $anonymous_client_mail): self
+    {
+        $this->anonymous_client_mail = $anonymous_client_mail;
+
+        return $this;
+    }
+
+    public function getAnonymousClientPhone(): ?string
+    {
+        return $this->anonymous_client_phone;
+    }
+
+    public function setAnonymousClientPhone(?string $anonymous_client_phone): self
+    {
+        $this->anonymous_client_phone = $anonymous_client_phone;
+
+        return $this;
     }
 }

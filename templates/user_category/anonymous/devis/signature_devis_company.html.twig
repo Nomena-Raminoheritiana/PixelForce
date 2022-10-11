@@ -87,15 +87,28 @@
                         <div id="place-order" class="list-view product-checkout">
                             <!-- Checkout Place Order Left starts -->
                             <div class="checkout-items">
-                                {{ form_start(form, {'attr': {'class': 'd-none', 'id': 'sign-contrat-form'}}) }}
+                                {{ form_start(form, {'attr': {'id': 'sign-contrat-form'}}) }}
                                     <div class="my-form-widget">
-                                        {{form_label(form.signature)}}
                                         {{form_widget(form.signature)}}
                                         {{form_errors(form.signature)}}
                                     </div>
-                                    
-                                    <div class="btn-wrap">
-                                        <button class="btn btn-primary btn-submit" type="submit"><i data-feather="save"></i>Créer</button>
+
+                                    <div class="my-form-widget">
+                                        {{form_label(form.client_name)}}
+                                        <div class="alert-client-name alert alert-danger d-none"></div>
+                                        {{form_widget(form.client_name)}}
+                                    </div>
+
+                                    <div class="my-form-widget">
+                                        {{form_label(form.client_mail)}}
+                                        <div class="alert-client-mail alert alert-danger d-none"></div>
+                                        {{form_widget(form.client_mail)}}
+                                    </div>
+
+                                    <div class="my-form-widget">
+                                        {{form_label(form.client_phone)}}
+                                        <div class="alert-client-phone alert alert-danger d-none"></div>
+                                        {{form_widget(form.client_phone)}}
                                     </div>
                                 {{ form_end(form) }}
                                 <div id="signature" style="margin : 25px 0px;"></div>
@@ -145,9 +158,49 @@
             });
             $('.btn-save').click(async function (){
                 var data = $sigdiv.jSignature('getData', 'default');
-                $('#sign-contrat-form_signature').val(data);
-                $('#sign-contrat-form').submit();
+                var _client_name = $('#sign-contrat-form_client_name').val();
+                var _client_mail = $('#sign-contrat-form_client_mail').val();
+                var _client_phone = $('#sign-contrat-form_client_phone').val();
+                var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
+                
+                if (_client_name === '') {
+                    $('#sign-contrat-form_client_name').focus()
+                    $('.alert-client-name').removeClass('d-none')
+                    $('.alert-client-name').html('Le champ est obligatoire');
+                }else if (_client_mail === '') {
+                    $('#sign-contrat-form_client_mail').focus()
+                    $('.alert-client-mail').removeClass('d-none')
+                    $('.alert-client-mail').html('Le champ est obligatoire');
+                }
+                else if (!testEmail.test(_client_mail)) {
+                    $('#sign-contrat-form_client_mail').focus()
+                    $('.alert-client-mail').removeClass('d-none')
+                    $('.alert-client-mail').html('Email invalide');
+                }
+                
+                else if (_client_phone === '') {
+                    $('#sign-contrat-form_client_phone').focus()
+                    $('.alert-client-phone').removeClass('d-none')
+                    $('.alert-client-phone').html('Le champ est obligatoire');
+                }
+                
+                
+                
+                else{
+                    $('#sign-contrat-form_signature').val(data);
+                    $('#sign-contrat-form').submit();
+                }
+               
             });
+            $('#sign-contrat-form_client_name').on('input', function(){
+                $('.alert-client-name').addClass('d-none');
+            })
+            $('#sign-contrat-form_client_mail').on('input', function(){
+                $('.alert-client-mail').addClass('d-none');
+            })
+            $('#sign-contrat-form_client_phone').on('input', function(){
+                $('.alert-client-phone').addClass('d-none');
+            })
         });
     </script>
 {% endblock %}
