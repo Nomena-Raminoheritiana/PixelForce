@@ -23,14 +23,20 @@
                                     <label class="section-label form-label mb-1">Société</label>
                                     <hr />
                                     <div class="company-info">
-                                        <div class="company-logo">
-                                            {% if devisCompany.companyLogo %}
-                                                {{devisCompany.companyLogo}}
-                                            {% endif %}
-                                        </div>
-                                        <div class="company_info_detail mt-4">
-                                            <h6 class="fw-bolder">Information Société</h6>
-                                            {{devisCompany.companyInfo|raw}}
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <div class="company-logo">
+                                                    {% if devisCompany.companyLogo %}
+                                                        <img src="{{ asset('/files/' ~ devisCompany.companyLogo ) }}" width="150" alt=""> 
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="company_info_detail mt-4">
+                                                    <h6 class="fw-bolder">Information Société</h6>
+                                                    {{devisCompany.companyInfo|raw}}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div>
@@ -156,7 +162,7 @@
                                                         <td class="text-right">{{devisCompanyDetail.montantHt}}</td>
                                                         <td>
                                                             {% if devisCompanyDetail.image %}
-                                                                <img src="{{ devisCompanyDetail.image_encode_img_base64 }}" width="100" alt="Image" />
+                                                                <img src="{{ asset('/files/' ~ devisCompanyDetail.image) }}" width="100" alt="Image" />
                                                             {% endif %}
                                                         </td>
                                                     </tr>
