@@ -65,6 +65,91 @@
                     </div>
                 </div>
             </div>
+
+
+            <hr class="mb-5">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">Détails devis</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class=" active dstepper-block" role="tabpanel" >
+                        <div id="place-order" class="list-view ">
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="item-name">
+                                                    <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">fdsfdsf</span></a></h6>
+                                                </div>
+                                                <div class="item-name my-2 mb-5">
+                                                    <h6 class="mb-0"><a href="#" class="text-body"> <span class="fw-bolder">Date :</span> {{devisCompany.createdAt|date('d/m/Y')}}</a></h6>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="float-end">
+                                                    {% if devisCompany.status == DEVIS_STATUS_INT["CREATED"] %}
+                                                        <span class="text-primary fw-bolder h5">Créé <i class="fa-solid fa-file"></i></span>
+                                                    {% elseif devisCompany.status == DEVIS_STATUS_INT["REJECTED"] %}
+                                                        <span class="text-danger fw-bolder h5">Rejeté <i class="fa-solid fa-trash"></i></span>  
+                                                    {% elseif devisCompany.status == DEVIS_STATUS_INT["SIGNED"] %}
+                                                        <span class="text-success fw-bolder h5">Signé <i class="fa-solid fa-circle-check ms-2"></i></span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="row container">
+                                            <table  class="table">
+                                                <thead>
+                                                    <tr style="background-color: #eceff1;">
+                                                        <th>Référence</th>
+                                                        <th>Désignation</th>
+                                                        <th>Quantité</th>
+                                                        <th>PU Vente</th>
+                                                        <th>TVA</th>
+                                                        <th>Montant HT</th>
+                                                        <th>Image</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
+                                                    <tr style="font-size: 13px;">
+                                                        <td>{{devisCompanyDetail.reference}}</td>
+                                                        <td>{{devisCompanyDetail.designation|raw}}</td>
+                                                        <td class="text-right">{{devisCompanyDetail.quantite}}</td>
+                                                        <td class="text-right">{{devisCompanyDetail.puVente}}</td>
+                                                        <td class="text-right">{{devisCompanyDetail.tva}}</td>
+                                                        <td class="text-right">{{devisCompanyDetail.montantHt}}</td>
+                                                        <td>
+                                                            {% if devisCompanyDetail.image %}
+                                                                <img src="{{ devisCompanyDetail.image_encode_img_base64 }}" width="100" alt="Image" />
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                     
+                                    </div>
+                                </div>                                
+                            </div>
+                          
+
+                        </div>
+                    </div>
+                </div>
+            </div>    
         </div>
     </div>
     <!-- END: Content-->

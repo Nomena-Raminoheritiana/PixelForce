@@ -382,6 +382,28 @@ class DevisCompany
         return $this;
     }
 
+    public function getStatusString()
+    {
+        switch ($this->status) {
+            case self::DEVIS_STATUS_INT['CREATED'] :
+                $status = 'créé';
+                break;
+            case self::DEVIS_STATUS_INT['REJECTED'] :
+                $status = 'rejeté';
+                break;
+            case self::DEVIS_STATUS_INT['SIGNED'] :
+                $status = 'signé';
+                break;
+            default :
+                $status = ' ';
+                break;
+        }
+        
+        return $status;
+            
+        
+    }
+
     public function getStatusColor()
     {
         switch ($this->status) {
@@ -393,6 +415,9 @@ class DevisCompany
                 break;
             case self::DEVIS_STATUS_INT['SIGNED'] :
                 $color = 'success';
+                break;
+            default :
+                $color = 'null';
                 break;
         }
         

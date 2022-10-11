@@ -70,6 +70,7 @@
                     <tr>
                         <th>Date</th>
                         <th>Client</th>
+                        <th>Statut</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -78,6 +79,7 @@
                     <tr>
                         <td>{{devisCompany.createdAt | date("d/m/Y H:i")}}</td>
                         <td>{{devisCompany.clientMail}} </td>
+                        <td> <span class="badge bg-{{devisCompany.getStatusColor}}">{{devisCompany.getStatusString}}</span>  </td>
                         <td class="col-action ">
                             <a href="{{path('agent_company_devis_fiche', {'id': devisCompany.id})}}">
                                 <i data-feather="eye"></i>

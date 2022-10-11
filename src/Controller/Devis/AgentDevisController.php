@@ -203,7 +203,8 @@ class AgentDevisController extends AbstractController
     public function agent_company_devis_fiche(DevisCompany $devisCompany): Response
     {
         return $this->render('user_category/agent/dd/devis/fiche_company_devis.html.twig', [
-            'devisCompany' => $devisCompany
+            'devisCompany' => $devisCompany,
+            'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT
         ]);
     }
 
