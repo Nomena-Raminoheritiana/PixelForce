@@ -57,7 +57,7 @@ class AdminTagController extends AbstractController
      * @param Tag|null $tag
      * @param Request $request
      */
-    public function admin_tag_form(?Tag $tag = null, Request $request)
+    public function admin_tag_form(Request $request, ?Tag $tag = null)
     {
         $tag = $tag ? $tag : new Tag();
         $tagForm = $this->createForm(TagType::class, $tag);
