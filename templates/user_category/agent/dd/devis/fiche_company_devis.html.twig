@@ -17,51 +17,75 @@
             <div class="content-body">
                 <div class="bs-stepper checkout-tab-steps">
                     <div class="bs-stepper-content">
-                        <div class="active dstepper-block" role="tabpanel" >
-                        <div id="place-order" class="list-view product-checkout">
-                            <div class="checkout-options">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <label class="section-label form-label mb-1">Société</label>
-                                        <hr />
-                                        <div class="company-info">
-                                            <div class="company-logo">
-                                                {% if devisCompany.companyLogo %}
-                                                    {{devisCompany.companyLogo}}
-                                                {% endif %}
-                                            </div>
-                                            <div class="company_info_detail mt-4">
-                                                <h6 class="fw-bolder">Information Société</h6>
-                                                {{devisCompany.companyInfo|raw}}
-                                            </div>
+                        <div class="checkout-options">
+                            <div class="card">
+                                <div class="card-body">
+                                    <label class="section-label form-label mb-1">Société</label>
+                                    <hr />
+                                    <div class="company-info">
+                                        <div class="company-logo">
+                                            {% if devisCompany.companyLogo %}
+                                                {{devisCompany.companyLogo}}
+                                            {% endif %}
                                         </div>
-                                        <div>
-                                            <a href="{{ asset('/files/'~devisCompany.pjFilename) }}" download class="btn btn-primary"><i class="fa fa-download"></i> Télécharger le devis</a>
+                                        <div class="company_info_detail mt-4">
+                                            <h6 class="fw-bolder">Information Société</h6>
+                                            {{devisCompany.companyInfo|raw}}
                                         </div>
+                                    </div>
+                                    <div>
+                                        <a href="{{ asset('/files/'~devisCompany.pjFilename) }}" download class="btn btn-primary"><i class="fa fa-download"></i> Télécharger le devis</a>
                                     </div>
                                 </div>
                             </div>
-                            <div class="checkout-options">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <label class="section-label form-label mb-1">Détails | Client</label>
-                                        <hr />
-                                         <div class="client-info">
-                                            <div class="client-email">
-                                                <h6 class="fw-bolder">Client Email</h6>
-                                                {{devisCompany.clientMail}}
-                                            </div>
-                                            <div class="client mt-5">
-                                                <h6 class="fw-bolder">Information Client</h6>
-                                                {{devisCompany.clientInfo|raw}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
                         </div>
+                        <div class="active dstepper-block" role="tabpanel" >
+                        <div class="client-info">
+                            <div class="checkout-options">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <label class="section-label form-label mb-1">Détails | Client</label>
+                                                <hr />
+                                                 <div class="client-info">
+                                                    <div class="client-email">
+                                                        <h6 class="fw-bolder">Client Email</h6>
+                                                        {{devisCompany.clientMail}}
+                                                    </div>
+                                                    <div class="client mt-5">
+                                                        <h6 class="fw-bolder">Information Client</h6>
+                                                        {{devisCompany.clientInfo|raw}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if devisCompany.status ==  DEVIS_STATUS_INT['SIGNED'] %}
+                                        <div class="col">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <label class="section-label form-label mb-1">Informations du client qui signé</label>
+                                                    <hr />
+                                                    <div class="client-info">
+                                                        <h6 class="fw-bolder">Client nom et prénom</h6>
+                                                        {{devisCompany.anonymousClientName}}
+                                                        <h6 class="fw-bolder mt-4">Client email</h6>
+                                                        {{devisCompany.anonymousClientMail}}
+                                                        <h6 class="fw-bolder mt-4">Client téléphone</h6>
+                                                        {{devisCompany.anonymousClientPhone}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    {% endif %}
+                                    
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
