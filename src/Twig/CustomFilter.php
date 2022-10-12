@@ -34,14 +34,14 @@ class CustomFilter extends AbstractExtension
     public function cacheNumber($date)
     {
         $cache = new FilesystemAdapter();
-        $cacheNumber = $cache->get('cacheNumber', function (ItemInterface $item) {
+        $cacheNumber = $cache->get($date, function (ItemInterface $item) {
             // détruire après 24h
             $item->expiresAfter(86400 );
 
             return 0;
         });
         /** @var CacheItem $cacheNumberItem */
-        $cacheNumberItem = $cache->getItem('cacheNumber');
+        $cacheNumberItem = $cache->getItem($date);
 
         $cacheNumberItem->set($cacheNumber+1);
         $cache->save($cacheNumberItem);
