@@ -136,6 +136,11 @@ class DevisCompany
      */
     private $anonymous_client_phone;
 
+    /**
+     * @ORM\OneToOne(targetEntity=OrderDigitalDevisCompany::class, mappedBy="devisCompany", cascade={"persist", "remove"})
+     */
+    private $orderDigitalDevisCompany;
+
 
 
     public function __construct()
@@ -468,6 +473,23 @@ class DevisCompany
     public function setAnonymousClientPhone(?string $anonymous_client_phone): self
     {
         $this->anonymous_client_phone = $anonymous_client_phone;
+
+        return $this;
+    }
+
+    public function getOrderDigitalDevisCompany(): ?OrderDigitalDevisCompany
+    {
+        return $this->orderDigitalDevisCompany;
+    }
+
+    public function setOrderDigitalDevisCompany(OrderDigitalDevisCompany $orderDigitalDevisCompany): self
+    {
+        // set the owning side of the relation if necessary
+        if ($orderDigitalDevisCompany->getDevisCompany() !== $this) {
+            $orderDigitalDevisCompany->setDevisCompany($this);
+        }
+
+        $this->orderDigitalDevisCompany = $orderDigitalDevisCompany;
 
         return $this;
     }

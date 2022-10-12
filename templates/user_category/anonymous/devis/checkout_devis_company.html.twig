@@ -1,0 +1,180 @@
+{% extends 'base_anonymous.html.twig' %}
+
+{% block title %}
+	Paiement devis
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="app-content content client ecommerce-application">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">Signature devis</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body mt-4">
+                <div class="bs-stepper checkout-tab-steps">
+                    <!-- Wizard starts -->
+                    <div class="bs-stepper-header">
+                        <div class="step active" data-target="#step-cart" role="tab" id="step-cart-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i class="fa-solid fa-file"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Signature du contrat</span>
+                                    <span class="bs-stepper-subtitle">Signer le contrat</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line">
+                            <i data-feather="chevron-right" class="font-medium-2"></i>
+                        </div>
+                        <div class="step active" data-target="#step-payment" role="tab" id="step-payment-trigger">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-box">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-title">Paiement</span>
+                                    <span class="bs-stepper-subtitle">Procéder au paiement</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-wrapper container-xxl p-0">
+            <hr class="mb-5">
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class="content active dstepper-block" role="tabpanel" >
+                        <div id="place-order" class="list-view product-checkout">
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                <div class="card ecommerce-card">
+                                    <div class="item-img">
+                                        <i class="fa-solid fa-credit-card fa-4x"></i>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="item-name">
+                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">Paiement</span></a></h6>
+                                        </div>
+                                      
+                                        <div id="form-stripe-checkout-pf">
+                                            <!-- Checkout Place Order Left starts -->
+                                            {{ form_start(form, {'attr': {class: 'list-view', id: form.vars.id}}) }}
+                                            <div class="payment-type w-100" >
+                                                
+                                                <div id="card-element" class="form-control">
+                                                    
+                                                </div>
+                                                <div id="card-errors" class="invalid-feedback d-block"></div>
+                                                                   
+                                                {{ form_widget(form.token) }}
+                                                <div class="col-12 mt-4">
+                                                    <button type="submit" class="btn btn-primary btn-next">Payer <i class="fa-solid fa-circle-check"></i></button>
+                                                </div>
+                                            </div>
+                                            {{form_end(form)}}
+                                            <!-- Checkout Place Order Left ends -->
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Details prix</label>
+                                        <hr />
+                                        <div class="price-details">
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total"> Prix HT :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{devisCompany.devisTotalHt|format_currency('EUR', locale='de') }}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Prix TVA (20%) :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{ ((devisCompany.devisTotalHt * 20) / 100)|format_currency('EUR', locale='de')  }} </div>
+                                                </li>
+
+                                                <li class="price-detail text-success h5 mt-2 fw-bolder">
+                                                    <div class="detail-title detail-total">Prix TTC :</div>
+                                                    <div class="detail-amt" id="total-cost" >{{ devisCompany.devisTotalTtc|format_currency('EUR', locale='de') }} </div>
+                                                </li>
+                                                <hr/>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Condition de paiement :</div>
+                                                    <div class="detail-amt fw-bolder text-success" id="total-cost" >{{ devisCompany.PaymentCondition }} %</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Condition de paiement (Provisoire):</div>
+                                                    <div class="detail-amt fw-bolder text-danger" id="total-cost" >100 %</div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://js.stripe.com/v3/"></script> 
+    <script>
+        $(function() {
+            var form = document.getElementById('{{ form.vars.id }}');
+            var errors = document.getElementById('card-errors');
+            var cardElement = document.getElementById('card-element');
+            
+            var stripe = Stripe('{{ stripePublishableKey }}');
+            var elements = stripe.elements();
+            var card = elements.create('card');
+            
+            card.mount('#card-element');
+            card.addEventListener('change', function(event) {
+                if (event.error) {
+                errors.textContent = event.error.message;
+                cardElement.classList.add('is-invalid');
+                } else {
+                errors.textContent = '';
+                cardElement.classList.remove('is-invalid');
+                }
+            });
+            
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+            
+                stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    errors.textContent = result.error.message;
+                    form.classList.add('has-error');
+                } else {
+                    document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
+                    form.submit();
+                }
+                });
+            });
+        })
+    </script>                       
+{% endblock %}
