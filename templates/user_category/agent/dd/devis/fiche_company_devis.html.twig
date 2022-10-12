@@ -14,6 +14,15 @@
         <div class="content-overlay"></div>
         <div class="header-navbar-shadow"></div>
         <div class="content-wrapper container-xxl p-0">
+        <div class="content-header row">
+            <div class="content-header-left col-md-9 col-12 mb-4">
+                <div class="row breadcrumbs-top">
+                    <div class="col-12">
+                        <h2 class="content-header-title float-start mb-0">Infomrations société/client</h2>
+                    </div>
+                </div>
+            </div>
+           
             <div class="content-body">
                 <div class="bs-stepper checkout-tab-steps">
                     <div class="bs-stepper-content">
@@ -91,7 +100,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -111,16 +119,14 @@
                 <div class="bs-stepper checkout-tab-steps">
                     <div class="bs-stepper-content">
                         <div class=" active dstepper-block" role="tabpanel" >
-                        <div id="place-order" class="list-view ">
+                        <div id="place-order" class="list-view  product-checkout">
                             <!-- Checkout Place Order Left starts -->
                             <div class="checkout-items">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col">
-                                                <div class="item-name">
-                                                    <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">fdsfdsf</span></a></h6>
-                                                </div>
+
                                                 <div class="item-name my-2 mb-5">
                                                     <h6 class="mb-0"><a href="#" class="text-body"> <span class="fw-bolder">Date :</span> {{devisCompany.createdAt|date('d/m/Y')}}</a></h6>
                                                 </div>
@@ -138,44 +144,91 @@
                                             </div>
                                             
                                         </div>
-                                        <div class="row container">
-                                            <table  class="table">
-                                                <thead>
-                                                    <tr style="background-color: #eceff1;">
-                                                        <th>Référence</th>
-                                                        <th>Désignation</th>
-                                                        <th>Quantité</th>
-                                                        <th>PU Vente</th>
-                                                        <th>TVA</th>
-                                                        <th>Montant HT</th>
-                                                        <th>Image</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
-                                                    <tr style="font-size: 13px;">
-                                                        <td>{{devisCompanyDetail.reference}}</td>
-                                                        <td>{{devisCompanyDetail.designation|raw}}</td>
-                                                        <td class="text-right">{{devisCompanyDetail.quantite}}</td>
-                                                        <td class="text-right">{{devisCompanyDetail.puVente}}</td>
-                                                        <td class="text-right">{{devisCompanyDetail.tva}}</td>
-                                                        <td class="text-right">{{devisCompanyDetail.montantHt}}</td>
-                                                        <td>
-                                                            {% if devisCompanyDetail.image %}
-                                                                <img src="{{ asset('/files/' ~ devisCompanyDetail.image) }}" width="100" alt="Image" />
-                                                            {% endif %}
-                                                        </td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
+                                        <div class="row container" style="width: 600px;">
+                                            <div class="table-responsive">
+                                                <table class="table" style="width: 900px;">
+                                                    <thead>
+                                                        <tr style="background-color: #eceff1;">
+                                                            <th>Référence</th>
+                                                            <th>Désignation</th>
+                                                            <th>Quantité</th>
+                                                            <th>PU Vente</th>
+                                                            <th>TVA</th>
+                                                            <th>Montant HT</th>
+                                                            <th>Image</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
+                                                        <tr style="font-size: 13px;">
+                                                            <td>{{devisCompanyDetail.reference}}</td>
+                                                            <td>{{devisCompanyDetail.designation|raw}}</td>
+                                                            <td class="text-right">{{devisCompanyDetail.quantite}}</td>
+                                                            <td class="text-right">{{devisCompanyDetail.puVente}}</td>
+                                                            <td class="text-right">{{devisCompanyDetail.tva}}</td>
+                                                            <td class="text-right">{{devisCompanyDetail.montantHt}}</td>
+                                                            <td>
+                                                                {% if devisCompanyDetail.image %}
+                                                                    <img src="{{ asset('/files/' ~ devisCompanyDetail.image) }}" width="100" alt="Image" />
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                      
                                     </div>
                                 </div>                                
                             </div>
-                          
 
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Prix</label>
+                                        <hr />
+                                        <div class="price-details">
+                                            <ul class="list-unstyled">
+                                                <li>
+                                                    <div class="devis-price-details">
+                                                        <ul class="list-unstyled">
+                                                            <li class="price-detail">
+                                                                <div class="detail-title detail-total"> Prix HT :</div>
+                                                                <div class="detail-amt fw-bolder" id="total-cost" >{{devisCompany.devisTotalHt|format_currency('EUR', locale='de') }}</div>
+                                                            </li>
+                                                            <li class="price-detail">
+                                                                <div class="detail-title detail-total">Prix TVA (20%) :</div>
+                                                                <div class="detail-amt fw-bolder" id="total-cost" >{{ ((devisCompany.devisTotalHt * 20) / 100)|format_currency('EUR', locale='de')  }} </div>
+                                                            </li>
+
+                                                            <li class="price-detail text-success h5 mt-2 fw-bolder">
+                                                                <div class="detail-title detail-total">Prix TTC :</div>
+                                                                <div class="detail-amt" id="total-cost" >{{ devisCompany.devisTotalTtc|format_currency('EUR', locale='de') }} </div>
+                                                            </li>
+                                                            <hr/>
+                                                            <li class="price-detail">
+                                                                <div class="detail-title detail-total">Condition de paiement :</div>
+                                                                <div class="detail-amt fw-bolder text-success" id="total-cost" >{{ devisCompany.PaymentCondition }} %</div>
+                                                            </li>
+                                                            <li class="price-detail">
+                                                                <div class="detail-title detail-total">Condition de paiement (Provisoire):</div>
+                                                                <div class="detail-amt fw-bolder text-danger" id="total-cost" >100 %</div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            {% if devisCompany.status != DEVIS_STATUS_INT["SIGNED"] and  devisCompany.status != DEVIS_STATUS_INT["REJECTED"] %}
+                                                <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{ path('anonymous_devis_company_signature', {'id': devisCompany.id}) }}">Signer le devis <i class="fa-solid fa-pen ms-2"></i></a>
+                                            {% endif %}
+                                        </div>
+                                        {% if devisCompany.status == DEVIS_STATUS_INT["SIGNED"] %}
+                                            <a href="/files/{{devisCompany.pjFilename}}" download  class="btn btn-primary w-100 btn-next place-order">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
