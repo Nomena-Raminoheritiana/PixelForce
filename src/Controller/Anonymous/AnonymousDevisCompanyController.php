@@ -104,8 +104,11 @@ class AnonymousDevisCompanyController extends AbstractController
 
             $signature = $form->get('signature')->getData();
             $photo = $this->fileHandler->saveBase64($signature, $filesDirectory.$devisCompanyDirectory.'/'.'signature.png');
+            $src = $this->fileHandler->encode_img_base64($photo);
             
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
+                'srcEncoded' => $src,
+                'signature' => true,
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $filesDirectory,
@@ -114,10 +117,8 @@ class AnonymousDevisCompanyController extends AbstractController
     
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $filepath = $this->fileHandler->saveBinary($binary, 'devis_avec_signature.pdf', $devisCompanyDirectory);
-            $this->demandeDevisService->signContrat($filesDirectory.$filepath, $photo);
             $devisCompany->setPjFilename($filepath);
             $devisCompany->setDateSignature(new \DateTime());
-            $devisCompany->setStatus(DevisCompany::DEVIS_STATUS_INT['SIGNED']);
             
             $devisCompany->setAnonymousClientName($anonymousClientName);
             $devisCompany->setAnonymousClientMail($anonymousClientMail);
