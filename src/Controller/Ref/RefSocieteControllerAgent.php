@@ -17,7 +17,7 @@ use App\Services\FileHandler;
 use App\Services\SearchService;
 use App\Util\PopupUtil;
 use App\Util\Search\MyCriteriaParam;
-use App\Util\Status\Status;
+use App\Util\Status;
 use Knp\Component\Pager\PaginatorInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
