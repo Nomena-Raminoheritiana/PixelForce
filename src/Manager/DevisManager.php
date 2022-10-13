@@ -23,6 +23,8 @@ class DevisManager
     public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup, $filesDirAbsolute)
     {
         if($logoPopup && $logoPopup != ""){
+            $src = $this->fileHandler->encode_img_base64($filesDirAbsolute.$logoPopup);
+            $devisCompany->setCompany_logo_encode_img_base64($src);
             $devisCompany->setCompanyLogo($logoPopup);
         }
         else if ($logo !== null) {
