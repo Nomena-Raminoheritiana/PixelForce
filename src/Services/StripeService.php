@@ -122,6 +122,31 @@ class StripeService
         return $intent['client_secret'] ?? null;
     }
 
+    /**
+     * @return object
+     */
+    public function paymentIntentKarma($amount)
+    {
+        \Stripe\Stripe::setApiKey($this->secretKey); 
+        
+        $intentStripe = \Stripe\PaymentIntent::create([
+            'amount' => $amount * 100,
+            'currency' =>  'eur',
+            'payment_method_types' =>  ['klarna'],
+            
+
+        ]);
+
+        return $intentStripe;
+    }
+
+    public function intentSecretKlarna($amount)
+    {
+        $intent = $this->paymentIntentKarma($amount);
+
+        return $intent['client_secret'] ?? null;
+    }
+
     public function getPaymentMethods($paymentMethodId)
     {
         $stripe = new \Stripe\StripeClient($this->secretKey);

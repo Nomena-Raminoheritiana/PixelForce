@@ -48,9 +48,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <a href="{{ asset('/files/'~devisCompany.pjFilename) }}" download class="btn btn-primary"><i class="fa fa-download"></i> Télécharger le devis</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -219,13 +216,8 @@
                                                     </div>
                                                 </li>
                                             </ul>
-                                            {% if devisCompany.status != DEVIS_STATUS_INT["SIGNED"] and  devisCompany.status != DEVIS_STATUS_INT["REJECTED"] %}
-                                                <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{ path('anonymous_devis_company_signature', {'id': devisCompany.id}) }}">Signer le devis <i class="fa-solid fa-pen ms-2"></i></a>
-                                            {% endif %}
                                         </div>
-                                        {% if devisCompany.status == DEVIS_STATUS_INT["SIGNED"] %}
-                                            <a href="/files/{{devisCompany.pjFilename}}" download  class="btn btn-primary w-100 btn-next place-order">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
-                                        {% endif %}
+                                        <a href="/files/{{devisCompany.pjFilename}}" download  class="btn btn-primary w-100 btn-next place-order">Exporter pdf  <i class="fa-solid fa-file-arrow-down"></i></a>
                                     </div>
                                 </div>
                             </div>
