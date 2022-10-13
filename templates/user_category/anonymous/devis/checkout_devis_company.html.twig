@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="item-name">
-                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">Paiement</span></a></h6>
+                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">Paiement en une seule fois</span></a></h6>
                                         </div>
                                       
                                         <div id="form-stripe-checkout-pf">
@@ -85,14 +85,37 @@
                                                                    
                                                 {{ form_widget(form.token) }}
                                                 <div class="col-12 mt-4">
-                                                    <button type="submit" class="btn btn-primary btn-next">Payer <i class="fa-solid fa-circle-check"></i></button>
+                                                    <button type="submit" class="btn btn-primary btn-next">Payer tout de suite <i class="fa-solid fa-circle-check"></i></button>
                                                 </div>
                                             </div>
                                             {{form_end(form)}}
                                             <!-- Checkout Place Order Left ends -->
                                         </div>
                                     </div>
-                                </div>                                
+                                </div>     
+                                <div class="card ecommerce-card">
+                                    <div class="item-img">
+                                        <i class="fa-solid fa-credit-card fa-4x"></i>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="item-name">
+                                            <h6 class="mb-0"><a href="#" class="text-body"><span class="fw-bolder">Paiement fractionné (3 fois)</span></a></h6>
+                                        </div>
+                                      
+                                        <div id="form-stripe-checkout-pf">
+                                            <div class="payment-type w-100" >
+                                                <p class="mt-3">
+                                                    Vous avez la possibilité de payer votre commande en 3 fois sans frais, 
+                                                </p>
+                                                <div id="card-errors" class="invalid-feedback d-block"></div>
+                                                <button id="payment-button" data-secret="{{stripeIntentSecret}}" class="btn btn-primary btn-next">
+                                                    Procéder au paiement fractionné <i class="fa-solid fa-circle-check"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                            
                             </div>
                             <div class="checkout-options">
                                 <div class="card">
@@ -175,6 +198,30 @@
                 }
                 });
             });
+
+            $('#payment-button').on('click', function () {
+                
+                stripe.confirmKlarnaPayment(
+                    "{{stripeIntentSecret}}",
+                    {
+                        payment_method: {
+                            billing_details: {
+                                email: "{{devisCompany.anonymousClientMail}}",
+                                address: {
+                                    country: 'FR',
+                                },
+                            },
+                        },
+                        return_url: "{{ url('anonymous_devis_company_fiche', {id: devisCompany.id}) }}",
+                    }
+                ).then(function(result) {
+                    if (result.error) {
+                        errors.textContent = result.error.message;
+                        form.classList.add('has-error');
+                    }
+                });
+                
+            })
         })
     </script>                       
 {% endblock %}
