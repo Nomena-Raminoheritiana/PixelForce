@@ -9,7 +9,7 @@
 {% endblock %}
 
 
-{% block body %}  
+{% block body %}
     <!-- BEGIN: Content-->
     <div class="app-content content client ecommerce-application pt-5">
         <div class="content-overlay"></div>
@@ -44,7 +44,7 @@
                             <section class="app-ecommerce-details">
                                 <div class="block block--bordered block--rounded">
                                     <h1 class="block__text block__text--center mt-2" >Demande de devis :</h1>
-                                        
+
                                     {{ form_start(form, {'attr': {'class': 'my-form', 'id': 'demandedevis-form'}}) }}
                                         {% if error %}
                                         <div class="alert alert-danger" role="alert">
@@ -73,11 +73,11 @@
                                             {{form_widget(form.telephone)}}
                                             {{form_errors(form.telephone)}}
                                         </div>
-                                        <div class="my-form-widget">
-                                            {{form_label(form.whatsapp)}}
-                                            {{form_widget(form.whatsapp)}}
-                                            {{form_errors(form.whatsapp)}}
-                                        </div>
+{#                                        <div class="my-form-widget">#}
+{#                                            {{form_label(form.whatsapp)}}#}
+{#                                            {{form_widget(form.whatsapp)}}#}
+{#                                            {{form_errors(form.whatsapp)}}#}
+{#                                        </div>#}
                                         <div class="my-form-widget">
                                             {{form_label(form.description)}}
                                             {{form_widget(form.description)}}
@@ -96,22 +96,22 @@
                                                     <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
                                                     <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
                                                 </div>
-            
+
                                                 <div class="file-block m-2">
                                                     <span><i class="fa-regular fa-file fa-lg"></i></i>&nbsp;my-file.php</span>
                                                     <div class="file-close"><i class="fa-solid fa-xmark fa-lg"></i></div>
                                                 </div> #}
-            
-                                                
+
+
                                             </div>
                                         </div>
-                                        
+
                                         <div class="btn-wrap">
                                             <button class="btn btn-primary" type="submit">{{ isEdit ? 'Enregistrer les modifications' : 'Envoyer' }}<i data-feather="send"></i></button>
                                         </div>
                                     {{ form_end(form) }}
                                 </div>
-                                
+
                             </section>
                             <!-- Demande devis -->
                         </section>

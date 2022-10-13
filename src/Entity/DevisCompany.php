@@ -14,6 +14,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class DevisCompany
 {
+    const DEVIS_STATUS_INT = [
+        'CREATED' => 0,
+        'REJECTED' => -1,
+        'SIGNED' => 1
+    ];
+
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -104,6 +111,36 @@ class DevisCompany
      */
     private $client_rdv;
 
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateSignature;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $anonymous_client_name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $anonymous_client_mail;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $anonymous_client_phone;
+
+    /**
+     * @ORM\OneToOne(targetEntity=OrderDigitalDevisCompany::class, mappedBy="devisCompany", cascade={"persist", "remove"})
+     */
+    private $orderDigitalDevisCompany;
+
 
 
     public function __construct()
@@ -111,6 +148,7 @@ class DevisCompany
         $this->created_at = new DateTime();
         $this->devis_company_detail = new ArrayCollection();
         $this->payment_condition = 100;
+        $this->status = self::DEVIS_STATUS_INT['CREATED'];
     }
 
     public function getId(): ?int
@@ -333,6 +371,125 @@ class DevisCompany
     public function setCompany_logo_encode_img_base64($company_logo_encode_img_base64)
     {
         $this->company_logo_encode_img_base64 = $company_logo_encode_img_base64;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatusString()
+    {
+        switch ($this->status) {
+            case self::DEVIS_STATUS_INT['CREATED'] :
+                $status = 'créé';
+                break;
+            case self::DEVIS_STATUS_INT['REJECTED'] :
+                $status = 'rejeté';
+                break;
+            case self::DEVIS_STATUS_INT['SIGNED'] :
+                $status = 'signé';
+                break;
+            default :
+                $status = ' ';
+                break;
+        }
+        
+        return $status;
+            
+        
+    }
+
+    public function getStatusColor()
+    {
+        switch ($this->status) {
+            case self::DEVIS_STATUS_INT['CREATED'] :
+                $color = 'primary';
+                break;
+            case self::DEVIS_STATUS_INT['REJECTED'] :
+                $color = 'danger';
+                break;
+            case self::DEVIS_STATUS_INT['SIGNED'] :
+                $color = 'success';
+                break;
+            default :
+                $color = 'null';
+                break;
+        }
+        
+        return $color;
+    }
+
+    public function getDateSignature(): ?\DateTimeInterface
+    {
+        return $this->dateSignature;
+    }
+
+    public function setDateSignature(?\DateTimeInterface $dateSignature): self
+    {
+        $this->dateSignature = $dateSignature;
+
+        return $this;
+    }
+
+    public function getAnonymousClientName(): ?string
+    {
+        return $this->anonymous_client_name;
+    }
+
+    public function setAnonymousClientName(?string $anonymous_client_name): self
+    {
+        $this->anonymous_client_name = $anonymous_client_name;
+
+        return $this;
+    }
+
+    public function getAnonymousClientMail(): ?string
+    {
+        return $this->anonymous_client_mail;
+    }
+
+    public function setAnonymousClientMail(?string $anonymous_client_mail): self
+    {
+        $this->anonymous_client_mail = $anonymous_client_mail;
+
+        return $this;
+    }
+
+    public function getAnonymousClientPhone(): ?string
+    {
+        return $this->anonymous_client_phone;
+    }
+
+    public function setAnonymousClientPhone(?string $anonymous_client_phone): self
+    {
+        $this->anonymous_client_phone = $anonymous_client_phone;
+
+        return $this;
+    }
+
+    public function getOrderDigitalDevisCompany(): ?OrderDigitalDevisCompany
+    {
+        return $this->orderDigitalDevisCompany;
+    }
+
+    public function setOrderDigitalDevisCompany(OrderDigitalDevisCompany $orderDigitalDevisCompany): self
+    {
+        // set the owning side of the relation if necessary
+        if ($orderDigitalDevisCompany->getDevisCompany() !== $this) {
+            $orderDigitalDevisCompany->setDevisCompany($this);
+        }
+
+        $this->orderDigitalDevisCompany = $orderDigitalDevisCompany;
 
         return $this;
     }
