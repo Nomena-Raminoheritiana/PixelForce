@@ -14,6 +14,7 @@ use App\Manager\EntityManager;
 use App\Repository\DevisCompanyRepository;
 use App\Services\FileHandler;
 use App\Services\MailerService;
+use App\Services\MailService;
 use App\Util\GenericUtil;
 use DateTime;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
@@ -156,7 +157,7 @@ class AgentDevisController extends AbstractController
     /**
      * @Route("/company/devis/creation", name="agent_company_devis_create")
      */
-    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper): Response
+    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper, MailService $mailService): Response
     {
         /** @var User $agent */
         $agent = $this->getUser();
@@ -186,7 +187,7 @@ class AgentDevisController extends AbstractController
 
             $this->entityManager->persist($devisCompany);
             $this->entityManager->flush();
-            $this->mailerService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
+            $mailService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
             $this->addFlash('success', 'Devis créé');
             return $this->redirectToRoute('agent_company_devis_liste');
         }
