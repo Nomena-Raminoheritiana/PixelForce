@@ -40,7 +40,7 @@ class AnonymousDevisCompanyController extends AbstractController
     }
 
     /**
-     * @Route("/devis/{id}/company/fiche", name="anonymous_devis_company_fiche")
+     * @Route("/devis/{id}/company/fiche", name="anonymous_devis_company_fiche", options={"expose"=true})
      */
     public function anonymous_devis_company_fiche(DevisCompany $devisCompany)
     {
@@ -146,7 +146,9 @@ class AnonymousDevisCompanyController extends AbstractController
     {
         $stripePublishableKey = $_ENV['STRIPE_PUBLIC_KEY'];
         $orderDevisCompany = new OrderDigitalDevisCompany();
-        
+        $amountDevis = $devisCompany->getDevisTotalTtc();
+        $stripeIntentSecret = $stripeService->intentSecretKlarna($amountDevis);
+
         $form = $formFactory
             ->createNamedBuilder("payment-form")
             ->add('token', HiddenType::class, [
@@ -183,6 +185,7 @@ class AnonymousDevisCompanyController extends AbstractController
             return $this->redirectToRoute('anonymous_devis_company_fiche', ['id' => $devisCompany->getId()]);
         }
         return $this->render('user_category/anonymous/devis/checkout_devis_company.html.twig', [
+            'stripeIntentSecret' => $stripeIntentSecret,
             'devisCompany' => $devisCompany,
             'stripePublishableKey' => $stripePublishableKey,
             'form' => $form->createView()
