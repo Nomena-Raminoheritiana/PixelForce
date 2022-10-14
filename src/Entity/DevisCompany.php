@@ -141,6 +141,11 @@ class DevisCompany
      */
     private $orderDigitalDevisCompany;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image_service;
+
 
 
     public function __construct()
@@ -490,6 +495,18 @@ class DevisCompany
         }
 
         $this->orderDigitalDevisCompany = $orderDigitalDevisCompany;
+
+        return $this;
+    }
+
+    public function getImageService(): ?string
+    {
+        return $this->image_service;
+    }
+
+    public function setImageService(?string $image_service): self
+    {
+        $this->image_service = $image_service;
 
         return $this;
     }

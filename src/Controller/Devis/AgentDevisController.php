@@ -157,7 +157,7 @@ class AgentDevisController extends AbstractController
     /**
      * @Route("/company/devis/creation", name="agent_company_devis_create")
      */
-    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper, MailService $mailService): Response
+    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper): Response
     {
         /** @var User $agent */
         $agent = $this->getUser();
@@ -166,12 +166,12 @@ class AgentDevisController extends AbstractController
         $formDevisComp->handleRequest($request);
 
         if($formDevisComp->isSubmitted() && $formDevisComp->isValid()) {
-            $clientEmail = $formDevisComp->get('client_mail')->getData();
             $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
+            $image_service = $formDevisComp->get('image_service')->getData();
             $logo = $formDevisComp->get('company_logo')->getData();
             $logoPopup = $request->get('my_logo_societe_input_hidden');
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
-            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute);
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $image_service);
 
             // Pour visualiser :
             // return $this->render('pdf/fiche_devis_entrepise.html.twig', [
@@ -194,7 +194,6 @@ class AgentDevisController extends AbstractController
 
             $this->entityManager->persist($devisCompany);
             $this->entityManager->flush();
-            $mailService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
             $this->addFlash('success', 'Devis créé');
             return $this->redirectToRoute('agent_company_devis_liste');
         }
@@ -202,6 +201,48 @@ class AgentDevisController extends AbstractController
         return $this->render('user_category/agent/dd/devis/create_company_devis.html.twig', [
             'formDevisComp' => $formDevisComp->createView(),
             'filesDirectory' => $this->getParameter('files_directory_relative')
+        ]);
+    }
+
+        /**
+     * @Route("/company/devis/{id}/edition", name="agent_company_devis_edit")
+     */
+    public function agent_company_devis_edit(DevisCompany $devisCompany, Request $request, DompdfWrapperInterface $wrapper): Response
+    {
+        /** @var User $agent */
+        $agent = $this->getUser();
+        $formDevisComp = $this->createForm(DevisCompanyType::class, $devisCompany);
+        $formDevisComp->handleRequest($request);
+
+        if($formDevisComp->isSubmitted() && $formDevisComp->isValid()) {
+            $directory = "digital/devis/entreprise/"."agentId-".$agent->getId()."_".date('Y-m-d-H-i-s');
+            $image_service = $formDevisComp->get('image_service')->getData();
+            $logo = $formDevisComp->get('company_logo')->getData();
+            $logoPopup = $request->get('my_logo_societe_input_hidden');
+            $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $image_service);
+
+            //Piece jointe
+            $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
+                'filesDirAbsolute' => $filesDirAbsolute,
+                'devisCompany' => $devisCompany,
+                'filesDirectory' => $this->getParameter('files_directory_relative'),
+                'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
+            ]);
+            $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
+            $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
+            $devisCompany->setPjFilename($pj_filepath);
+
+            $this->entityManager->persist($devisCompany);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Devis modifié');
+            return $this->redirectToRoute('agent_company_devis_liste');
+        }
+
+        return $this->render('user_category/agent/dd/devis/create_company_devis.html.twig', [
+            'formDevisComp' => $formDevisComp->createView(),
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'devisCompany' => $devisCompany
         ]);
     }
 
@@ -214,6 +255,19 @@ class AgentDevisController extends AbstractController
             'devisCompany' => $devisCompany,
             'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT
         ]);
+    }
+
+    /**
+     * @Route("/company/devis/{id}/mail/to/client/send", name="agent_company_devis_send_mail_to_client")
+     */
+    public function agent_company_devis_send_mail_to_client(MailerService $mailService, DevisCompany $devisCompany): Response
+    {
+        $clientEmail = $devisCompany->getClientMail();
+        $pj_filepath = $devisCompany->getPjFilename();
+        $mailService->SendDevisToCompany($clientEmail, $devisCompany, $pj_filepath);
+        $this->addFlash('success', 'Email envoyé avec succès');
+        return $this->redirectToRoute('agent_company_devis_fiche', ['id' =>  $devisCompany->getId()]);
+
     }
 
 

@@ -37,7 +37,8 @@ class DevisCompanyDetailType extends AbstractType
                 'label' => false,
                 'attr' => [
                     'class' => 'js-quantity'
-                ]
+                ],
+                'data' => 1
             ])
             ->add('pu_vente', null, [
                 'label' => false,

@@ -31,6 +31,11 @@ class DevisCompanyType extends AbstractType
                 'mapped' => false,
                 'required' => false
             ])
+            ->add('image_service', FileType::class, [
+                'label' => false,
+                'mapped' => false,
+                'required' => false
+            ])
             ->add('client_mail', EmailType::class, [
                 'label' => 'Adresse email du client'
             ])
