@@ -4,6 +4,7 @@
 namespace App\Controller\Anonymous;
 
 use App\Entity\DevisCompany;
+use App\Entity\DevisCompanyDetail;
 use App\Entity\OrderDigitalDevisCompany;
 use App\Manager\EntityManager;
 use App\Services\DemandeDevisService;
@@ -105,6 +106,20 @@ class AnonymousDevisCompanyController extends AbstractController
             $signature = $form->get('signature')->getData();
             $photo = $this->fileHandler->saveBase64($signature, $filesDirectory.$devisCompanyDirectory.'/'.'signature.png');
             $src = $this->fileHandler->encode_img_base64($photo);
+
+            $src_logoCompany = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompany->getCompanyLogo());
+            $devisCompany->setCompany_logo_encode_img_base64($src_logoCompany);
+
+
+            // To base64 
+             /** @var DevisCompanyDetail $devisCompanyDetail */
+            foreach ($devisCompany->getDevisCompanyDetail() as $devisCompanyDetail) {                
+                $image = $devisCompanyDetail->getImage();
+                if (!is_null($image)) {
+                    $srcImgDevisDetail = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompanyDetail->getImage());
+                    $devisCompanyDetail->setImage_encode_img_base64($srcImgDevisDetail);
+                }
+            }
             
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'srcEncoded' => $src,
@@ -146,8 +161,8 @@ class AnonymousDevisCompanyController extends AbstractController
     {
         $stripePublishableKey = $_ENV['STRIPE_PUBLIC_KEY'];
         $orderDevisCompany = new OrderDigitalDevisCompany();
-        $amountDevis = $devisCompany->getDevisTotalTtc();
-        $stripeIntentSecret = $stripeService->intentSecretKlarna($amountDevis);
+        // $amountDevis = $devisCompany->getDevisTotalTtc();
+        // $stripeIntentSecret = $stripeService->intentSecretKlarna($amountDevis);
 
         $form = $formFactory
             ->createNamedBuilder("payment-form")
@@ -185,7 +200,7 @@ class AnonymousDevisCompanyController extends AbstractController
             return $this->redirectToRoute('anonymous_devis_company_fiche', ['id' => $devisCompany->getId()]);
         }
         return $this->render('user_category/anonymous/devis/checkout_devis_company.html.twig', [
-            'stripeIntentSecret' => $stripeIntentSecret,
+            // 'stripeIntentSecret' => $stripeIntentSecret,
             'devisCompany' => $devisCompany,
             'stripePublishableKey' => $stripePublishableKey,
             'form' => $form->createView()
