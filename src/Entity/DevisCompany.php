@@ -141,13 +141,6 @@ class DevisCompany
      */
     private $orderDigitalDevisCompany;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $image_service;
-
-
-
     public function __construct()
     {
         $this->created_at = new DateTime();
@@ -360,20 +353,14 @@ class DevisCompany
     }
 
 
-    /**
-     * Get the value of company_logo_encode_img_base64
-     */ 
+
     public function getCompany_logo_encode_img_base64()
     {
         return $this->company_logo_encode_img_base64;
     }
 
-    /**
-     * Set the value of company_logo_encode_img_base64
-     *
-     * @return  self
-     */ 
-    public function setCompany_logo_encode_img_base64($company_logo_encode_img_base64)
+
+    public function setCompany_logo_encode_img_base64( $company_logo_encode_img_base64): self
     {
         $this->company_logo_encode_img_base64 = $company_logo_encode_img_base64;
 
@@ -499,15 +486,5 @@ class DevisCompany
         return $this;
     }
 
-    public function getImageService(): ?string
-    {
-        return $this->image_service;
-    }
-
-    public function setImageService(?string $image_service): self
-    {
-        $this->image_service = $image_service;
-
-        return $this;
-    }
+  
 }

@@ -20,7 +20,7 @@ class DevisManager
         $this->fileHandler = $fileHandler;
     }
 
-    public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup, $filesDirAbsolute, $image_service)
+    public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup, $filesDirAbsolute)
     {
         if($logoPopup && $logoPopup != ""){
             $src = $this->fileHandler->encode_img_base64($filesDirAbsolute.$logoPopup);
@@ -34,12 +34,6 @@ class DevisManager
             $devisCompany->setCompanyLogo($logoC_filename);
         }
        
-        if ($image_service !== null) {
-            $image_service_filename = $this->fileHandler->upload($image_service, $directory);
-            $src = $this->fileHandler->encode_img_base64($filesDirAbsolute.$image_service_filename);
-            $devisCompany->setImageService($image_service_filename);
-        }
-        
     
         $totalHt = 0;
 

@@ -93,7 +93,7 @@
                                         </div>
                                     </div>
                                 </div>     
-                                <div class="card ecommerce-card">
+                                {# <div class="card ecommerce-card">
                                     <div class="item-img">
                                         <i class="fa-solid fa-credit-card fa-4x"></i>
                                     </div>
@@ -115,7 +115,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>                            
+                                </div>                             #}
                             </div>
                             <div class="checkout-options">
                                 <div class="card">
@@ -199,7 +199,7 @@
                 });
             });
 
-            $('#payment-button').on('click', function () {
+            {# $('#payment-button').on('click', function () {
                 
                 stripe.confirmKlarnaPayment(
                     "{{stripeIntentSecret}}",
@@ -221,7 +221,7 @@
                     }
                 });
                 
-            })
+            }) #}
         })
     </script>                       
 {% endblock %}
