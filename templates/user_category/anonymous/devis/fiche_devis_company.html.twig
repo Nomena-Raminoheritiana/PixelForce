@@ -194,11 +194,7 @@
                                                             <hr/>
                                                             <li class="price-detail">
                                                                 <div class="detail-title detail-total">Condition de paiement :</div>
-                                                                <div class="detail-amt fw-bolder text-success" id="total-cost" >{{ devisCompany.PaymentCondition }} %</div>
-                                                            </li>
-                                                            <li class="price-detail">
-                                                                <div class="detail-title detail-total">Condition de paiement (Provisoire):</div>
-                                                                <div class="detail-amt fw-bolder text-danger" id="total-cost" >100 %</div>
+                                                                <div class="detail-amt fw-bolder text-success" id="total-cost" >{{ devisCompany.devisTotalTtc / devisCompany.iterationPayment }}€ x {{devisCompany.iterationPayment}}</div>
                                                             </li>
                                                         </ul>
                                                     </div>

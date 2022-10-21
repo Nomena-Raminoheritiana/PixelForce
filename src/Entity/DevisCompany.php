@@ -141,12 +141,18 @@ class DevisCompany
      */
     private $orderDigitalDevisCompany;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $iteration_payment;
+
     public function __construct()
     {
         $this->created_at = new DateTime();
         $this->devis_company_detail = new ArrayCollection();
         $this->payment_condition = 100;
         $this->status = self::DEVIS_STATUS_INT['CREATED'];
+        $this->iteration_payment = 1;
     }
 
     public function getId(): ?int
@@ -482,6 +488,18 @@ class DevisCompany
         }
 
         $this->orderDigitalDevisCompany = $orderDigitalDevisCompany;
+
+        return $this;
+    }
+
+    public function getIterationPayment(): ?int
+    {
+        return $this->iteration_payment;
+    }
+
+    public function setIterationPayment(int $iteration_payment): self
+    {
+        $this->iteration_payment = $iteration_payment;
 
         return $this;
     }

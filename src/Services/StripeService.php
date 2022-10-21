@@ -13,7 +13,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class StripeService 
 {
     const PRODUCT_ID = [
-        'PLAN_COMPTE_AGENT' =>  'prod_planCompteAgent'
+        'PLAN_COMPTE_AGENT' =>  'prod_planCompteAgent',
+        'FRACTIONAL_PAYMENT' =>  'prod_fractionalPayment'
     ];
 
     /**
@@ -322,6 +323,44 @@ class StripeService
         );
     }
 
+    /**
+     * Permet de plannifer un abonnement
+     * 
+     * $start_data : timestamp
+     * 
+     * $end_behavior 
+     * - release : mettra fin au calendrier d'abonnement et conservera l'abonnement sous-jacent
+     * - cancel : mettra fin au calendrier d'abonnement et annulera l'abonnement sous-jacent
+     */
+    public function createSubscriptionSchedule(string $customerId, $start_date, array $price, int $iterations, string $end_behavior = 'release')
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        return $stripe->subscriptionSchedules->create([
+            'customer' => $customerId,
+            'start_date' => $start_date,
+            'end_behavior' => $end_behavior,
+            'phases' => [
+                [
+                'items' => [
+                    $price
+                ],
+                    'iterations' => $iterations,
+                ],
+            ],
+        ]);
+    }
+
+
+    public function updateSubscriptionSchedule(string $sub_sched_id, array $associativeArray)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+
+        return $stripe->subscriptionSchedules->update(
+            $sub_sched_id,
+            $associativeArray
+        );
+    }
 
     /**
      * Permet de créer à la fois un Product et un Price (Qui conduit à un plan d'abonnement)
@@ -365,6 +404,62 @@ class StripeService
         $stripeDatas['status'] = self::PLAN_STATUS['ACTIVE']; 
 
         return $stripeDatas;
+    }
+
+    /**
+     * Normalement, cette fonction permet de plannifier un abonnement, mais ici on opte pour réaliser une facilité de paiement pour les clients
+     */
+    public function create_SubscriptionSchedule_ProductAndPrice($iteration_payment, $amount, $interval_unit, $customer_email, $customer_name, $customer_desciption)
+    {
+        $stripe = new \Stripe\StripeClient($this->secretKey);
+        
+        // 1 => Création Product pour le Price (Stripe) 
+        $productName = "Facilité de paiement / Paiement fractionné";
+        $productDescription = "Ce produit permet au client d'effectuer une facilité de paiment";
+
+        $existingProduct = $this->getProduct(StripeService::PRODUCT_ID['FRACTIONAL_PAYMENT']);
+        if ($existingProduct->id === 'not_found') {
+            $product = $stripe->products->create([
+                'id' => StripeService::PRODUCT_ID['FRACTIONAL_PAYMENT'],
+                'name' => $productName,
+                'description' => $productDescription
+            ]);
+        } else {
+            $product = $existingProduct;
+        }
+
+        $productId = $product['id'];
+
+        // 2 =>  creation price
+        $interval_unit = self::INTERVAL_UNIT_MONTH; // Provisoire
+        $priceName = 'Paiement fractionné en '.$iteration_payment.' fois';
+
+        $price = $stripe->prices->create([
+            'unit_amount' => $amount * 100,
+            'currency' => 'eur',
+            'recurring' => [
+                'interval' => $interval_unit
+            ],
+            'nickname' => $priceName,
+            'product' => $productId
+        ]);
+
+        // 3 =>  creation customer
+        $customer = $this->createCustomer($customer_email, $customer_name, $customer_desciption);
+      
+        // 4 =>  creation subscription schedule (Paimenent fractionné)
+        $price_subSched = [
+            'price' => $price->id,
+            'quantity' => 1,
+        ];
+        $subSched = $this->createSubscriptionSchedule($customer->id, 'now', $price_subSched, $iteration_payment, 'cancel');
+
+        $informations = [
+            'customer_id' => $customer->id,
+            'price_id' => $price->id,
+            'subSched_id' => $subSched->id
+        ];
+        return $informations ;
     }
     
     /**

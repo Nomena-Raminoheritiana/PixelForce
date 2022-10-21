@@ -106,9 +106,11 @@ class AnonymousDevisCompanyController extends AbstractController
             $signature = $form->get('signature')->getData();
             $photo = $this->fileHandler->saveBase64($signature, $filesDirectory.$devisCompanyDirectory.'/'.'signature.png');
             $src = $this->fileHandler->encode_img_base64($photo);
-
-            $src_logoCompany = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompany->getCompanyLogo());
-            $devisCompany->setCompany_logo_encode_img_base64($src_logoCompany);
+            
+            if (!is_null($devisCompany->getCompanyLogo())) {
+                $src_logoCompany = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompany->getCompanyLogo());
+                $devisCompany->setCompany_logo_encode_img_base64($src_logoCompany);
+            }
 
 
             // To base64 
@@ -127,7 +129,7 @@ class AnonymousDevisCompanyController extends AbstractController
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $filesDirectory,
-                'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition()) 
+                'iterationPercent' => $devisCompany->getIterationPayment()
             ]);
     
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
@@ -173,6 +175,7 @@ class AnonymousDevisCompanyController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $amount_with_condition_payment = $devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment();
             $stripeToken =  $form->get('token')->getData();
             
             $orderDevisCompany->setTotalAmountHt($devisCompany->getDevisTotalHt());
@@ -182,16 +185,29 @@ class AnonymousDevisCompanyController extends AbstractController
             $orderDevisCompany->setClientMail($devisCompany->getAnonymousClientMail());
             $orderDevisCompany->setClientPhone($devisCompany->getAnonymousClientPhone());
             $orderDevisCompany->setDevisCompany($devisCompany);
+            $orderDevisCompany->setIterationPayment($devisCompany->getIterationPayment());
+            $orderDevisCompany->setAmountWithConditionPayment($amount_with_condition_payment);
 
 
             // On opte cette option pour le moment (Condition de paiment en 100%)
-            $chargeId = $stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    $devisCompany->getDevisTotalTtc(), 
-                    ['description' => 'Paiement signature devis digital pour une entreprise']
-            );
-            $orderDevisCompany->setStripeChargeId($chargeId);
+            // $chargeId = $stripeService
+            //     ->createCharge(
+            //         $stripeToken, 
+            //         $devisCompany->getDevisTotalTtc(), 
+            //         ['description' => 'Paiement signature devis digital pour une entreprise']
+            // );
+            // $orderDevisCompany->setStripeChargeId($chargeId);
+
+            $interval_unit = StripeService::INTERVAL_UNIT_MONTH;
+            $customer_descri = 'Téléphone : '. $devisCompany->getAnonymousClientPhone();
+            $subSched = $stripeService->create_SubscriptionSchedule_ProductAndPrice($devisCompany->getIterationPayment(), $amount_with_condition_payment, $interval_unit, $devisCompany->getAnonymousClientMail(), $devisCompany->getAnonymousClientName(), $customer_descri);
+
+            $orderDevisCompany->setIterationPayment($devisCompany->getIterationPayment());
+            $orderDevisCompany->setAmountWithConditionPayment($amount_with_condition_payment);
+            $orderDevisCompany->setStripeCustomerId($subSched['customer_id']);
+            $orderDevisCompany->setStripeSubSchedId($subSched['subSched_id']);
+            $orderDevisCompany->setStripePriceId($subSched['price_id']);
+
 
             $devisCompany->setStatus(DevisCompany::DEVIS_STATUS_INT['SIGNED']);
             $this->entityManager->persist($orderDevisCompany);

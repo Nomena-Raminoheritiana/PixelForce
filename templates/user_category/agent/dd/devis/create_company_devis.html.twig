@@ -171,7 +171,9 @@
                                 <div class="my-form-widget mt-5">
                                     <div class="row">
                                         <div class="col-12 col-md-5">
-                                            {{form_row(formDevisComp.payment_condition)}}
+                                            {# {{form_row(formDevisComp.payment_condition)}} #}
+                                            {{form_row(formDevisComp.select_cond_pay)}}
+                                            <p class="alert alert-primary"><i class="fa-solid fa-circle-info"></i> Nombre de tranche pour le paiement.</p>
                                         </div>
                                     </div>
                                 </div>
