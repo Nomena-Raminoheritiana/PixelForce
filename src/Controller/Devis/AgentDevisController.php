@@ -148,7 +148,7 @@ class AgentDevisController extends AbstractController
     public function agent_company_devis_liste(): Response
     {
         $agent = $this->getUser();
-        $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent]);
+        $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent],['created_at' => 'DESC']);
         return $this->render('user_category/agent/dd/devis/list_company_devis.html.twig', [
             'allDevisCompanies' => $allDevisCompanies
         ]);
