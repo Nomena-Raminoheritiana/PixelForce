@@ -116,6 +116,13 @@
             <script src="{{ asset('assets/vuexy/vendors/js/forms/validation/jquery.validate.min.js') }}" defer></script>
             <script src="{{ asset('assets/vuexy/vendors/js/pickers/flatpickr/flatpickr.min.js') }}" defer></script>
 
+             {# Google Analytics #}
+            <!-- Google tag (gtag.js) -->
+            {% if app.environment == 'prod' %}
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-8PBBKR57JN"></script>
+                <script src="{{ asset('assets/js/google_analytics.js') }}"></script>
+            {% endif %}
+            {# Google Analytics #}
         {% endblock %}
     </body>
 </html>
