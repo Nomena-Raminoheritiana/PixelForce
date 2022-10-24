@@ -4,6 +4,7 @@
 namespace App\Controller\Anonymous;
 
 use App\Entity\DevisCompany;
+use App\Entity\DevisCompanyDetail;
 use App\Entity\OrderDigitalDevisCompany;
 use App\Manager\EntityManager;
 use App\Services\DemandeDevisService;
@@ -106,13 +107,29 @@ class AnonymousDevisCompanyController extends AbstractController
             $photo = $this->fileHandler->saveBase64($signature, $filesDirectory.$devisCompanyDirectory.'/'.'signature.png');
             $src = $this->fileHandler->encode_img_base64($photo);
             
+            if (!is_null($devisCompany->getCompanyLogo())) {
+                $src_logoCompany = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompany->getCompanyLogo());
+                $devisCompany->setCompany_logo_encode_img_base64($src_logoCompany);
+            }
+
+
+            // To base64 
+             /** @var DevisCompanyDetail $devisCompanyDetail */
+            foreach ($devisCompany->getDevisCompanyDetail() as $devisCompanyDetail) {                
+                $image = $devisCompanyDetail->getImage();
+                if (!is_null($image)) {
+                    $srcImgDevisDetail = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompanyDetail->getImage());
+                    $devisCompanyDetail->setImage_encode_img_base64($srcImgDevisDetail);
+                }
+            }
+            
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'srcEncoded' => $src,
                 'signature' => true,
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $filesDirectory,
-                'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition()) 
+                'iterationPercent' => $devisCompany->getIterationPayment()
             ]);
     
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
@@ -146,8 +163,8 @@ class AnonymousDevisCompanyController extends AbstractController
     {
         $stripePublishableKey = $_ENV['STRIPE_PUBLIC_KEY'];
         $orderDevisCompany = new OrderDigitalDevisCompany();
-        $amountDevis = $devisCompany->getDevisTotalTtc();
-        $stripeIntentSecret = $stripeService->intentSecretKlarna($amountDevis);
+        // $amountDevis = $devisCompany->getDevisTotalTtc();
+        // $stripeIntentSecret = $stripeService->intentSecretKlarna($amountDevis);
 
         $form = $formFactory
             ->createNamedBuilder("payment-form")
@@ -158,6 +175,7 @@ class AnonymousDevisCompanyController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $amount_with_condition_payment = $devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment();
             $stripeToken =  $form->get('token')->getData();
             
             $orderDevisCompany->setTotalAmountHt($devisCompany->getDevisTotalHt());
@@ -167,16 +185,29 @@ class AnonymousDevisCompanyController extends AbstractController
             $orderDevisCompany->setClientMail($devisCompany->getAnonymousClientMail());
             $orderDevisCompany->setClientPhone($devisCompany->getAnonymousClientPhone());
             $orderDevisCompany->setDevisCompany($devisCompany);
+            $orderDevisCompany->setIterationPayment($devisCompany->getIterationPayment());
+            $orderDevisCompany->setAmountWithConditionPayment($amount_with_condition_payment);
 
 
             // On opte cette option pour le moment (Condition de paiment en 100%)
-            $chargeId = $stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    $devisCompany->getDevisTotalTtc(), 
-                    ['description' => 'Paiement signature devis digital pour une entreprise']
-            );
-            $orderDevisCompany->setStripeChargeId($chargeId);
+            // $chargeId = $stripeService
+            //     ->createCharge(
+            //         $stripeToken, 
+            //         $devisCompany->getDevisTotalTtc(), 
+            //         ['description' => 'Paiement signature devis digital pour une entreprise']
+            // );
+            // $orderDevisCompany->setStripeChargeId($chargeId);
+
+            $interval_unit = StripeService::INTERVAL_UNIT_MONTH;
+            $customer_descri = 'Téléphone : '. $devisCompany->getAnonymousClientPhone();
+            $subSched = $stripeService->create_SubscriptionSchedule_ProductAndPrice($devisCompany->getIterationPayment(), $amount_with_condition_payment, $interval_unit, $devisCompany->getAnonymousClientMail(), $devisCompany->getAnonymousClientName(), $customer_descri);
+
+            $orderDevisCompany->setIterationPayment($devisCompany->getIterationPayment());
+            $orderDevisCompany->setAmountWithConditionPayment($amount_with_condition_payment);
+            $orderDevisCompany->setStripeCustomerId($subSched['customer_id']);
+            $orderDevisCompany->setStripeSubSchedId($subSched['subSched_id']);
+            $orderDevisCompany->setStripePriceId($subSched['price_id']);
+
 
             $devisCompany->setStatus(DevisCompany::DEVIS_STATUS_INT['SIGNED']);
             $this->entityManager->persist($orderDevisCompany);
@@ -185,7 +216,7 @@ class AnonymousDevisCompanyController extends AbstractController
             return $this->redirectToRoute('anonymous_devis_company_fiche', ['id' => $devisCompany->getId()]);
         }
         return $this->render('user_category/anonymous/devis/checkout_devis_company.html.twig', [
-            'stripeIntentSecret' => $stripeIntentSecret,
+            // 'stripeIntentSecret' => $stripeIntentSecret,
             'devisCompany' => $devisCompany,
             'stripePublishableKey' => $stripePublishableKey,
             'form' => $form->createView()

@@ -199,20 +199,13 @@ class DevisCompanyDetail
         return $this;
     }
 
-    /**
-     * Get the value of image_encode_img_base64
-     */ 
+
     public function getImage_encode_img_base64()
     {
         return $this->image_encode_img_base64;
     }
 
-    /**
-     * Set the value of image_encode_img_base64
-     *
-     * @return  self
-     */ 
-    public function setImage_encode_img_base64($image_encode_img_base64)
+    public function setImage_encode_img_base64($image_encode_img_base64): self
     {
         $this->image_encode_img_base64 = $image_encode_img_base64;
 

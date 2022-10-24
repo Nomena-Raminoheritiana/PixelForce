@@ -77,31 +77,6 @@
                         <section class="app-ecommerce-details">
                             <div class="block block--bordered block--rounded">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <h2 class="block__text block__text--center mt-2" >Image service</h2>
-                                </div>
-                                <div class="row">
-                                    {% if devisCompany is defined and devisCompany.imageService %}
-                                        <div class="col">
-                                            <img src="{{ asset('/files/' ~ devisCompany.imageService ) }}" style="border: 1px solid #DDD; border-radius: 10px; max-height: 100px;"> 
-                                        </div>
-                                    {% endif %}
-                                    <div class="col">
-                                        <div class="row">
-                                            {{form_row(formDevisComp.image_service)}}
-                                        </div>
-                                        <div class="my-form-img-preview-container d-none" id="_image_service">
-                                            <img class="my-form-img-preview" id="my-form-img-preview" data-prototype="{{ asset( filesDirectory ~ '__real_path__') }}" src="" />
-                                        </div>
-                                        <input type="hidden" name="_image_service_input_hidden" id="_image_service_input_hidden" onchange="changeImage(this)">
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                    <div class="col-12">
-                        <section class="app-ecommerce-details">
-                            <div class="block block--bordered block--rounded">
-                                <div class="d-flex align-items-center justify-content-between">
                                     <h2 class="block__text block__text--center mt-2" >Information société</h2>
                                     <button class="btn btn-primary" onclick="openPopup('{{path('agent_refsociete_popup')}}', 'hidden_cke___devis_company_company_info;my_logo_societe_input_hidden', 'description;logo')" type="button">Choisir parmi les références</button>
                                 </div>
@@ -196,7 +171,9 @@
                                 <div class="my-form-widget mt-5">
                                     <div class="row">
                                         <div class="col-12 col-md-5">
-                                            {{form_row(formDevisComp.payment_condition)}}
+                                            {# {{form_row(formDevisComp.payment_condition)}} #}
+                                            {{form_row(formDevisComp.iteration_payment)}}
+                                            <p class="alert alert-primary"><i class="fa-solid fa-circle-info"></i> Nombre de tranche pour le paiement.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -317,9 +294,6 @@
             let imgViewer = document.querySelector("#my_logo_societe img");
             let companyLogoImgInput = document.getElementById("devis_company_company_logo");
 
-            let _image_service_imgViewer = document.querySelector("#_image_service img");
-            let _image_service_ImgInput = document.getElementById("devis_company_image_service");
-
 
             function previewImage(data){
                 let input = data.target;
@@ -334,20 +308,11 @@
                         $('#my_logo_societe').removeClass('d-none');
                         $('#my_logo_societe_input_hidden').val("");
                     }
-
-                    if(input.id == _image_service_ImgInput.id ){
-                        _image_service_imgViewer.src = base64;
-                        $('#_image_service').removeClass('d-none');
-                        $('#_image_service_input_hidden').val("");
-                    }
                 };
             }
 
             if(companyLogoImgInput){
                 companyLogoImgInput.addEventListener("change", previewImage);
-            }
-            if(_image_service_ImgInput){
-                _image_service_ImgInput.addEventListener("change", previewImage);
             }
 
         });

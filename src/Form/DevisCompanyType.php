@@ -6,6 +6,7 @@ use App\Entity\DevisCompany;
 use App\Entity\DevisCompanyDetail;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -28,11 +29,6 @@ class DevisCompanyType extends AbstractType
             ])
             ->add('company_logo', FileType::class, [
                 'label' => 'Logo société',
-                'mapped' => false,
-                'required' => false
-            ])
-            ->add('image_service', FileType::class, [
-                'label' => false,
                 'mapped' => false,
                 'required' => false
             ])
@@ -65,14 +61,21 @@ class DevisCompanyType extends AbstractType
                 'constraints' =>  new NotNull(['groups' => ['create']]),
                 'required'  => true
             ])
-            ->add('payment_condition', IntegerType::class, [
-                'data' => 100,
-                'label' => 'Condition de paiement (%)',
+            // ->add('payment_condition', IntegerType::class, [
+            //     'data' => 100,
+            //     'label' => 'Condition de paiement (%)',
+            //     'attr' => [
+            //         'min' => 1,
+            //         'max' => 100
+            //     ]
+            // ])
+            ->add('iteration_payment', IntegerType::class, [
+                'label' => 'Condition de paiement',
                 'attr' => [
                     'min' => 1,
                     'max' => 100
                 ]
-            ])
+            ]);
         ;
     }
 
@@ -82,4 +85,19 @@ class DevisCompanyType extends AbstractType
             'data_class' => DevisCompany::class,
         ]);
     }
+
+
+    public function selectConditionPayment()
+    {
+        $default_condition_payment = 100;
+        $available_cond_pay = [];
+        for($i=$default_condition_payment; $i >= 1; $i--){
+            $reste = $default_condition_payment % $i;
+            ($reste == 0) ? $available_cond_pay[$i] = $i : null;
+        }
+        asort($available_cond_pay);
+        return $available_cond_pay;
+    }
+
+   
 }

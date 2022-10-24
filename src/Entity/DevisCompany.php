@@ -142,11 +142,9 @@ class DevisCompany
     private $orderDigitalDevisCompany;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="integer")
      */
-    private $image_service;
-
-
+    private $iteration_payment;
 
     public function __construct()
     {
@@ -154,6 +152,7 @@ class DevisCompany
         $this->devis_company_detail = new ArrayCollection();
         $this->payment_condition = 100;
         $this->status = self::DEVIS_STATUS_INT['CREATED'];
+        $this->iteration_payment = 1;
     }
 
     public function getId(): ?int
@@ -360,20 +359,14 @@ class DevisCompany
     }
 
 
-    /**
-     * Get the value of company_logo_encode_img_base64
-     */ 
+
     public function getCompany_logo_encode_img_base64()
     {
         return $this->company_logo_encode_img_base64;
     }
 
-    /**
-     * Set the value of company_logo_encode_img_base64
-     *
-     * @return  self
-     */ 
-    public function setCompany_logo_encode_img_base64($company_logo_encode_img_base64)
+
+    public function setCompany_logo_encode_img_base64( $company_logo_encode_img_base64): self
     {
         $this->company_logo_encode_img_base64 = $company_logo_encode_img_base64;
 
@@ -499,15 +492,17 @@ class DevisCompany
         return $this;
     }
 
-    public function getImageService(): ?string
+    public function getIterationPayment(): ?int
     {
-        return $this->image_service;
+        return $this->iteration_payment;
     }
 
-    public function setImageService(?string $image_service): self
+    public function setIterationPayment(int $iteration_payment): self
     {
-        $this->image_service = $image_service;
+        $this->iteration_payment = $iteration_payment;
 
         return $this;
     }
+
+  
 }

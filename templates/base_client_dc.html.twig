@@ -122,6 +122,13 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
             <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
 
+            {# Google Analytics #}
+            <!-- Google tag (gtag.js) -->
+            {% if app.environment == 'prod' %}
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-8PBBKR57JN"></script>
+                <script src="{{ asset('assets/js/google_analytics.js') }}"></script>
+            {% endif %}
+            {# Google Analytics #}
             
 
             
