@@ -20,7 +20,7 @@ class DevisManager
         $this->fileHandler = $fileHandler;
     }
 
-    public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup, $filesDirAbsolute, $iteration_payment)
+    public function persistDevisCompany($logo, $directory, DevisCompany $devisCompany, User $agent, string $logoPopup, $filesDirAbsolute)
     {
         if($logoPopup && $logoPopup != ""){
             $src = $this->fileHandler->encode_img_base64($filesDirAbsolute.$logoPopup);
@@ -65,7 +65,6 @@ class DevisManager
         $refSequence = "PX-F-".(new \DateTime())->format('Y-m-d');
         $devisCompany->setDevisRefSeq($refSequence);
         $devisCompany->setAgent($agent);
-        $devisCompany->setIterationPayment($iteration_payment);
 
         $devisCompany->setDevisTotalHt($totalHt);
         $devisCompany->setDevisTotalTtc($totalTTC);

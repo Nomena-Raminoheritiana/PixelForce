@@ -170,8 +170,7 @@ class AgentDevisController extends AbstractController
             $logo = $formDevisComp->get('company_logo')->getData();
             $logoPopup = $request->get('my_logo_societe_input_hidden');
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
-            $iteration_payment = $formDevisComp->get('select_cond_pay')->getData();
-            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $iteration_payment);
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute);
             // Pour visualiser :
             // return $this->render('pdf/fiche_devis_entrepise.html.twig', [
             //     'filesDirAbsolute' => $filesDirAbsolute,
@@ -222,7 +221,7 @@ class AgentDevisController extends AbstractController
             $logo = $formDevisComp->get('company_logo')->getData();
             $logoPopup = $request->get('my_logo_societe_input_hidden');
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
-            $devisCompany = $this->devisManager->persistDevisCompany($logo, $devisCompanyDirectory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $devisCompany->getIterationPayment());
+            $devisCompany = $this->devisManager->persistDevisCompany($logo, $devisCompanyDirectory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $devisCompany->getIterationPayment() );
 
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [

@@ -69,10 +69,12 @@ class DevisCompanyType extends AbstractType
             //         'max' => 100
             //     ]
             // ])
-            ->add('select_cond_pay', ChoiceType::class, [
-                'choices' => $this->selectConditionPayment(),
-                'mapped' => false,
-                'label' => 'Condition de paiement'
+            ->add('iteration_payment', IntegerType::class, [
+                'label' => 'Condition de paiement',
+                'attr' => [
+                    'min' => 1,
+                    'max' => 100
+                ]
             ]);
         ;
     }

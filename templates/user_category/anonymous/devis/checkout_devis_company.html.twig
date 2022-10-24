@@ -85,7 +85,7 @@
                                                                    
                                                 {{ form_widget(form.token) }}
                                                 <div class="col-12 mt-4">
-                                                    <button type="submit" class="btn btn-primary btn-next">Payer tout de suite <i class="fa-solid fa-circle-check"></i></button>
+                                                    <button type="submit" class="btn btn-primary btn-next">Payer <i class="fa-solid fa-circle-check"></i></button>
                                                 </div>
                                             </div>
                                             {{form_end(form)}}
@@ -140,7 +140,7 @@
                                                 <hr/>
                                                 <li class="price-detail">
                                                     <div class="detail-title detail-total">Condition de paiement :</div>
-                                                    <div class="detail-amt fw-bolder text-success" id="total-cost" > {{ 100 / devisCompany.iterationPayment }} %</div>
+                                                    <div class="detail-amt fw-bolder text-success" id="total-cost" > {{ (100 / devisCompany.iterationPayment)|number_format(2) }} %</div>
                                                 </li>
                                                  <li class="price-detail h5 mt-2 fw-bolder">
                                                     <div class="detail-title detail-total">Paiment :</div>
