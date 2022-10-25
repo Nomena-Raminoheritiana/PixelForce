@@ -288,6 +288,22 @@ class AgentDevisController extends AbstractController
 //        ]);
 //        $response = $wrapper->getStreamResponse($html, "document.pdf");
 //        $response->send();
+
+        
 //    }
+//    /**
+//     * @Route("/company/devis/{id}/detail/generate", name="agent_company_detail_pdf_generate")
+//     */
+//     public function agent_view_pdf_generate(DevisCompany $devisCompany, DompdfWrapperInterface $wrapper)
+//     {
+//         $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
+//         // dd($devisCompany);
+//         return $this->render('pdf/fiche_devis_entrepise.html.twig', [
+//             'filesDirAbsolute' => $filesDirAbsolute,
+//             'devisCompany' => $devisCompany,
+//             'filesDirectory' => $this->getParameter('files_directory_relative'),
+//             'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
+//         ]);
+//     }
 
 }
