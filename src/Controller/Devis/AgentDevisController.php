@@ -179,12 +179,21 @@ class AgentDevisController extends AbstractController
             //     'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
             // ]);
 
+
+            $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+            $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+            $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+            $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative'),
-                'iterationPercent' => $devisCompany->getIterationPayment()
+                'iterationPayment' => $devisCompany->getIterationPayment(),
+                'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+                'intval_amount' => $intval_amount,
+                'round_rest_amount_modulo' => $round_rest_amount_modulo
             ]);
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
@@ -223,12 +232,20 @@ class AgentDevisController extends AbstractController
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
             $devisCompany = $this->devisManager->persistDevisCompany($logo, $devisCompanyDirectory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $devisCompany->getIterationPayment() );
 
+            $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+            $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+            $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+            $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative'),
-                'iterationPercent' => $devisCompany->getIterationPayment()
+                'iterationPayment' => $devisCompany->getIterationPayment(),
+                'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+                'intval_amount' => $intval_amount,
+                'round_rest_amount_modulo' => $round_rest_amount_modulo
             ]);
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $devisCompanyDirectory);
@@ -252,9 +269,19 @@ class AgentDevisController extends AbstractController
      */
     public function agent_company_devis_fiche(DevisCompany $devisCompany): Response
     {
+        
+        $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+        $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+        $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+        $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
         return $this->render('user_category/agent/dd/devis/fiche_company_devis.html.twig', [
             'devisCompany' => $devisCompany,
-            'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT
+            'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT,
+            'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+            'intval_amount' => $intval_amount,
+            'rest_amount_modulo' => $rest_amount_modulo,
+            'round_rest_amount_modulo' => $round_rest_amount_modulo
         ]);
     }
 
