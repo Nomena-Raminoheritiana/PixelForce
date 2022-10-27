@@ -61,7 +61,7 @@
                 margin : 20px auto;
                 font-size: 12px;
                 width: 100%;
-                border : 1px solid #eee !important;
+                /*border : 1px solid #eee !important;*/
             }
             table, td, th{
                 border : none;
@@ -72,10 +72,10 @@
                 min-width : 75px;
             }
             table th{
-                background-color: #eceff1;
+                /*background-color: #eceff1;*/
             }
             table td {
-                border-right : 1px solid #eee !important;
+                /*border-right : 1px solid #eee !important;*/
             }
             table td:nth-child(7) {
                 border-right: none !important;
@@ -157,12 +157,13 @@
                                 </div>
 
                                 <div class="row">
-                                    <table border="1">
-                                        <thead style="background-color: #eceff1;">
+                                    <table>
+                                        <thead>
                                             <tr>
                                                 <th></th>
                                                 {# <th>Référence</th> #}
-                                                <th>Désignation</th>
+                                                {# <th>Désignation</th> #}
+                                                <th></th>
                                                 <th>Qté</th>
                                                 <th>PU HT</th>
                                                 {# <th>TVA</th> #}
@@ -180,7 +181,7 @@
                                                         <br>
 
                                                     {% endif %}
-                                                    <strong>{{devisCompanyDetail.reference}}</strong>
+                                                    {# <strong>{{devisCompanyDetail.reference}}</strong> #}
                                                 </td>
                                                 {# <td>{{devisCompanyDetail.reference}}</td> #}
                                                 <td>{{devisCompanyDetail.designation|raw}}</td>
