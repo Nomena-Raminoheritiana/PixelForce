@@ -8,6 +8,7 @@ use App\Entity\DevisCompany;
 use App\Entity\DevisCompanyDetail;
 use App\Entity\User;
 use App\Form\DevisCompanyType;
+use App\Form\DevisFilterType;
 use App\Form\DevisType;
 use App\Manager\DevisManager;
 use App\Manager\EntityManager;
@@ -15,8 +16,11 @@ use App\Repository\DevisCompanyRepository;
 use App\Services\FileHandler;
 use App\Services\MailerService;
 use App\Services\MailService;
+use App\Services\SearchService;
 use App\Util\GenericUtil;
+use App\Util\Search\MyCriteriaParam;
 use DateTime;
+use Knp\Component\Pager\PaginatorInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -145,12 +149,48 @@ class AgentDevisController extends AbstractController
     /**
      * @Route("/company/devis/liste", name="agent_company_devis_liste")
      */
-    public function agent_company_devis_liste(): Response
+    public function agent_company_devis_liste(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
         $agent = $this->getUser();
-        $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent],['created_at' => 'DESC']);
+        $page = $request->query->get('page', 1);
+        $limit = 5;
+        $criteria = [
+            ['prop' => 'dateMin', 'col' => 'created_at', 'op' => '>='],
+            ['prop' => 'dateMax', 'col' => 'created_at', 'op' => '<='],
+            ['prop' => 'client', 'col' => "client_mail", 'op' => 'LIKE']
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(DevisFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('d')
+            ->from(DevisCompany::class, 'd')
+        ;  
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'd'));   
+        $query->where($where["where"]." and d.agent = :agent ");
+        $where["params"]["agent"] = $agent;
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'd.created_at', 'direction' => 'desc']);
+
+        $allDevisCompanies = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        // $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent],['created_at' => 'DESC']);
         return $this->render('user_category/agent/dd/devis/list_company_devis.html.twig', [
-            'allDevisCompanies' => $allDevisCompanies
+            'allDevisCompanies' => $allDevisCompanies,
+            'form' => $form->createView(),
         ]);
     }
 
