@@ -47,11 +47,19 @@ class AnonymousDevisCompanyController extends AbstractController
     {
 
         $filesDirectory = $this->getParameter('files_directory_relative');
+        $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+        $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+        $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+        $round_rest_amount_modulo = round($rest_amount_modulo, 2);
 
         return $this->render('user_category/anonymous/devis/fiche_devis_company.html.twig', [
             'devisCompany' => $devisCompany,
             'filesDirectory' => $filesDirectory,
-            'DEVIS_STATUS_INT' =>  DevisCompany::DEVIS_STATUS_INT
+            'DEVIS_STATUS_INT' =>  DevisCompany::DEVIS_STATUS_INT,
+            'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+            'intval_amount' => $intval_amount,
+            'rest_amount_modulo' => $rest_amount_modulo,
+            'round_rest_amount_modulo' => $round_rest_amount_modulo
         ]);
     }
 
@@ -123,13 +131,23 @@ class AnonymousDevisCompanyController extends AbstractController
                 }
             }
             
+            
+            $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+            $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+            $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+            $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
+            
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'srcEncoded' => $src,
                 'signature' => true,
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $filesDirectory,
-                'iterationPercent' => $devisCompany->getIterationPayment()
+                'iterationPayment' => $devisCompany->getIterationPayment(),
+                'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+                'intval_amount' => $intval_amount,
+                'round_rest_amount_modulo' => $round_rest_amount_modulo
             ]);
     
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
@@ -166,6 +184,12 @@ class AnonymousDevisCompanyController extends AbstractController
         // $amountDevis = $devisCompany->getDevisTotalTtc();
         // $stripeIntentSecret = $stripeService->intentSecretKlarna($amountDevis);
 
+        $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+        $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+        $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+        $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
+
         $form = $formFactory
             ->createNamedBuilder("payment-form")
             ->add('token', HiddenType::class, [
@@ -200,7 +224,7 @@ class AnonymousDevisCompanyController extends AbstractController
 
             $interval_unit = StripeService::INTERVAL_UNIT_MONTH;
             $customer_descri = 'Téléphone : '. $devisCompany->getAnonymousClientPhone();
-            $subSched = $stripeService->create_SubscriptionSchedule_ProductAndPrice($devisCompany->getIterationPayment(), $amount_with_condition_payment, $interval_unit, $devisCompany->getAnonymousClientMail(), $devisCompany->getAnonymousClientName(), $customer_descri);
+            $subSched = $stripeService->create_SubscriptionSchedule_ProductAndPrice($devisCompany->getIterationPayment(), $devisCompany->getDevisTotalTtc() , $interval_unit, $devisCompany->getAnonymousClientMail(), $devisCompany->getAnonymousClientName(), $customer_descri);
 
             $orderDevisCompany->setIterationPayment($devisCompany->getIterationPayment());
             $orderDevisCompany->setAmountWithConditionPayment($amount_with_condition_payment);
@@ -219,7 +243,11 @@ class AnonymousDevisCompanyController extends AbstractController
             // 'stripeIntentSecret' => $stripeIntentSecret,
             'devisCompany' => $devisCompany,
             'stripePublishableKey' => $stripePublishableKey,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+            'intval_amount' => $intval_amount,
+            'rest_amount_modulo' => $rest_amount_modulo,
+            'round_rest_amount_modulo' => $round_rest_amount_modulo
         ]);    
     }
 

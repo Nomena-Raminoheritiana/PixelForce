@@ -59,7 +59,7 @@
 
             table{
                 margin : 20px auto;
-                font-size: 16px;
+                font-size: 12px;
                 width: 100%;
                 border : 1px solid #eee !important;
             }
@@ -68,7 +68,8 @@
             }
             table td, table th{
                 padding : 5px;
-                /*border : 1px solid #eee;*/
+                vertical-align : top;
+                min-width : 75px;
             }
             table th{
                 background-color: #eceff1;
@@ -123,7 +124,7 @@
                                     <div class="column" >
                                         <div class="company-info">
                                             {% if devisCompany.companyLogo %}
-                                                <img src="{{ devisCompany.Company_logo_encode_img_base64 }}" class="" alt="Logo société"  width="150"/>
+                                                <img src="{{ absolute_url(asset('files/'~devisCompany.companyLogo)) }}" class="" alt="Logo société"  width="150"/>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -159,29 +160,35 @@
                                     <table border="1">
                                         <thead style="background-color: #eceff1;">
                                             <tr>
-                                                <th>Référence</th>
+                                                <th></th>
+                                                {# <th>Référence</th> #}
                                                 <th>Désignation</th>
-                                                <th>Quantité</th>
-                                                <th>PU Vente</th>
-                                                <th>TVA</th>
-                                                <th>Montant HT</th>
-                                                <th>Image</th>
+                                                <th>Qté</th>
+                                                <th>PU HT</th>
+                                                {# <th>TVA</th> #}
+                                                <th>Total HT</th>
+                                                
                                             </tr>
                                         </thead>
                                         <tbody>
                                         {% for devisCompanyDetail in devisCompany.devisCompanyDetail %}
                                             <tr style="font-size: 13px;">
-                                                <td>{{devisCompanyDetail.reference}}</td>
+                                                <td>
+                                                    {% if devisCompanyDetail.image %}
+                                                        <img src="{{ absolute_url(asset('files/'~devisCompanyDetail.image)) }}" width="75" alt="Image" />
+                                                        <br>
+                                                        <br>
+
+                                                    {% endif %}
+                                                    <strong>{{devisCompanyDetail.reference}}</strong>
+                                                </td>
+                                                {# <td>{{devisCompanyDetail.reference}}</td> #}
                                                 <td>{{devisCompanyDetail.designation|raw}}</td>
                                                 <td class="text-right">{{devisCompanyDetail.quantite}}</td>
                                                 <td class="text-right">{{devisCompanyDetail.puVente}}</td>
-                                                <td class="text-right">{{devisCompanyDetail.tva}}</td>
+                                                {# <td class="text-right">{{devisCompanyDetail.tva}}</td> #}
                                                 <td class="text-right">{{devisCompanyDetail.montantHt}}</td>
-                                                <td>
-                                                    {% if devisCompanyDetail.image %}
-                                                        <img src="{{ devisCompanyDetail.image_encode_img_base64 }}" width="100" alt="Image" />
-                                                    {% endif %}
-                                                </td>
+                                                
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -202,27 +209,30 @@
                                             <div class="column">
                                                 <div class="cond-paiement">
                                                     <p>Condition de paiement</p>
-                                                    {% set percentCondtion =  100 / iterationPercent %}
-                                                    {% set iterationPercent = iterationPercent %}
-                                                    {% set resteIteration = 100 - (iterationPercent * percentCondtion) %}
+                                                    {% set percentCondtion =  100 / iterationPayment %}
+                                                    {% set resteIteration = 100 - (iterationPayment * percentCondtion) %}
 
                                                     <ul>
-                                                        {% if iterationPercent > 1 %}
-                                                            {% for i in 1..iterationPercent %}
-                                                                {% if i == 1 %}
-                                                                    <li> <span class="fw-bolder"> 1ère Tranche : </span>{{percentCondtion|number_format(2)}}% soit {{(devisCompany.devisTotalttc * percentCondtion)/100 }} € : Paiement comptant</li>
-                                                                {% else %}
-                                                                    <li> <span class="fw-bolder">{{i}}ème Tranche : </span>{{percentCondtion|number_format(2)}}% soit {{(devisCompany.devisTotalttc * percentCondtion)/100 }} €</li>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                            {% if resteIteration < 50 and resteIteration != 0 %}
-                                                                <li><span class="fw-bolder">Dernière tranche : </span>{{resteIteration|number_format(2)}}% soit {{(devisCompany.devisTotalttc * resteIteration)/100 }} €</li>
+                                                        {% if iterationPayment > 1 %}
+                                                            {% if isFloat__rest_amount_modulo > 0 %}
+                                                                {% for i in 1..iterationPayment %}
+                                                                    {% if i == 1 %}
+                                                                        <li> <span class="fw-bolder"> 1ère Tranche : </span>{{percentCondtion|number_format(2)}}% soit {{ intval_amount  + round_rest_amount_modulo }} € : Paiement comptant</li>
+                                                                    {% else %}
+                                                                        <li> <span class="fw-bolder">{{i}}ème Tranche : </span>{{percentCondtion|number_format(2)}}% soit  {{ intval_amount }} €</li>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                {% for i in 1..iterationPayment %}
+                                                                    {% if i == 1 %}
+                                                                        <li> <span class="fw-bolder"> 1ère Tranche : </span>{{percentCondtion|number_format(2)}}% soit {{(devisCompany.devisTotalttc * percentCondtion)/100 }} € : Paiement comptant</li>
+                                                                    {% else %}
+                                                                        <li> <span class="fw-bolder">{{i}}ème Tranche : </span>{{percentCondtion|number_format(2)}}% soit {{(devisCompany.devisTotalttc * percentCondtion)/100 }} €</li>
+                                                                    {% endif %}
+                                                                {% endfor %}
                                                             {% endif %}
                                                         {% else %}
                                                             <li><span class="fw-bolder">1ère Tranche : </span>{{percentCondtion|number_format(2)}}% soit {{(devisCompany.devisTotalttc * percentCondtion)/100 }} € : Paiement comptant</li>
-                                                            {% if resteIteration < 50 and resteIteration != 0 %}
-                                                                <li><span class="fw-bolder">2ème Tranche : </span>{{resteIteration|number_format(2)}}% soit {{(devisCompany.devisTotalttc * resteIteration)/100 }} €</li>
-                                                            {% endif %}
                                                         {% endif %}
                                                     </ul>
                                                 </div>
