@@ -220,13 +220,12 @@
                                                             </li>
                                                             <hr/>
                                                             <li class="price-detail">
-                                                                <div class="detail-title detail-total">{% if isFloat__rest_amount_modulo == true %}  <i class="fa-solid fa-circle-info text-danger" id="info_payment_condition" style="cursor: auto"></i>{% endif %} Condition de paiement :</div>
+                                                                <div class="detail-title detail-total">Condition de paiement : </div>
                                                                 <div class="detail-amt fw-bolder" id="total-cost" >
                                                                     {% if isFloat__rest_amount_modulo == true %} 
-                                                                        <span class="text-danger"> {{ intval_amount }} € x {{devisCompany.iterationPayment}} </span>
+                                                                        <span class="text-danger">  <i class="fa-solid fa-circle-info text-primary" id="info_payment_condition" style="cursor: auto"></i></span>
                                                                     {% else %}
                                                                         <span class="text-success"> {{ (devisCompany.devisTotalTtc / devisCompany.iterationPayment)|number_format(2) }}€ x {{devisCompany.iterationPayment}}</span>
-    
                                                                     {% endif %}
                                                                 </div>
                                                             </li>
