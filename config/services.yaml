@@ -42,7 +42,3 @@ services:
     App\Services\DemandeDevisService:
         arguments:
             $filesDirectory: '%files_directory%'
-    App\Services\MailService:
-        arguments:
-            $mailerSendFrom: '%swift_mailer_send_from%'
-            $mailerSendFromName: '%swift_mailer_send_from_name%'
