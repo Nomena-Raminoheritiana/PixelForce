@@ -438,7 +438,7 @@ class StripeService
         $amout_intval = intval($amount_TotalTtc / $iteration_payment);
         $amount_first_price = $amout_intval + round($rest_amount_modulo, 2);
 
-        // On test si le paiement par tranche laise des virgules (qui empêchera le calcul exacte du somme des tranches)
+        // On test si le paiement par tranche laisse des virgules (qui empêchera le calcul exacte du somme des tranches)
         if ($isFloat__rest_amount_modulo === true) {
 
             $price = $stripe->prices->create([

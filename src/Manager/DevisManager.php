@@ -48,7 +48,11 @@ class DevisManager
             $devisCompanyDetail->setTva(20);
 
             $uploadedFIle = $devisCompanyDetail->getFileImage();
-            if (!is_null($uploadedFIle)) {
+            if($devisCompanyDetail->getImageHidden() && $devisCompanyDetail->getImageHidden() != ""){
+                $src = $this->fileHandler->encode_img_base64($filesDirAbsolute.$devisCompanyDetail->getImageHidden());
+                $devisCompanyDetail->setImage_encode_img_base64($src);
+                $devisCompanyDetail->setImage($devisCompanyDetail->getImageHidden());
+            } else if (!is_null($uploadedFIle)) {
                 $image_filename = $this->fileHandler->upload($devisCompanyDetail->getFileImage(), $directory);
                 $devisCompanyDetail->setImage($image_filename);
 
