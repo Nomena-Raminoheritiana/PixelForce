@@ -97,7 +97,7 @@
                                         <div class="my-form-img-preview-container d-none" id="my_logo_societe">
                                             <img class="my-form-img-preview" id="my-form-img-preview" data-prototype="{{ asset( filesDirectory ~ '__real_path__') }}" src="" />
                                         </div>
-                                        <input type="hidden" name="my_logo_societe_input_hidden" id="my_logo_societe_input_hidden" onchange="changeImage(this)">
+                                        <input type="hidden" name="my_logo_societe_input_hidden" id="my_logo_societe_input_hidden" onchange="changeImage(this, '#my_logo_societe')">
                                     </div>
                                 </div>
                             </div>
@@ -212,9 +212,9 @@
             CKEDITOR.instances[elmt.dataset.myTarget].setData(elmt.value);
         }
 
-        function changeImage(elmt){
+        function changeImage(elmt, imgViewerContainerSelector){
             console.log(elmt, elmt.value, elmt.id)
-            let logoContainer = $('#my_logo_societe');
+            let logoContainer = $(imgViewerContainerSelector);
             let realImg = logoContainer.find('img');
             let src = realImg[0].dataset.prototype.replace('__real_path__', elmt.value);
             realImg.attr('src', src);
@@ -222,6 +222,30 @@
         }
 
         $( document ).ready(function() {
+            function addImagePreview(imgViewerSelector, imgInputSelector, imgViewerContainerSelector, imgInputHiddenSelector){
+                let imgViewer = document.querySelector(imgViewerSelector);
+                let companyLogoImgInput = document.querySelector(imgInputSelector);
+
+
+                if(companyLogoImgInput){
+                    companyLogoImgInput.addEventListener("change", function (data) {
+                        let input = data.target;
+                        let file = input.files[0];
+                        var reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onloadend = () => {
+                            let base64 = reader.result;
+                        
+                            if(input.id == companyLogoImgInput.id){
+                                imgViewer.src = base64;
+                                $(imgViewerContainerSelector).removeClass('d-none');
+                                $(imgInputHiddenSelector).val("");
+                            }
+                        };
+                    });
+                }
+            }
+
             $('#add-devis-detail').click(function(){
                 const index = +$('#widgets-counter').val();
                 const tmpl = $('#devis_company_devis_company_detail').data('prototype').replace(/__name__/g, index);
@@ -236,7 +260,8 @@
 
                 const delete_btn = 'delete_btn_devis_company_devis_company_detail_'+index
                 const delete_btn_select = $('#'+delete_btn);
-                handleDeleteButton(delete_btn_select)
+                handleDeleteButton(delete_btn_select);
+                addImagePreview(`#devis_company_devis_company_detail_${index}_image_preview_container img`, `#devis_company_devis_company_detail_${index}_file_image`, `#devis_company_devis_company_detail_${index}_image_preview_container`, `#devis_company_devis_company_detail_${index}_imageHidden`);
             })
                 
             // Simuler un ajout de première ligne
@@ -291,29 +316,9 @@
             });
 
 
-            let imgViewer = document.querySelector("#my_logo_societe img");
-            let companyLogoImgInput = document.getElementById("devis_company_company_logo");
+            
 
-
-            function previewImage(data){
-                let input = data.target;
-                let file = input.files[0];
-                var reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onloadend = () => {
-                    let base64 = reader.result;
-                   
-                    if(input.id == companyLogoImgInput.id){
-                        imgViewer.src = base64;
-                        $('#my_logo_societe').removeClass('d-none');
-                        $('#my_logo_societe_input_hidden').val("");
-                    }
-                };
-            }
-
-            if(companyLogoImgInput){
-                companyLogoImgInput.addEventListener("change", previewImage);
-            }
+            addImagePreview("#my_logo_societe img", "#devis_company_company_logo", '#my_logo_societe', '#my_logo_societe_input_hidden');
 
         });
 

@@ -138,14 +138,27 @@
                                                     <div class="detail-amt" id="total-cost" >{{ devisCompany.devisTotalTtc|format_currency('EUR', locale='de') }} </div>
                                                 </li>
                                                 <hr/>
-                                                <li class="price-detail">
-                                                    <div class="detail-title detail-total">Condition de paiement :</div>
-                                                    <div class="detail-amt fw-bolder text-success" id="total-cost" > {{ (100 / devisCompany.iterationPayment)|number_format(2) }} %</div>
+                                               <li class="price-detail">
+                                                    <div class="detail-title detail-total">Condition de paiement : </div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >
+                                                        {% if isFloat__rest_amount_modulo == true %} 
+                                                            <span class="text-danger">  <i class="fa-solid fa-circle-info text-primary" id="info_payment_condition" style="cursor: auto"></i></span>
+                                                        {% else %}
+                                                            <span class="text-success"> {{ (devisCompany.devisTotalTtc / devisCompany.iterationPayment)|number_format(2) }}€ x {{devisCompany.iterationPayment}}</span>
+                                                        {% endif %}
+                                                    </div>
                                                 </li>
-                                                 <li class="price-detail h5 mt-2 fw-bolder">
-                                                    <div class="detail-title detail-total">Paiment :</div>
-                                                    <div class="detail-amt text-success">{{ devisCompany.devisTotalTtc / devisCompany.iterationPayment }}€ x {{devisCompany.iterationPayment}} </div>
+                                                {% if isFloat__rest_amount_modulo == true %}
+                                                <li class="price-detail-explanation">
+                                                    <div class="alert alert-primary info_payment_condition_block d-none">
+                                                        <ul>
+                                                            <li>1ère tranche : {{ intval_amount  + round_rest_amount_modulo }} € </li>
+                                                            <li>Tranches suivantes : {{ intval_amount }} €  x  {{devisCompany.iterationPayment - 1}}</li>
+                                                        </ul>    
+                                                    
+                                                    </div>
                                                 </li>
+                                                {% endif %}
                                             </ul>
                                         </div>
                                     </div>
@@ -223,5 +236,10 @@
                 
             }) #}
         })
+
+        $('#info_payment_condition').on('click', function(){
+            $('.info_payment_condition_block').removeClass('d-none');
+        })
     </script>                       
 {% endblock %}
+

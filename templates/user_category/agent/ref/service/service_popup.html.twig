@@ -6,14 +6,6 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <style>
-        .img-product{
-            height: 150px;
-            width: auto;
-        }
-
-    </style>
-
 {% endblock %}
 
 {% block body %} 
@@ -79,6 +71,7 @@
                         <th>Référence</th>
                         <th>Désignation</th>
                         <th>Prix</th>
+                        <th class="text-center">Image</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,7 +82,11 @@
                         <td class='ref' data-popup="{{ref.ref}}">{{ref.ref}}</td>
                         <td class='designation' data-popup="{{ref.designation}}">{{ref.designation | raw}}</td>
                         <td class='prix' data-popup="{{ref.prix}}">{{ref.prix | number_format(2, ',', ' ')}} €</td>
-
+                        <td class="text-center image"  data-popup="{{ref.image}}">
+                            {% if ref.image != null %}
+                                <img class="img-fluid card-img-top ecommerce-card-img img-product" src="{{ asset( filesDirectory ~ ref.image) }}" alt="Image pour {{ref.ref}}" />
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

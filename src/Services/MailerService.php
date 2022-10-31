@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
 use App\Entity\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -22,6 +23,7 @@ class MailerService
     private $from;
     private $from_name;
     private $parameterBag;
+    public $noreply_pixenshop = 'noreply.pixenshop@yahoo.com' ;
 
     public function __construct(MailerInterface $mailer, ParameterBagInterface $parameterBag)
     {
@@ -84,7 +86,7 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Validation du nouveau compte',
-            'from' => 'noreply.pixenshop@yahoo.com',
+            'from' => $this->noreply_pixenshop,
             'from_name' => $this->from_name,
             'to' => [
                 $recipient->getEmail()
@@ -109,17 +111,22 @@ class MailerService
         ])
         ->attachFromPath($this->parameterBag->get('kernel.project_dir')."/public/files/".$pj_pathname, null);
         $this->mailer->send($email);
-    ;
+    }
 
-        // $this->sendMail([
-        //     'subject' => 'Devis',
-        //     'from' => $this->from,
-        //     'from_name' => $this->from_name,
-        //     'to' => [
-        //         $recipient
-        //     ],
-        //     'template' => 'devis/devis_entreprise.html.twig',
-        // ]);
+
+    public function sendDocument(DocumentRecipient $rec, $link, $recipient)
+    {
+        $email = (new TemplatedEmail())
+            ->from(new Address($this->noreply_pixenshop, $this->from_name))
+            ->to($recipient->getEmail())
+            ->subject("Signature du document << ".$rec->getDocument()->getNom()." >>")
+            ->htmlTemplate('emails/document.html.twig')
+            ->context([
+                'link' => $link,
+                'conseiller' => $rec->getConseiller()
+            ])
+            ->embedFromPath($this->parameterBag->get('kernel.project_dir').'/public/assets/img/securitas.png', 'logoSecuritas', 'image/png');
+        $this->mailer->send($email);
     }
 
 
