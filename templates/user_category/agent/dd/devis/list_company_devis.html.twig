@@ -9,15 +9,20 @@
 {% endblock %}
 
 {% block body %}
-    <div class="block block--bordered block--rounded">
+    {# <div class="block block--bordered block--rounded">
         <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
         <div class="filter-wrap">
             
             {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
                 <div class="my-form-widget">
-                    {{form_label(form.client)}}
-                    {{form_widget(form.client)}}
-                    {{form_errors(form.client)}}
+                    {{form_label(form.clientName)}}
+                    {{form_widget(form.clientName)}}
+                    {{form_errors(form.clientName)}}
+                </div>
+                <div class="my-form-widget">
+                    {{form_label(form.nomProduit)}}
+                    {{form_widget(form.nomProduit)}}
+                    {{form_errors(form.nomProduit)}}
                 </div>
                 <div class="my-form-widget">
                     {{form_label(form.dateMin)}}
@@ -45,7 +50,7 @@
                 </div>
             {{ form_end(form) }}
         </div>
-    </div>
+    </div> #}
     <div class="block block--bordered block--rounded pb-5">
         <div class="mb-1" >
             <div class="row">
@@ -86,9 +91,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="d-flex justify-content-center scale-up-center">
-            {{ knp_pagination_render(allDevisCompanies) }}
-        <div>
+        {# <div class="d-flex justify-content-center scale-up-center">
+            {{ knp_pagination_render(ddList) }}
+        <div> #}
     </div>
 
 {% endblock %}

@@ -6,6 +6,14 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        .img-product{
+            height: 150px;
+            width: auto;
+        }
+
+    </style>
+
 {% endblock %}
 
 {% block body %} 
@@ -71,7 +79,6 @@
                         <th>Référence</th>
                         <th>Désignation</th>
                         <th>Prix</th>
-                        <th class="text-center">Image</th>
                         <th></th>
                         <th></th>
 
@@ -84,11 +91,6 @@
                         <td>{{ref.ref}}</td>
                         <td>{{ref.designation | raw}}</td>
                         <td>{{ref.prix | number_format(2, ',', ' ')}} €</td>
-                        <td class="text-center">
-                            {% if ref.image != null %}
-                                <img class="img-fluid card-img-top ecommerce-card-img img-product" src="{{ asset( filesDirectory ~ ref.image) }}" alt="Image pour {{ref.ref}}" />
-                            {% endif %}
-                        </td>
                         <td class="col-action col-action--edit">
                             <a href="{{path('agent_refservice_edit', {'id': ref.id})}}">
                                  <i data-feather="edit"></i>

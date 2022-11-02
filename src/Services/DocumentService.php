@@ -15,6 +15,10 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use setasign\Fpdi\Fpdi;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_Attachment;
+use Swift_Image;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment as Twig_Environment;
@@ -24,6 +28,7 @@ class DocumentService
 {
     private $entityManager;
     private $documentRepository;
+    private $mailer;
     private $filesDirectory;
     private $baseUrl;
     private $stripeService;
@@ -43,25 +48,24 @@ class DocumentService
         ['field' => 'paiement', 'debut' => 148, 'fin' => 148],
     ];
     
-    private $mailerService;
 
     public function __construct(
         $filesDirectory,
         $baseUrl,
         EntityManagerInterface $entityManager, 
         DocumentRepository $documentRepository, 
+        Swift_Mailer $mailer,
         StripeService $stripeService,
-        Twig_Environment $twig ,
-        MailerService $mailerService
-    )
+        Twig_Environment $twig 
+        )
     {
         $this->entityManager = $entityManager;
         $this->documentRepository = $documentRepository;
+        $this->mailer = $mailer;
         $this->filesDirectory = $filesDirectory;
         $this->baseUrl = $baseUrl;
         $this->stripeService = $stripeService;
         $this->twig = $twig;
-        $this->mailerService = $mailerService;
     }
 
     public function sendDocument(DocumentRecipient $rec)
@@ -75,8 +79,21 @@ class DocumentService
         $this->entityManager->flush();
 
         $link = $this->baseUrl.'/dc/'.sha1($rec->getId());
-
-        $this->mailerService->sendDocument($rec, $link, $rec);
+        $message = new Swift_Message("Signature du document << ".$rec->getDocument()->getNom()." >>");
+        $message = $message
+            ->setFrom('noreply.pixenshop@yahoo.com', "PixelForce")
+            ->setTo($rec->getEmail())
+            //->setBody("<p>Bonjour ".($rec->getPrenom() ? $rec->getPrenom() : "")." ".$rec->getNom().",</p><p>Pixelforce vous invite à suivre ce lien vers l'ouverture du document <i>&lt;&lt; ".$rec->getDocument()->getNom()." &gt;&gt;</i> et pour lequel vous devez souscrire. </p> <p><a href='".$link."'>".$link.'</a></p><div style="display:flex; justify-content:center; align-items:center; gap: 50px; margin-top : 30px;"><img src="'.$message->embed(Swift_Image::fromPath('assets/img/pixelforce.PNG')).'" alt="Logo Pixelforce" style=" " /><img src="'.$message->embed(Swift_Image::fromPath('assets/img/securitas.png')).'" alt="Logo Securitas" style="width : 75px;" /></div>', "text/html");
+            // ->attach(Swift_Attachment::fromPath('assets/img/securitas.png')->setDisposition('inline'));   
+            ->setBody(
+                $this->twig->render('emails/document.html.twig', [
+                    'logoSecuritas' => $message->embed(Swift_Image::fromPath('assets/img/securitas.png')),
+                    'link' => $link,
+                    'conseiller' => $rec->getConseiller() 
+                ]),
+                "text/html"
+            );
+        $this->mailer->send($message); 
     }
 
     public function signDocument(DocumentRecipient $rec, $signature){

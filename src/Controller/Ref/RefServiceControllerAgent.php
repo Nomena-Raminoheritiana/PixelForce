@@ -165,11 +165,7 @@ class RefServiceControllerAgent extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $imageFile = $form->get('imageFile')->getData();
-                if ($imageFile) {
-                    $photo = $this->fileHandler->upload($imageFile, "images/ref/service");
-                    $ref->setImage($photo);
-                }
+                
                 $ref->setSecteur($secteur);
                 $ref->setStatut(Status::VALID);
                 $this->entityManager->persist($ref);
@@ -203,11 +199,7 @@ class RefServiceControllerAgent extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $imageFile = $form->get('imageFile')->getData();
-                if ($imageFile) {
-                    $photo = $this->fileHandler->upload($imageFile, "images/ref/service");
-                    $ref->setImage($photo);
-                }
+            
                 $this->entityManager->persist($ref);
                 $this->entityManager->flush();
                 

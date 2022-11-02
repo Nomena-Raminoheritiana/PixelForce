@@ -11,6 +11,8 @@ parameters:
     stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
     stripe_currency: '%env(STRIPE_CURRENCY)%'
     base_url: '%env(BASE_URL)%'
+    swift_mailer_send_from: '%env(SWIFT_MAILER_SEND_FROM)%'
+    swift_mailer_send_from_name: '%env(SWIFT_MAILER_SEND_FROM_NAME)%'
 
 services:
     # default configuration for services in *this* file
@@ -40,3 +42,7 @@ services:
     App\Services\DemandeDevisService:
         arguments:
             $filesDirectory: '%files_directory%'
+    App\Services\MailService:
+        arguments:
+            $mailerSendFrom: '%swift_mailer_send_from%'
+            $mailerSendFromName: '%swift_mailer_send_from_name%'

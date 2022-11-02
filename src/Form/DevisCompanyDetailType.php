@@ -6,7 +6,6 @@ use App\Entity\DevisCompanyDetail;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -55,9 +54,6 @@ class DevisCompanyDetailType extends AbstractType
                 'attr' => [
                     'class' => 'input_file'
                 ],
-                'required' => false
-            ])
-            ->add('imageHidden', HiddenType::class,[
                 'required' => false
             ]);
 

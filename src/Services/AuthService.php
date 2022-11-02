@@ -12,6 +12,8 @@ use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Swift_Mailer;
+use Swift_Message;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -19,6 +21,7 @@ class AuthService
 {
     private $entityManager;
     private $userRepository;
+    private $mailer;
     private $forgotPasswordRepository;
     private $passwordHasher;
     private $validator;
@@ -29,6 +32,7 @@ class AuthService
         EntityManagerInterface $entityManager, 
         UserRepository $userRepository, 
         UserPasswordHasherInterface $passwordHasher, 
+        Swift_Mailer $mailer,
         ValidatorInterface $validator,
         AccountValidationRepository $accountValidationRepository,
         MailerService $mailerService
@@ -37,6 +41,7 @@ class AuthService
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->passwordHasher = $passwordHasher;
+        $this->mailer = $mailer;
         $this->validator = $validator;
         $this->accountValidationRepository = $accountValidationRepository;
         $this->mailerService = $mailerService;

@@ -75,7 +75,6 @@ class DevisCompanyDetail
      */
     private $total_ttc;
 
-    private $imageHidden;
     public function getId(): ?int
     {
         return $this->id;
@@ -209,26 +208,6 @@ class DevisCompanyDetail
     public function setImage_encode_img_base64($image_encode_img_base64): self
     {
         $this->image_encode_img_base64 = $image_encode_img_base64;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of imageHidden
-     */ 
-    public function getImageHidden()
-    {
-        return $this->imageHidden;
-    }
-
-    /**
-     * Set the value of imageHidden
-     *
-     * @return  self
-     */ 
-    public function setImageHidden($imageHidden)
-    {
-        $this->imageHidden = $imageHidden;
 
         return $this;
     }
