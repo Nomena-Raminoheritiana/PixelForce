@@ -23,7 +23,6 @@ class MailerService
     private $from;
     private $from_name;
     private $parameterBag;
-    public $noreply_pixenshop = 'noreply.pixenshop@yahoo.com' ;
 
     public function __construct(MailerInterface $mailer, ParameterBagInterface $parameterBag)
     {
@@ -37,8 +36,6 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Code de vérification',
-            'from' => $this->from,
-            'from_name' => $this->from_name,
             'to' => [
                 $email
             ],
@@ -53,8 +50,6 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Code de vérification',
-            'from' => $this->from,
-            'from_name' => $this->from_name,
             'to' => [
                 $user->getEmail()
             ],
@@ -69,8 +64,8 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Formation terminée',
-            'from' => $sender->getEmail(),
-            'from_name' => $sender->getNom(),
+            //'from' => $sender->getEmail(),
+            //'from_name' => $sender->getNom(),
             'to' => [
                 $recipient->getEmail()
             ],
@@ -86,8 +81,6 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Validation du nouveau compte',
-            'from' => $this->noreply_pixenshop,
-            'from_name' => $this->from_name,
             'to' => [
                 $recipient->getEmail()
             ],
@@ -117,7 +110,7 @@ class MailerService
     public function sendDocument(DocumentRecipient $rec, $link, $recipient)
     {
         $email = (new TemplatedEmail())
-            ->from(new Address($this->noreply_pixenshop, $this->from_name))
+            ->from(new Address($this->from, $this->from_name))
             ->to($recipient->getEmail())
             ->subject("Signature du document << ".$rec->getDocument()->getNom()." >>")
             ->htmlTemplate('emails/document.html.twig')
@@ -133,7 +126,8 @@ class MailerService
     public function sendMail($parameters)
     {
         $email = (new TemplatedEmail())
-            ->from(new Address($parameters['from'], isset($parameters['from_name']) ? $parameters['from_name'] : ''))
+            //->from(new Address($parameters['from'], isset($parameters['from_name']) ? $parameters['from_name'] : ''))
+            ->from(new Address($this->from, $this->from_name))
             ->subject($parameters['subject'])
         ;
 
@@ -160,13 +154,13 @@ class MailerService
         // $email = $email->attachFromPath(  $this->parameterBag->get('kernel.project_dir')."/public/files/piece-jointe/livret_d_accueil_formation_officielle_entreprendre_en_2022.pdf", null)  
 
 
-        try{
+        //try{
             $this->mailer->send($email);
-        } catch (TransportExceptionInterface $e) {
+        //} catch (TransportExceptionInterface $e) {
             // some error prevented the email sending; display an
             // error message or try to resend the message
-             echo 'erreur : '.$e->getMessage();
-        }
+        //     echo 'erreur : '.$e->getMessage();
+        //}
 
 
     }
