@@ -4,8 +4,8 @@ namespace App\Controller\Produit;
 
 use App\Entity\ImplantationAroma;
 use App\Form\ImplantationAromaFormType;
+use App\Services\ImplatationService;
 use App\Services\SearchService;
-use App\Services\StockService;
 use App\Util\Search\MyCriteriaParam;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,8 +22,10 @@ class ImplantationAromaControllerCoach extends AbstractController
 {
     
     private $entityManager;
-    public function __construct(EntityManagerInterface $entityManager){
+    private $implatationService;
+    public function __construct(EntityManagerInterface $entityManager, ImplatationService $implatationService){
         $this->entityManager = $entityManager;
+        $this->implatationService = $implatationService;
     }
     
     
@@ -40,7 +42,7 @@ class ImplantationAromaControllerCoach extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                //$this->stockService->saveIntenvaire($mere);
+                $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation ajoutée');
                 //return $this->redirectToRoute('app_admin_stock_inventaire_list');
             } catch(Exception $ex){
@@ -53,6 +55,19 @@ class ImplantationAromaControllerCoach extends AbstractController
             'isEdit' => false,
             'mere' => $mere
         ]);
+    }
+
+    #[Route('/{id}/supprimer', name: 'admin_aroma_implantation_delete')]
+    public function supprimer_inventaire(ImplantationAroma $mere): Response
+    {
+        try{
+            $this->implatationService->supprimerImplantation($mere);
+            $this->addFlash('success', 'Inventaire supprimé');
+        } catch(Exception $ex){
+            $this->addFlash('error', $ex->getMessage());
+        }
+        return new Response();
+        //return $this->redirectToRoute('app_admin_stock_inventaire_list');
     }
 
     /*
@@ -82,17 +97,7 @@ class ImplantationAromaControllerCoach extends AbstractController
     }
 
     
-    #[Route('/inventaire/{id}/supprimer', name: 'app_admin_stock_inventaire_supprimer')]
-    public function supprimer_inventaire(InventaireMere $inventaire): Response
-    {
-        try{
-            $this->stockService->supprimerInventaire($inventaire);
-            $this->addFlash('success', 'Inventaire supprimé');
-        } catch(Exception $ex){
-            $this->addFlash('error', $ex->getMessage());
-        }
-        return $this->redirectToRoute('app_admin_stock_inventaire_list');
-    }
+    
 
     
     #[Route('/inventaireList', name: 'app_admin_stock_inventaire_list')]

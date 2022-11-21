@@ -92,12 +92,7 @@ class ImplantationElmtAroma
         return $this;
     }
 
-    public function getPrix(): ?string
-    {
-        if(!$this->getProduit()) return null;
-        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemise()/100);
-    }
-
+    
     public function setPrix(?string $prix): self
     {
         $this->prix = $prix;
@@ -105,12 +100,12 @@ class ImplantationElmtAroma
         return $this;
     }
 
-    
-    
-    public function getPrixReassort(): ?string
+    /**
+     * Get the value of prix
+     */ 
+    public function getPrix()
     {
-        if(!$this->getProduit()) return null;
-        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemiseReassort()/100);
+        return $this->prix;
     }
 
     public function setPrixReassort(?string $prixReassort): self
@@ -118,6 +113,13 @@ class ImplantationElmtAroma
         $this->prixReassort = $prixReassort;
 
         return $this;
+    }
+    /**
+     * Get the value of prixReassort
+     */ 
+    public function getPrixReassort()
+    {
+        return $this->prixReassort;
     }
 
     
@@ -226,4 +228,8 @@ class ImplantationElmtAroma
 
         return $this;
     }
+
+    
+
+    
 }

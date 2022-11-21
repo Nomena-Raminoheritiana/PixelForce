@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\ImplantationElmtAroma;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +38,18 @@ class ImplantationElmtAromaRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findValidByMere($mereId)
+    {
+        $result = $this->createQueryBuilder('i')
+            ->join('i.mere', 'm')
+            ->where('m.id = :mereId and ( i.statut is NULL or i.statut != 0 ) ')
+            ->setParameter('mereId', $mereId)
+            ->getQuery()
+            ->getResult()
+        ;
+        return new ArrayCollection($result);
     }
 
 //    /**
