@@ -33,7 +33,7 @@ class ProduitAroma
     private $image;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2, nullable=true)
+     * @ORM\Column(type="decimal", precision=12, scale=2)
      */
     private $prix;
 

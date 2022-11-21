@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ImplantationAromaRepository;
+use App\Util\Status;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -148,7 +149,7 @@ class ImplantationAroma
 
     public function getQteElmt(): ?int
     {
-        return $this->qteElmt;
+        return $this->qteElmt ? $this->qteElmt : 0;
     }
 
     public function setQteElmt(int $qteElmt): self
@@ -160,7 +161,7 @@ class ImplantationAroma
 
     public function getQteElmtReassort(): ?int
     {
-        return $this->qteElmtReassort;
+        return $this->qteElmtReassort ? $this->qteElmtReassort : 0;;
     }
 
     public function setQteElmtReassort(?int $qteElmtReassort): self
@@ -326,5 +327,46 @@ class ImplantationAroma
         $this->filles = $filles;
 
         return $this;
+    }
+
+
+    public function calculerTotal(){
+        $total = 0;
+        foreach($this->getFilles() as $fille){
+            if($fille->getStatut() == Status::VALID){
+                $total += $fille->calculerPrix() * $this->getQteElmt();
+            }
+        }
+        return $total;
+    }
+
+    public function calculerTotalReassort(){
+        $total = 0;
+        foreach($this->getFilles() as $fille){
+            if($fille->getStatut() == Status::VALID){
+                $total += $fille->calculerPrixReassort() * $this->getQteElmtReassort();
+            }
+        }
+        return $total;
+    }
+
+    public function calculerUG(){
+        $ug = 0;
+        foreach($this->getFilles() as $fille){
+            if($fille->getStatut() == Status::VALID){
+                $ug += $fille->getQteGratuit();
+            }
+        }
+        return $ug;
+    }
+
+    public function calculerUGReassort(){
+        $ug = 0;
+        foreach($this->getFilles() as $fille){
+            if($fille->getStatut() == Status::VALID){
+                $ug += $fille->getQteGratuitReassort();
+            }
+        }
+        return $ug;
     }
 }

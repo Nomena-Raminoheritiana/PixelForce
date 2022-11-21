@@ -125,7 +125,7 @@ class ImplantationElmtAroma
     
     public function getQteGratuit(): ?int
     {
-        return $this->qteGratuit;
+        return $this->qteGratuit ? $this->qteGratuit : 0;
     }
 
     public function setQteGratuit(?int $qteGratuit): self
@@ -137,7 +137,7 @@ class ImplantationElmtAroma
 
     public function getQteGratuitReassort(): ?int
     {
-        return $this->qteGratuitReassort;
+        return $this->qteGratuitReassort ? $this->qteGratuitReassort : 0;
     }
 
     public function setQteGratuitReassort(?int $qteGratuitReassort): self
@@ -231,5 +231,11 @@ class ImplantationElmtAroma
 
     
 
+    public function calculerPrix(){
+        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemise()/100);
+    }
+    public function calculerPrixReassort(){
+        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemiseReassort()/100);
+    }
     
 }
