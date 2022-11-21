@@ -314,4 +314,17 @@ class ImplantationAroma
             $this->addFille($fille);
         }
     }
+
+    
+    /**
+     * Set the value of filles
+     *
+     * @return  self
+     */ 
+    public function setFilles($filles)
+    {
+        $this->filles = $filles;
+
+        return $this;
+    }
 }

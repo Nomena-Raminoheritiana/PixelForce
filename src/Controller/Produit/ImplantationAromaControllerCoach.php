@@ -4,6 +4,8 @@ namespace App\Controller\Produit;
 
 use App\Entity\ImplantationAroma;
 use App\Form\ImplantationAromaFormType;
+use App\Repository\ImplantationElmtAromaRepository;
+use App\Services\FileHandler;
 use App\Services\ImplatationService;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
@@ -23,9 +25,11 @@ class ImplantationAromaControllerCoach extends AbstractController
     
     private $entityManager;
     private $implatationService;
-    public function __construct(EntityManagerInterface $entityManager, ImplatationService $implatationService){
+    private $fileHandler;
+    public function __construct(EntityManagerInterface $entityManager, ImplatationService $implatationService, FileHandler $fileHandler){
         $this->entityManager = $entityManager;
         $this->implatationService = $implatationService;
+        $this->fileHandler = $fileHandler;
     }
     
     
@@ -42,6 +46,11 @@ class ImplantationAromaControllerCoach extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile) {
+                    $photo = $this->fileHandler->upload($imageFile, "images\products\aroma\implantation");
+                    $mere->setImage($photo);
+                }
                 $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation ajoutée');
                 //return $this->redirectToRoute('app_admin_stock_inventaire_list');
@@ -70,35 +79,41 @@ class ImplantationAromaControllerCoach extends AbstractController
         //return $this->redirectToRoute('app_admin_stock_inventaire_list');
     }
 
-    /*
-    #[Route('/inventaire/{id}/modif', name: 'app_admin_stock_inventaire_modif')]
-    public function modif_inventaire(InventaireMere $mere, Request $request, InventaireFilleRepository $inventaireFilleRepository): Response
+    
+    #[Route('/{id}/edit', name: 'admin_aroma_implantation_edit')]
+    public function edit(ImplantationAroma $mere, Request $request, ImplantationElmtAromaRepository $implantationElmtAromaRepository): Response
     {
         
-        $mere->setInventaireFilles($inventaireFilleRepository->findValidByMere($mere->getId()));
+        $mere->setFilles($implantationElmtAromaRepository->findValidByMere($mere->getId()));
         $mere->initFilles(0);
-        $form = $this->createForm(InventaireMereFormType::class, $mere);
+        $form = $this->createForm(ImplantationAromaFormType::class, $mere);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $this->stockService->saveIntenvaire($mere);
-                $this->addFlash('success', 'Inventaire modifié');
-                return $this->redirectToRoute('app_admin_stock_inventaire_list');
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile) {
+                    $photo = $this->fileHandler->upload($imageFile, "images\products\aroma\implantation");
+                    $mere->setImage($photo);
+                }
+                $this->implatationService->saveImplantation($mere);
+                $this->addFlash('success', 'Implantation modifiée');
+                //return $this->redirectToRoute('app_admin_stock_inventaire_list');
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
         }
 
-        return $this->render('admin/stock/inventaire.html.twig', [
+        return $this->render('user_category/coach/aroma/implantation/implantation_form.html.twig', [
             'form' => $form->createView(),
-            'isEdit' => true 
+            'isEdit' => true,
+            'mere' => $mere 
         ]);
     }
 
     
     
-
+    /*
     
     #[Route('/inventaireList', name: 'app_admin_stock_inventaire_list')]
     public function inventaire_list(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
