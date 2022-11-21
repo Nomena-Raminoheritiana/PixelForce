@@ -5,6 +5,8 @@ twig:
         directoryManagement: '@App\Services\DirectoryManagement'
         dateHelper: '@App\Helpers\DateHelper'
         GfilesDirectoryRelative: 'files/'
+        files_directory: '%kernel.project_dir%/public/files'
+        files_directory_relative: 'files/'
     paths:
         # pour spécifier le namespace des image. Exemple d'utilisation : email.image('@images/logo.png')
         '%kernel.project_dir%/assets/images': images
