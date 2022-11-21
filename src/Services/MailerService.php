@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
 use App\Entity\User;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -35,8 +36,6 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Code de vérification',
-            'from' => $this->from,
-            'from_name' => $this->from_name,
             'to' => [
                 $email
             ],
@@ -51,8 +50,6 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Code de vérification',
-            'from' => $this->from,
-            'from_name' => $this->from_name,
             'to' => [
                 $user->getEmail()
             ],
@@ -67,8 +64,8 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Formation terminée',
-            'from' => $sender->getEmail(),
-            'from_name' => $sender->getNom(),
+            //'from' => $sender->getEmail(),
+            //'from_name' => $sender->getNom(),
             'to' => [
                 $recipient->getEmail()
             ],
@@ -84,8 +81,6 @@ class MailerService
     {
         $this->sendMail([
             'subject' => 'Validation du nouveau compte',
-            'from' => 'noreply.pixenshop@yahoo.com',
-            'from_name' => $this->from_name,
             'to' => [
                 $recipient->getEmail()
             ],
@@ -109,24 +104,30 @@ class MailerService
         ])
         ->attachFromPath($this->parameterBag->get('kernel.project_dir')."/public/files/".$pj_pathname, null);
         $this->mailer->send($email);
-    ;
+    }
 
-        // $this->sendMail([
-        //     'subject' => 'Devis',
-        //     'from' => $this->from,
-        //     'from_name' => $this->from_name,
-        //     'to' => [
-        //         $recipient
-        //     ],
-        //     'template' => 'devis/devis_entreprise.html.twig',
-        // ]);
+
+    public function sendDocument(DocumentRecipient $rec, $link, $recipient)
+    {
+        $email = (new TemplatedEmail())
+            ->from(new Address($this->from, $this->from_name))
+            ->to($recipient->getEmail())
+            ->subject("Signature du document << ".$rec->getDocument()->getNom()." >>")
+            ->htmlTemplate('emails/document.html.twig')
+            ->context([
+                'link' => $link,
+                'conseiller' => $rec->getConseiller()
+            ])
+            ->embedFromPath($this->parameterBag->get('kernel.project_dir').'/public/assets/img/securitas.png', 'logoSecuritas', 'image/png');
+        $this->mailer->send($email);
     }
 
 
     public function sendMail($parameters)
     {
         $email = (new TemplatedEmail())
-            ->from(new Address($parameters['from'], isset($parameters['from_name']) ? $parameters['from_name'] : ''))
+            //->from(new Address($parameters['from'], isset($parameters['from_name']) ? $parameters['from_name'] : ''))
+            ->from(new Address($this->from, $this->from_name))
             ->subject($parameters['subject'])
         ;
 
@@ -153,13 +154,13 @@ class MailerService
         // $email = $email->attachFromPath(  $this->parameterBag->get('kernel.project_dir')."/public/files/piece-jointe/livret_d_accueil_formation_officielle_entreprendre_en_2022.pdf", null)  
 
 
-        try{
+        //try{
             $this->mailer->send($email);
-        } catch (TransportExceptionInterface $e) {
+        //} catch (TransportExceptionInterface $e) {
             // some error prevented the email sending; display an
             // error message or try to resend the message
-             echo 'erreur : '.$e->getMessage();
-        }
+        //     echo 'erreur : '.$e->getMessage();
+        //}
 
 
     }
