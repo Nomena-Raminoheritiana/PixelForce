@@ -6,6 +6,15 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        .my-text-right{
+            text-align: right;
+        }
+
+        .my-text-center{
+            text-align: center;
+        }
+    </style>
 {% endblock %}
 
 {% form_theme form '/user_category/coach/aroma/implantation/partials/theme_implantation_form.html.twig' %}
@@ -69,7 +78,7 @@
                         <tr>
                             <th colspan="3"></th>
                             <th colspan="2"></th>
-                            <th colspan="2">Réassort</th>
+                            <th colspan="2" class="my-text-center">Réassort</th>
                             <th></th>
                         </tr>
                         <tr>
@@ -77,7 +86,7 @@
                             <th>PU conseillé</th>
                             <th>PU</th>
                             <th>PU après réduction</th>
-                            <th>Unités Gratuits</th>
+                            <th>Unités Gratuites</th>
                             <th>PU après réduction</th>
                             <th>Unités Gratuits</th>
                             <th></th>
@@ -86,6 +95,27 @@
                     <tbody id="row-list">
                         {{form_widget(form.filles)}}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td class="my-text-right">Total</td>
+                            <td class="my-text-right" id="implantationTotal"></td>
+                            <td class="my-text-right">Total</td>
+                            <td class="my-text-right" id="implantationTotalReassort"></td>
+                            <td></td>
+                            
+                        </tr>
+                        <tr>
+                            <td colspan="3"></td>
+                            <td class="my-text-right">Unités Gratuites</td>
+                            <td class="my-text-right" id="implantationUG"></td>
+                            <td class="my-text-right">Unités Gratuites</td>
+                            <td class="my-text-right" id="implantationUGReassort"></td>
+                            <td></td>
+                            
+                        </tr>
+                    </tfoot>
+                    
                 </table>
             </div>
             <div style="margin-bottom: 100px;">
@@ -114,8 +144,8 @@
             window.open(path+'?'+queryString+"&opener="+opener+"&popup="+popup, 'popUpWindow', options).focus();
         }   
 
-        function myRound(val){
-            return val.toFixed(2); 
+        function myRound(val, afterComma=2){
+            return val.toFixed(afterComma); 
         }
 
         function ifNullZero(val){
@@ -131,7 +161,12 @@
                     let rowId = $(this)[0].dataset.rowId;
                     console.log(rowId);
                     $('#implantation_aroma_form_filles_'+rowId+'_statut').val('0');
-                    $('#block_'+rowId).remove();
+                    $('#'+rowId).remove();
+
+                    onChangeTotal(false);
+                    onChangeTotal(true);
+                    onChangeUG(false);
+                    onChangeUG(true);
                 });
                 
             }
@@ -144,8 +179,15 @@
                 let newRow = $(tmpl);
                 handleDeleteRowBtn(newRow.find('.delete-row'));
                 
+                
                 $('#row-list').append(newRow);
                 $('#widgets-counter').val(index + 1);
+                
+                checkChangeRow();
+                checkChangeTotal(false);
+                checkChangeTotal(true);
+                checkChangeUG(false);
+                checkChangeUG(true);
                 
             });
 
@@ -217,11 +259,56 @@
             }
 
             
+            function onChangeTotal(reassort=false){
+                let pref = getPref(reassort);
+                let qteElmt = ifNullZero($(`#implantation_aroma_form_qteElmt${pref}`).val());
+                let total = 0;
+                $('.implantation-elmt-row').each(function(){
+                    let rowId = $(this).attr('id');
+                    let prixApresReduction = ifNullZero($(`#${rowId}_prix${pref}`).val());
+                    total += qteElmt * prixApresReduction;
+                });
+                $(`#implantationTotal${pref}`).html(myRound(total));
+            }
+
+            function onChangeUG(reassort=false){
+                let pref = getPref(reassort);
+                let ug = 0;
+                $('.implantation-elmt-row').each(function(){
+                    let rowId = $(this).attr('id');
+                    let ugRow = ifNullZero($(`#${rowId}_qteGratuit${pref}`).val());
+                    ug += ugRow;
+                });
+                $(`#implantationUG${pref}`).html(myRound(ug, 0));
+            }
+
+            function checkChangeTotal(reassort=false){
+                let pref = getPref(reassort);
+                $(`#implantation_aroma_form_qteElmt${pref}, #implantation_aroma_form_remise${pref}, .row-prix-produit`).change(function (){
+                    onChangeTotal(reassort);
+                });
+            }
+
+            function checkChangeUG(reassort=false){
+                let pref = getPref(reassort);
+                $(`.row-qteGraduit${pref}`).change(function (){
+                    onChangeUG(reassort);
+                });
+            }
+
             checkChangeRow();
             checkChangeRemise(false);
             checkChangeRemise(true);
+            checkChangeTotal(false);
+            checkChangeTotal(true);
+            checkChangeUG(false);
+            checkChangeUG(true);
             onChangeRemise(false);
             onChangeRemise(true);
+            onChangeTotal(false);
+            onChangeTotal(true);
+            onChangeUG(false);
+            onChangeUG(true);
 
         });
     </script>
