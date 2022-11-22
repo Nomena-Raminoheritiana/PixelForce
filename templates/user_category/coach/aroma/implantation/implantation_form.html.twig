@@ -251,8 +251,9 @@
 
             function checkChangeRow(){
                 $(`.row-prix-produit`).change(function (){
-                    console.log(`haha ${$(this).attr('id')}`);
-                    const elmt = $(this).parent().parent();
+                    const parentId = $(this).data('parentId');
+                    console.log(`parentId = ${parentId}`);
+                    const elmt = $(`#${parentId}`);
                     onChangeRow(elmt, null, false);
                     onChangeRow(elmt, null, true);
                 });
