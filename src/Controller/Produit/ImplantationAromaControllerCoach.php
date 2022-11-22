@@ -53,7 +53,7 @@ class ImplantationAromaControllerCoach extends AbstractController
                 }
                 $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation ajoutée');
-                //return $this->redirectToRoute('app_admin_stock_inventaire_list');
+                return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getId()]);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
@@ -98,7 +98,7 @@ class ImplantationAromaControllerCoach extends AbstractController
                 }
                 $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation modifiée');
-                //return $this->redirectToRoute('app_admin_stock_inventaire_list');
+                return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getId()]);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
@@ -111,7 +111,13 @@ class ImplantationAromaControllerCoach extends AbstractController
         ]);
     }
 
-    
+    #[Route('/{id}/details', name: 'admin_aroma_implantation_details')]
+    public function details(ImplantationAroma $mere): Response
+    {
+        return $this->render('user_category/coach/aroma/implantation/implantation_details.html.twig', [
+            'mere' => $mere
+        ]);
+    }
     
     /*
     

@@ -77,6 +77,11 @@ class ImplantationAroma
     private $montant;
     private $montantReassort;
 
+    /**
+     * @ORM\OneToOne(targetEntity=ViewImplantationAromaTotalFull::class, mappedBy="implantation", cascade={"persist", "remove"})
+     */
+    private $allTotal;
+
     public function __construct()
     {
         $this->filles = new ArrayCollection();
@@ -368,5 +373,22 @@ class ImplantationAroma
             }
         }
         return $ug;
+    }
+
+    public function getAllTotal(): ?ViewImplantationAromaTotalFull
+    {
+        return $this->allTotal;
+    }
+
+    public function setAllTotal(ViewImplantationAromaTotalFull $allTotal): self
+    {
+        // set the owning side of the relation if necessary
+        if ($allTotal->getImplantation() !== $this) {
+            $allTotal->setImplantation($this);
+        }
+
+        $this->allTotal = $allTotal;
+
+        return $this;
     }
 }
