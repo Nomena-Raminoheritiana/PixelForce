@@ -234,21 +234,26 @@ class CoachFormationController extends AbstractController
      */
    public function coach_formation_uploadDocument(Request $request)
    {
-        if($documents = $request->files->get('documents')) {
-            $fileNames = [];
-            foreach($documents as $document) {
-              $fileNames[] = $this->fileUploader->upload($document, $this->directoryManagement->getMediaFolder_formation_document());
+        try{
+            if($documents = $request->files->get('documents')) {
+                $fileNames = [];
+                foreach($documents as $document) {
+                $fileNames[] = $this->fileUploader->upload($document, $this->directoryManagement->getMediaFolder_formation_document());
+                }
+                return $this->json([
+                'files' => $fileNames,
+                    'error' => false
+                ]);
+            } else {
+                throw new Exception('Aucun fichier trouvé dans la requête');
             }
+        } catch(Exception $ex){
+
             return $this->json([
-               'files' => $fileNames,
-                'error' => false
+                'error' => true,
+                'message' => $ex->getMessage()
             ]);
         }
-
-        return $this->json([
-           'error' => true,
-           'message' => 'Aucun fichier trouvé dans la requête'
-        ]);
    }
 
     /**
