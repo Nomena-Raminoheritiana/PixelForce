@@ -36,7 +36,17 @@
             <div class="card invoice-preview-card">
                 <div class="card-body invoice-padding pb-0">
                     <!-- Header starts -->
-                    <h3 class="text-primary invoice-logo">{{mere.nom}}</h3>
+                    <div class="d-flex align-items-center">
+                        <h3 class="text-primary invoice-logo">
+                            {{mere.nom}} 
+                        </h3>
+                        {% if mere.reassort %}
+                            <div class="invoice-date-wrapper">
+                                <p class="invoice-date">(RÉASSORT)</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-4 col-12">
                             {% if mere.image != null %}
@@ -52,11 +62,7 @@
                                 <p class="invoice-date-title">Remise:</p>
                                 <p class="invoice-date">{{mere.remise | number_format(2, ',', ' ')}} %</p>
                             </div>
-                            {% if mere.reassort %}
-                            <div class="invoice-date-wrapper">
-                                <p class="invoice-date">RÉASSORT</p>
-                            </div>
-                            {% endif %}
+    
                             <div class="card-text mb-25">{{mere.description | raw}}</div>
                         </div>
                         
