@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
 
 class ImplantationElmtAromaFormType extends AbstractType
 {
@@ -40,9 +41,6 @@ class ImplantationElmtAromaFormType extends AbstractType
                 'label' => false,
                 'attr' => ['readonly' => true]
             ])
-            ->add('prixProduitNotReadonly', HiddenType::class, [
-                'label' => false,
-            ])
             ->add('prixConseilleProduit', TextType::class, [
                 'label' => false,
                 'attr' => ['readonly' => true]
@@ -54,18 +52,7 @@ class ImplantationElmtAromaFormType extends AbstractType
             ->add('qteGratuit', IntegerType::class, [
                 'label' => false,
                 'constraints' => [
-                    new Positive(["message" => "La quantité doit être positive"])
-                ],
-                'required' => false
-            ])
-            ->add('prixReassort', TextType::class, [
-                'label' => false,
-                'attr' => ['readonly' => true]
-            ])
-            ->add('qteGratuitReassort', IntegerType::class, [
-                'label' => false,
-                'constraints' => [
-                    new Positive(["message" => "La quantité doit être positive"])
+                    new PositiveOrZero(["message" => "La quantité doit être positive"])
                 ],
                 'required' => false
             ])

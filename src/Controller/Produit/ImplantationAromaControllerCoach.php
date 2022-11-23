@@ -3,8 +3,10 @@
 namespace App\Controller\Produit;
 
 use App\Entity\ImplantationAroma;
+use App\Entity\ImplantationMereAroma;
 use App\Form\ImplantationAromaFormType;
 use App\Repository\ImplantationElmtAromaRepository;
+use App\Repository\ImplantationMereAromaRepository;
 use App\Services\FileHandler;
 use App\Services\ImplatationService;
 use App\Services\SearchService;
@@ -14,10 +16,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Routing\RouterInterface;
 
 #[Route('/coach/aroma/implantation')]
 class ImplantationAromaControllerCoach extends AbstractController
@@ -26,34 +29,42 @@ class ImplantationAromaControllerCoach extends AbstractController
     private $entityManager;
     private $implatationService;
     private $fileHandler;
-    public function __construct(EntityManagerInterface $entityManager, ImplatationService $implatationService, FileHandler $fileHandler){
+    private $router;
+
+    public function __construct(EntityManagerInterface $entityManager, ImplatationService $implatationService, FileHandler $fileHandler, RouterInterface $router){
         $this->entityManager = $entityManager;
         $this->implatationService = $implatationService;
         $this->fileHandler = $fileHandler;
+        $this->router = $router;
     }
     
     
     
     #[Route('/new', name: 'admin_aroma_implantation_new')]
-    public function new(Request $request): Response
+    public function new(Request $request, ImplantationMereAromaRepository $implantationMereAromaRepository): Response
     {
-
+        $superMere = null;
+        $superMereId = $request->get('id');
+        if($superMereId){
+            $superMere = $implantationMereAromaRepository->find($superMereId);
+        }
         $mere = new ImplantationAroma();
-        $mere->setElementUnique(true);
-        $mere->initFilles(1);
+        $mere->initFilles(1, 2);
         $form = $this->createForm(ImplantationAromaFormType::class, $mere);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
+                
                 $imageFile = $form->get('imageFile')->getData();
                 if ($imageFile) {
                     $photo = $this->fileHandler->upload($imageFile, "images\products\aroma\implantation");
                     $mere->setImage($photo);
                 }
+                if($superMere) $mere->setMere($superMere);
                 $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation ajoutée');
-                return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getId()]);
+                return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getMere()->getId()]);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
@@ -98,7 +109,9 @@ class ImplantationAromaControllerCoach extends AbstractController
                 }
                 $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation modifiée');
-                return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getId()]);
+                $url = $this->router->generate('admin_aroma_implantation_details', ['id' => $mere->getMere()->getId()]);
+                $url .= "#fille".$mere->getId();
+                return new RedirectResponse($url);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
@@ -112,10 +125,10 @@ class ImplantationAromaControllerCoach extends AbstractController
     }
 
     #[Route('/{id}/details', name: 'admin_aroma_implantation_details')]
-    public function details(ImplantationAroma $mere): Response
+    public function details(ImplantationMereAroma $superMere): Response
     {
         return $this->render('user_category/coach/aroma/implantation/implantation_details.html.twig', [
-            'mere' => $mere
+            'superMere' => $superMere
         ]);
     }
     

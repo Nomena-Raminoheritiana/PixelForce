@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Entity\ImplantationAroma;
+use App\Entity\ImplantationMereAroma;
 use App\Repository\ImplantationElmtAromaRepository;
+use App\Util\Status;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
@@ -23,7 +25,16 @@ class ImplatationService
         try{
             $this->entityManager->beginTransaction();
             $isSave = $mere->getId() === null;
-            $mere->setStatut(1);
+            
+            $superMere = $mere->getMere();
+            if($isSave && !$superMere){
+                $superMere = new ImplantationMereAroma();
+                $superMere->setStatut(Status::VALID);
+            }
+            $superMere->addFille($mere);
+            $this->entityManager->persist($superMere);
+
+            $mere->setStatut(Status::VALID);
             $this->entityManager->persist($mere);
             
             if(!$isSave){
@@ -36,7 +47,7 @@ class ImplatationService
 
             $length = 0;
             foreach($mere->getFilles() as $fille){
-                $fille->setStatut(1);
+                $fille->setStatut(Status::VALID);
                 $fille->setMere($mere);
                 $this->entityManager->persist($fille);
                 $length++; 

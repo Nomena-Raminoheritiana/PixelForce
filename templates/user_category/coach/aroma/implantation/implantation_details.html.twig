@@ -6,6 +6,18 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <style>
+        .invoice-date-title{
+            width: initial !important;
+        }
+        .my-text-right{
+            text-align: right;
+        }
+
+        .my-text-center{
+            text-align: center;
+        }
+    </style>
 {% endblock %}
 
 
@@ -13,146 +25,86 @@
 <section class="invoice-preview-wrapper">
     <div class="row invoice-preview">
         <!-- Invoice -->
-        <div class="col-12">
-            
+        <div class="d-flex align-items-center justify-content-end mb-2">
+            <div class="btn-wrap mx-2">
+                <a href="{{path('admin_aroma_implantation_new', {'id': superMere.id})}}" class="btn btn-success" role="button"
+                    ><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Ajouter</a>
+            </div>
+        </div>
+        {% for mere in superMere.filles %}
+        <div class="col-12" id="fille{{mere.id}}">
             <div class="card invoice-preview-card">
                 <div class="card-body invoice-padding pb-0">
                     <!-- Header starts -->
-                    <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
-                        <div>
-                            <div class="logo-wrapper">
-                                
-                                <h3 class="text-primary invoice-logo">{{mere.nom}}</h3>
+                    <h3 class="text-primary invoice-logo">{{mere.nom}}</h3>
+                    <div class="row">
+                        <div class="col-md-4 col-12">
+                            {% if mere.image != null %}
+                                <img src="{{asset(files_directory_relative ~ mere.image)}}" class="uploadedAvatar rounded me-50" alt="profile image" height="150" />
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8 col-12 mt-3">
+                            <div class="invoice-date-wrapper">
+                                <p class="invoice-date-title">Nombre d'unités par produit:</p>
+                                <p class="invoice-date">{{mere.qteElmt}}</p>
                             </div>
+                            <div class="invoice-date-wrapper">
+                                <p class="invoice-date-title">Remise:</p>
+                                <p class="invoice-date">{{mere.remise | number_format(2, ',', ' ')}} %</p>
+                            </div>
+                            {% if mere.reassort %}
+                            <div class="invoice-date-wrapper">
+                                <p class="invoice-date">RÉASSORT</p>
+                            </div>
+                            {% endif %}
                             <div class="card-text mb-25">{{mere.description | raw}}</div>
-
-                            {# <p class="card-text mb-25">San Diego County, CA 91905, USA</p>
-                            <p class="card-text mb-0">+1 (123) 456 7891, +44 (876) 543 2198</p> #}
                         </div>
-                        <div class="mt-md-0 mt-2">
-                            <h4 class="invoice-title">
-                                {# Invoice
-                                <span class="invoice-number">#3492</span> #}
-                            </h4>
-                            {# <div class="invoice-date-wrapper">
-                                <p class="invoice-date-title">Date:</p>
-                                <p class="invoice-date">{{inventaire.dateInventaire | date('d/m/Y')}}</p>
-                            </div> #}
-                            {# <div class="invoice-date-wrapper">
-                                <p class="invoice-date-title">Due Date:</p>
-                                <p class="invoice-date">29/08/2020</p>
-                            </div> #}
-                        </div>
-                    </div>
+                        
+                    </div>                     
                     <!-- Header ends -->
                 </div>
 
-                {# <hr class="invoice-spacing" /> #}
+                <hr class="invoice-spacing" />
 
                 <!-- Address and Contact starts -->
-                {# <div class="card-body invoice-padding pt-0">
-                    <div class="row invoice-spacing">
-                        <div class="col-xl-8 p-0">
-                            <h6 class="mb-2">Invoice To:</h6>
-                            <h6 class="mb-25">Thomas shelby</h6>
-                            <p class="card-text mb-25">Shelby Company Limited</p>
-                            <p class="card-text mb-25">Small Heath, B10 0HF, UK</p>
-                            <p class="card-text mb-25">718-986-6062</p>
-                            <p class="card-text mb-0">peakyFBlinders@gmail.com</p>
-                        </div>
-                        <div class="col-xl-4 p-0 mt-xl-0 mt-2">
-                            <h6 class="mb-2">Payment Details:</h6>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td class="pe-1">Total Due:</td>
-                                        <td><span class="fw-bold">$12,110.55</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="pe-1">Bank name:</td>
-                                        <td>American Bank</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="pe-1">Country:</td>
-                                        <td>United States</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="pe-1">IBAN:</td>
-                                        <td>ETD95476213874685</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="pe-1">SWIFT code:</td>
-                                        <td>BR91905</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div> #}
-                <!-- Address and Contact ends -->
-
-                <!-- Invoice Description starts -->
-                {# <div class="table-responsive">
-                    <table class="table">
+                <div class="card-body invoice-padding pt-0">
+                    <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th class="py-1">Produit</th>
-                                <th class="py-1">Quantité</th>
+                                <th>Produit</th>
+                                <th>PU conseillé</th>
+                                <th>PU</th>
+                                <th>PU après réduction</th>
+                                <th>Unités Gratuites</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for fille in inventaire.inventaireFilles %} #}
-                            {# <tr class="border-bottom"></tr> #}
-                            {# <tr> #}
-                                {# <td class="py-1">
-                                    <p class="card-text fw-bold mb-25">Native App Development</p>
-                                    <p class="card-text text-nowrap">
-                                        Developed a full stack native app using React Native, Bootstrap & Python
-                                    </p>
-                                </td> #}
-                                {# <td class="py-1">
-                                    <span class="fw-bold">{{fille.produit.nom}}</span>
-                                </td>
-                                <td class="py-1">
-                                    <span class="fw-bold">{{fille.qte | number_format(0, ',', ' ') }}</span>
-                                </td>
-                            </tr>
+                        <tbody id="row-list">
+                            {% for elmt in mere.filles %}
+                                <tr>
+                                    <td>{{elmt.produit.nom}}</td>
+                                    <td class="my-text-right">{{elmt.produit.prixConseille | number_format(2, ',', ' ')}} €</td>
+                                    <td class="my-text-right">{{elmt.produit.prix | number_format(2, ',', ' ')}} €</td>
+                                    <td class="my-text-right">{{elmt.prixFinal | number_format(2, ',', ' ')}} €</td>
+                                    <td class="my-text-right">{{elmt.qteGratuit | number_format(2, ',', ' ')}} </td>
+                                </tr>    
                             {% endfor %}
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td class="my-text-right">Total</td>
+                                <td class="my-text-right">{{mere.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td class="my-text-right">Unités Gratuites</td>
+                                <td class="my-text-right">{{mere.allTotal.ug | number_format(2, ',', ' ')}}</td>                                
+                            </tr>
+                        </tfoot>
+                        
                     </table>
-                </div> #}
-
-                {# <div class="card-body invoice-padding pb-0">
-                    <div class="row invoice-sales-total-wrapper">
-                        <div class="col-md-6 order-md-1 order-2 mt-md-0 mt-3">
-                            <p class="card-text mb-0">
-                                <span class="fw-bold">Salesperson:</span> <span class="ms-75">Alfie Solomons</span>
-                            </p>
-                        </div>
-                        <div class="col-md-6 d-flex justify-content-end order-md-2 order-1">
-                            <div class="invoice-total-wrapper">
-                                <div class="invoice-total-item">
-                                    <p class="invoice-total-title">Subtotal:</p>
-                                    <p class="invoice-total-amount">$1800</p>
-                                </div>
-                                <div class="invoice-total-item">
-                                    <p class="invoice-total-title">Discount:</p>
-                                    <p class="invoice-total-amount">$28</p>
-                                </div>
-                                <div class="invoice-total-item">
-                                    <p class="invoice-total-title">Tax:</p>
-                                    <p class="invoice-total-amount">21%</p>
-                                </div>
-                                <hr class="my-50" />
-                                <div class="invoice-total-item">
-                                    <p class="invoice-total-title">Total:</p>
-                                    <p class="invoice-total-amount">$1690</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> #}
-                <!-- Invoice Description ends -->
+                </div>
+                <!-- Address and Contact ends -->
 
                 <hr class="invoice-spacing" />
 
@@ -178,9 +130,10 @@
                 </div>
                 <!-- Invoice Note ends -->
             </div>
+            
         </div>
         <!-- /Invoice -->
-
+        {% endfor %}
         
     </div>
 </section>

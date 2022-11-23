@@ -39,17 +39,10 @@ class ImplantationElmtAroma
      */
     private $qteGratuit;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $qteGratuitReassort;
-
     private $prix;
-    private $prixReassort;
     private $prixProduit;
     private $prixConseilleProduit;
     private $produitlib;
-    private $prixProduitNotReadonly;
 
     public function getId(): ?int
     {
@@ -108,20 +101,6 @@ class ImplantationElmtAroma
         return $this->prix;
     }
 
-    public function setPrixReassort(?string $prixReassort): self
-    {
-        $this->prixReassort = $prixReassort;
-
-        return $this;
-    }
-    /**
-     * Get the value of prixReassort
-     */ 
-    public function getPrixReassort()
-    {
-        return $this->prixReassort;
-    }
-
     
     public function getQteGratuit(): ?int
     {
@@ -135,17 +114,6 @@ class ImplantationElmtAroma
         return $this;
     }
 
-    public function getQteGratuitReassort(): ?int
-    {
-        return $this->qteGratuitReassort ? $this->qteGratuitReassort : 0;
-    }
-
-    public function setQteGratuitReassort(?int $qteGratuitReassort): self
-    {
-        $this->qteGratuitReassort = $qteGratuitReassort;
-
-        return $this;
-    }
 
     
 
@@ -209,33 +177,10 @@ class ImplantationElmtAroma
         return $this;
     }
 
-    /**
-     * Get the value of prixProduitNotReadonly
-     */ 
-    public function getPrixProduitNotReadonly()
-    {
-        return $this->getPrixProduit();
-    }
-
-    /**
-     * Set the value of prixProduitNotReadonly
-     *
-     * @return  self
-     */ 
-    public function setPrixProduitNotReadonly($prixProduitNotReadonly)
-    {
-        $this->prixProduitNotReadonly = $prixProduitNotReadonly;
-
-        return $this;
-    }
-
     
-
-    public function calculerPrix(){
-        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemise()/100);
-    }
-    public function calculerPrixReassort(){
-        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemiseReassort()/100);
-    }
     
+    public function getPrixFinal(){
+        return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemise()/100); 
+    }
+
 }

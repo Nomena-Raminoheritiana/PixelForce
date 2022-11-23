@@ -58,19 +58,12 @@ class ImplantationAromaFormType extends AbstractType
 
                 ]
             ])
-            ->add('elementUnique', CheckboxType::class,  [
-                "label" => "Lot",
+            ->add('reassort', CheckboxType::class,  [
+                "label" => "Réassort",
                 "required" => false
             ])
             ->add('qteElmt', IntegerType::class, [
-                'label' => 'Quantité de chaque produit',
-                'constraints' => [
-                    new Positive(["message" => "La quantité doit être positive"])
-                ],
-                'required' => true
-            ])
-            ->add('qteElmtReassort', IntegerType::class, [
-                'label' => 'Quantité de chaque produit pour le réassort',
+                'label' => 'Nombre d\'unités',
                 'constraints' => [
                     new Positive(["message" => "La quantité doit être positive"])
                 ],
@@ -81,11 +74,7 @@ class ImplantationAromaFormType extends AbstractType
                 'required' => false,
                 'trim' => true
             ])
-            ->add('remiseReassort', TextType::class, [
-                'label' => 'Remise pour le reassort',
-                'required' => false,
-                'trim' => true
-            ]);    
+            ;
 
     }
 

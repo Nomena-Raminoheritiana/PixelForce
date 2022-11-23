@@ -40,21 +40,11 @@ class ImplantationAroma
      */
     private $statut;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $elementUnique;
 
     /**
      * @ORM\Column(type="integer")
      */
     private $qteElmt;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $qteElmtReassort;
-
 
     /**
      * @ORM\OneToMany(targetEntity=ImplantationElmtAroma::class, mappedBy="mere")
@@ -65,22 +55,25 @@ class ImplantationAroma
      * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
      */
     private $remise;
-    
-    /**
-     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
-     */
-    private $remiseReassort;
-    
-    private $remiseTotaleConsiderantGratuits;
-    private $remiseTotaleConsiderantGratuitsReassort;
 
+    private $remiseFinale;
     private $montant;
-    private $montantReassort;
 
     /**
      * @ORM\OneToOne(targetEntity=ViewImplantationAromaTotalFull::class, mappedBy="implantation", cascade={"persist", "remove"})
      */
     private $allTotal;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=ImplantationMereAroma::class, inversedBy="filles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $mere;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $reassort;
 
     public function __construct()
     {
@@ -140,17 +133,7 @@ class ImplantationAroma
         return $this;
     }
 
-    public function isElementUnique(): ?bool
-    {
-        return $this->elementUnique;
-    }
-
-    public function setElementUnique(?bool $elementUnique): self
-    {
-        $this->elementUnique = $elementUnique;
-
-        return $this;
-    }
+    
 
     public function getQteElmt(): ?int
     {
@@ -164,18 +147,7 @@ class ImplantationAroma
         return $this;
     }
 
-    public function getQteElmtReassort(): ?int
-    {
-        return $this->qteElmtReassort ? $this->qteElmtReassort : 0;;
-    }
-
-    public function setQteElmtReassort(?int $qteElmtReassort): self
-    {
-        $this->qteElmtReassort = $qteElmtReassort;
-
-        return $this;
-    }
-
+    
     public function getMontant(): ?string
     {
         return $this->montant;
@@ -188,18 +160,7 @@ class ImplantationAroma
         return $this;
     }
 
-    public function getMontantReassort(): ?string
-    {
-        return $this->montantReassort;
-    }
-
-    public function setMontantReassort(?string $montantReassort): self
-    {
-        $this->montantReassort = $montantReassort;
-
-        return $this;
-    }
-
+    
     
     /**
      * @return Collection<int, ImplantationElmtAroma>
@@ -251,68 +212,11 @@ class ImplantationAroma
         return $this;
     }
 
-    /**
-     * Get the value of remiseReassort
-     */ 
-    public function getRemiseReassort()
-    {
-        return $this->remiseReassort ? $this->remiseReassort : 0;
-    }
-
-    /**
-     * Set the value of remiseReassort
-     *
-     * @return  self
-     */ 
-    public function setRemiseReassort($remiseReassort)
-    {
-        $this->remiseReassort = $remiseReassort;
-
-        return $this;
-    }
 
     
+    
 
-    /**
-     * Get the value of remiseTotaleConsiderantGratuits
-     */ 
-    public function getRemiseTotaleConsiderantGratuits()
-    {
-        return $this->remiseTotaleConsiderantGratuits;
-    }
-
-    /**
-     * Set the value of remiseTotaleConsiderantGratuits
-     *
-     * @return  self
-     */ 
-    public function setRemiseTotaleConsiderantGratuits($remiseTotaleConsiderantGratuits)
-    {
-        $this->remiseTotaleConsiderantGratuits = $remiseTotaleConsiderantGratuits;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of remiseTotaleConsiderantGratuitsReassort
-     */ 
-    public function getRemiseTotaleConsiderantGratuitsReassort()
-    {
-        return $this->remiseTotaleConsiderantGratuitsReassort;
-    }
-
-    /**
-     * Set the value of remiseTotaleConsiderantGratuitsReassort
-     *
-     * @return  self
-     */ 
-    public function setRemiseTotaleConsiderantGratuitsReassort($remiseTotaleConsiderantGratuitsReassort)
-    {
-        $this->remiseTotaleConsiderantGratuitsReassort = $remiseTotaleConsiderantGratuitsReassort;
-
-        return $this;
-    }
-
+    
     public function initFilles(int $count){
         for($i=0; $i<$count; $i++){
             $fille = new ImplantationElmtAroma();
@@ -339,22 +243,13 @@ class ImplantationAroma
         $total = 0;
         foreach($this->getFilles() as $fille){
             if($fille->getStatut() == Status::VALID){
-                $total += $fille->calculerPrix() * $this->getQteElmt();
+                $total += $fille->getPrixFinal() * $this->getQteElmt();
             }
         }
         return $total;
     }
 
-    public function calculerTotalReassort(){
-        $total = 0;
-        foreach($this->getFilles() as $fille){
-            if($fille->getStatut() == Status::VALID){
-                $total += $fille->calculerPrixReassort() * $this->getQteElmtReassort();
-            }
-        }
-        return $total;
-    }
-
+    
     public function calculerUG(){
         $ug = 0;
         foreach($this->getFilles() as $fille){
@@ -365,16 +260,7 @@ class ImplantationAroma
         return $ug;
     }
 
-    public function calculerUGReassort(){
-        $ug = 0;
-        foreach($this->getFilles() as $fille){
-            if($fille->getStatut() == Status::VALID){
-                $ug += $fille->getQteGratuitReassort();
-            }
-        }
-        return $ug;
-    }
-
+    
     public function getAllTotal(): ?ViewImplantationAromaTotalFull
     {
         return $this->allTotal;
@@ -388,6 +274,50 @@ class ImplantationAroma
         }
 
         $this->allTotal = $allTotal;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of remiseFinale
+     */ 
+    public function getRemiseFinale()
+    {
+        return $this->remiseFinale;
+    }
+
+    /**
+     * Set the value of remiseFinale
+     *
+     * @return  self
+     */ 
+    public function setRemiseFinale($remiseFinale)
+    {
+        $this->remiseFinale = $remiseFinale;
+
+        return $this;
+    }
+
+    public function getMere(): ?ImplantationMereAroma
+    {
+        return $this->mere;
+    }
+
+    public function setMere(?ImplantationMereAroma $mere): self
+    {
+        $this->mere = $mere;
+
+        return $this;
+    }
+
+    public function isReassort(): ?bool
+    {
+        return $this->reassort;
+    }
+
+    public function setReassort(?bool $reassort): self
+    {
+        $this->reassort = $reassort;
 
         return $this;
     }
