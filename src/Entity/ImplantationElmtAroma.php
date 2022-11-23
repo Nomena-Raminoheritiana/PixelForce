@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ImplantationElmtAromaRepository;
+use App\Util\Status;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -181,6 +182,10 @@ class ImplantationElmtAroma
     
     public function getPrixFinal(){
         return $this->getProduit()->getPrix() * (1. - $this->getMere()->getRemise()/100); 
+    }
+
+    public function isValid(){
+        return $this->getStatut() === null || $this->getStatut() != Status::INVALID;
     }
 
 }

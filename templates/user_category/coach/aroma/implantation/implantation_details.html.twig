@@ -32,6 +32,7 @@
             </div>
         </div>
         {% for mere in superMere.filles %}
+        {% if mere.valid %}
         <div class="col-12" id="fille{{mere.id}}">
             <div class="card invoice-preview-card">
                 <div class="card-body invoice-padding pb-0">
@@ -86,13 +87,15 @@
                         </thead>
                         <tbody id="row-list">
                             {% for elmt in mere.filles %}
+                            {% if elmt.valid %}
                                 <tr>
                                     <td>{{elmt.produit.nom}}</td>
                                     <td class="my-text-right">{{elmt.produit.prixConseille | number_format(2, ',', ' ')}} €</td>
                                     <td class="my-text-right">{{elmt.produit.prix | number_format(2, ',', ' ')}} €</td>
                                     <td class="my-text-right">{{elmt.prixFinal | number_format(2, ',', ' ')}} €</td>
                                     <td class="my-text-right">{{elmt.qteGratuit | number_format(2, ',', ' ')}} </td>
-                                </tr>    
+                                </tr>  
+                            {% endif %}  
                             {% endfor %}
                         </tbody>
                         <tfoot>
@@ -139,6 +142,7 @@
             
         </div>
         <!-- /Invoice -->
+        {% endif %}
         {% endfor %}
         
     </div>

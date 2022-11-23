@@ -321,4 +321,8 @@ class ImplantationAroma
 
         return $this;
     }
+
+    public function isValid(){
+        return $this->getStatut() === null || $this->getStatut() != Status::INVALID;
+    }
 }
