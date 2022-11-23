@@ -18,6 +18,7 @@ use App\Repository\UserRepository;
 use App\Services\DirectoryManagement;
 use App\Services\FileUploader;
 use App\Services\FormationService;
+use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -255,21 +256,26 @@ class CoachFormationController extends AbstractController
      */
     public function coach_formation_uploadAudio(Request $request)
     {
-        if($audios = $request->files->get('audios')) {
-            $fileNames = [];
-            foreach($audios as $audio) {
-                $fileNames[] = $this->fileUploader->upload($audio, $this->directoryManagement->getMediaFolder_formation_audio());
+        try{
+            if($audios = $request->files->get('audios')) {
+                $fileNames = [];
+                foreach($audios as $audio) {
+                    $fileNames[] = $this->fileUploader->upload($audio, $this->directoryManagement->getMediaFolder_formation_audio());
+                }
+                return $this->json([
+                    'files' => $fileNames,
+                    'error' => false
+                ]);
+            } else {
+                throw new Exception('Aucun fichier trouvé dans la requête');
             }
+        } catch(Exception $ex){
+
             return $this->json([
-                'files' => $fileNames,
-                'error' => false
+                'error' => true,
+                'message' => $ex->getMessage()
             ]);
         }
-
-        return $this->json([
-            'error' => true,
-            'message' => 'Aucun fichier trouvé dans la requête'
-        ]);
     }
 
     /**
