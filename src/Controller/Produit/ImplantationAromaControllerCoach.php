@@ -64,7 +64,9 @@ class ImplantationAromaControllerCoach extends AbstractController
                 if($superMere) $mere->setMere($superMere);
                 $this->implatationService->saveImplantation($mere);
                 $this->addFlash('success', 'Implantation ajoutée');
-                return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getMere()->getId()]);
+                $url = $this->router->generate('admin_aroma_implantation_details', ['id' => $mere->getMere()->getId()]);
+                $url .= "#fille".$mere->getId();
+                return new RedirectResponse($url);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
