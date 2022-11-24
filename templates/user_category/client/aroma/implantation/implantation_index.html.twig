@@ -105,7 +105,7 @@
                                     </div>
                                     
                                     {# {% if is_granted('ROLE_CLIENT') %} #}
-                                    <a href="#" class="btn btn-primary btn-cart" >
+                                    <a href="{{path('client_cart_aroma_add', {'token': token, 'id': implantation.id})}}" class="btn btn-primary btn-cart" >
                                         <i data-feather="shopping-cart"></i>
                                         <span class="add-to-cart">Ajouter au panier</span>
                                     </a>

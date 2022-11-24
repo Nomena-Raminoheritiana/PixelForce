@@ -44,7 +44,7 @@ class BasketServiceAroma
         $basket = $this->getBasket($groupkey);
         $index = -1;
         for($i=0; $i<count($basket) ; $i++){
-            if($basket[$i]->getProduct()->getId()==$productId) {
+            if($basket[$i]->getImplantation()->getId()==$productId) {
                 $index = $i;
                 break;
             }
@@ -52,13 +52,17 @@ class BasketServiceAroma
         return $index;
     }
 
-    public function getTotalCost($groupkey){
-        $basket = $this->getBasket($groupkey);
+    public function getTotalCostBasket($basket){
         $cost = 0;
         for($i=0; $i<count($basket) ; $i++){
             $cost += $basket[$i]->getCost();
         }  
         return $cost;
+    }
+
+    public function getTotalCos($groupKey){
+        $basket = $this->getBasket($groupkey);
+        return $this->getTotalCostBasket($basket);
     }
 
     public function checkBasketItem(BasketItemAroma $basketItem){

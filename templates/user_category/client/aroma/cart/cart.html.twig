@@ -1,0 +1,232 @@
+{% set active = 'cart' %}
+{% extends 'user_category/client/aroma/cart/base_cart.html.twig' %}
+
+
+{% block content_basket %} 
+
+<div id="step-cart" class="content active dstepper-block" role="tabpanel" aria-labelledby="step-cart-trigger">
+    {% if basket|length ==0 %}
+        <div class="alert alert-primary mt-3 p-3 text-center" role="alert">
+            <div class="alert-body">
+                Votre panier est vide.
+            </div>
+        </div>
+    {% else %}
+    <div id="msg-container"></div>
+    <div id="place-order" class="list-view product-checkout">
+        <!-- Checkout Place Order Left starts -->
+        <div class="checkout-items" style="overflow: auto; height: calc(100vh - 300px);">
+            {% for basketItem in basket %}
+            <div class="card ecommerce-card basket-item"
+                id="basket-item-{{basketItem.implantation.id}}" 
+                data-product-id="{{basketItem.implantation.id}}" 
+                data-unit-price="{{basketItem.implantation.allTotal.total}}">
+                <div class="item-img">
+                    <a href="{{path('client_product_aroma_details', {'id': basketItem.implantation.id, 'token': token})}}}">
+                        <img src="{{ asset( files_directory_relative ~ basketItem.implantation.image) }}" alt="Image pour {{basketItem.implantation.nom}}" />
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="item-name">
+                        <h6 class="mb-0"><a href="{{path('client_product_aroma_details', {'id': basketItem.implantation.id, 'token': token})}}" class="text-body">{{basketItem.implantation.nom}}</a></h6>
+                    
+                    </div>
+                    {# <span class="text-success mb-1">En stock</span> #}
+                    <div class="item-quantity">
+                        <span class="quantity-title">Quantité:</span>
+                        <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
+                            <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-down" type="button" onclick="addQuantity({{basketItem.implantation.id}}, -1)" >-</button></span><input type="text" class="quantity-counter form-control"  value="{{basketItem.quantity}}" id="input-quantity-of-product-{{basketItem.implantation.id}}"  name="quant[{{basketItem.implantation.id}}]" onchange="refreshTotalCostOf({{basketItem.implantation.id}})"><span class="input-group-btn input-group-append bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-up" type="button" onclick="addQuantity({{basketItem.implantation.id}}, 1)" >+</button></span>
+                        </div>
+                    </div>
+                    {# <span class="text-success">Remise de 20%</span> #}
+                    <span class="delivery-date text-muted"><i><b>Description :</b></i> {{basketItem.implantation.description|raw}}</span>
+                </div>
+                <div class="item-options text-center">
+                    <div class="item-wrapper">
+                        <div class="item-cost">
+                            <h4 class="item-price mb-2 total-amount" id="total-cost-of-product-{{basketItem.implantation.id}}">{{basketItem.cost | number_format(2, ',', ' ')}} €</h4>
+                            {# <p class="card-text shipping">
+                                <span class="badge rounded-pill badge-light-success">Free Shipping</span>
+                            </p> #}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-light mt-1 remove-wishlist" onclick="deleteItem(event, {{basketItem.implantation.id}})">
+                        <i data-feather="x" class="align-middle me-25"></i>
+                        <span>Retirer du panier</span>
+                    </button>
+                    {# <button type="button" class="btn btn-primary btn-cart move-cart" >
+                        <i data-feather="shopping-cart" class="align-middle me-25"></i>
+                        <span class="text-truncate">Modifier le panier</span>
+                    </button> #}
+                </div>
+            </div>
+            {% endfor %}
+            
+        </div>
+        <!-- Checkout Place Order Left ends -->
+
+        <!-- Checkout Place Order Right starts -->
+        <div class="checkout-options" >
+            <div class="card">
+                <div class="card-body">
+                    <label class="section-label form-label mb-3">Détails de la commande</label>
+                    <div class="price-details">
+                        {# <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
+                            <li class="price-detail">
+                                <div class="detail-title">Prix de livraison</div>
+                                <div class="detail-amt discount-amt text-success">Gratuit</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">Délai de livraison</div>
+                                <div class="detail-amt discount-amt">15 à 20 minute(s)</div>
+                            </li>
+                        </ul>
+                        <hr /> #}
+                        <ul class="list-unstyled">
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Montant total  :</div>
+                                <div class="detail-amt fw-bolder" id="cart-total">{{totalCost | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                        </ul>
+                        <a role="button" onclick="updateBasketItems(event)" class="btn btn-secondary w-100 btn-next place-order mb-2" href="#">Modifier le panier</a>
+                        {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
+                    </div>
+                </div>
+            </div>
+            <!-- Checkout Place Order Right ends -->
+        </div>
+    </div>
+    {% endif %}
+    <!-- Checkout Place order Ends -->
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">  
+    let token = '{{token}}';
+    function load(check=true){
+        console.log('loading '+(check?'start':'end'));
+    }
+    function formatPrix(prix){
+        let text = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(prix);
+        return text;
+    }
+    function decreaseQuantity(productId){
+        let quantityCounter = document.getElementById(`quantity-for-product-${productId}`);
+        let costDOM = document.getElementById(`item-price-for-product-${productId}`);
+        let totalCostDOM = document.getElementById(`total-cost`);
+        let unitPrice = parseFloat(costDOM.dataset.unitPrice);
+        let totalCost = parseFloat(totalCostDOM.dataset.totalCost)- unitPrice;
+        
+        let qty = parseInt(quantityCounter.value) - 1;
+        if(qty>=0){
+            quantityCounter.value = qty;
+            costDOM.innerHTML = `${qty* unitPrice}€`;
+            totalCostDOM.innerHTML = `${totalCost}€`;
+            totalCostDOM.dataset.totalCost = totalCost;
+        } 
+    }
+
+    function addQuantity(productId, plus){
+        let quantityCounter = document.getElementById(`input-quantity-of-product-${productId}`);
+        let qty = parseInt(quantityCounter.value) + plus;
+        if(qty <= 0) return;
+        quantityCounter.value = qty;
+        quantityCounter.dispatchEvent(new Event('change'));
+    }
+
+    function getBasketItems(){
+        let basketItemsDOM = document.getElementsByClassName('basket-item');
+        let basketItems = [];
+        for(let i=0; i<basketItemsDOM.length; i++){
+            let basketItemDOM = basketItemsDOM[i];
+            let productId = basketItemDOM.dataset.productId;
+            let quantityInput = $(`#input-quantity-of-product-${productId}`);
+            let deleted = $(basketItemDOM).hasClass('d-none');
+            console.log('deleted: '+deleted);
+            let quantity = deleted ? 0 : quantityInput.val();
+            basketItems.push({productId : productId, quantity : quantity, deleted: deleted});
+        }
+        return basketItems;
+    }
+
+    function getTotalCostOf(productId){
+        let basketItem = document.getElementById(`basket-item-${productId}`);
+        let quantityCounter = document.getElementById(`input-quantity-of-product-${productId}`);
+        let quantity = parseInt(quantityCounter.value);
+        let unitPrice = parseFloat(basketItem.dataset.unitPrice);
+        let deleted = $(basketItem).hasClass('d-none');
+        console.log(quantity);
+        console.log(unitPrice);
+
+        if(deleted || isNaN(quantity)) {
+            quantityCounter.value = 0;
+            quantity = 0;
+        }
+        let total = unitPrice * quantity;
+        return total;
+    }
+
+    function refreshCartTotal(){
+        let basketItems = getBasketItems();
+        let total = 0;
+        for(let i=0; i<basketItems.length; i++){
+            let subtotal = getTotalCostOf(basketItems[i]['productId']);
+            total += subtotal;
+        }
+        //let subtotalDOM = document.getElementById(`cart-subtotal`);
+        let totalDOM = document.getElementById(`cart-total`);
+        //subtotalDOM.innerHTML = `${total} €`;
+        totalDOM.innerHTML = formatPrix(total);
+
+    }
+
+    function refreshTotalCostOf(productId){
+    
+        let totalCost = document.getElementById(`total-cost-of-product-${productId}`);
+        let total = getTotalCostOf(productId);
+        totalCost.innerHTML = formatPrix(total);
+        refreshCartTotal();
+    }
+
+    function deleteItem(event, productId){
+        let basketItem = $(`#basket-item-${productId}`);
+        basketItem.addClass('d-none');
+        refreshCartTotal();
+        event.preventDefault();
+    }
+
+    function addMsg(type, message){
+        $('#msg-container').html(`<div class="alert alert-${type}">${message}</div>`)
+    }
+    function updateBasketItems(event){
+        let basketItems = getBasketItems();
+        let request = $.ajax({  
+            url:        "{{path('client_cart_aroma_update', {'token': token})}}",  
+            type:       'PUT', 
+            data : JSON.stringify(basketItems),  
+            contentType: 'application/json; charset=utf-8',
+            dataType: "json"
+        });  
+        request.done(function(data) {
+            // your success code here
+            load(false);
+            location.reload();     
+        });
+
+        request.fail(function(jqXHR, textStatus) {
+            // your failure code here
+            let errMessage = jqXHR.responseJSON.message;
+            addMsg('danger', errMessage);
+            load(false);
+        });
+        event.preventDefault();
+        load();
+    }
+    
+</script>
+
+{% endblock %}
+
