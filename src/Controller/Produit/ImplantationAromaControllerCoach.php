@@ -4,6 +4,7 @@ namespace App\Controller\Produit;
 
 use App\Entity\ImplantationAroma;
 use App\Entity\ImplantationMereAroma;
+use App\Form\ImplantationAromaFilterType;
 use App\Form\ImplantationAromaFormType;
 use App\Repository\ImplantationElmtAromaRepository;
 use App\Repository\ImplantationMereAromaRepository;
@@ -88,6 +89,9 @@ class ImplantationAromaControllerCoach extends AbstractController
         } catch(Exception $ex){
             $this->addFlash('error', $ex->getMessage());
         }
+        if($mere->getMere()->getAllTotal()->getNbr() > 0){
+            return $this->redirectToRoute('admin_aroma_implantation_details', ['id' => $mere->getMere()->getId()]);
+        }
         return new Response();
         //return $this->redirectToRoute('app_admin_stock_inventaire_list');
     }
@@ -134,52 +138,63 @@ class ImplantationAromaControllerCoach extends AbstractController
         ]);
     }
     
-    /*
     
-    #[Route('/inventaireList', name: 'app_admin_stock_inventaire_list')]
-    public function inventaire_list(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    
+    #[Route('/', name: 'admin_aroma_implantation_index')]
+    public function index(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
         $page = $request->query->get('page', 1);
         $limit = 6;
         $criteria = [
-            ['prop' => 'dateMin', 'col' => 'dateInventaire', 'op' => '>='],
-            ['prop' => 'dateMax', 'col' => 'dateInventaire', 'op' => '<='],
-            ['prop' => 'description', 'op' => 'LIKE']
+            ['prop' => 'totalMin', 'col' => 'total', 'op' => '>=', 'case_sensitive' => true, 'alias' => 'a'],
+            ['prop' => 'totalMax', 'col' => 'total', 'op' => '<=', 'case_sensitive' => true, 'alias' => 'a'],
+            ['prop' => 'nom', 'op' => 'LIKE'],
+            ['prop' => 'reassort'],
+            ['prop' => 'reassortNot', 'op' => "!=", "col" => "reassort" ]
         ];
 
         $filter = [];
 
-        $form = $this->createForm(InventaireFilterType::class, $filter, [
+        $form = $this->createForm(ImplantationAromaFilterType::class, $filter, [
             'method' => 'GET'
         ]);
 
         $form->handleRequest($request);
         $filter = $form->getData();
+        $reassort = $form->get('reassort')->getData();
+        unset($filter["reassort"]);
+        if($reassort == 2)  {
+            $filter["reassortNot"] = "1";
+        } else if ($reassort == 1){
+            $filter["reassort"] = "1";
+        }
 
         $query = $this->entityManager
             ->createQueryBuilder()
             ->select('i')
-            ->from(InventaireMere::class, 'i')
+            ->from(ImplantationAroma::class, 'i')
+            ->join('i.allTotal', 'a')
+            ->join('i.mere', 'm')
         ;  
 
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'i')); 
-        $where["where"] .= " and (i.statut is NULL or i.statut != 0)  ";  
+        $where["where"] .= " and (i.statut is NULL or i.statut != 0) and (m.statut is NULL or m.statut != 0)  ";  
         $query->where($where["where"]);
         $searchService->setAllParameters($query, $where["params"]);
-        $searchService->addOrderBy($query, $filter, ['sort' => 'i.dateInventaire', 'direction' => 'desc']);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'm.id', 'direction' => 'asc']);
 
-        $inventaireList = $paginator->paginate(
+        $implantationList = $paginator->paginate(
             $query,
             $page,
             $limit
         );
 
-        return $this->render('admin/stock/inventaire_list.html.twig', [
-            'inventaireList' => $inventaireList,
+        return $this->render('user_category/coach/aroma/implantation/implantation_index.html.twig', [
+            'implantationList' => $implantationList,
             'form' => $form->createView(),
         ]);
 
     }
-    */
+    
     
 }

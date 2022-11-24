@@ -20,7 +20,8 @@ image,
 statut, 
 reassort, 
 coalesce(qte_elmt, 0) as qte_elmt, 
-coalesce(remise, 0) as remise
+coalesce(remise, 0) as remise,
+mere_id
 from  implantation_aroma;
 
 create or replace view view_implantation_aroma_total as 
@@ -36,3 +37,32 @@ coalesce(total, 0) as total,
 coalesce(ug, 0) as ug,
 i.id as implantation_id
 from implantation_aroma i left join view_implantation_aroma_total it on i.id = it.id;
+
+create or replace view view_implantation_aroma_valid as 
+select id, 
+nom, 
+description, 
+image, 
+statut, 
+reassort, 
+qte_elmt, 
+remise,
+mere_id
+from  view_implantation_aroma where statut is NULL or statut != 0;
+
+create or replace view view_implantation_mere_aroma_total as 
+select im.id,
+sum(i.reassort) as nbr_reassort,
+sum(not i.reassort) as nbr_normal,
+count(i.id) as nbr
+from implantation_mere_aroma im join view_implantation_aroma_valid i on im.id = i.mere_id
+group by im.id;
+
+
+create or replace view view_implantation_mere_aroma_total_full as 
+select im.id,
+im.id as implantation_mere_id,
+coalesce(i.nbr_reassort) as nbr_reassort,
+coalesce(i.nbr_normal) as nbr_normal,
+coalesce(i.nbr) as nbr
+from implantation_mere_aroma im left join view_implantation_mere_aroma_total i on im.id = i.id;
