@@ -1,0 +1,227 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Produit
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block body %}  
+    <!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            {# <h2 class="content-header-title float-start mb-0">Détail du produit</h2> #}
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_home', {'token': token})}}">Accueil</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteur_aroma', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
+                                    </li>
+                                    {# <li class="breadcrumb-item"><a href="{{path('boutique_secteur_aroma', {'token': token, 'id': app.session.get('secteurId')})}}">Liste des produits</a>
+                                    </li> #}
+                                    <li class="breadcrumb-item active">Détails
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-body">
+                <!-- app e-commerce details start -->
+                <section class="app-ecommerce-details">
+                    
+                    <div class="card">
+                        <!-- Product Details starts -->
+                        <div class="card-body">
+                            <div class="row my-2">
+                                <div class="col-12 col-md-5 text-center mb-2 mb-md-0">
+                                    <img src="{{ asset(files_directory_relative ~ implantation.image) }}" alt="Image pour {{implantation.nom}}" class="img-fluid product-img" />
+                                </div>
+                                <div class="col-12 col-md-7">
+                                    <h4>{{implantation.nom}}</h4>
+                                    <p>{{implantation.qteElmt}} unité(s) par produit</p>
+                                    {% if implantation.remise > 0 %}
+                                    <p>Remise de {{implantation.remise | number_format(2, ',', ' ')}} %</p>
+                                    {% endif %}
+                                    <div class="ecommerce-details-price d-flex flex-wrap mt-1">
+                                        
+                                        <h5 class="item-price me-1">{{implantation.allTotal.total | number_format(2, ',', ' ')}}€ {% if implantation.allTotal.ug > 0 %} avec {{implantation.allTotal.ug}} unité(s) gratuites {% endif %}</h5>
+
+                                    </div>
+                                    <p class="card-text">
+                                        {{implantation.description|raw}}
+                                    </p>
+                                    
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>PU conseillé</th>
+                                                <th>PU</th>
+                                                <th>PU après réduction</th>
+                                                <th>Unités Gratuites</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="row-list">
+                                            {% for elmt in implantation.filles %}
+                                            {% if elmt.valid %}
+                                                <tr>
+                                                    <td>{{elmt.produit.nom}}</td>
+                                                    <td class="my-text-right">{{elmt.produit.prixConseille | number_format(2, ',', ' ')}} €</td>
+                                                    <td class="my-text-right">{{elmt.produit.prix | number_format(2, ',', ' ')}} €</td>
+                                                    <td class="my-text-right">{{elmt.prixFinal | number_format(2, ',', ' ')}} €</td>
+                                                    <td class="my-text-right">{{elmt.qteGratuit | number_format(2, ',', ' ')}} </td>
+                                                </tr>  
+                                            {% endif %}  
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td class="my-text-right">Total</td>
+                                                <td class="my-text-right">{{implantation.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td class="my-text-right">Unités Gratuites</td>
+                                                <td class="my-text-right">{{implantation.allTotal.ug | number_format(2, ',', ' ')}}</td>                                
+                                            </tr>
+                                        </tfoot>
+                                        
+                                    </table>
+
+                                    <hr />
+                                    <div class="d-flex flex-column flex-sm-row pt-1">
+                                        <a href="{{path('client_basket_add_normal', {'token': token, 'id': implantation.id})}}" class="btn btn-primary btn-cart me-0 me-sm-1 mb-1 mb-sm-0">
+                                            <i data-feather="shopping-cart" class="me-50"></i>
+                                            <span class="add-to-cart">Ajouter au panier</span>
+                                        </a>
+                                        
+                                        
+                                        {# <div class="btn-group dropdown-icon-wrapper btn-share">
+                                            <button type="button" class="btn btn-icon hide-arrow btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i data-feather="share-2"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="facebook"></i>
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="twitter"></i>
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="youtube"></i>
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i data-feather="instagram"></i>
+                                                </a>
+                                            </div>
+                                        </div> #}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Product Details ends -->
+
+
+                    </div>
+                    {% if implantation.mere.reassort %}
+                    <div class="card">
+                        <!-- Product Details starts -->
+                        <div class="card-body">
+                            <h2>Réassort</h2>
+                            <div class="row my-2">
+                                {% for filleReassort in implantation.mere.fillesReassort %}
+                                <div class="col-12 col-md-6">
+                                    {# <h4>{{filleReassort.nom}}</h4> #}
+                                    <p>{{filleReassort.qteElmt}} unité(s) par produit</p>
+                                    {% if filleReassort.remise > 0 %}
+                                    <p>Remise de {{filleReassort.remise | number_format(2, ',', ' ')}} %</p>
+                                    {% endif %}
+                                    <div class="ecommerce-details-price d-flex flex-wrap mt-1">
+                                        
+                                        <h5 class="item-price me-1">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}}€ {% if implantation.allTotal.ug > 0 %} avec {{implantation.allTotal.ug}} unité(s) gratuites {% endif %}</h5>
+
+                                    </div>
+                                    {# <p class="card-text">
+                                        {{implantation.description|raw}}
+                                    </p>
+                                    <hr /> #}
+                                    
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>PU conseillé</th>
+                                                <th>PU</th>
+                                                <th>PU après réduction</th>
+                                                <th>Unités Gratuites</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="row-list">
+                                            {% for elmt in filleReassort.filles %}
+                                            {% if elmt.valid %}
+                                                <tr>
+                                                    <td>{{elmt.produit.nom}}</td>
+                                                    <td class="my-text-right">{{elmt.produit.prixConseille | number_format(2, ',', ' ')}} €</td>
+                                                    <td class="my-text-right">{{elmt.produit.prix | number_format(2, ',', ' ')}} €</td>
+                                                    <td class="my-text-right">{{elmt.prixFinal | number_format(2, ',', ' ')}} €</td>
+                                                    <td class="my-text-right">{{elmt.qteGratuit | number_format(2, ',', ' ')}} </td>
+                                                </tr>  
+                                            {% endif %}  
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td class="my-text-right">Total</td>
+                                                <td class="my-text-right">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td class="my-text-right">Unités Gratuites</td>
+                                                <td class="my-text-right">{{filleReassort.allTotal.ug | number_format(2, ',', ' ')}}</td>                                
+                                            </tr>
+                                        </tfoot>
+                                        
+                                    </table>
+                                    <div class="d-flex flex-column flex-sm-row pt-1">
+                                        <a href="{{path('client_basket_add_normal', {'token': token, 'id': filleReassort.id})}}" class="btn btn-primary btn-cart me-0 me-sm-1 mb-1 mb-sm-0">
+                                            <i data-feather="shopping-cart" class="me-50"></i>
+                                            <span class="add-to-cart">Ajouter au panier</span>
+                                        </a>
+                                        
+                                        
+                                        
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- Product Details ends -->
+
+
+                    </div>
+                    {% endif %}
+                </section>
+                <!-- app e-commerce details end -->
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+
+{% endblock %}
+
+

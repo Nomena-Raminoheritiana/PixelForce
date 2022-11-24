@@ -111,4 +111,16 @@ class ImplantationMereAroma
 
         return $this;
     }
+
+    public function hasReassort(){
+        return $this->getAllTotal()->getNbrReassort() > 0;
+    }
+
+    public function getFillesReassort(){
+        $fillesReassort = new ArrayCollection();
+        foreach ($this->getFilles() as $fille) {
+            if($fille->isValid() && $fille->isReassort()) $fillesReassort->add($fille);
+        }
+        return $fillesReassort;
+    }
 }

@@ -81,7 +81,7 @@
                             {% for implantation in implantationList %}
                             <div class="card ecommerce-card">
                                 <div class="item-img text-center">
-                                    <a href="{{path('client_product_details', {'id': implantation.id, 'token': token})}}">
+                                    <a href="{{path('client_product_aroma_details', {'id': implantation.id, 'token': token})}}">
                                     <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( files_directory_relative ~ implantation.image) }}" alt="Image pour {{implantation.nom}}" /></a>
                                 </div>
                                 <div class="card-body">
@@ -91,8 +91,7 @@
                                         </div>
                                     </div>
                                     <h6 class="item-name">
-                                        {# <a class="text-body" href="{{path('client_product_details', {'id': implantation.id, 'token': token})}}">{{implantation.nom}}</a> #}
-                                        <a class="text-body" href="#">{{implantation.nom}}</a>
+                                        <a class="text-body" href="{{path('client_product_aroma_details', {'id': implantation.id, 'token': token})}}">{{implantation.nom}}</a>
                                     </h6>
                                     <p class="card-text item-description">
                                         {{implantation.description|raw}}
@@ -105,12 +104,12 @@
                                         </div>
                                     </div>
                                     
-                                    {% if is_granted('ROLE_CLIENT') %}
+                                    {# {% if is_granted('ROLE_CLIENT') %} #}
                                     <a href="#" class="btn btn-primary btn-cart" >
                                         <i data-feather="shopping-cart"></i>
                                         <span class="add-to-cart">Ajouter au panier</span>
                                     </a>
-                                    {% endif %}
+                                    {# {% endif %} #}
                                     
                                 </div>
                             </div>

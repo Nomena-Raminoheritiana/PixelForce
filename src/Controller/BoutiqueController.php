@@ -72,6 +72,24 @@ class BoutiqueController extends AbstractController
     }
 
     /**
+     * @Route("/productaroma/{id}", name="client_product_aroma_details")
+     */
+    public function detailsAroma($token, ImplantationAroma $implantation): Response
+    {
+
+        $agent = $this->userRepository->findAgentByToken($token);
+        
+        if($this->isGranted('ROLE_CLIENT')){
+            $user = (object) $this->getUser();
+        }
+        return $this->render('user_category/client/aroma/implantation/implantation_details.html.twig',[
+            'implantation' => $implantation,
+            'agent' => $agent,
+            'token' => $token
+        ]);
+    }
+
+    /**
      * @Route("/secteuraroma/{id}", name="boutique_secteur_aroma")
      */
     public function secteurAroma($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
