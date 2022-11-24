@@ -29,14 +29,7 @@ class ImplantationAromaFilterType extends AbstractType
             "required" => false,
             "trim" => true
         ])
-        ->add('reassort', ChoiceType::class, [
-            "label" => "Type",
-            'choices' => [
-                "Normal" => 2,
-                "Réassort" => 1
-            ],
-            "required" => false,
-        ])
+        
         ->add('sort', ChoiceType::class, [
             "label" => "Trier par",
             'choices'  => [
@@ -55,11 +48,22 @@ class ImplantationAromaFilterType extends AbstractType
         ])
         ;
 
+        if($options['admin']){
+            $builder
+            ->add('reassort', ChoiceType::class, [
+                "label" => "Type",
+                'choices' => [
+                    "Normal" => 2,
+                    "Réassort" => 1
+                ],
+                "required" => false,
+            ]);
+        }
         
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults(['admin' => true]);
     }
 }

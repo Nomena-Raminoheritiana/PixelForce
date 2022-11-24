@@ -1,0 +1,180 @@
+{% extends 'base_client.html.twig' %}
+
+{% block title %}
+	Liste des produits
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block body %} 
+    <!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application pt-5">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            {# <h2 class="content-header-title float-start mb-0">Shop</h2> #}
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_home', {'token': token})}}">Accueil</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="{{path('boutique_secteur_aroma', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Liste des produits
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+                <div class="content-body pb-4" style="display : grid;grid-template-columns: 2.5fr 0.5fr;column-gap: 2rem;">
+                    
+                    <div class="products">
+                        <!-- E-commerce Content Section Starts -->
+                        <section id="ecommerce-header" class="mb-1">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="ecommerce-header-items">
+                                        <div class="result-toggler">
+                                            <button class="navbar-toggler shop-sidebar-toggler" type="button" data-bs-toggle="collapse">
+                                                <span class="navbar-toggler-icon d-block d-lg-none"><i data-feather="menu"></i></span>
+                                            </button>
+                                            <div class="search-results">{{ implantationList|length }} résultat(s) trouvé(s)</div>
+                                        </div>
+                                        <div class="view-options d-flex">
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="radio_options" id="radio_option1" autocomplete="off" checked />
+                                                <label class="btn btn-icon btn-outline-primary view-btn grid-view-btn" for="radio_option1"><i data-feather="grid" class="font-medium-3"></i></label>
+                                                <input type="radio" class="btn-check" name="radio_options" id="radio_option2" autocomplete="off" />
+                                                <label class="btn btn-icon btn-outline-primary view-btn list-view-btn" for="radio_option2"><i data-feather="list" class="font-medium-3"></i></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- E-commerce Content Section Starts -->
+
+                        <!-- background Overlay when sidebar is shown  starts-->
+                        <div class="body-content-overlay"></div>
+                        <!-- background Overlay when sidebar is shown  ends-->
+
+                        
+                        <!-- E-commerce Products Starts -->
+                        {% if implantationList|length ==0 %}
+                                <div class="alert alert-primary p-3 text-center" role="alert">
+                                    <div class="alert-body">
+                                        Aucun produit disponible pour le moment.
+                                    </div>
+                                </div>
+                        {% endif %}
+                        {% if implantationList|length !=0 %}
+                        <section id="ecommerce-products" class="grid-view" style="grid-template-columns: 1fr 1fr 1fr;">
+                            {% for implantation in implantationList %}
+                            <div class="card ecommerce-card">
+                                <div class="item-img text-center">
+                                    <a href="{{path('client_product_details', {'id': implantation.id, 'token': token})}}">
+                                    <img class="img-fluid card-img-top ecommerce-card-img" src="{{ asset( files_directory_relative ~ implantation.image) }}" alt="Image pour {{implantation.nom}}" /></a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="item-wrapper">
+                                        <div>
+                                            <h6 class="item-price">{{implantation.allTotal.total | number_format(2, ',', ' ')}} €</h6>
+                                        </div>
+                                    </div>
+                                    <h6 class="item-name">
+                                        {# <a class="text-body" href="{{path('client_product_details', {'id': implantation.id, 'token': token})}}">{{implantation.nom}}</a> #}
+                                        <a class="text-body" href="#">{{implantation.nom}}</a>
+                                    </h6>
+                                    <p class="card-text item-description">
+                                        {{implantation.description|raw}}
+                                    </p>
+                                </div>
+                                <div class="item-options text-center">
+                                    <div class="item-wrapper">
+                                        <div class="item-cost">
+                                            <h4 class="item-price">{{implantation.allTotal.total | number_format(2, ',', ' ')}} €</h4>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if is_granted('ROLE_CLIENT') %}
+                                    <a href="#" class="btn btn-primary btn-cart" >
+                                        <i data-feather="shopping-cart"></i>
+                                        <span class="add-to-cart">Ajouter au panier</span>
+                                    </a>
+                                    {% endif %}
+                                    
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                        </section>
+                        {% endif %}
+                        <!-- E-commerce Products Ends -->
+
+                        <!-- E-commerce Pagination Starts -->
+                        <div class="d-flex justify-content-center scale-up-center">
+                            {{ knp_pagination_render(implantationList) }}
+                        </div>
+                    
+                        <!-- E-commerce Pagination Ends -->
+                    
+                    </div>
+                    <div class="block block--bordered block--rounded">
+                       
+                        <h1 class="block__text block__text--center mt-2" >Options de filtre :</h1>
+                        <div class="filter-wrap">
+                            
+                            {{ form_start(form, {'attr': {'class': 'filter-form', 'id': 'product-filter-form'}}) }}
+                                
+                                <div class="my-form-widget">
+                                    {{form_label(form.nom)}}
+                                    {{form_widget(form.nom)}}
+                                    {{form_errors(form.nom)}}
+                                </div>
+                                <div class="my-form-widget">
+                                    {{form_label(form.totalMin)}}
+                                    {{form_widget(form.totalMin)}}
+                                    {{form_errors(form.totalMin)}}
+                                </div>
+                                <div class="my-form-widget">
+                                    {{form_label(form.totalMax)}}
+                                    {{form_widget(form.totalMax)}}
+                                    {{form_errors(form.totalMax)}}
+                                </div>
+                                
+                                <div class="my-form-widget">
+                                    {{form_label(form.sort)}}
+                                    {{form_widget(form.sort)}}
+                                    {{form_errors(form.sort)}}
+                                </div>
+                                <div class="my-form-widget">
+                                    {{form_label(form.direction)}}
+                                    {{form_widget(form.direction)}}
+                                    {{form_errors(form.direction)}}
+                                </div>
+                                <div class="btn-wrap" style="width:250px;">
+                                    <button class="btn btn-primary" type="submit" style="width:100%;"><i class="fas fa-filter me-2"></i>Filtrer</button>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+
+                </div>
+
+        </div>
+    </div>
+    <!-- END: Content-->
+
+{% endblock %}
+
+
+
