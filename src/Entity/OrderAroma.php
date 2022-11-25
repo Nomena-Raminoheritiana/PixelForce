@@ -275,4 +275,8 @@ class OrderAroma
 
         return $this;
     }
+
+    public function getMontantTva(){
+        return $this->getAmount() * $this->getTva()/100;
+    }
 }

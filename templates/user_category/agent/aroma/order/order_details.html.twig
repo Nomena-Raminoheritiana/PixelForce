@@ -201,8 +201,16 @@
                                             <hr />
                                             <ul class="list-unstyled">
                                                 <li class="price-detail">
-                                                    <div class="detail-title detail-total">Prix total  :</div>
+                                                    <div class="detail-title detail-total">Montant total HT  :</div>
                                                     <div class="detail-amt fw-bolder" id="total-cost" >{{order.amount | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">TVA ({{order.tva | number_format(2, ',', '0')}} %)  :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{order.montantTva | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Montant total TTC  :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{order.montantTtc | number_format(2, ',', ' ')}} €</div>
                                                 </li>
                                             </ul>
                                             {% if order.status == constant('App\\Entity\\OrderAroma::CREATED') %}
