@@ -100,7 +100,6 @@ class CheckoutControllerAroma extends AbstractController
                 $order->setAddress($request->getSession()->get('addressAroma'));
                 $order = $orderService->saveOrder($order, $token);
                 return $this->redirectToRoute('client_aroma_order_details', ['id' => $order->getId(), 'token' => $token]);
-                return new Response('Order Ok');
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
