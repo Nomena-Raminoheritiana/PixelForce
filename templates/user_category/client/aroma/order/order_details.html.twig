@@ -118,14 +118,12 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td></td>
-                                                    <td colspan="3"></td>
+                                                    <td colspan="{% if oi.remiseImplantation > 0 %}4{% else %}3{% endif %}"></td>
                                                     <td class="my-text-right">Total</td>
                                                     <td class="my-text-right">{{oi.prixImplantation | number_format(2, ',', ' ')}} €</td>                                
                                                 </tr>
                                                 <tr>
-                                                    <td></td>
-                                                    <td colspan="3"></td>
+                                                    <td colspan="{% if oi.remiseImplantation > 0 %}4{% else %}3{% endif %}"></td>
                                                     <td class="my-text-right">Unités Gratuites</td>
                                                     <td class="my-text-right">{{oi.ugImplantation | number_format(2, ',', ' ')}}</td>                                
                                                 </tr>
