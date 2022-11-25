@@ -19,13 +19,15 @@ class OrderServiceAroma
     private $entityManager;
     private $stripeService;
     private $orderImplantationAromaRepository;
+    private $configSecteurService;
 
-    public function __construct(BasketServiceAroma $basketService, EntityManagerInterface $entityManager, StripeService $stripeService, OrderImplantationAromaRepository $orderImplantationAromaRepository)
+    public function __construct(BasketServiceAroma $basketService, EntityManagerInterface $entityManager, StripeService $stripeService, OrderImplantationAromaRepository $orderImplantationAromaRepository, ConfigSecteurService $configSecteurService)
     {
         $this->basketService = $basketService;
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
         $this->orderImplantationAromaRepository = $orderImplantationAromaRepository;
+        $this->configSecteurService = $configSecteurService;
     }
 
     public function saveOrder(OrderAroma $order, string $stripeToken): ?OrderAroma{
@@ -38,6 +40,7 @@ class OrderServiceAroma
 
             $order->getAddress()->setUser($order->getUser());
             $order->setOrderDate(new DateTime());
+            $order->setTva($this->configSecteurService->findTva($order->getSecteur()));
             $order->setStatus(OrderAroma::CREATED);
             $this->entityManager->persist($order->getAddress());
             $this->entityManager->persist($order);
@@ -74,6 +77,7 @@ class OrderServiceAroma
                 }
             }
             $order->setAmount($amount); 
+            $order->setMontantTtc($order->getAmount() * (1 + $order->getTva()/100));
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 

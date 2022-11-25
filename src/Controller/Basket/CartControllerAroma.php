@@ -12,8 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\BasketItemAroma;
 use App\Entity\ImplantationAroma;
+use App\Repository\ConfigSecteurRepository;
+use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Services\BasketServiceAroma;
+use App\Services\ConfigSecteurService;
 use Exception;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -24,33 +27,42 @@ class CartControllerAroma extends AbstractController
     private $basketService;
     private $userRepository;
     private $session;
+    private $configSecteurService;
+    private $secteurRepository;
 
 
 
     public function __construct(EntityManagerInterface $entityManager, 
         BasketServiceAroma $basketService, 
         UserRepository $userRepository, 
-        SessionInterface $session)
+        SessionInterface $session,
+        SecteurRepository $secteurRepository,
+        ConfigSecteurService $configSecteurService)
     {
         $this->entityManager = $entityManager;
         $this->basketService = $basketService;
         $this->userRepository = $userRepository;
         $this->session = $session;
+        $this->configSecteurService = $configSecteurService;
+        $this->secteurRepository = $secteurRepository;
     }
 
     #[Route('/', name: 'client_cart_aroma_index')]
     public function index($token): Response
     {
         $secteurId = $this->session->get('secteurId');
+        $secteur = $this->secteurRepository->find($secteurId);
         $agent = $this->userRepository->findAgentByToken($token);
         $groupKey = BasketItemAroma::getGroupKeyStatic($agent->getId(), $secteurId);
         $basket = $this->basketService->refreshBasket($groupKey);
         $totalCost = $this->basketService->getTotalCostBasket($basket);
+        $tva = $this->configSecteurService->findTva($secteur);
         return $this->render('user_category/client/aroma/cart/cart.html.twig', [
             'basket' => $basket,
             'totalCost' => $totalCost,
             'agent' => $agent,
-            'token' => $token
+            'token' => $token,
+            'tva' => $tva
         ]);
     }
 

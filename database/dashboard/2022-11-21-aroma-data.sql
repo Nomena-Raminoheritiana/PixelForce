@@ -21,3 +21,7 @@ VALUES(31, NULL, NULL, 'agentaromaforest@gmail.com', 'agentaromaforest', '["ROLE
 INSERT INTO agent_secteur
 (id, agent_id, secteur_id, date_validation, statut)
 VALUES(25, 31, 8, '2022-09-01 14:20:05', 1);
+
+INSERT INTO config_secteur
+(id, secteur_id, type_secteur_id, nom, val, statut, num)
+VALUES(1, NULL, 4, 'TVA', 20.0, 1, 1);

@@ -9,6 +9,7 @@ use App\Form\OrderAddressAromaFormType;
 use App\Repository\SecteurRepository;
 use App\Repository\UserRepository;
 use App\Services\BasketServiceAroma;
+use App\Services\ConfigSecteurService;
 use App\Services\OrderServiceAroma;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -28,17 +29,20 @@ class CheckoutControllerAroma extends AbstractController
     private $basketService;
     private $userRepository;
     private $session;
+    private $configSecteurService;
 
     
     public function __construct(EntityManagerInterface $entityManager, 
     BasketServiceAroma $basketService, 
     UserRepository $userRepository, 
-    SessionInterface $session)
+    SessionInterface $session,
+    ConfigSecteurService $configSecteurService)
     {
         $this->entityManager = $entityManager;
         $this->basketService = $basketService;
         $this->session = $session;
         $this->userRepository = $userRepository;
+        $this->configSecteurService = $configSecteurService;
     }
 
 
@@ -80,6 +84,8 @@ class CheckoutControllerAroma extends AbstractController
         $groupKey = BasketItemAroma::getGroupKeyStatic($agent->getId(), $secteurId);
         $basket = $this->basketService->refreshBasket($groupKey);
         $totalCost = $this->basketService->getTotalCostBasket($basket);
+        $tva = $this->configSecteurService->findTva($secteur);
+        
         $form = $formFactory
             ->createNamedBuilder("payment-form")
             ->add('token', HiddenType::class, [
@@ -92,13 +98,13 @@ class CheckoutControllerAroma extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $token =  $form->get('token')->getData();
+                $stripeToken =  $form->get('token')->getData();
                 $order = new OrderAroma();
                 $order->setUser($this->getUser());
                 $order->setSecteur($secteur);
                 $order->setAgent($agent);
                 $order->setAddress($request->getSession()->get('addressAroma'));
-                $order = $orderService->saveOrder($order, $token);
+                $order = $orderService->saveOrder($order, $stripeToken);
                 return $this->redirectToRoute('client_aroma_order_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
@@ -112,6 +118,7 @@ class CheckoutControllerAroma extends AbstractController
             'token' => $token,
             'basket' => $basket,
             'totalCost' => $totalCost,
+            'tva' => $tva
         ]);
         
     }

@@ -89,6 +89,16 @@ class OrderAroma
      */
     private $orderImplantations;
 
+    /**
+     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
+     */
+    private $tva;
+
+    /**
+     * @ORM\Column(type="decimal", precision=12, scale=2, nullable=true)
+     */
+    private $montantTtc;
+
     public function __construct()
     {
         $this->orderImplantations = new ArrayCollection();
@@ -240,5 +250,29 @@ class OrderAroma
     public function getStatusStr(): ?string 
     {
         return Order::STATUS[$this->getStatus()];
+    }
+
+    public function getTva(): ?string
+    {
+        return $this->tva;
+    }
+
+    public function setTva(?string $tva): self
+    {
+        $this->tva = $tva;
+
+        return $this;
+    }
+
+    public function getMontantTtc(): ?string
+    {
+        return $this->montantTtc;
+    }
+
+    public function setMontantTtc(?string $montantTtc): self
+    {
+        $this->montantTtc = $montantTtc;
+
+        return $this;
     }
 }
