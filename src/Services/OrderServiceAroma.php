@@ -2,9 +2,13 @@
 namespace App\Services;
 
 use App\Entity\BasketItemAroma;
+use App\Entity\ImplantationAroma;
 use App\Entity\OrderAroma;
 use App\Entity\OrderImplantationAroma;
 use App\Entity\OrderImplantationElmtAroma;
+use App\Entity\User;
+use App\Repository\OrderAromaRepository;
+use App\Repository\OrderImplantationAromaRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -14,12 +18,14 @@ class OrderServiceAroma
     private $basketService;
     private $entityManager;
     private $stripeService;
+    private $orderImplantationAromaRepository;
 
-    public function __construct(BasketServiceAroma $basketService, EntityManagerInterface $entityManager, StripeService $stripeService)
+    public function __construct(BasketServiceAroma $basketService, EntityManagerInterface $entityManager, StripeService $stripeService, OrderImplantationAromaRepository $orderImplantationAromaRepository)
     {
         $this->basketService = $basketService;
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
+        $this->orderImplantationAromaRepository = $orderImplantationAromaRepository;
     }
 
     public function saveOrder(OrderAroma $order, string $stripeToken): ?OrderAroma{
@@ -99,5 +105,11 @@ class OrderServiceAroma
         $order->setStatus($status);
         $this->entityManager->persist($order);
         $this->entityManager->flush();
+    }
+
+    public function checkUserEnableReassort(User $user, ImplantationAroma $implantation): ?bool 
+    {
+        $orderImplantationElmts = $this->orderImplantationAromaRepository->findSameParent($user->getId(), $implantation->getMere()->getId());
+        return count($orderImplantationElmts) > 0;
     }
 }

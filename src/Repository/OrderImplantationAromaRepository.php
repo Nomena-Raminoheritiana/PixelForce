@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\OrderAroma;
 use App\Entity\OrderImplantationAroma;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,21 @@ class OrderImplantationAromaRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findSameParent($userId, $implantationMereId){
+        return $this->createQueryBuilder('o')
+            ->join('o.orderParent', 'op')
+            ->join('o.implantation', 'i')
+           ->andWhere('op.status = :statusValid')
+           ->andWhere('op.user = :userId')
+           ->andWhere('i.mere = :mereId')
+           ->setParameter('statusValid', OrderAroma::VALIDATED)
+           ->setParameter('userId', $userId)
+           ->setParameter('mereId', $implantationMereId)
+           ->getQuery()
+           ->getResult()
+       ;
     }
 
 //    /**

@@ -24,6 +24,7 @@ use App\Repository\ProduitRepository;
 use App\Repository\ProduitSecuFavoriRepository;
 use App\Repository\UserRepository;
 use App\Services\FileHandler;
+use App\Services\OrderServiceAroma;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
 use DateTime;
@@ -74,18 +75,20 @@ class BoutiqueController extends AbstractController
     /**
      * @Route("/productaroma/{id}", name="client_product_aroma_details")
      */
-    public function detailsAroma($token, ImplantationAroma $implantation): Response
+    public function detailsAroma($token, ImplantationAroma $implantation, OrderServiceAroma $orderServiceAroma): Response
     {
 
         $agent = $this->userRepository->findAgentByToken($token);
-        
+        $enableReassort = false;
         if($this->isGranted('ROLE_CLIENT')){
             $user = (object) $this->getUser();
+            $enableReassort = $orderServiceAroma->checkUserEnableReassort($user, $implantation);
         }
         return $this->render('user_category/client/aroma/implantation/implantation_details.html.twig',[
             'implantation' => $implantation,
             'agent' => $agent,
-            'token' => $token
+            'token' => $token,
+            'enableReassort' => $enableReassort
         ]);
     }
 
