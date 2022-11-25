@@ -236,4 +236,9 @@ class OrderAroma
 
         return $this;
     }
+
+    public function getStatusStr(): ?string 
+    {
+        return Order::STATUS[$this->getStatus()];
+    }
 }

@@ -56,6 +56,7 @@ class OrderServiceAroma
 
                 foreach($basketItem->getImplantation()->getFilles() as $elmt){
                     //$elmt = new ImplantationElmtAroma();
+                    if(!$elmt->isValid()) continue;
                     $orderImplantationElmt = new OrderImplantationElmtAroma();
                     $orderImplantationElmt->setImplantationElmt($elmt);
                     $orderImplantationElmt->setPrixConseilleProduitImplantationElmt($elmt->getProduit()->getPrixConseille());
