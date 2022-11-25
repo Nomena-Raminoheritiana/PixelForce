@@ -1,5 +1,5 @@
 {% set active = 'address' %}
-{% extends 'user_category/client/basket/base_basket.html.twig' %}
+{% extends 'user_category/client/aroma/cart/base_cart.html.twig' %}
 
 
 
@@ -15,13 +15,7 @@
                 {# <p class="card-text text-muted mt-25">Be sure to check "Deliver to this address" when you have finished</p> #}
             </div>
             <div class="card-body pt-3">
-                {% if error %}
-                <div class="alert alert-danger" role="alert">
-                    <div class="alert-body">
-                        {{error}}
-                    </div>
-                </div>
-                {% endif %}
+                
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
                         <div class="mb-2">
@@ -120,8 +114,8 @@
         let currentPositionDOM = document.getElementById("current_position");
         let latitudeDOM = document.getElementById("latitude");
         let longitudeDOM = document.getElementById("longitude");
-        let orderAddressLatitudeInput = document.getElementById("order_address_latitude");
-        let orderAddressLongitudeInput = document.getElementById("order_address_longitude");
+        let orderAddressLatitudeInput = document.getElementById("order_address_aroma_form_latitude");
+        let orderAddressLongitudeInput = document.getElementById("order_address_aroma_form_longitude");
 
         let map = null;
         let markerGroup = null;
@@ -133,7 +127,7 @@
             },
         });
 
-		window.onload = async () => {  
+		$(document).ready(function () {  
             map = L.map('map_canvas', { zoomControl: false });
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution: 'Pixel Force &copy;',
@@ -145,7 +139,7 @@
             });
 
             findMyLocation();
-        };
+        });
         
         function findMyLocation(){
             map.locate({setView: true, enableHighAccuracy: true, maxZoom: 15})

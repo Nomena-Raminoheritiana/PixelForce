@@ -1,5 +1,5 @@
 {% set active = 'payment' %}
-{% extends 'user_category/client/basket/base_basket.html.twig' %}
+{% extends 'user_category/client/aroma/cart/base_cart.html.twig' %}
 
 
 
@@ -21,13 +21,7 @@
                             US Unlocked Debit Card 12XX XXXX XXXX 0000
                         </label>
                     </div> #}
-                    {% if error %}
-                    <div class="alert alert-danger" role="alert">
-                        <div class="alert-body">
-                            {{error}}
-                        </div>
-                    </div>
-                    {% endif %}
+                    
                     <div class="row pb-3">
                         <div class="col-md-12 col-sm-12">
                             <div class="mb-2 p-3">
@@ -94,13 +88,13 @@
                 </div>
             </div>
         </div>
-        {# <div class="amount-payable checkout-options">
+        <div class="amount-payable checkout-options">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Price Details</h4>
+                    <h4 class="card-title">Détails de la commande</h4>
                 </div>
-                <div class="card-body">
-                    <ul class="list-unstyled price-details">
+                <div class="card-body pt-3">
+                    {# <ul class="list-unstyled price-details">
                         <li class="price-detail">
                             <div class="details-title">Price of 3 items</div>
                             <div class="detail-amt">
@@ -112,16 +106,16 @@
                             <div class="detail-amt discount-amt text-success">Free</div>
                         </li>
                     </ul>
-                    <hr />
+                    <hr /> #}
                     <ul class="list-unstyled price-details">
                         <li class="price-detail">
-                            <div class="details-title">Amount Payable</div>
-                            <div class="detail-amt fw-bolder">$699.30</div>
+                            <div class="details-title">Montant total</div>
+                            <div class="detail-amt fw-bolder">{{totalCost | number_format(2, ',', ' ')}} €</div>
                         </li>
                     </ul>
                 </div>
             </div>
-        </div> #}
+        </div>
         
     {# </form>     #}
     {{ form_end(form) }}

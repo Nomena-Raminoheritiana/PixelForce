@@ -60,8 +60,8 @@ class BasketServiceAroma
         return $cost;
     }
 
-    public function getTotalCos($groupKey){
-        $basket = $this->getBasket($groupkey);
+    public function getTotalCost($groupKey){
+        $basket = $this->getBasket($groupKey);
         return $this->getTotalCostBasket($basket);
     }
 
