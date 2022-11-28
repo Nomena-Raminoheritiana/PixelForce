@@ -110,15 +110,15 @@
                     <ul class="list-unstyled price-details">
                         <li class="price-detail">
                             <div class="detail-title detail-total">Montant total HT:</div>
-                            <div class="detail-amt fw-bolder">{{totalCost | number_format(2, ',', ' ')}} €</div>
+                            <div class="detail-amt fw-bolder">{{(totalCost / (1.0 + tva/100)) | number_format(2, ',', ' ')}} €</div>
                         </li>
                         <li class="price-detail">
                             <div class="detail-title detail-total">TVA ({{tva | number_format(2, ',', ' ')}} %)  :</div>
-                            <div class="detail-amt fw-bolder">{{(totalCost * tva/100) | number_format(2, ',', ' ')}} €</div>
+                            <div class="detail-amt fw-bolder">{{(totalCost / (1.0 + 100/tva)) | number_format(2, ',', ' ')}} €</div>
                         </li>
                         <li class="price-detail">
                             <div class="detail-title detail-total">Montant total TTC  :</div>
-                            <div class="detail-amt fw-bolder">{{(totalCost * (1 + tva/100)) | number_format(2, ',', ' ')}} €</div>
+                            <div class="detail-amt fw-bolder">{{(totalCost) | number_format(2, ',', ' ')}} €</div>
                         </li>
                     </ul>
                     

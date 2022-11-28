@@ -28,34 +28,34 @@ VALUES(1, NULL, 4, 'TVA', 20.0, 1, 1);
 
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(3, 'RAVINTSARA 10 ml', NULL, NULL, 9.000000, 1, NULL);
+VALUES(3, 'RAVINTSARA 10 ml', NULL, NULL, 10.800000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(4, 'YLANG YLANG 10 ml', NULL, NULL, 11.875000, 1, NULL);
+VALUES(4, 'YLANG YLANG 10 ml', NULL, NULL, 14.250000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(5, 'NIAOULI 10 ml', NULL, NULL, 6.666666, 1, NULL);
+VALUES(5, 'NIAOULI 10 ml', NULL, NULL, 8.000000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(6, 'SARO 10 ml', NULL, NULL, 10.416666, 1, NULL);
+VALUES(6, 'SARO 10 ml', NULL, NULL, 12.500000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(7, 'GINGEMBRE FRAIS 5 ml', NULL, NULL, 11.041666, 1, NULL);
+VALUES(7, 'GINGEMBRE FRAIS 5 ml', NULL, NULL, 13.250000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(8, 'ZEN&SENS 10 ml', NULL, NULL, 10.833333, 1, NULL);
+VALUES(8, 'ZEN&SENS 10 ml', NULL, NULL, 13.000000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(9, 'DYNAMIN''&SENS 10 ml', NULL, NULL, 10.833333, 1, NULL);
+VALUES(9, 'DYNAMIN''&SENS 10 ml', NULL, NULL, 13.000000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(10, 'IMMUN''&SENS 10 ml', NULL, NULL, 10.833333, 1, NULL);
+VALUES(10, 'IMMUN''&SENS 10 ml', NULL, NULL, 13.000000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(11, 'FRAGRAN''DELICES 10 ml', NULL, NULL, 10.833333, 1, NULL);
+VALUES(11, 'FRAGRAN''DELICES 10 ml', NULL, NULL, 13.000000, 1, NULL);
 INSERT INTO produit_aroma
 (id, nom, description, image, prix, statut, prix_conseille)
-VALUES(12, 'DIFFUSEUR', NULL, NULL, 41.666666, 1, NULL);
+VALUES(12, 'DIFFUSEUR', NULL, NULL, 50.000000, 1, NULL);
 
 
 INSERT INTO implantation_mere_aroma
