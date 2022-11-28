@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ImplantationAroma;
 use App\Entity\KitBaseSecu;
 use App\Entity\Produit;
 use App\Entity\ProduitDD;
@@ -10,6 +11,7 @@ use App\Entity\ProduitSecu;
 use App\Entity\ProduitSecuFavori;
 use App\Entity\Secteur;
 use App\Entity\User;
+use App\Form\ImplantationAromaFilterType;
 use App\Form\KitBaseFilterType;
 use App\Form\MyProduitDDFilterType;
 use App\Form\MyProduitFilterType;
@@ -22,6 +24,7 @@ use App\Repository\ProduitRepository;
 use App\Repository\ProduitSecuFavoriRepository;
 use App\Repository\UserRepository;
 use App\Services\FileHandler;
+use App\Services\OrderServiceAroma;
 use App\Services\SearchService;
 use App\Util\Search\MyCriteriaParam;
 use DateTime;
@@ -69,7 +72,83 @@ class BoutiqueController extends AbstractController
         ]);
     }
 
-    
+    /**
+     * @Route("/productaroma/{id}", name="client_product_aroma_details")
+     */
+    public function detailsAroma($token, ImplantationAroma $implantation, OrderServiceAroma $orderServiceAroma): Response
+    {
+
+        $agent = $this->userRepository->findAgentByToken($token);
+        $enableReassort = false;
+        if($this->isGranted('ROLE_CLIENT')){
+            $user = (object) $this->getUser();
+            $enableReassort = $orderServiceAroma->checkUserEnableReassort($user, $implantation);
+        }
+        return $this->render('user_category/client/aroma/implantation/implantation_details.html.twig',[
+            'implantation' => $implantation,
+            'agent' => $agent,
+            'token' => $token,
+            'enableReassort' => $enableReassort
+        ]);
+    }
+
+    /**
+     * @Route("/secteuraroma/{id}", name="boutique_secteur_aroma")
+     */
+    public function secteurAroma($token, Secteur $secteur, Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    {
+        
+        $this->session->set('secteurId', $secteur->getId());
+        $this->session->set('typeSecteurId', $secteur->getType()->getId());
+        $agent = $this->userRepository->findAgentByToken($token);
+        $page = $request->query->get('page', 1);
+        $limit = 6;
+        $criteria = [
+            ['prop' => 'totalMin', 'col' => 'total', 'op' => '>=', 'case_sensitive' => true, 'alias' => 'a'],
+            ['prop' => 'totalMax', 'col' => 'total', 'op' => '<=', 'case_sensitive' => true, 'alias' => 'a'],
+            ['prop' => 'nom', 'op' => 'LIKE'],
+            ['prop' => 'reassortNot', 'op' => "!=", "col" => "reassort" ]
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(ImplantationAromaFilterType::class, $filter, [
+            'method' => 'GET',
+            'admin' => false
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+        $filter["reassortNot"] = 1;
+        
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(ImplantationAroma::class, 'i')
+            ->join('i.allTotal', 'a')
+            ->join('i.mere', 'm')
+        ;  
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'i')); 
+        $where["where"] .= " and (i.statut is NULL or i.statut != 0) and (m.statut is NULL or m.statut != 0)  ";  
+        $query->where($where["where"]);
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'm.id', 'direction' => 'asc']);
+
+        $implantationList = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        return $this->render('user_category/client/aroma/implantation/implantation_index.html.twig', [
+            'implantationList' => $implantationList,
+            'form' => $form->createView(),
+            'agent' => $agent,
+            'token' => $token
+        ]);
+    }
  
     
    /**

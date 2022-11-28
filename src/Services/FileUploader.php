@@ -38,11 +38,11 @@ class FileUploader
                 $fileName = $safeFilename.'-'.uniqid().'.'.$extension;
             }
 
-            try {
+            //try {
                 $file->move($this->getTargetDirectory(), $fileName);
-            } catch (FileException $e) {
-                return null;
-            }
+            //} catch (FileException $e) {
+            //    return null;
+            //}
         }
         return $fileName;
     }

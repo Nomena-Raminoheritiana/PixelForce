@@ -197,7 +197,7 @@ $(document).ready(function () {
                  setTimeout(function() {
                      progressionLabel.html('<strong>Rafraichissement de la page ...</strong>')
                      setTimeout(function() {
-                         location.reload();
+                        location.reload();
                      },1000)
                  },1000)
              }
@@ -231,11 +231,13 @@ async function saveData(videoId = '')
     let documentsData = [];
     let audiosData = [];
     // préparation du formulaire, fichiers Documents et Audios
-    let fileDocuments = new FormData();
-    let fileAudios = new FormData();
+    let fileDocuments = [];
+    let fileAudios = [];
     let formData = new FormData($('form[name="formation"]')[0])
     $('#formation-document').find('input[type="file"]').each(function() {
-        fileDocuments.append('documents[]', this.files[0]);
+        let oneDocument = new FormData();
+        oneDocument.append('documents[]', this.files[0]);
+        fileDocuments.push(oneDocument);
         const document = {
             name : this.files[0].name,
             mimeType: this.files[0].type,
@@ -244,7 +246,9 @@ async function saveData(videoId = '')
         documentsData.push(document);
     });
     $('#formation-audio').find('input[type="file"]').each(function() {
-        fileAudios.append('audios[]', this.files[0]);
+        let oneAudio = new FormData();
+        oneAudio.append('audios[]', this.files[0]);
+        fileAudios.push(oneAudio);
         const audio = {
             name : this.files[0].name,
             mimeType: this.files[0].type,
@@ -257,28 +261,37 @@ async function saveData(videoId = '')
     progressionContainer = $(img_loader)
     progressionLabel.html('<strong>Téléchargement des documents en cours ...</strong>');
     // envoie des fichiers Documents
-    const responseDocuments = (await axios.post(Routing.generate('coach_formation_uploadDocument'), fileDocuments, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
+    for(let u=0; u<fileDocuments.length; u++){
+        const responseDocuments = (await axios.post(Routing.generate('coach_formation_uploadDocument'), fileDocuments[u], {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })).data;
+        if(!responseDocuments.error) {
+            responseDocuments.files.forEach(function(e, i) {
+                documentsData[u].slug = e;
+            });
         }
-    })).data;
-    if(!responseDocuments.error) {
-        responseDocuments.files.forEach(function(e, i) {
-            documentsData[i].slug = e;
-        });
+        console.log('responseDocuments', responseDocuments);
     }
     progressionLabel.html('<strong>Téléchargement des audios en cours ...</strong>')
     // envoie des fichiers audios
-    const responseAudios = (await axios.post(Routing.generate('coach_formation_uploadAudio'), fileAudios, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
+    for(let j=0; j<fileAudios.length; j++){
+        const responseAudios = (await axios.post(Routing.generate('coach_formation_uploadAudio'), fileAudios[j], {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })).data;
+        if(!responseAudios.error) {
+            responseAudios.files.forEach(function(e, i) {
+                audiosData[j].slug = e;
+            });
         }
-    })).data;
-    if(!responseAudios.error) {
-        responseAudios.files.forEach(function(e, i) {
-            audiosData[i].slug = e;
-        });
+        console.log('responseAudios', responseAudios);
     }
+    
+    
+    
     progressionLabel.html('<strong>Finalisation ...</strong>');
     // récuperation de tout les médias importé, qu'importe que ce soit un document ou un fichier audio
     const mediasData = documentsData.concat(audiosData);

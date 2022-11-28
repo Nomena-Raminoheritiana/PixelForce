@@ -1,0 +1,242 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Commande
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .qtyx{
+            text-align: center;
+            vertical-align: middle;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .ecommerce-card{
+            grid-template-columns: 1fr 2fr !important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- BEGIN: Content-->
+    <div class="app-content content client ecommerce-application">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-start mb-0">Commande</h2>
+                            <div class="breadcrumb-wrapper">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="index.html">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item"><a href="#">eCommerce</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Commande
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="bs-stepper checkout-tab-steps">
+                    <div class="bs-stepper-content">
+                        <div class="content client active dstepper-block" role="tabpanel" >
+                        
+                        <div id="place-order" class="list-view product-checkout">
+                            <!-- Checkout Place Order Left starts -->
+                            <div class="checkout-items">
+                                {% for oi in order.orderImplantations %}
+                                <div class="card ecommerce-card">
+                                    <div class="item-img">
+                                        <a href="#">
+                                            <img src="{{ asset( files_directory_relative ~ oi.implantation.image) }}" alt="Image pour {{oi.implantation.nom}}" />
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="item-name">
+                                            <h6 class="mb-0"><a href="#" class="text-body">{{oi.implantation.nom}}</a></h6>
+                                        
+                                        </div>
+                                        {# <span class="text-success mb-1">En stock</span> #}
+                                        <div class="item-quantity">
+                                            <span class="quantity-title">Quantité:</span>
+                                            <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
+                                                <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected">{{oi.qty}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="item-quantity">
+                                            <span class="quantity-title">Montant total HT:</span>
+                                            <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
+                                                <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected">{{oi.cost | number_format(2, ',', ' ')}} €</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    
+                                                    <th colspan="{% if oi.remiseImplantation > 0 %}6{% else %}5{% endif %}" style="text-align: center;">
+                                                    Un(e) {{oi.implantation.nom}} contient
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Produit</th>
+                                                    {# <th>PU conseillé</th> #}
+                                                    <th>PU HT</th>
+                                                    {% if oi.remiseImplantation > 0 %}
+                                                    <th>PU après réduction HT (remise de {{oi.remiseImplantation | number_format(2, ',', ' ')}} %)</th>
+                                                    {% endif %}
+                                                    <th>Montant HT</th>
+                                                    <th>Unités Gratuites</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="row-list">
+                                                {% for elmt in oi.orderImplantationElmts %}
+                                                    <tr>
+                                                        {% if loop.index0 == 0 %}
+                                                        <td class="qtyx" rowspan="{{oi.orderImplantationElmts | length }}">{{oi.qteElmtImplantation}}x </td>
+                                                        {% endif %}
+                                                        <td>{{elmt.implantationElmt.produit.nom}}</td>
+                                                        {# <td class="my-text-right">{{elmt.prixConseilleProduitImplantationElmt | number_format(2, ',', ' ')}} €</td> #}
+                                                        <td class="my-text-right">{{elmt.prixProduitImplantationElmt | number_format(2, ',', ' ')}} €</td>
+                                                        {% if oi.remiseImplantation > 0 %}
+                                                        <td class="my-text-right">{{elmt.prixProduitApresReductionImplantationElmt | number_format(2, ',', ' ')}} €</td>
+                                                        {% endif %}
+                                                         <td class="my-text-right">{{elmt.montant | number_format(2, ',', ' ')}} €</td>
+                                                        <td class="my-text-right">{{elmt.qteGratuitImplantationElmt | number_format(0, ',', ' ')}} </td>
+                                                    </tr>  
+                                                {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="{% if oi.remiseImplantation > 0 %}4{% else %}3{% endif %}"></td>
+                                                    <td class="my-text-right">Montant total HT</td>
+                                                    <td class="my-text-right">{{oi.prixImplantation | number_format(2, ',', ' ')}} €</td>                                
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="{% if oi.remiseImplantation > 0 %}4{% else %}3{% endif %}"></td>
+                                                    <td class="my-text-right">Unités Gratuites</td>
+                                                    <td class="my-text-right">{{oi.ugImplantation | number_format(0, ',', ' ')}}</td>                                
+                                                </tr>
+                                            </tfoot>
+                                            
+                                        </table>
+
+                                        
+                                        
+                                        {# <span class="delivery-date text-muted">Delivery by, Wed Apr 25</span> #}
+                                        {# <span class="text-success">Remise de 20%</span> #}
+                                    </div>
+                                    {# <div class="item-options text-center">
+                                        <div class="item-wrapper">
+                                            <div class="item-cost">
+                                                <h4 class="item-price" >{{oi.cost | number_format(2, ',', ' ')}} €</h4> #}
+                                                {# <p class="card-text shipping">
+                                                    <span class="badge rounded-pill badge-light-success">Free Shipping</span>
+                                                </p> #}
+                                            {# </div>
+                                        </div> #}
+                                        {# <button type="button" class="btn btn-light mt-1 remove-wishlist" onclick="removeBasketItem({{basketItem.produit.id}})">
+                                            <i data-feather="x" class="align-middle me-25"></i>
+                                            <span>Retirer du panier</span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-cart move-cart" onclick="updateBasketItem({{basketItem.produit.id}})">
+                                            <i data-feather="shopping-cart" class="align-middle me-25"></i>
+                                            <span class="text-truncate">Modifier le panier</span>
+                                        </button> #}
+                                    {# </div> #}
+                                </div>
+                                {% endfor %}
+                                
+                            </div>
+                            <!-- Checkout Place Order Left ends -->
+
+                            <!-- Checkout Place Order Right starts -->
+                            <div class="checkout-options">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Détails</label>
+                                        <hr />
+                                        <div class="price-details">
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Date</div>
+                                                    <div class="detail-amt">{{order.orderDate | date("d/m/Y H:i")}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Client</div>
+                                                    <div class="detail-amt">{{order.user.prenom}} {{order.user.nom}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Statut</div>
+                                                    <div class="detail-amt discount-amt text-primary">{{order.statusStr}}</div>
+                                                </li>
+                                                {% if order.address %}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Adresse</div>
+                                                    <div class="detail-amt">{{order.address.address}}</div>
+                                                </li>
+
+                                                {% if order.address.city %}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Ville</div>
+                                                    <div class="detail-amt">{{order.address.city}}</div>
+                                                </li>
+                                                {% endif %}
+                                                {% if order.address.postalCode %}
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Code postal</div>
+                                                    <div class="detail-amt">{{order.address.postalCode}}</div>
+                                                </li>
+                                                {% endif %}
+                                                {% endif %}
+                                            </ul>
+                                            <hr />
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Montant total HT  :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{order.amount | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">TVA ({{order.tva | number_format(2, ',', '0')}} %)  :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{order.montantTva | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Montant total TTC  :</div>
+                                                    <div class="detail-amt fw-bolder" id="total-cost" >{{order.montantTtc | number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                            </ul>
+                                            {% if order.status == constant('App\\Entity\\OrderAroma::CREATED') %}
+                                            <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{path('admin_aroma_order_validate', {'id': order.id})}}">Accepter</a>
+                                            <a role="button" class="btn btn-danger w-100 btn-next place-order mt-1" href="{{path('admin_aroma_order_refuse', {'id': order.id})}}">Refuser</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Checkout Place Order Right ends -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                    
+                    <!-- Checkout Place order Ends -->
+                </div>
+                    
+            </div>
+        </div>
+    </div>
+    <!-- END: Content-->
+{% endblock %}
+
+
+
