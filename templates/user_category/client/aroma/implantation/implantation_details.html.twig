@@ -168,7 +168,7 @@
                                     {% endif %}
                                     <div class="ecommerce-details-price d-flex flex-wrap mt-1">
                                         
-                                        <h5 class="item-price me-1">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}} € HT {% if implantation.allTotal.ug > 0 %} avec {{implantation.allTotal.ug | number_format(0, ',', ' ')}} unité(s) gratuites {% endif %}</h5>
+                                        <h5 class="item-price me-1">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}} € HT {% if filleReassort.allTotal.ug > 0 %} avec {{filleReassort.allTotal.ug | number_format(0, ',', ' ')}} unité(s) gratuites {% endif %}</h5>
 
                                     </div>
                                     {# <p class="card-text">
