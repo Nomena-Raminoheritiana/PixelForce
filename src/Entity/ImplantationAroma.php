@@ -325,4 +325,12 @@ class ImplantationAroma
     public function isValid(){
         return $this->getStatut() === null || $this->getStatut() != Status::INVALID;
     }
+
+    public function getFillesValid(){
+        $fillesValid = new ArrayCollection();
+        foreach($this->getFilles() as $f){
+            if($f->isValid()) $fillesValid->add($f);
+        } 
+        return $fillesValid;
+    }
 }

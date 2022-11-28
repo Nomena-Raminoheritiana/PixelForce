@@ -125,4 +125,8 @@ class OrderImplantationElmtAroma
 
         return $this;
     }
+
+    public function getMontant(){
+        return $this->getPrixProduitApresReductionImplantationElmt() * $this->getOrderImplantationParent()->getQteElmtImplantation();
+    }
 }

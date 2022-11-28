@@ -41,11 +41,15 @@ class ImplantationElmtAromaFormType extends AbstractType
                 'label' => false,
                 'attr' => ['readonly' => true]
             ])
-            ->add('prixConseilleProduit', TextType::class, [
+            // ->add('prixConseilleProduit', TextType::class, [
+            //     'label' => false,
+            //     'attr' => ['readonly' => true]
+            // ])
+            ->add('prix', TextType::class, [
                 'label' => false,
                 'attr' => ['readonly' => true]
             ])
-            ->add('prix', TextType::class, [
+            ->add('montant', TextType::class, [
                 'label' => false,
                 'attr' => ['readonly' => true]
             ])

@@ -17,8 +17,20 @@
         .my-text-center{
             text-align: center;
         }
+        .my-text-left{
+            text-align: left !important;
+            padding-left: 5px !important;
+        }
+
+        .qtyx{
+            text-align: center;
+            vertical-align: middle;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
     </style>
 {% endblock %}
+
 
 
 {% block body %}
@@ -78,36 +90,40 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th></th>
                                 <th>Produit</th>
-                                <th>PU conseillé</th>
-                                <th>PU</th>
-                                <th>PU après réduction</th>
+                                {# <th>PU conseillé</th> #}
+                                <th>PU HT</th>
+                                <th>PU après réduction HT (remise de {{mere.remise | number_format(2, ',', ' ')}} %)</th>
+                                <th>Montant HT</th>
                                 <th>Unités Gratuites</th>
                             </tr>
                         </thead>
                         <tbody id="row-list">
-                            {% for elmt in mere.filles %}
-                            {% if elmt.valid %}
+                            {% for elmt in mere.fillesValid %}
                                 <tr>
-                                    <td>{{elmt.produit.nom}}</td>
-                                    <td class="my-text-right">{{elmt.produit.prixConseille | number_format(2, ',', ' ')}} €</td>
+                                    {% if loop.index0 == 0 %}
+                                        <td class="qtyx" rowspan="{{mere.fillesValid | length }}">{{mere.qteElmt | number_format(0, ',', ' ')}}x </td>
+                                    {% endif %}
+                                    <td class="my-text-left">{{elmt.produit.nom}}</td>
+                                    {# <td class="my-text-right">{{elmt.produit.prixConseille | number_format(2, ',', ' ')}} €</td> #}
                                     <td class="my-text-right">{{elmt.produit.prix | number_format(2, ',', ' ')}} €</td>
                                     <td class="my-text-right">{{elmt.prixFinal | number_format(2, ',', ' ')}} €</td>
-                                    <td class="my-text-right">{{elmt.qteGratuit | number_format(2, ',', ' ')}} </td>
+                                    <td class="my-text-right">{{elmt.montantFinal | number_format(2, ',', ' ')}} €</td>
+                                    <td class="my-text-right">{{elmt.qteGratuit | number_format(0, ',', ' ')}}</td>
                                 </tr>  
-                            {% endif %}  
                             {% endfor %}
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3"></td>
-                                <td class="my-text-right">Total</td>
+                                <td colspan="4"></td>
+                                <td class="my-text-right">Montant total HT</td>
                                 <td class="my-text-right">{{mere.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
                             </tr>
                             <tr>
-                                <td colspan="3"></td>
+                                <td colspan="4"></td>
                                 <td class="my-text-right">Unités Gratuites</td>
-                                <td class="my-text-right">{{mere.allTotal.ug | number_format(2, ',', ' ')}}</td>                                
+                                <td class="my-text-right">{{mere.allTotal.ug | number_format(0, ',', ' ')}}</td>                                
                             </tr>
                         </tfoot>
                         

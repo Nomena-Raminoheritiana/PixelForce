@@ -44,6 +44,7 @@ class ImplantationElmtAroma
     private $prixProduit;
     private $prixConseilleProduit;
     private $produitlib;
+    private $montant;
 
     public function getId(): ?int
     {
@@ -178,6 +179,25 @@ class ImplantationElmtAroma
         return $this;
     }
 
+    /**
+     * Get the value of montant
+     */ 
+    public function getMontant()
+    {
+        return $this->montant;
+    }
+
+    /**
+     * Set the value of montant
+     *
+     * @return  self
+     */ 
+    public function setMontant($montant)
+    {
+        $this->montant = $montant;
+
+        return $this;
+    }
     
     
     public function getPrixFinal(){
@@ -186,6 +206,10 @@ class ImplantationElmtAroma
 
     public function isValid(){
         return $this->getStatut() === null || $this->getStatut() != Status::INVALID;
+    }
+
+    public function getMontantFinal(){
+        return $this->getMere()->getQteElmt() * $this->getPrixFinal();
     }
 
 }

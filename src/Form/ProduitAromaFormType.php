@@ -34,7 +34,7 @@ class ProduitAromaFormType extends AbstractType
                 "required" => false
             ])
             ->add('prix', TextType::class, [
-                "label" => "Prix",
+                "label" => "Prix HT",
                 "trim" => true,
                 "required" => false,
                 "constraints" => [

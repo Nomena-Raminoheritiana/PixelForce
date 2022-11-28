@@ -97,7 +97,7 @@
                                 <div class="detail-amt fw-bolder" id="cart-total-ttc">{{(totalCost * (1 + tva/100)) | number_format(2, ',', ' ')}} €</div>
                             </li>
                         </ul>
-                        <a role="button" onclick="updateBasketItems(event)" class="btn btn-secondary w-100 btn-next place-order mb-2" href="#">Modifier le panier</a>
+                        <a role="button" onclick="updateBasketItems(event)" class="btn btn-warning w-100 btn-next place-order mb-2" href="#">Enregistrer les modifications</a>
                         {% if is_granted('ROLE_CLIENT') %}
                         <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_aroma_checkout_address', {'token': token})}}">Commander</a>
                         {% endif %}

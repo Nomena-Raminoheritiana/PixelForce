@@ -78,8 +78,8 @@
                         <th>Id</th>
                         <th>Nom</th>
                         <th>Description</th>
-                        <th>Prix</th>
-                        <th>Prix conseillé</th>
+                        <th>Prix HT</th>
+                        {# <th>Prix conseillé</th> #}
                         <th class="text-center">Image</th>
                     </tr>
                 </thead>
@@ -91,7 +91,7 @@
                         <td class='nom' data-popup="{{product.nom}}">{{product.nom}}</td>
                         <td class='description' data-popup="{{product.description}}">{{product.description | raw}}</td>
                         <td class='prix' data-popup="{{product.prix}}">{{product.prix | number_format(2, ',', ' ')}} €</td>
-                        <td class='prixConseille' data-popup="{{product.prixConseille}}">{{product.prixConseille | number_format(2, ',', ' ')}} €</td>
+                        {# <td class='prixConseille' data-popup="{{product.prixConseille}}">{{product.prixConseille | number_format(2, ',', ' ')}} €</td> #}
                         <td class="text-center image"  data-popup="{{product.image}}">
                             {% if product.image != null %}
                                 <img class="img-fluid card-img-top ecommerce-card-img img-product" src="{{ asset( files_directory_relative ~ product.image) }}" alt="Image pour {{product.nom}}" />

@@ -67,9 +67,10 @@
                     <thead>
                         <tr>
                             <th>Produit</th>
-                            <th>PU conseillé</th>
-                            <th>PU</th>
-                            <th>PU après réduction</th>
+                            {# <th>PU conseillé</th> #}
+                            <th>PU HT</th>
+                            <th>PU après réduction HT</th>
+                            <th>Montant HT</th>
                             <th>Unités Gratuites</th>
                             <th></th>
                         </tr>
@@ -196,24 +197,27 @@
 
             //metier
             
-            function onChangeRow(elmt, remise=null){
-                if(remise === null) remise = ifNullZero($(`#implantation_aroma_form_remise`).val());
+            function onChangeRow(elmt){
+                let remise = ifNullZero($(`#implantation_aroma_form_remise`).val());
+                let qteElmt = ifNullZero($(`#implantation_aroma_form_qteElmt`).val());
                 let rowId = $(elmt).attr('id');
                 let prix = ifNullZero($(`#${rowId}_prixProduit`).val());
                 let prixApresReduction = prix * (1. - remise/100);
+                let montant = prixApresReduction * qteElmt;
                 $(`#${rowId}_prix`).val(myRound(prixApresReduction));
+                $(`#${rowId}_montant`).val(myRound(montant));
             }
 
-            function onChangeRemise(){
-                let remise = ifNullZero($(`#implantation_aroma_form_remise`).val());
+            function onChangeRemiseOrQteElmt(){
                 $('.implantation-elmt-row').each(function(){
-                    onChangeRow(this, remise);
+                    onChangeRow(this);
                 });
             }
 
-            function checkChangeRemise(){
-                $(`#implantation_aroma_form_remise`).change(function (){
-                    onChangeRemise();
+            
+            function checkChangeRemiseOrQteElmt(){
+                $(`#implantation_aroma_form_remise, #implantation_aroma_form_qteElmt`).change(function (){
+                    onChangeRemiseOrQteElmt();
                 });
             }
 
@@ -222,7 +226,7 @@
                     const parentId = $(this).data('parentId');
                     console.log(`parentId = ${parentId}`);
                     const elmt = $(`#${parentId}`);
-                    onChangeRow(elmt, null);
+                    onChangeRow(elmt);
                 });
             }
 
@@ -262,10 +266,10 @@
             }
 
             checkChangeRow();
-            checkChangeRemise();
+            checkChangeRemiseOrQteElmt();
             checkChangeTotal();
             checkChangeUG();
-            onChangeRemise();
+            onChangeRemiseOrQteElmt();
             onChangeTotal();
             onChangeUG();
 
