@@ -51,7 +51,6 @@ class CoachDashboardController extends AbstractController
 
 
         //stat
-        if($secteur->getId() == 8) $secteur = $secteurRepository->find(7);
         $anneeActuelle = intval(date('Y'));
         $annee = $request->get('annee', $anneeActuelle);
         $statVente = $statCoachService->getStatVente($secteur->getId());
