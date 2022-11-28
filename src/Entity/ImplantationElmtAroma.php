@@ -45,6 +45,7 @@ class ImplantationElmtAroma
     private $prixConseilleProduit;
     private $produitlib;
     private $montant;
+    private $prixProduitFormated;
 
     public function getId(): ?int
     {
@@ -212,4 +213,25 @@ class ImplantationElmtAroma
         return $this->getMere()->getQteElmt() * $this->getPrixFinal();
     }
 
+    
+
+    /**
+     * Get the value of prixProduitFormated
+     */ 
+    public function getPrixProduitFormated()
+    {
+        return number_format($this->getPrixProduit() ? $this->getPrixProduit() : 0, 2, ',', ' ');
+    }
+
+    /**
+     * Set the value of prixProduitFormated
+     *
+     * @return  self
+     */ 
+    public function setPrixProduitFormated($prixProduitFormated)
+    {
+        $this->prixProduitFormated = $prixProduitFormated;
+
+        return $this;
+    }
 }

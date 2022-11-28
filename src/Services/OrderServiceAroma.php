@@ -81,7 +81,7 @@ class OrderServiceAroma
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 
-                    $order->getMontantTtc(), [
+                    round($order->getMontantTtc(), 2), [
                         'description' => 'Paiement commande'
                     ]);
             $order->setChargeId($chargeId);        

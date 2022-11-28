@@ -160,7 +160,7 @@
                             <h2>Réassort</h2>
                             <div class="row my-2">
                                 {% for filleReassort in implantation.mere.fillesReassort %}
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-6" style="margin-top: 40px;">
                                     {# <h4>{{filleReassort.nom}}</h4> #}
                                     <p>{{filleReassort.qteElmt | number_format(0, ',', ' ')}} unité(s) par produit</p>
                                     {% if filleReassort.remise > 0 %}

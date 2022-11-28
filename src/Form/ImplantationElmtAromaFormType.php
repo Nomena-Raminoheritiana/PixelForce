@@ -37,10 +37,11 @@ class ImplantationElmtAromaFormType extends AbstractType
                     new NotBlank(["message" => "Produit obligatoire"])
                 ]
             ])
-            ->add('prixProduit', TextType::class, [
+            ->add('prixProduitFormated', TextType::class, [
                 'label' => false,
                 'attr' => ['readonly' => true]
             ])
+            ->add('prixProduit', HiddenType::class)
             // ->add('prixConseilleProduit', TextType::class, [
             //     'label' => false,
             //     'attr' => ['readonly' => true]

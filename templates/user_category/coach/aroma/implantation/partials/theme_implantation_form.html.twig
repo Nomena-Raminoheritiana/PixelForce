@@ -24,7 +24,8 @@
             <div class="d-none">{{form_widget(form.produit)}}</div> 
         </td>
         {# <td>{{form_widget(form.prixConseilleProduit,{ 'attr': {'class': 'form-control'} })}}{{form_errors(form.prixConseilleProduit)}}</td> #}
-        <td>{{form_widget(form.prixProduit,{ 'attr': {'class': 'form-control row-prix-produit', 'data-parent-id': id} })}}{{form_errors(form.prixProduit)}}</td>
+        {{form_widget(form.prixProduit,{ 'attr': {'class': 'row-prix-produit', 'data-parent-id': id} })}}
+        <td>{{form_widget(form.prixProduitFormated,{ 'attr': {'class': 'form-control'} })}}{{form_errors(form.prixProduit)}}{{form_errors(form.prixProduitFormated)}}</td>
         <td>{{form_widget(form.prix,{ 'attr': {'class': 'form-control'} })}}{{form_errors(form.prix)}}</td>
         <td>{{form_widget(form.montant,{ 'attr': {'class': 'form-control'} })}}{{form_errors(form.montant)}}</td>
         <td>{{form_widget(form.qteGratuit,{ 'attr': {'class': 'form-control row-qteGraduit'} })}}{{form_errors(form.qteGratuit)}}</td>
