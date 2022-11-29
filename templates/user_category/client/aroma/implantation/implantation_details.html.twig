@@ -65,7 +65,7 @@
                                     {% endif %}
                                     <div class="ecommerce-details-price d-flex flex-wrap mt-1">
                                         
-                                        <h5 class="item-price me-1">{{implantation.allTotal.total | number_format(2, ',', ' ')}} € HT {% if implantation.allTotal.ug > 0 %} avec {{implantation.allTotal.ug | number_format(0, ',', ' ')}} unité(s) gratuites {% endif %}</h5>
+                                        <h5 class="item-price me-1">{{implantation.allTotal.total | number_format(2, ',', ' ')}} € TTC {% if implantation.allTotal.ug > 0 %} avec {{implantation.allTotal.ug | number_format(0, ',', ' ')}} unité(s) gratuites {% endif %}</h5>
 
                                     </div>
                                     <p class="card-text">
@@ -77,12 +77,12 @@
                                             <tr>
                                                 <th></th>
                                                 <th>Produit</th>
-                                                {# <th>PU conseillé HT</th> #}
-                                                <th>PU HT</th>
+                                                {# <th>PU conseillé TTC</th> #}
+                                                <th>PU TTC</th>
                                                 {% if implantation.remise > 0 %}
-                                                <th>PU après réduction HT (remise de {{implantation.remise | number_format(2, ',', ' ')}} %)</th>
+                                                <th>PU après réduction TTC (remise de {{implantation.remise | number_format(2, ',', ' ')}} %)</th>
                                                 {% endif %}
-                                                <th>Montant HT</th>
+                                                <th>Montant TTC</th>
                                                 <th>Unités Gratuites</th>
                                             </tr>
                                         </thead>
@@ -106,7 +106,7 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="{% if implantation.remise > 0 %}4{% else %}3{% endif %}"></td>
-                                                <td class="my-text-right">Montant total HT</td>
+                                                <td class="my-text-right">Montant total TTC</td>
                                                 <td class="my-text-right">{{implantation.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
                                             </tr>
                                             <tr>
@@ -160,7 +160,7 @@
                             <h2>Réassort</h2>
                             <div class="row my-2">
                                 {% for filleReassort in implantation.mere.fillesReassort %}
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-6" style="margin-top: 40px;">
                                     {# <h4>{{filleReassort.nom}}</h4> #}
                                     <p>{{filleReassort.qteElmt | number_format(0, ',', ' ')}} unité(s) par produit</p>
                                     {% if filleReassort.remise > 0 %}
@@ -168,7 +168,7 @@
                                     {% endif %}
                                     <div class="ecommerce-details-price d-flex flex-wrap mt-1">
                                         
-                                        <h5 class="item-price me-1">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}} € HT {% if filleReassort.allTotal.ug > 0 %} avec {{filleReassort.allTotal.ug | number_format(0, ',', ' ')}} unité(s) gratuites {% endif %}</h5>
+                                        <h5 class="item-price me-1">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}} € TTC {% if filleReassort.allTotal.ug > 0 %} avec {{filleReassort.allTotal.ug | number_format(0, ',', ' ')}} unité(s) gratuites {% endif %}</h5>
 
                                     </div>
                                     {# <p class="card-text">
@@ -181,12 +181,12 @@
                                             <tr>
                                                 <th></th>
                                                 <th>Produit</th>
-                                                {# <th>PU conseillé HT</th> #}
-                                                <th>PU HT</th>
+                                                {# <th>PU conseillé TTC</th> #}
+                                                <th>PU TTC</th>
                                                {% if filleReassort.remise > 0 %}
-                                                <th>PU après réduction HT (remise de {{filleReassort.remise | number_format(2, ',', ' ')}} %)</th>
+                                                <th>PU après réduction TTC (remise de {{filleReassort.remise | number_format(2, ',', ' ')}} %)</th>
                                                 {% endif %}
-                                                <th>Montant HT</th>
+                                                <th>Montant TTC</th>
                                                 <th>Unités Gratuites</th>
                                             </tr>
                                         </thead>
@@ -210,7 +210,7 @@
                                         <tfoot>
                                             <tr>
                                                 <td colspan="{% if filleReassort.remise > 0 %}4{% else %}3{% endif %}"></td>
-                                                <td class="my-text-right">Montant total HT</td>
+                                                <td class="my-text-right">Montant total TTC</td>
                                                 <td class="my-text-right">{{filleReassort.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
                                             </tr>
                                             <tr>

@@ -93,9 +93,9 @@
                                 <th></th>
                                 <th>Produit</th>
                                 {# <th>PU conseillé</th> #}
-                                <th>PU HT</th>
-                                <th>PU après réduction HT (remise de {{mere.remise | number_format(2, ',', ' ')}} %)</th>
-                                <th>Montant HT</th>
+                                <th>PU TTC</th>
+                                <th>PU après réduction TTC (remise de {{mere.remise | number_format(2, ',', ' ')}} %)</th>
+                                <th>Montant TTC</th>
                                 <th>Unités Gratuites</th>
                             </tr>
                         </thead>
@@ -117,7 +117,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="4"></td>
-                                <td class="my-text-right">Montant total HT</td>
+                                <td class="my-text-right">Montant total TTC</td>
                                 <td class="my-text-right">{{mere.allTotal.total | number_format(2, ',', ' ')}} €</td>                                
                             </tr>
                             <tr>

@@ -64,7 +64,7 @@ class OrderAroma
     private $orderDate;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2)
+     * @ORM\Column(type="decimal", precision=16, scale=6)
      */
     private $amount;
 
@@ -95,7 +95,7 @@ class OrderAroma
     private $tva;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2, nullable=true)
+     * @ORM\Column(type="decimal", precision=16, scale=6, nullable=true)
      */
     private $montantTtc;
 
@@ -277,6 +277,6 @@ class OrderAroma
     }
 
     public function getMontantTva(){
-        return $this->getAmount() * $this->getTva()/100;
+        return $this->getMontantTtc() / (1.0 + 100/$this->getTva());
     }
 }

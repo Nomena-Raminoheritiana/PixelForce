@@ -76,12 +76,14 @@ class OrderServiceAroma
                     $this->entityManager->persist($orderImplantationElmt);
                 }
             }
-            $order->setAmount($amount); 
-            $order->setMontantTtc($order->getAmount() * (1 + $order->getTva()/100));
+            // $order->setAmount($amount); 
+            // $order->setMontantTtc($order->getAmount() * (1 + $order->getTva()/100));
+            $order->setMontantTtc($amount); 
+            $order->setAmount($amount / (1.0 + $order->getTva()/100));
             $chargeId = $this->stripeService
                 ->createCharge(
                     $stripeToken, 
-                    $order->getMontantTtc(), [
+                    round($order->getMontantTtc(), 2), [
                         'description' => 'Paiement commande'
                     ]);
             $order->setChargeId($chargeId);        

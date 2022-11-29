@@ -75,7 +75,7 @@
                                             </div>
                                         </div>
                                         <div class="item-quantity">
-                                            <span class="quantity-title">Montant total HT:</span>
+                                            <span class="quantity-title">Montant total TTC:</span>
                                             <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
                                                 <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected">{{oi.cost | number_format(2, ',', ' ')}} €</span>
                                             </div>
@@ -93,11 +93,11 @@
                                                     <th></th>
                                                     <th>Produit</th>
                                                     {# <th>PU conseillé</th> #}
-                                                    <th>PU HT</th>
+                                                    <th>PU TTC</th>
                                                     {% if oi.remiseImplantation > 0 %}
-                                                    <th>PU après réduction HT (remise de {{oi.remiseImplantation | number_format(2, ',', ' ')}} %)</th>
+                                                    <th>PU après réduction TTC (remise de {{oi.remiseImplantation | number_format(2, ',', ' ')}} %)</th>
                                                     {% endif %}
-                                                    <th>Montant HT</th>
+                                                    <th>Montant TTC</th>
                                                     <th>Unités Gratuites</th>
                                                 </tr>
                                             </thead>
@@ -121,7 +121,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="{% if oi.remiseImplantation > 0 %}4{% else %}3{% endif %}"></td>
-                                                    <td class="my-text-right">Montant total HT</td>
+                                                    <td class="my-text-right">Montant total TTC</td>
                                                     <td class="my-text-right">{{oi.prixImplantation | number_format(2, ',', ' ')}} €</td>                                
                                                 </tr>
                                                 <tr>

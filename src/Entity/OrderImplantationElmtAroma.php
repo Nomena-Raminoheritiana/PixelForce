@@ -29,12 +29,12 @@ class OrderImplantationElmtAroma
     private $qteGratuitImplantationElmt;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2)
+     * @ORM\Column(type="decimal", precision=16, scale=6)
      */
     private $prixProduitImplantationElmt;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2, nullable=true)
+     * @ORM\Column(type="decimal", precision=16, scale=6, nullable=true)
      */
     private $prixConseilleProduitImplantationElmt;
 
@@ -45,7 +45,7 @@ class OrderImplantationElmtAroma
     private $orderImplantationParent;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2)
+     * @ORM\Column(type="decimal", precision=16, scale=6)
      */
     private $prixProduitApresReductionImplantationElmt;
 

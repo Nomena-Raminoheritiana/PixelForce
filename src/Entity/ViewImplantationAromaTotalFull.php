@@ -18,13 +18,13 @@ class ViewImplantationAromaTotalFull
     private $id;
 
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2, nullable=true)
+     * @ORM\Column(type="decimal", precision=16, scale=6, nullable=true)
      */
     private $total;
 
     
     /**
-     * @ORM\Column(type="decimal", precision=12, scale=2, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $ug;
 

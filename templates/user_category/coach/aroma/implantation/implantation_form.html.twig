@@ -68,9 +68,9 @@
                         <tr>
                             <th>Produit</th>
                             {# <th>PU conseillé</th> #}
-                            <th>PU HT</th>
-                            <th>PU après réduction HT</th>
-                            <th>Montant HT</th>
+                            <th>PU TTC</th>
+                            <th>PU après réduction TTC</th>
+                            <th>Montant TTC</th>
                             <th>Unités Gratuites</th>
                             <th></th>
                         </tr>
@@ -81,7 +81,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="3"></td>
-                            <td class="my-text-right">Total</td>
+                            <td class="my-text-right">Montant total TTC</td>
                             <td class="my-text-right" id="implantationTotal"></td>
                             <td></td>
                             
@@ -122,6 +122,11 @@
             var options = "resizable=yes,scrollbars=yes,location=no,width=1000,height=500,top=0,left=0";
             window.open(path+'?'+queryString+"&opener="+opener+"&popup="+popup, 'popUpWindow', options).focus();
         }   
+
+        function formatPrix(prix){
+            let text = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(prix);
+            return text;
+        }
 
         function myRound(val, afterComma=2){
             return val.toFixed(afterComma); 
@@ -204,8 +209,9 @@
                 let prix = ifNullZero($(`#${rowId}_prixProduit`).val());
                 let prixApresReduction = prix * (1. - remise/100);
                 let montant = prixApresReduction * qteElmt;
-                $(`#${rowId}_prix`).val(myRound(prixApresReduction));
-                $(`#${rowId}_montant`).val(myRound(montant));
+                $(`#${rowId}_prixProduitFormated`).val(formatPrix(prix));
+                $(`#${rowId}_prix`).val(formatPrix(prixApresReduction));
+                $(`#${rowId}_montant`).val(formatPrix(montant));
             }
 
             function onChangeRemiseOrQteElmt(){
@@ -232,14 +238,16 @@
 
             
             function onChangeTotal(){
+                let remise = ifNullZero($(`#implantation_aroma_form_remise`).val());
                 let qteElmt = ifNullZero($(`#implantation_aroma_form_qteElmt`).val());
                 let total = 0;
                 $('.implantation-elmt-row').each(function(){
                     let rowId = $(this).attr('id');
-                    let prixApresReduction = ifNullZero($(`#${rowId}_prix`).val());
+                    let prix = ifNullZero($(`#${rowId}_prixProduit`).val());
+                    let prixApresReduction = prix * (1. - remise/100);
                     total += qteElmt * prixApresReduction;
                 });
-                $(`#implantationTotal`).html(myRound(total));
+                $(`#implantationTotal`).html(formatPrix(total));
             }
 
             function onChangeUG(){
