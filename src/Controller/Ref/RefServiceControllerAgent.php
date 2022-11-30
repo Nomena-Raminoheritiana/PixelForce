@@ -16,7 +16,7 @@ use App\Services\FileHandler;
 use App\Services\SearchService;
 use App\Util\PopupUtil;
 use App\Util\Search\MyCriteriaParam;
-use App\Util\Status;
+use App\Util\Status\Status;
 use Knp\Component\Pager\PaginatorInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -165,7 +165,11 @@ class RefServiceControllerAgent extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile) {
+                    $photo = $this->fileHandler->upload($imageFile, "images/ref/service");
+                    $ref->setImage($photo);
+                }
                 $ref->setSecteur($secteur);
                 $ref->setStatut(Status::VALID);
                 $this->entityManager->persist($ref);
@@ -199,7 +203,11 @@ class RefServiceControllerAgent extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-            
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile) {
+                    $photo = $this->fileHandler->upload($imageFile, "images/ref/service");
+                    $ref->setImage($photo);
+                }
                 $this->entityManager->persist($ref);
                 $this->entityManager->flush();
                 

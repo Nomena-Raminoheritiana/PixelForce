@@ -8,15 +8,17 @@ use App\Entity\DevisCompany;
 use App\Entity\DevisCompanyDetail;
 use App\Entity\User;
 use App\Form\DevisCompanyType;
+use App\Form\DevisFilterType;
 use App\Form\DevisType;
 use App\Manager\DevisManager;
 use App\Manager\EntityManager;
 use App\Repository\DevisCompanyRepository;
 use App\Services\FileHandler;
 use App\Services\MailerService;
-use App\Services\MailService;
+use App\Services\SearchService;
 use App\Util\GenericUtil;
-use DateTime;
+use App\Util\Search\MyCriteriaParam;
+use Knp\Component\Pager\PaginatorInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -145,12 +147,48 @@ class AgentDevisController extends AbstractController
     /**
      * @Route("/company/devis/liste", name="agent_company_devis_liste")
      */
-    public function agent_company_devis_liste(): Response
+    public function agent_company_devis_liste(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
     {
         $agent = $this->getUser();
-        $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent],['created_at' => 'DESC']);
+        $page = $request->query->get('page', 1);
+        $limit = 5;
+        $criteria = [
+            ['prop' => 'dateMin', 'col' => 'created_at', 'op' => '>='],
+            ['prop' => 'dateMax', 'col' => 'created_at', 'op' => '<='],
+            ['prop' => 'client', 'col' => "client_mail", 'op' => 'LIKE']
+        ];
+
+        $filter = [];
+
+        $form = $this->createForm(DevisFilterType::class, $filter, [
+            'method' => 'GET'
+        ]);
+
+        $form->handleRequest($request);
+        $filter = $form->getData();
+
+        $query = $this->entityManager
+            ->createQueryBuilder()
+            ->select('d')
+            ->from(DevisCompany::class, 'd')
+        ;  
+
+        $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'd'));   
+        $query->where($where["where"]." and d.agent = :agent ");
+        $where["params"]["agent"] = $agent;
+        $searchService->setAllParameters($query, $where["params"]);
+        $searchService->addOrderBy($query, $filter, ['sort' => 'd.created_at', 'direction' => 'desc']);
+
+        $allDevisCompanies = $paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+
+        // $allDevisCompanies = $this->repoDevisCompany->findBy(['agent' => $agent],['created_at' => 'DESC']);
         return $this->render('user_category/agent/dd/devis/list_company_devis.html.twig', [
-            'allDevisCompanies' => $allDevisCompanies
+            'allDevisCompanies' => $allDevisCompanies,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -179,12 +217,21 @@ class AgentDevisController extends AbstractController
             //     'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
             // ]);
 
+
+            $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+            $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+            $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+            $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative'),
-                'iterationPercent' => $devisCompany->getIterationPayment()
+                'iterationPayment' => $devisCompany->getIterationPayment(),
+                'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+                'intval_amount' => $intval_amount,
+                'round_rest_amount_modulo' => $round_rest_amount_modulo
             ]);
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $directory);
@@ -223,12 +270,20 @@ class AgentDevisController extends AbstractController
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
             $devisCompany = $this->devisManager->persistDevisCompany($logo, $devisCompanyDirectory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute, $devisCompany->getIterationPayment() );
 
+            $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+            $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+            $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+            $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
             //Piece jointe
             $html = $this->renderView('pdf/fiche_devis_entrepise.html.twig', [
                 'filesDirAbsolute' => $filesDirAbsolute,
                 'devisCompany' => $devisCompany,
                 'filesDirectory' => $this->getParameter('files_directory_relative'),
-                'iterationPercent' => $devisCompany->getIterationPayment()
+                'iterationPayment' => $devisCompany->getIterationPayment(),
+                'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+                'intval_amount' => $intval_amount,
+                'round_rest_amount_modulo' => $round_rest_amount_modulo
             ]);
             $binary = $wrapper->getPdf($html, ['isRemoteEnabled' => true]);
             $pj_filepath = $this->fileHandler->saveBinary($binary, "agentId-".$agent->getId()."_".date('Y-m-d-H-i-s').'.pdf', $devisCompanyDirectory);
@@ -252,9 +307,19 @@ class AgentDevisController extends AbstractController
      */
     public function agent_company_devis_fiche(DevisCompany $devisCompany): Response
     {
+        
+        $rest_amount_modulo = fmod($devisCompany->getDevisTotalTtc(), $devisCompany->getIterationPayment());
+        $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+        $intval_amount = intval($devisCompany->getDevisTotalTtc() / $devisCompany->getIterationPayment());
+        $round_rest_amount_modulo = round($rest_amount_modulo, 2);
+
         return $this->render('user_category/agent/dd/devis/fiche_company_devis.html.twig', [
             'devisCompany' => $devisCompany,
-            'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT
+            'DEVIS_STATUS_INT' => DevisCompany::DEVIS_STATUS_INT,
+            'isFloat__rest_amount_modulo' => $isFloat__rest_amount_modulo,
+            'intval_amount' => $intval_amount,
+            'rest_amount_modulo' => $rest_amount_modulo,
+            'round_rest_amount_modulo' => $round_rest_amount_modulo
         ]);
     }
 
@@ -288,6 +353,22 @@ class AgentDevisController extends AbstractController
 //        ]);
 //        $response = $wrapper->getStreamResponse($html, "document.pdf");
 //        $response->send();
+
+        
 //    }
+//    /**
+//     * @Route("/company/devis/{id}/detail/generate", name="agent_company_detail_pdf_generate")
+//     */
+//     public function agent_view_pdf_generate(DevisCompany $devisCompany, DompdfWrapperInterface $wrapper)
+//     {
+//         $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
+//         // dd($devisCompany);
+//         return $this->render('pdf/fiche_devis_entrepise.html.twig', [
+//             'filesDirAbsolute' => $filesDirAbsolute,
+//             'devisCompany' => $devisCompany,
+//             'filesDirectory' => $this->getParameter('files_directory_relative'),
+//             'iterationPercent' => intval(100 / $devisCompany->getPaymentCondition())
+//         ]);
+//     }
 
 }

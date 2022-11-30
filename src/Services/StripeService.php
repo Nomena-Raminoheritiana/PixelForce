@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Google\Service\CloudFunctions\Retry;
 use Stripe\Charge;
 use Stripe\Stripe;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -332,22 +333,18 @@ class StripeService
      * - release : mettra fin au calendrier d'abonnement et conservera l'abonnement sous-jacent
      * - cancel : mettra fin au calendrier d'abonnement et annulera l'abonnement sous-jacent
      */
-    public function createSubscriptionSchedule(string $customerId, $start_date, array $price, int $iterations, string $end_behavior = 'release')
+    public function createSubscriptionSchedule(string $customerId, $start_date, array $phase_sub_shed, string $end_behavior = 'release')
     {
         $stripe = new \Stripe\StripeClient($this->secretKey);
 
+        // dd($phase_sub_shed);
+        // $phases ;
         return $stripe->subscriptionSchedules->create([
             'customer' => $customerId,
             'start_date' => $start_date,
             'end_behavior' => $end_behavior,
-            'phases' => [
-                [
-                'items' => [
-                    $price
-                ],
-                    'iterations' => $iterations,
-                ],
-            ],
+            'phases' => [$phase_sub_shed]
+            ,
         ]);
     }
 
@@ -409,7 +406,7 @@ class StripeService
     /**
      * Normalement, cette fonction permet de plannifier un abonnement, mais ici on opte pour réaliser une facilité de paiement pour les clients
      */
-    public function create_SubscriptionSchedule_ProductAndPrice($iteration_payment, $amount, $interval_unit, $customer_email, $customer_name, $customer_desciption)
+    public function create_SubscriptionSchedule_ProductAndPrice($iteration_payment, $amount_TotalTtc, $interval_unit, $customer_email, $customer_name, $customer_desciption)
     {
         $stripe = new \Stripe\StripeClient($this->secretKey);
         
@@ -434,29 +431,71 @@ class StripeService
         $interval_unit = self::INTERVAL_UNIT_MONTH; // Provisoire
         $priceName = 'Paiement fractionné en '.$iteration_payment.' fois';
 
-        $price = $stripe->prices->create([
-            'unit_amount' => $amount * 100,
-            'currency' => 'eur',
-            'recurring' => [
-                'interval' => $interval_unit
-            ],
-            'nickname' => $priceName,
-            'product' => $productId
-        ]);
+        $phase_sub_shed = [];
 
-        // 3 =>  creation customer
+        $rest_amount_modulo = fmod($amount_TotalTtc, $iteration_payment);
+        $isFloat__rest_amount_modulo = $rest_amount_modulo > 0;
+        $amout_intval = intval($amount_TotalTtc / $iteration_payment);
+        $amount_first_price = $amout_intval + round($rest_amount_modulo, 2);
+
+        // On test si le paiement par tranche laisse des virgules (qui empêchera le calcul exacte du somme des tranches)
+        if ($isFloat__rest_amount_modulo === true) {
+
+            $price = $stripe->prices->create([
+                'currency' => 'eur',
+                'recurring' => [
+                    'interval' => $interval_unit, 
+                    // 'usage_type' => 'metered' // metered or licenced
+                ],
+                'nickname' => $priceName,
+                'product' => $productId,
+
+                'tiers' => [
+                    ['unit_amount' => $amount_first_price * 100, 'up_to' => 1],
+                    ['unit_amount' => $amout_intval * 100, 'up_to' => 'inf'],
+                ],
+                'tiers_mode' => 'graduated',
+                'billing_scheme' => 'tiered',
+                'expand' => ['tiers'],
+            ]);
+            
+            $phase_sub_shed[] = [
+                'items' =>  [[
+                    'price' => $price->id,
+                    'quantity' => 1
+                ]],
+                'iterations' => $iteration_payment
+            ];
+
+        }else{
+            $price = $stripe->prices->create([
+                'unit_amount' => $amout_intval * 100,
+                'currency' => 'eur',
+                'recurring' => [
+                    'interval' => $interval_unit
+                ],
+                'nickname' => $priceName,
+                'product' => $productId
+            ]);
+            $phase_sub_shed[] = [
+                'items' =>  [[
+                    'price' => $price->id,
+                    'quantity' => 1
+                ]],
+                'iterations' => $iteration_payment
+            ];
+
+        }
+        
+        // On gère l'opération pour la tranche suivante
+
+        // 4 =>  creation customer
         $customer = $this->createCustomer($customer_email, $customer_name, $customer_desciption);
-      
-        // 4 =>  creation subscription schedule (Paimenent fractionné)
-        $price_subSched = [
-            'price' => $price->id,
-            'quantity' => 1,
-        ];
-        $subSched = $this->createSubscriptionSchedule($customer->id, 'now', $price_subSched, $iteration_payment, 'cancel');
+        $subSched = $this->createSubscriptionSchedule($customer->id, 'now', $phase_sub_shed, 'cancel');
 
         $informations = [
             'customer_id' => $customer->id,
-            'price_id' => $price->id,
+            'price_id' =>  $isFloat__rest_amount_modulo ? '(Price multiples)' : $price->id,
             'subSched_id' => $subSched->id
         ];
         return $informations ;
