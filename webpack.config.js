@@ -149,12 +149,12 @@ Encore
     .autoProvidejQuery()
     // define the environment variables
     .configureDefinePlugin(options => {
-        const env = dotenv.config({path: './.env.local'});
+        const env = dotenv.config({path: './.env'});
         if (env.error) {
             throw env.error;
         }
 
-        options['process.env'].VIMEO_ACCESS_TOKEN = JSON.stringify(env.parsed. VIMEO_ACCESS_TOKEN);
+        options['process.env'].VIMEO_ACCESS_TOKEN = JSON.stringify(env.parsed.VIMEO_ACCESS_TOKEN);
     })
 ;
 

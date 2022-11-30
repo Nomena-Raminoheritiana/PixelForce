@@ -27,6 +27,16 @@
     </li>
 </ul>
 </li>
+{% elseif app.user.uniqueCoachSecteur.type.id == 4 %}
+<li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="briefcase"></i><span class="menu-title text-truncate" data-i18n="Components">Catalogue</span></a>
+<ul class="menu-content">
+    <li><a class="d-flex align-items-center" href="{{path('admin_aroma_product_index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Produits</span></a>
+    </li>
+    <li><a class="d-flex align-items-center" href="{{path('admin_aroma_implantation_index')}}"><i data-feather="circle"></i><span class="menu-item text-truncate" data-i18n="Alerts">Implantations</span></a>
+    </li>
+</ul>
+</li>
+
 {% else %}
 <li class=" nav-item"><a class="d-flex align-items-center" href="{{ path('coach_contratsecu_form') }}"><i data-feather="file"></i><span class="menu-title text-truncate" data-i18n="User">Contrat</span></a>
 <li class=" nav-item"><a class="d-flex align-items-center" href="#"><i data-feather="briefcase"></i><span class="menu-title text-truncate" data-i18n="Components">Catalogue</span></a>

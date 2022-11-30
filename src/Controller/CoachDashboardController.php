@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\CalendarEventRepository;
 use App\Repository\ContactRepository;
+use App\Repository\SecteurRepository;
 use App\Services\Stat\StatAgentService;
 use App\Services\Stat\StatCoachService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +31,7 @@ class CoachDashboardController extends AbstractController
     /**
      * @Route("", name="coach_dashboard_index")
      */
-    public function index(Request $request, PaginatorInterface $paginator, StatAgentService $statAgentService, StatCoachService $statCoachService)
+    public function index(Request $request, PaginatorInterface $paginator, StatAgentService $statAgentService, StatCoachService $statCoachService, SecteurRepository $secteurRepository)
     {
       
         $user = (object)$this->getUser();
