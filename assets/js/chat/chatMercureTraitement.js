@@ -1,5 +1,6 @@
 import {ConversationComponent} from "./components/ConversationComponent";
 import {showMessageInstance, updateMenu} from "./helpers/chat_helpers";
+import { EventSourcePolyfill } from 'event-source-polyfill/src/eventsource.min.js';
 
 $(function() {
     // detecter s'il y a un message
@@ -7,10 +8,30 @@ $(function() {
     const chat_vu_topic = JSON.parse(document.getElementById("chat-vu-topic").textContent);
     const chat_userTyping_topic = JSON.parse(document.getElementById("chat-userTyping-topic").textContent);
     const chat_userStopTyping_topic = JSON.parse(document.getElementById("chat-userStopTyping-topic").textContent);
-    const eventNewMessage = new EventSource(chat_newMessage_topic);
-    const eventVu = new EventSource(chat_vu_topic);
-    const eventUserTyping = new EventSource(chat_userTyping_topic);
-    const eventUserStopTyping = new EventSource(chat_userStopTyping_topic);
+    const eventNewMessage = new EventSourcePolyfill(chat_newMessage_topic, {
+        headers : {
+            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+        },
+        withCredentials: true
+    });
+    const eventVu = new EventSourcePolyfill(chat_vu_topic, {
+        headers : {
+            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+        },
+        withCredentials: true
+    });
+    const eventUserTyping = new EventSourcePolyfill(chat_userTyping_topic, {
+        headers : {
+            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+        },
+        withCredentials: true
+    });
+    const eventUserStopTyping = new EventSourcePolyfill(chat_userStopTyping_topic, {
+        headers : {
+            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+        },
+        withCredentials: true
+    });
     const conversationComponent = new ConversationComponent();
     // présence d'un nouveau message
     eventNewMessage.onmessage = async event => {

@@ -155,6 +155,8 @@ Encore
         }
 
         options['process.env'].VIMEO_ACCESS_TOKEN = JSON.stringify(env.parsed.VIMEO_ACCESS_TOKEN);
+        options['process.env'].MERCURE_JWT_SECRET = JSON.stringify(env.parsed.MERCURE_JWT_SECRET);
+
     })
 ;
 
