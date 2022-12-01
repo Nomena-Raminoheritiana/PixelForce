@@ -1,6 +1,7 @@
 import { Modal } from 'bootstrap';
 import axios from 'axios';
 import {launchLiveVideo,arretJitsi,generateCode} from './liveFunctions'
+import { EventSourcePolyfill } from 'event-source-polyfill/src/eventsource.min.js';
 
 $(function() {
     // code de l'appel video
@@ -136,7 +137,13 @@ $(function() {
     const elementUrl = document.getElementById("live-call-topic");
     if(elementUrl) {
         const urlDetectionAppel = JSON.parse(elementUrl.textContent);
-        const eventDetectionAppelSource = new EventSource(urlDetectionAppel);
+        const eventDetectionAppelSource = new EventSourcePolyfill(urlDetectionAppel, {
+            headers : {
+                'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+            },
+            withCredentials: true
+        });
+
         
         eventDetectionAppelSource.onmessage = async event => {
             const data = JSON.parse(event.data);
@@ -169,7 +176,12 @@ $(function() {
     const elementUrlRefus = document.getElementById("live-refus-topic");
     if(elementUrlRefus) {
         const urlRefus = JSON.parse(elementUrlRefus.textContent);
-        const evenRefusSource = new EventSource(urlRefus);
+        const evenRefusSource = new EventSourcePolyfill(urlRefus, {
+            headers : {
+                'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+            },
+            withCredentials: true
+        });
         evenRefusSource.onmessage = async event => {
             const data = JSON.parse(event.data);
             const alertRefu = $('#model-alert');
