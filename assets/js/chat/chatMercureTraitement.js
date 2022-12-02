@@ -10,25 +10,25 @@ $(function() {
     const chat_userStopTyping_topic = JSON.parse(document.getElementById("chat-userStopTyping-topic").textContent);
     const eventNewMessage = new EventSourcePolyfill(chat_newMessage_topic, {
         headers : {
-            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+            'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET}` ,
         },
         withCredentials: true
     });
     const eventVu = new EventSourcePolyfill(chat_vu_topic, {
         headers : {
-            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+            'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET}` ,
         },
         withCredentials: true
     });
     const eventUserTyping = new EventSourcePolyfill(chat_userTyping_topic, {
         headers : {
-            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+            'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET}` ,
         },
         withCredentials: true
     });
     const eventUserStopTyping = new EventSourcePolyfill(chat_userStopTyping_topic, {
         headers : {
-            'Authorization': `Bearer ${MERCURE_JWT_SECRET}` ,
+            'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET}` ,
         },
         withCredentials: true
     });
