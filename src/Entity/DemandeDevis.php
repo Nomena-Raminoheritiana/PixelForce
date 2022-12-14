@@ -41,7 +41,7 @@ class DemandeDevis
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=600)
+     * @ORM\Column(type="string", length=600, nullable=true)
      */
     private $description;
 

@@ -63,10 +63,12 @@ class DemandeDevisFormType extends AbstractType
 //                ]
 //            ])
             ->add('description', CKEditorType::class,  array(
+                'required' => false,
                 'config' => array(
                     'uiColor' => '#ffffff',
                     //'uiColor' => '#7367f0',
                 )))
+                
             ->add('files', FileType::class, [
                 "label" => false,
                 'mapped' => false,
