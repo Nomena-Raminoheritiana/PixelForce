@@ -1,7 +1,7 @@
 {% extends 'base_client.html.twig' %}
 
 {% block title %}
-	Liste des accompagnements
+	Liste des options
 {% endblock %}
 
 {% block stylesheets %}
@@ -26,7 +26,7 @@
                                     </li>
                                     <li class="breadcrumb-item"><a href="{{path('boutique_secteursecu', {'token': token, 'id': app.session.get('secteurId')})}}">Ma boutique en ligne</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Liste des accompagnements
+                                    <li class="breadcrumb-item active">Liste des options
                                     </li>
                                 </ol>
                             </div>
@@ -50,12 +50,13 @@
                                             <div class="search-results">{{ productList|length }} résultat(s) trouvé(s)</div>
                                         </div>
                                         <div class="view-options d-flex">
-                                            <div class="btn-group" role="group">
+                                            {# <div class="btn-group" role="group">
                                                 <input type="radio" class="btn-check" name="radio_options" id="radio_option1" autocomplete="off" checked />
                                                 <label class="btn btn-icon btn-outline-primary view-btn grid-view-btn" for="radio_option1"><i data-feather="grid" class="font-medium-3"></i></label>
                                                 <input type="radio" class="btn-check" name="radio_options" id="radio_option2" autocomplete="off" />
                                                 <label class="btn btn-icon btn-outline-primary view-btn list-view-btn" for="radio_option2"><i data-feather="list" class="font-medium-3"></i></label>
-                                            </div>
+                                            </div> #}
+                                            <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{path('client_make_ordersecu_installation', {'token': token})}}">Continuer&nbsp;&nbsp;<i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -72,7 +73,7 @@
                         {% if productList|length ==0 %}
                                 <div class="alert alert-primary p-3 text-center" role="alert">
                                     <div class="alert-body">
-                                        Aucun accompagnement disponible pour le moment.
+                                        Aucune option disponible pour le moment.
                                     </div>
                                 </div>
                         {% endif %}
