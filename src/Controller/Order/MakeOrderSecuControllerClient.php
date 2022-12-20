@@ -25,6 +25,7 @@ use App\Services\DocumentService;
 use App\Services\FileHandler;
 use App\Services\OrderSecuService;
 use App\Services\SearchService;
+use App\Services\StripeService;
 use App\Util\Search\MyCriteriaParam;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -477,9 +478,55 @@ class MakeOrderSecuControllerClient extends AbstractController
     }
 
     /**
-     * @Route("/signContrat", name="client_make_ordersecu_sign_contrat")
+     * @Route("/payment/{order}", name="client_make_ordersecu_payment")
      */
-    public function signContrat($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository, DocumentService $documentService): Response
+    public function payment($token, OrderSecu $order, Request $request, FormFactoryInterface $formFactory, StripeService $stripeService): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        
+
+        $form = $formFactory
+            ->createNamedBuilder("payment-form")
+            ->add('token', HiddenType::class, [
+                'constraints' => [new NotBlank()],
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try{
+                $stripeToken =  $form->get('token')->getData();
+                $this->orderSecuService->payOrder($order);
+                $this->addFlash('success', 'Commande payée');
+                return $this->redirectToRoute('client_ordersecu_details', ['id' => $order->getId(), 'token' => $token]);
+            } catch(Exception $ex){
+                $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
+            }
+
+        }
+        
+        $stripeIntentSecret = $stripeService->intentSecretByPaymentIntentId($order->getChargeId());
+        return $this->render('user_category/client/secu/makeorder/makeorder_payment.html.twig', [
+            'stripe_public_key' => $this->getParameter('stripe_public_key'),
+            'order' => $order,
+            'filesDirectory' => $this->getParameter('files_directory_relative'),
+            'form' => $form->createView(),
+            'token' => $token,
+            'agent' => $agent,
+            'stripeIntentSecret' => $stripeIntentSecret,
+        ]);
+
+    }
+
+    /**
+     * @Route("/mySignContrat", name="client_make_ordersecu_sign_contrat")
+     */
+    public function mySignContrat($token, Request $request, FormFactoryInterface $formFactory, DocumentService $documentService): Response
     {
         $filesDirectory = $this->getParameter('files_directory_relative');
         $secteurId = $this->session->get('secteurId');
@@ -513,7 +560,8 @@ class MakeOrderSecuControllerClient extends AbstractController
                 $filename = $documentService->signContrat($order->getContratRempli(), "secu/contrat/signed/".$user->getId()."_".date('Y-m-d-H-i-s').".pdf", $photo);
                 $order->setContratSigned($filename);
                 $this->orderSecuService->setOrderSecu($order);
-                return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token]);
+
+                return $this->redirectToRoute('client_make_ordersecu_generate_order', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
                 $this->addFlash('danger', $error);
@@ -528,6 +576,41 @@ class MakeOrderSecuControllerClient extends AbstractController
             'token' => $token,
             'agent' => $agent
         ]);
+
+    }
+
+    /**
+     * @Route("/generateOrder", name="client_make_ordersecu_generate_order")
+     */
+    public function generateOrder($token, SecteurRepository $secteurRepository): Response
+    {
+        $secteurId = $this->session->get('secteurId');
+        $agent = $this->userRepository->findAgentByToken($token);
+        $user = (object) $this->getUser();
+        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
+        $order = $this->orderSecuService->getOrderSecu($sessionKey);
+        if(!$order) {
+            $this->addFlash('danger', 'Commander un produit');
+            return $this->redirectToRoute('boutique_secteursecu', [
+                'id' => $this->session->get('secteurId'),
+                'token' => $token
+            ]);
+        }
+
+        
+        try{
+            $secteur = $secteurRepository->find($secteurId);
+            $order->setClient($user);
+            $order->setAgent($agent);
+            $order->setSecteur($secteur);
+            $order = $this->orderSecuService->saveOrder($order);
+            $this->orderSecuService->removeOrderSecu($order->getSessionKey());
+            return $this->redirectToRoute('client_make_ordersecu_payment', ['token' => $token, 'order' => $order->getId()]);
+        } catch(Exception $ex){
+            $error = $ex->getMessage();
+            $this->addFlash('danger', $error);
+            return $this->redirectToRoute('client_make_ordersecu_sign_contrat', ['token' => $token]);
+        }
 
     }
 
@@ -620,62 +703,6 @@ class MakeOrderSecuControllerClient extends AbstractController
 
     }
 
-    /**
-     * @Route("/payment", name="client_make_ordersecu_payment")
-     */
-    public function payment($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository): Response
-    {
-        $secteurId = $this->session->get('secteurId');
-        $agent = $this->userRepository->findAgentByToken($token);
-        $user = (object) $this->getUser();
-        $sessionKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
-        $order = $this->orderSecuService->getOrderSecu($sessionKey);
-        if(!$order) {
-            $this->addFlash('danger', 'Commander un produit');
-            return $this->redirectToRoute('boutique_secteursecu', [
-                'id' => $this->session->get('secteurId'),
-                'token' => $token
-            ]);
-        }
-
-        
-
-        $form = $formFactory
-            ->createNamedBuilder("payment-form")
-            ->add('token', HiddenType::class, [
-                'constraints' => [new NotBlank()],
-            ])
-            ->getForm();
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            try{
-                $stripeToken =  $form->get('token')->getData();
-                $secteur = $secteurRepository->find($secteurId);
-                $order->setClient($user);
-                $order->setAgent($agent);
-                $order->setSecteur($secteur);
-                $order = $this->orderSecuService->saveOrder($stripeToken, $order);
-                $this->orderSecuService->removeOrderSecu($order->getSessionKey());
-                $this->addFlash('success', 'Commande validée');
-                return $this->redirectToRoute('client_ordersecu_details', ['id' => $order->getId(), 'token' => $token]);
-            } catch(Exception $ex){
-                $error = $ex->getMessage();
-                $this->addFlash('danger', $error);
-            }
-
-        }
-        
-        return $this->render('user_category/client/secu/makeorder/makeorder_payment.html.twig', [
-            'stripe_public_key' => $this->getParameter('stripe_public_key'),
-            'order' => $order,
-            'filesDirectory' => $this->getParameter('files_directory_relative'),
-            'form' => $form->createView(),
-            'token' => $token,
-            'agent' => $agent
-        ]);
-
-    }
+    
 
 }

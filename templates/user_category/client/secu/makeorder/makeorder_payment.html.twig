@@ -57,7 +57,7 @@
                             </li>
                             <li class="price-detail">
                                 <div class="detail-title">Montant des accompagnements</div>
-                                <div class="detail-amt discount-amt" id="accomp-cost" data-accomp-cost="{{order.montantAccomp}}">{{order.montantAccomp | number_format(2, ',', ' ')}} €</div>
+                                <div class="detail-amt discount-amt" id="accomp-cost" data-accomp-cost="{{order.accompMontant}}">{{order.accompMontant | number_format(2, ',', ' ')}} €</div>
                             </li>
                             {# <li class="price-detail" id="installation">
                                 <div class="detail-title">Frais d'installation</div>
@@ -68,15 +68,15 @@
                         <ul class="list-unstyled">
                             <li class="price-detail">
                                 <div class="detail-title detail-total">Montant HT :</div>
-                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{order.montantHt}}">{{order.montantHt | number_format(2, ',', ' ')}} €</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{order.totalHt}}">{{order.totalHt | number_format(2, ',', ' ')}} €</div>
                             </li>
                             <li class="price-detail">
                                 <div class="detail-title detail-total">TVA (<span id="tvaPercentage">{{order.tva.valeur | number_format(2, ',', ' ')}}</span> %) :</div>
-                                <div class="detail-amt fw-bolder" id="tva-amount" >{{order.montantTva | number_format(2, ',', ' ')}} €</div>
+                                <div class="detail-amt fw-bolder" id="tva-amount" >{{order.tvaMontantBase | number_format(2, ',', ' ')}} €</div>
                             </li>
                             <li class="price-detail">
                                 <div class="detail-title detail-total">Montant TTC :</div>
-                                <div class="detail-amt fw-bolder" id="total-cost-ttc" >{{order.montantTtc | number_format(2, ',', ' ')}} €</div>
+                                <div class="detail-amt fw-bolder" id="total-cost-ttc" >{{order.totalTtc | number_format(2, ',', ' ')}} €</div>
                             </li>
                         </ul>
                         {# <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a> #}
@@ -103,7 +103,7 @@
         installationJQuery.hide();
     } #}
     
-
+    var clientSecret = '{{ stripeIntentSecret }}';
     var form = document.getElementById('{{ form.vars.id }}');
     var errors = document.getElementById('card-errors');
     var cardElement = document.getElementById('card-element');
@@ -125,16 +125,19 @@
     
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-    
-        stripe.createToken(card).then(function(result) {
-        if (result.error) {
-            errors.textContent = result.error.message;
-            form.classList.add('has-error');
-        } else {
-            document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
-            form.submit();
-        }
-        });
+
+        stripe.handleCardPayment(
+            clientSecret,
+            card
+        ).then((result) => {
+            if (result.error) {
+                errors.textContent = result.error.message;
+                form.classList.add('has-error');
+            }else if('paymentIntent' in result){
+                document.getElementById('{{form.children.token.vars.id}}').setAttribute('value', result.paymentIntent.id);
+                form.submit();
+            }
+        }); 
     });
 </script>
 {% endblock %}
