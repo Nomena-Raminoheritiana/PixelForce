@@ -114,7 +114,7 @@ class OrderAromaControllerAdmin extends AbstractController
             $this->orderService->changeStatus($order, OrderAroma::VALIDATED);
             $this->addFlash(
                 'success',
-                'Commande validée'
+                'Commande livrée'
             ); 
         } catch(Exception $ex){
             $this->addFlash(

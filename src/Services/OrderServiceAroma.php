@@ -30,7 +30,7 @@ class OrderServiceAroma
         $this->configSecteurService = $configSecteurService;
     }
 
-    public function saveOrder(OrderAroma $order, string $stripeToken): ?OrderAroma{
+    public function saveOrder(OrderAroma $order): ?OrderAroma{
         try{
             $groupKey = BasketItemAroma::getGroupKeyStatic($order->getAgent()->getId(), $order->getSecteur()->getId());
             $this->entityManager->beginTransaction();
@@ -80,13 +80,9 @@ class OrderServiceAroma
             // $order->setMontantTtc($order->getAmount() * (1 + $order->getTva()/100));
             $order->setMontantTtc($amount); 
             $order->setAmount($amount / (1.0 + $order->getTva()/100));
-            $chargeId = $this->stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    round($order->getMontantTtc(), 2), [
-                        'description' => 'Paiement commande'
-                    ]);
-            $order->setChargeId($chargeId);        
+           
+            $paymentIntent = $this->stripeService->paymentIntent(round($order->getMontantTtc(), 2));
+            $order->setChargeId($paymentIntent->id); 
 
             $this->entityManager->flush();
 
@@ -104,6 +100,16 @@ class OrderServiceAroma
         finally {
             $this->entityManager->clear();
         }
+    }
+
+    public function payOrder(OrderAroma $order){
+        $paymentIntent = $this->stripeService->getPaymentIntent($order->getChargeId());
+        if($paymentIntent->status != "succeeded") throw new Exception("Erreur rencontrée lors du paiement");
+        $order->setStatus(OrderAroma::PAIED);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        try{
+        } catch(Exception $ex){}
     }
 
     public function changeStatus(OrderAroma $order, int $status)

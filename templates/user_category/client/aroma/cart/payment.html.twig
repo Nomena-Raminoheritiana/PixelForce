@@ -110,15 +110,15 @@
                     <ul class="list-unstyled price-details">
                         <li class="price-detail">
                             <div class="detail-title detail-total">Montant total HT:</div>
-                            <div class="detail-amt fw-bolder">{{(totalCost / (1.0 + tva/100)) | number_format(2, ',', ' ')}} €</div>
+                            <div class="detail-amt fw-bolder">{{order.amount | number_format(2, ',', ' ')}} €</div>
                         </li>
                         <li class="price-detail">
-                            <div class="detail-title detail-total">TVA ({{tva | number_format(2, ',', ' ')}} %)  :</div>
-                            <div class="detail-amt fw-bolder">{{(totalCost / (1.0 + 100/tva)) | number_format(2, ',', ' ')}} €</div>
+                            <div class="detail-title detail-total">TVA ({{order.tva | number_format(2, ',', ' ')}} %)  :</div>
+                            <div class="detail-amt fw-bolder">{{order.montantTva | number_format(2, ',', ' ')}} €</div>
                         </li>
                         <li class="price-detail">
                             <div class="detail-title detail-total">Montant total TTC  :</div>
-                            <div class="detail-amt fw-bolder">{{(totalCost) | number_format(2, ',', ' ')}} €</div>
+                            <div class="detail-amt fw-bolder">{{order.montantTtc | number_format(2, ',', ' ')}} €</div>
                         </li>
                     </ul>
                     
@@ -136,6 +136,7 @@
 {{ parent() }}
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
+  var clientSecret = '{{ stripeIntentSecret }}';
   var form = document.getElementById('{{ form.vars.id }}');
   var errors = document.getElementById('card-errors');
   var cardElement = document.getElementById('card-element');
@@ -158,15 +159,18 @@
   form.addEventListener('submit', function(event) {
     event.preventDefault();
  
-    stripe.createToken(card).then(function(result) {
-      if (result.error) {
-        errors.textContent = result.error.message;
-        form.classList.add('has-error');
-      } else {
-        document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
-        form.submit();
-      }
-    });
+    stripe.handleCardPayment(
+        clientSecret,
+        card
+    ).then((result) => {
+        if (result.error) {
+            errors.textContent = result.error.message;
+            form.classList.add('has-error');
+        }else if('paymentIntent' in result){
+            document.getElementById('{{form.children.token.vars.id}}').setAttribute('value', result.paymentIntent.id);
+            form.submit();
+        }
+    });  
   });
 </script>
 {% endblock %}

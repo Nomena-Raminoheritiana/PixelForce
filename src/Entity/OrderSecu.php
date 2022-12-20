@@ -23,14 +23,14 @@ class OrderSecu implements JsonSerializable
     public const STATUS = [
         self::CREATED => "Créée", 
         self::PAIED => "Payée",
-        self::VALIDATED => "Validée",
+        self::VALIDATED => "Livrée",
         self::REJECTED => "Rejetée"
     ];
 
     public const STATUS_DATA_FORM = [
         "Créée" => self::CREATED, 
         "Payée" => self::PAIED,
-        "Acceptée" => self::VALIDATED,
+        "Livrée" => self::VALIDATED,
         "Rejetée" => self::REJECTED
     ];
 
