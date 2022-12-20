@@ -8,6 +8,7 @@ use App\Entity\OrderAddress;
 use App\Entity\OrderProduct;
 use App\Entity\Secteur;
 use App\Entity\User;
+use App\Repository\ConfigSecteurRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProduitRepository;
 use DateTime;
@@ -26,8 +27,9 @@ class OrderService
     private $orderRepository;
     private $stripeService;
     private $stockService;
+    private $configSecteurService;
 
-    public function __construct(SessionInterface $session, TokenStorageInterface $tokenStorage, BasketService $basketService, EntityManagerInterface $entityManager, ProduitRepository $produitRepository, OrderRepository $orderRepository, StripeService $stripeService, StockService $stockService)
+    public function __construct(SessionInterface $session, TokenStorageInterface $tokenStorage, BasketService $basketService, EntityManagerInterface $entityManager, ProduitRepository $produitRepository, OrderRepository $orderRepository, StripeService $stripeService, StockService $stockService, ConfigSecteurService $configSecteurService)
     {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
@@ -37,6 +39,7 @@ class OrderService
         $this->orderRepository = $orderRepository;
         $this->stripeService = $stripeService;
         $this->stockService = $stockService;
+        $this->configSecteurService = $configSecteurService;
     }
 
 
@@ -65,8 +68,9 @@ class OrderService
         $this->session->remove('orderAddress');
     }
 
-    public function saveOrder(string $stripeToken, User $agent, Secteur $secteur): ?Order{
+    public function saveOrder(User $agent, Secteur $secteur): ?Order{
         try{
+            $this->entityManager->beginTransaction();
             $groupKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteur->getId());
             $user = $this->tokenStorage->getToken()->getUser();
             $basket = $this->basketService->getBasket($groupKey);
@@ -80,6 +84,7 @@ class OrderService
             $this->entityManager->persist($address);
 
             $order = new Order();
+            $order->setTva($this->configSecteurService->findTva());
             $order->setUser($user);
             $order->setAddress($address);
             $order->setOrderDate(new DateTime());
@@ -106,21 +111,35 @@ class OrderService
             $order->setAmount($amount); 
             
 
-            $chargeId = $this->stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    $order->getAmount(), [
-                        'description' => 'Paiement commande'
-                    ]);
-
-            $order->setChargeId($chargeId);        
+            $paymentIntent = $this->stripeService->paymentIntent($order->getAmount());
+            $order->setChargeId($paymentIntent->id);
+            
             $this->entityManager->flush();
+            $this->entityManager->commit();
             $this->basketService->removeBasket($groupKey);
             $this->removeAddress();
+            
             return $order;
-        } finally {
+        } catch(\Exception $ex){
+            if($this->entityManager->getConnection()->isTransactionActive()) {
+                $this->entityManager->rollback();
+            }
+            throw $ex;
+        }
+        finally {
             $this->entityManager->clear();
         }
+    }
+
+    public function payOrder(Order $order){
+        $paymentIntent = $this->stripeService->getPaymentIntent($order->getChargeId());
+        if($paymentIntent->status != "succeeded") throw new Exception("Erreur rencontrée lors du paiement");
+        $order->setStatus(Order::PAIED);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        try{
+            
+        } catch(Exception $ex){}
     }
 
     public function changeStatus(int $orderId, int $status)

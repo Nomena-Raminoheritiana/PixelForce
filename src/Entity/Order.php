@@ -14,17 +14,20 @@ use Doctrine\ORM\Mapping as ORM;
 class Order
 {
 
-    public const CREATED = 1;
+    public const CREATED = 100;
+    public const PAIED = 1;
     public const VALIDATED = 2;
 
     public const STATUS = [
-        Order::CREATED => "Créée", 
-        Order::VALIDATED => "Acceptée"
+        self::CREATED => "Créée", 
+        self::PAIED => "Payée",
+        self::VALIDATED => "Livrée"
     ];
 
     public const STATUS_DATA_FORM = [
-        "Créée" => Order::CREATED, 
-        "Acceptée" => Order::VALIDATED
+        "Créée" => self::CREATED, 
+        "Payée" => self::PAIED,
+        "Livrée" => self::VALIDATED
     ];
 
     /**
@@ -82,6 +85,11 @@ class Order
      * @ORM\JoinColumn(nullable=false)
      */
     private $secteur;
+
+    /**
+     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
+     */
+    private $tva;
 
     public function __construct()
     {
@@ -224,5 +232,26 @@ class Order
         $this->secteur = $secteur;
 
         return $this;
+    }
+
+    public function getTva(): ?string
+    {
+        return $this->tva ?? 20.;
+    }
+
+    public function setTva(?string $tva): self
+    {
+        $this->tva = $tva;
+
+        return $this;
+    }
+
+
+    public function getMontantTva(){
+        return $this->getAmount() * $this->getTva() / (100 + $this->getTva());
+    }
+
+    public function getMontantHt(){
+        return $this->getAmount() / (1. + $this->getTva()/100);
     }
 }

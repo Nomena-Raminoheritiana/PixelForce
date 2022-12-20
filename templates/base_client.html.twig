@@ -50,6 +50,7 @@
 
     </head>
     <body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
+        {% set configTva = configSecteurService.findTva() %}
         <!-- Navbar -->
         {% include '/partials/header-navbar-client.html.twig' %}
         <!-- Content -->

@@ -16,7 +16,7 @@ class ConfigSecteurService
         $this->configSecteurRepository = $configSecteurRepository;
     }
 
-    public function findTva(Secteur $secteur){
+    public function findTva(?Secteur $secteur = null){
         $config = $this->configSecteurRepository->findConfigByNum(ConfigSecteurService::CONFIG_NUM_TVA, $secteur);
         return $config ? ($config->getVal() ? $config->getVal() : 0) : 0;
     }

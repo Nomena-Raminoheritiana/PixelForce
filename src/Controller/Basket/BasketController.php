@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Produit;
 use App\Entity\BasketItem;
+use App\Entity\Order;
 use App\Entity\OrderAddress;
 
 use App\Form\OrderAddressType;
@@ -45,8 +46,9 @@ class BasketController extends AbstractController
     private $orderService;
     private $userRepository;
     private $session;
+    private $stripeService;
 
-    public function __construct(EntityManagerInterface $entityManager, ProduitRepository $produitRepository, FileHandler $fileHandler, BasketService $basketService, OrderService $orderService, UserRepository $userRepository, SessionInterface $session){
+    public function __construct(EntityManagerInterface $entityManager, ProduitRepository $produitRepository, FileHandler $fileHandler, BasketService $basketService, OrderService $orderService, UserRepository $userRepository, SessionInterface $session, StripeService $stripeService){
         $this->entityManager = $entityManager;
         $this->produitRepository = $produitRepository;
         $this->fileHandler = $fileHandler;
@@ -54,6 +56,7 @@ class BasketController extends AbstractController
         $this->orderService = $orderService;
         $this->userRepository = $userRepository;
         $this->session = $session;
+        $this->stripeService = $stripeService;
     }
 
    /**
@@ -81,17 +84,22 @@ class BasketController extends AbstractController
     /**
      * @Route("/address", name="client_order_address")
      */
-    public function address($token, Request $request): Response
+    public function address($token, Request $request, SecteurRepository $secteurRepository): Response
     {
         $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
         $groupKey = BasketItem::getGroupKeyStatic($agent->getId(), $secteurId);
         if(!$this->basketService->hasItem($groupKey))
-            return $this->redirectToRoute('client_basket');
+            return $this->redirectToRoute('client_basket', ['token' => $token]);
 
+        $user = (object)$this->getUser();
         $error = null;
         //$orderAddress = $this->orderService->getAddressOrDefault();
         $orderAddress = new OrderAddress();
+        $orderAddress->setNom($user->getNom());
+        $orderAddress->setPrenom($user->getPrenom());
+        $orderAddress->setTelephone($user->getTelephone());
+        $orderAddress->setEmail($user->getEmail());
 
         $form = $this->createForm(OrderAddressType::class, $orderAddress);
 
@@ -99,8 +107,10 @@ class BasketController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
+                $secteur = $secteurRepository->find($secteurId);
                 $this->orderService->setAddress($orderAddress);
-                return $this->redirectToRoute('client_order_payment', ['token' => $token]);
+                $order = $this->orderService->saveOrder($agent, $secteur);
+                return $this->redirectToRoute('client_order_payment', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
@@ -116,14 +126,11 @@ class BasketController extends AbstractController
     }
 
     /**
-     * @Route("/payment", name="client_order_payment")
+     * @Route("/payment/{id}", name="client_order_payment")
      */
-    public function payment($token, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository): Response
+    public function payment($token, Order $order, Request $request, FormFactoryInterface $formFactory, SecteurRepository $secteurRepository): Response
     {
         
-        if(!$this->orderService->getAddress())
-            return $this->redirectToRoute('client_order_address');
-
         $secteurId = $this->session->get('secteurId');
         $agent = $this->userRepository->findAgentByToken($token);
 
@@ -139,9 +146,9 @@ class BasketController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
-                $secteur = $secteurRepository->find($secteurId);
-                $stripeToken =  $form->get('token')->getData();
-                $order = $this->orderService->saveOrder($stripeToken, $agent, $secteur);
+                $paymentIntentId =  $form->get('token')->getData();
+                $this->orderService->payOrder($order);          
+                $this->addFlash('success', 'Votre commande a été efféctuée avec succès.');
                 return $this->redirectToRoute('client_order_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
@@ -149,12 +156,15 @@ class BasketController extends AbstractController
 
         }
 
+        $stripeIntentSecret = $this->stripeService->intentSecretByPaymentIntentId($order->getChargeId());
         return $this->render('user_category/client/basket/payment.html.twig',[
+            'stripeIntentSecret' => $stripeIntentSecret,
             'stripe_public_key' => $this->getParameter('stripe_public_key'),
             'form' => $form->createView(),
             'error' => $error,
             'agent' => $agent,
-            'token' => $token
+            'token' => $token,
+            'order' => $order
         ]);
     }
 

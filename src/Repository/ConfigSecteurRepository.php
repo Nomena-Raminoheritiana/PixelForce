@@ -41,17 +41,31 @@ class ConfigSecteurRepository extends ServiceEntityRepository
         }
     }
 
-    public function findConfigByNum($num, Secteur $secteur): ?ConfigSecteur
+    public function findConfigByNum($num, ?Secteur $secteur = null, $nbr=1): ?ConfigSecteur
     {
-        return $this->createQueryBuilder('c')
+        $secteurId = -1;
+        $typeSecteurId = -1;
+        if($secteur){
+            $secteurId = $secteur->getId();
+            $typeSecteurId = $secteur->getType()->getId();
+        }
+        $result = $this->createQueryBuilder('c')
             ->where('c.num = :num and c.statut = :statutValid and (c.secteur = :secteurId or c.secteur is NULL) and (c.typeSecteur = :typeSecteurId or c.typeSecteur is NULL) ')
             ->setParameter('num', $num)
             ->setParameter('statutValid', Status::VALID)
-            ->setParameter('secteurId', $secteur->getId())
-            ->setParameter('typeSecteurId', $secteur->getType()->getId())
+            ->setParameter('secteurId', $secteurId)
+            ->setParameter('typeSecteurId', $typeSecteurId)
+            ->addOrderBy('c.secteur', 'desc')
+            ->addOrderBy('c.typeSecteur', 'desc')
+            ->setMaxResults($nbr)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
+        if($nbr > 1){
+            return $result;
+        }
+        return count($result) > 0 ? $result[0] : null; 
+        
     }
 
 //    /**
