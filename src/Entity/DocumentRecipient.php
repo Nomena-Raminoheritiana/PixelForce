@@ -68,6 +68,11 @@ class DocumentRecipient
      */
     private $conseiller;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $paymentIntentId;
+
 
     public function getId(): ?int
     {
@@ -190,6 +195,18 @@ class DocumentRecipient
     public function setConseiller(string $conseiller): self
     {
         $this->conseiller = $conseiller;
+
+        return $this;
+    }
+
+    public function getPaymentIntentId(): ?string
+    {
+        return $this->paymentIntentId;
+    }
+
+    public function setPaymentIntentId(?string $paymentIntentId): self
+    {
+        $this->paymentIntentId = $paymentIntentId;
 
         return $this;
     }

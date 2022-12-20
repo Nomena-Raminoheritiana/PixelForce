@@ -11,6 +11,7 @@ use App\Form\SignDocumentType;
 use App\Repository\DocumentRecipientRepository;
 use App\Services\DocumentService;
 use App\Services\FileHandler;
+use App\Services\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,12 +31,14 @@ class DocumentClientController extends AbstractController
     private $documentRecipientRepository;
     private $fileHandler;
     private $documentService;
+    private $stripeService;
 
-    public function __construct(EntityManagerInterface $entityManager, DocumentRecipientRepository $documentRecipientRepository, FileHandler $fileHandler, DocumentService $documentService){
+    public function __construct(EntityManagerInterface $entityManager, DocumentRecipientRepository $documentRecipientRepository, FileHandler $fileHandler, DocumentService $documentService, StripeService $stripeService){
         $this->entityManager = $entityManager;
         $this->documentRecipientRepository = $documentRecipientRepository;
         $this->fileHandler = $fileHandler;
         $this->documentService = $documentService;
+        $this->stripeService = $stripeService;
     }
 
     /**
@@ -89,7 +92,8 @@ class DocumentClientController extends AbstractController
                 $photo = $this->fileHandler->saveBase64($signature, $filesDirectory."docs/signatures/signature-".$rec->getId().'.png');
                 $this->documentService->signDocument($rec, $photo);
                 $this->addFlash('success', 'Document signé');
-                return $this->redirectToRoute('dc_document_pay', ['token' => $token]);
+
+                return $this->redirectToRoute('dc_document_set_intent', ['token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
             }
@@ -102,6 +106,27 @@ class DocumentClientController extends AbstractController
             'token' => $token,
             'filesDirectory' => $filesDirectory
         ]);
+    }
+
+    /**
+     * @Route("/setIntent", name="dc_document_set_intent")
+     */
+    public function setIntent($token, Request $request): Response
+    {
+        
+       
+        try{
+            $rec = $this->documentRecipientRepository->findRecipientByToken($token);
+            $paymentIntent = $this->stripeService->paymentIntent($rec->getDocument()->getAmount());
+            $rec->setPaymentIntentId($paymentIntent->id);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('dc_document_pay', ['token' => $token]);
+        } catch(Exception $ex){
+            $error = $ex->getMessage();
+            $this->addFlash('danger', $error);
+            return $this->redirectToRoute('dc_document_sign', ['token' => $token]);
+        }
     }
 
     /**
@@ -152,7 +177,7 @@ class DocumentClientController extends AbstractController
 
             try{
                 $stripeToken = $form->get('token')->getData();
-                $this->documentService->pay($stripeToken, $rec);
+                $this->documentService->pay($rec);
                 $this->addFlash('success', 'Paiement effectué');
                 return $this->redirectToRoute('dc_document_fiche', ['token' => $token]);
             } catch(Exception $ex){
@@ -160,12 +185,14 @@ class DocumentClientController extends AbstractController
             }
         }
 
+        $stripeIntentSecret = $this->stripeService->intentSecretByPaymentIntentId($rec->getPaymentIntentId());
         return $this->render('user_category/dc/document/document_pay.html.twig',[
             'stripe_public_key' => $this->getParameter('stripe_public_key'),
             'rec' => $rec,
             'form' => $form->createView(),
             'error' => $error,
-            'token' => $token
+            'token' => $token,
+            'stripeIntentSecret' => $stripeIntentSecret,
         ]);
     }
 }
