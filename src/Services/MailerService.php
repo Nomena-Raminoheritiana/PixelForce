@@ -220,12 +220,6 @@ class MailerService
     }
 
     public function sendFactureProduit(Order $order){
-        $facturePdf = $this->twig->render('pdf/facture.html.twig', [
-            'order' => $order
-        ]);
-        $binary = $this->wrapper->getPdf($facturePdf, ['isRemoteEnabled' => true, 'isHtml5ParserEnabled'=>true, 'defaultFont'=> 'Arial']);
-        $directory = "factures";
-        $pj_filepath = $this->fileHandler->saveBinary($binary, "Facture Pixelforce-Commande n°".$order->getId()." du ".date('Y-m-d-H-i-s').'.pdf', $directory);
         
         $body = $this->renderTwig('emails/commande.html.twig', [
             'nomClient' => $order->getAddress()->getNom(),
@@ -233,13 +227,24 @@ class MailerService
             'order' => $order
         ]);
 
-        $attachmentsPath = [$pj_filepath];
+        $attachmentsPath = [$order->getInvoicePath()];
         $embeddedImages = ['logo' => 'assets/img/logo/pixelforce/logo-pixelforce-min.png'];
         $this->mySendMail([
             'subject' => 'Confirmation de commande '.$order->getId(),
             'to' => $order->getAddress()->getEmail(),
             'body' => $body
         ], $attachmentsPath, null, $embeddedImages);
+
+        $bodyMailToAdmin = $this->renderTwig('emails/commande_details.html.twig', [
+            'order' => $order
+        ]);
+        $MailToAdmin = [
+            'body' => $bodyMailToAdmin,
+            'subject' => "Commande coffret  n°{$order->getId()}",
+            'to' => $order->getAgent()->getEmail()
+        ];
+
+        $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);
 
     }
 

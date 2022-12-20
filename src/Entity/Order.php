@@ -91,6 +91,11 @@ class Order
      */
     private $tva;
 
+    /**
+     * @ORM\Column(type="string", length=500, nullable=true)
+     */
+    private $invoicePath;
+
     public function __construct()
     {
         $this->orderProducts = new ArrayCollection();
@@ -253,5 +258,17 @@ class Order
 
     public function getMontantHt(){
         return $this->getAmount() / (1. + $this->getTva()/100);
+    }
+
+    public function getInvoicePath(): ?string
+    {
+        return $this->invoicePath;
+    }
+
+    public function setInvoicePath(?string $invoicePath): self
+    {
+        $this->invoicePath = $invoicePath;
+
+        return $this;
     }
 }

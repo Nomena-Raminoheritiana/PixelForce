@@ -138,11 +138,12 @@ class BasketController extends AbstractController
         $form = $formFactory
             ->createNamedBuilder("payment-form")
             ->add('token', HiddenType::class, [
-                'constraints' => [new NotBlank()],
+                //'constraints' => [new NotBlank()],
             ])
             ->getForm();
 
         $form->handleRequest($request);
+        var_dump($form->isSubmitted() && $form->isValid());
         if ($form->isSubmitted() && $form->isValid()) {
 
             try{
@@ -152,6 +153,7 @@ class BasketController extends AbstractController
                 return $this->redirectToRoute('client_order_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
+                $this->addFlash('danger', $error);
             }
 
         }

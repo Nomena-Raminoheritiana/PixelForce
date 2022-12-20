@@ -14,6 +14,7 @@ use App\Repository\ProduitRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -29,8 +30,10 @@ class OrderService
     private $stockService;
     private $configSecteurService;
     private $mailerService;
+    private $fileHandler;
+    private $wrapper;
 
-    public function __construct(SessionInterface $session, TokenStorageInterface $tokenStorage, BasketService $basketService, EntityManagerInterface $entityManager, ProduitRepository $produitRepository, OrderRepository $orderRepository, StripeService $stripeService, StockService $stockService, ConfigSecteurService $configSecteurService, MailerService $mailerService)
+    public function __construct(SessionInterface $session, TokenStorageInterface $tokenStorage, BasketService $basketService, EntityManagerInterface $entityManager, ProduitRepository $produitRepository, OrderRepository $orderRepository, StripeService $stripeService, StockService $stockService, ConfigSecteurService $configSecteurService, MailerService $mailerService, DompdfWrapperInterface $wrapper, FileHandler $fileHandler)
     {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
@@ -42,6 +45,8 @@ class OrderService
         $this->stockService = $stockService;
         $this->configSecteurService = $configSecteurService;
         $this->mailerService = $mailerService;
+        $this->fileHandler = $fileHandler;
+        $this->wrapper = $wrapper;
     }
 
 
@@ -140,6 +145,7 @@ class OrderService
         $this->entityManager->persist($order);
         $this->entityManager->flush();
         try{
+            $this->saveInvoice($order);
             $this->mailerService->sendFactureProduit($order);
         } catch(Exception $ex){}
     }
@@ -151,6 +157,17 @@ class OrderService
             throw new Exception("La commande n°".$orderId." n'existe pas");
         }
         $order->setStatus($status);
+        $this->entityManager->flush();
+    }
+
+    public function saveInvoice(Order $order){
+        $facturePdf = $this->mailerService->renderTwig('pdf/facture.html.twig', [
+            'order' => $order
+        ]);
+        $binary = $this->wrapper->getPdf($facturePdf, ['isRemoteEnabled' => true, 'isHtml5ParserEnabled'=>true, 'defaultFont'=> 'Arial']);
+        $directory = "factures";
+        $pj_filepath = $this->fileHandler->saveBinary($binary, "Facture Pixelforce-Commande n°".$order->getId()." du ".date('Y-m-d-H-i-s').'.pdf', $directory);
+        $order->setInvoicePath($pj_filepath);
         $this->entityManager->flush();
     }
 }
