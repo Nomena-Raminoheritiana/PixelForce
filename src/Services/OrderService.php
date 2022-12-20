@@ -28,8 +28,9 @@ class OrderService
     private $stripeService;
     private $stockService;
     private $configSecteurService;
+    private $mailerService;
 
-    public function __construct(SessionInterface $session, TokenStorageInterface $tokenStorage, BasketService $basketService, EntityManagerInterface $entityManager, ProduitRepository $produitRepository, OrderRepository $orderRepository, StripeService $stripeService, StockService $stockService, ConfigSecteurService $configSecteurService)
+    public function __construct(SessionInterface $session, TokenStorageInterface $tokenStorage, BasketService $basketService, EntityManagerInterface $entityManager, ProduitRepository $produitRepository, OrderRepository $orderRepository, StripeService $stripeService, StockService $stockService, ConfigSecteurService $configSecteurService, MailerService $mailerService)
     {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
@@ -40,6 +41,7 @@ class OrderService
         $this->stripeService = $stripeService;
         $this->stockService = $stockService;
         $this->configSecteurService = $configSecteurService;
+        $this->mailerService = $mailerService;
     }
 
 
@@ -138,7 +140,7 @@ class OrderService
         $this->entityManager->persist($order);
         $this->entityManager->flush();
         try{
-            
+            $this->mailerService->sendFactureProduit($order);
         } catch(Exception $ex){}
     }
 
