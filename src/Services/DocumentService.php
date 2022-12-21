@@ -124,15 +124,10 @@ class DocumentService
         }
     }
 
-    public function pay(string $stripeToken, DocumentRecipient $rec){
+    public function pay(DocumentRecipient $rec){
         try{
-            $chargeId = $this->stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    $rec->getDocument()->getAmount(), [
-                        'description' => 'Paiement apres signature document'
-                    ]);
-
+            $paymentIntent = $this->stripeService->getPaymentIntent($rec->getPaymentIntentId());
+            if($paymentIntent->status != "succeeded") throw new Exception("Erreur rencontrée lors du paiement");
             $rec->setPaid(true);        
             $this->entityManager->flush();
         } finally {

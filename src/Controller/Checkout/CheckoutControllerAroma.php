@@ -3,6 +3,7 @@
 namespace App\Controller\Checkout;
 
 use App\Entity\BasketItemAroma;
+use App\Entity\Order;
 use App\Entity\OrderAddressAroma;
 use App\Entity\OrderAroma;
 use App\Form\OrderAddressAromaFormType;
@@ -11,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Services\BasketServiceAroma;
 use App\Services\ConfigSecteurService;
 use App\Services\OrderServiceAroma;
+use App\Services\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,26 +32,30 @@ class CheckoutControllerAroma extends AbstractController
     private $userRepository;
     private $session;
     private $configSecteurService;
+    private $orderService;
 
     
     public function __construct(EntityManagerInterface $entityManager, 
     BasketServiceAroma $basketService, 
     UserRepository $userRepository, 
     SessionInterface $session,
-    ConfigSecteurService $configSecteurService)
+    ConfigSecteurService $configSecteurService,
+    OrderServiceAroma $orderService)
     {
         $this->entityManager = $entityManager;
         $this->basketService = $basketService;
         $this->session = $session;
         $this->userRepository = $userRepository;
         $this->configSecteurService = $configSecteurService;
+        $this->orderService = $orderService;
     }
 
 
     #[Route(path: '/address', name: 'client_aroma_checkout_address')]
-    public function address(string $token, Request $request): Response
+    public function address(string $token, Request $request, SecteurRepository $secteurRepository): Response
     {
         $secteurId = $this->session->get('secteurId');
+        $secteur = $secteurRepository->find($secteurId);
         $agent = $this->userRepository->findAgentByToken($token);
         $address = new OrderAddressAroma();
         $form = $this->createForm(OrderAddressAromaFormType::class, $address);
@@ -59,7 +65,13 @@ class CheckoutControllerAroma extends AbstractController
 
             try{
                 $request->getSession()->set('addressAroma', $address);
-                return $this->redirectToRoute('client_aroma_checkout_payment', ['token' => $token]);
+                $order = new OrderAroma();
+                $order->setUser($this->getUser());
+                $order->setSecteur($secteur);
+                $order->setAgent($agent);
+                $order->setAddress($request->getSession()->get('addressAroma'));
+                $order = $this->orderService->saveOrder($order);
+                return $this->redirectToRoute('client_aroma_checkout_payment', ['token' => $token, 'order' => $order->getId()]);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
@@ -75,16 +87,11 @@ class CheckoutControllerAroma extends AbstractController
     }
 
     
-    #[Route(path: '/payment', name: 'client_aroma_checkout_payment')]
-    public function payment(string $token, Request $request, FormFactoryInterface $formFactory, OrderServiceAroma $orderService, SecteurRepository $secteurRepository): Response
+    #[Route(path: '/payment/{order}', name: 'client_aroma_checkout_payment')]
+    public function payment(string $token, OrderAroma $order, Request $request, FormFactoryInterface $formFactory, StripeService $stripeService): Response
     {
         $secteurId = $this->session->get('secteurId');
-        $secteur = $secteurRepository->find($secteurId);
         $agent = $this->userRepository->findAgentByToken($token);
-        $groupKey = BasketItemAroma::getGroupKeyStatic($agent->getId(), $secteurId);
-        $basket = $this->basketService->refreshBasket($groupKey);
-        $totalCost = $this->basketService->getTotalCostBasket($basket);
-        $tva = $this->configSecteurService->findTva($secteur);
         
         $form = $formFactory
             ->createNamedBuilder("payment-form")
@@ -99,26 +106,20 @@ class CheckoutControllerAroma extends AbstractController
 
             try{
                 $stripeToken =  $form->get('token')->getData();
-                $order = new OrderAroma();
-                $order->setUser($this->getUser());
-                $order->setSecteur($secteur);
-                $order->setAgent($agent);
-                $order->setAddress($request->getSession()->get('addressAroma'));
-                $order = $orderService->saveOrder($order, $stripeToken);
+                $this->orderService->payOrder($order);
                 return $this->redirectToRoute('client_aroma_order_details', ['id' => $order->getId(), 'token' => $token]);
             } catch(Exception $ex){
                 $this->addFlash('danger', $ex->getMessage());
             }
         }
 
-        
+        $stripeIntentSecret = $stripeService->intentSecretByPaymentIntentId($order->getChargeId());
         return $this->render('user_category/client/aroma/cart/payment.html.twig',[
             'form' => $form->createView(),
             'agent' => $agent,
             'token' => $token,
-            'basket' => $basket,
-            'totalCost' => $totalCost,
-            'tva' => $tva
+            'order' => $order,
+            'stripeIntentSecret' => $stripeIntentSecret,
         ]);
         
     }

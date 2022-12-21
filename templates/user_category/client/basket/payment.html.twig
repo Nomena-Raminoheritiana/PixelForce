@@ -94,35 +94,34 @@
                 </div>
             </div>
         </div>
-        {# <div class="amount-payable checkout-options">
+        <div class="checkout-options" >
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Price Details</h4>
-                </div>
                 <div class="card-body">
-                    <ul class="list-unstyled price-details">
-                        <li class="price-detail">
-                            <div class="details-title">Price of 3 items</div>
-                            <div class="detail-amt">
-                                <strong>$699.30</strong>
-                            </div>
-                        </li>
-                        <li class="price-detail">
-                            <div class="details-title">Delivery Charges</div>
-                            <div class="detail-amt discount-amt text-success">Free</div>
-                        </li>
-                    </ul>
-                    <hr />
-                    <ul class="list-unstyled price-details">
-                        <li class="price-detail">
-                            <div class="details-title">Amount Payable</div>
-                            <div class="detail-amt fw-bolder">$699.30</div>
-                        </li>
-                    </ul>
+                    <label class="section-label form-label mb-3">Détails de la commande</label>
+                    <div class="price-details">
+                        <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
+                            <li class="price-detail">
+                                <div class="detail-title">Prix net (sans TVA)</div>
+                                <div class="detail-amt discount-amt" id="cart-total-ht">{{order.montantHt|number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            <li class="price-detail">
+                                <div class="detail-title">TVA ({{order.tva | number_format(0, ',', ' ')}} %)</div>
+                                <div class="detail-amt discount-amt" id="cart-tva">{{order.montantTva|number_format(2, ',', ' ')}} €</div>
+                            </li>
+                            
+                        </ul>
+                        <hr />
+                        <ul class="list-unstyled">
+                            <li class="price-detail">
+                                <div class="detail-title detail-total">Prix total (TVA incluse) :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" >{{order.amount | number_format(2, ',', ' ')}} €</div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div> #}
-        
+            <!-- Checkout Place Order Right ends -->
+        </div>
     {# </form>     #}
     {{ form_end(form) }}
 </div>
@@ -133,6 +132,7 @@
 {{ parent() }}
 <script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
+  var clientSecret = '{{ stripeIntentSecret }}';
   var form = document.getElementById('{{ form.vars.id }}');
   var errors = document.getElementById('card-errors');
   var cardElement = document.getElementById('card-element');
@@ -155,15 +155,18 @@
   form.addEventListener('submit', function(event) {
     event.preventDefault();
  
-    stripe.createToken(card).then(function(result) {
-      if (result.error) {
-        errors.textContent = result.error.message;
-        form.classList.add('has-error');
-      } else {
-        document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
-        form.submit();
-      }
-    });
+    stripe.handleCardPayment(
+        clientSecret,
+        card
+    ).then((result) => {
+        if (result.error) {
+            errors.textContent = result.error.message;
+            form.classList.add('has-error');
+        }else if('paymentIntent' in result){
+            document.getElementById('{{form.children.token.vars.id}}').setAttribute('value', result.paymentIntent.id);
+            form.submit();
+        }
+    });  
   });
 </script>
 {% endblock %}

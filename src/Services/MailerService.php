@@ -3,9 +3,12 @@
 
 namespace App\Services;
 
+use Twig\Environment as Twig_Environment;
 use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
+use App\Entity\Order;
 use App\Entity\User;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -23,13 +26,19 @@ class MailerService
     private $from;
     private $from_name;
     private $parameterBag;
+    private $twig;
+    private $wrapper;
+    private $fileHandler;
 
-    public function __construct(MailerInterface $mailer, ParameterBagInterface $parameterBag)
+    public function __construct(MailerInterface $mailer, ParameterBagInterface $parameterBag, Twig_Environment $twig, DompdfWrapperInterface $wrapper, FileHandler $fileHandler)
     {
         $this->mailer = $mailer;
         $this->from =  $_ENV['MAILER_SEND_FROM'];
         $this->from_name = $_ENV['MAILER_SEND_FROM_NAME'];
         $this->parameterBag = $parameterBag;
+        $this->twig = $twig;
+        $this->wrapper = $wrapper;
+        $this->fileHandler = $fileHandler;
     }
 
     public function sendMailInscriptionUser($email)
@@ -182,5 +191,61 @@ class MailerService
 //
 //    ];
 
+    public function mySendMail(array $mail, array $attachmentsPath = [], ?string $to = null, array $embeddedImages = [])
+    {
+        $email = (new Email())
+            ->from(new Address($this->from, $this->from_name))
+            ->subject($mail['subject'])
+            ->html($mail['body']);
+
+        $to = $to === null ? $mail['to'] : $to;    
+        if(gettype($to) == "array"){
+            $email = $email->to(...$to);
+        } else {
+            $email = $email->to($to);
+        }
+
+        foreach($attachmentsPath as $path){
+            $email->attachFromPath($this->parameterBag->get('kernel.project_dir')."/public/files/".$path);
+        }
+
+        foreach($embeddedImages as $key => $value){
+            $email->embedFromPath($this->parameterBag->get('kernel.project_dir')."/public/".$value, $key);
+        }
+        $this->mailer->send($email);
+    }
+
+    public function renderTwig($filePath, $options = []){
+        return $this->twig->render($filePath, $options);
+    }
+
+    public function sendFactureProduit(Order $order){
+        
+        $body = $this->renderTwig('emails/commande.html.twig', [
+            'nomClient' => $order->getAddress()->getNom(),
+            'prenomClient' => $order->getAddress()->getPrenom(),
+            'order' => $order
+        ]);
+
+        $attachmentsPath = [$order->getInvoicePath()];
+        $embeddedImages = ['logo' => 'assets/img/logo/pixelforce/logo-pixelforce-min.png'];
+        $this->mySendMail([
+            'subject' => 'Confirmation de commande '.$order->getId(),
+            'to' => $order->getAddress()->getEmail(),
+            'body' => $body
+        ], $attachmentsPath, null, $embeddedImages);
+
+        $bodyMailToAdmin = $this->renderTwig('emails/commande_details.html.twig', [
+            'order' => $order
+        ]);
+        $MailToAdmin = [
+            'body' => $bodyMailToAdmin,
+            'subject' => "Commande coffret  n°{$order->getId()}",
+            'to' => $order->getAgent()->getEmail()
+        ];
+
+        $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);
+
+    }
 
 }

@@ -620,4 +620,17 @@ class StripeService
             'subscription_proration_date' => $proration_date,
         ]);
     }
+
+    public function intentSecretByPaymentIntentId($paymentIntentId)
+    {
+        $intent = $this->getPaymentIntent($paymentIntentId);
+
+        return $intent['client_secret'] ?? null;
+    }
+
+    
+    public function getPaymentIntent($id)
+    {
+        return \Stripe\PaymentIntent::retrieve($id, []);
+    }
 }

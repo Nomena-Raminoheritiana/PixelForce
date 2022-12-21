@@ -40,3 +40,5 @@ services:
     App\Services\DemandeDevisService:
         arguments:
             $filesDirectory: '%files_directory%'
+
+    util.config: '@App\Services\ConfigSecteurService'

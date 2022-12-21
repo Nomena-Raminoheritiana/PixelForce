@@ -11,6 +11,7 @@ use App\Manager\EntityManager;
 use App\Repository\UserRepository;
 use App\Services\DemandeDevisService;
 use App\Services\FileHandler;
+use App\Services\OrderDigitalService;
 use App\Services\StripeService;
 use App\Util\GenericUtil;
 use Exception;
@@ -38,13 +39,15 @@ class ClientDevisController extends AbstractController
     private $entityManager;
     private $fileHandler;
     private $demandeDevisService;
+    private $orderDigitalService;
 
-    public function __construct(UserRepository $userRepository, EntityManager $entityManager, FileHandler $fileHandler, DemandeDevisService $demandeDevisService)
+    public function __construct(UserRepository $userRepository, EntityManager $entityManager, FileHandler $fileHandler, DemandeDevisService $demandeDevisService, OrderDigitalService $orderDigitalService)
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->fileHandler = $fileHandler;
         $this->demandeDevisService = $demandeDevisService;
+        $this->orderDigitalService = $orderDigitalService;
 
     }
 
@@ -135,7 +138,11 @@ class ClientDevisController extends AbstractController
                 $devis->setContratFileName($filepath);
                 $this->entityManager->persist($devis);
                 $this->entityManager->flush();
-                return $this->redirectToRoute('client_devis_signature_step_three', ['token' => $token, 'dd' => $dd->getId(), 'devis' => $devis->getId()]);
+
+                $orderDigital = new OrderDigital();
+                $orderDigital = $this->orderDigitalService->saveOrder($orderDigital, $devis, $agent, $user);
+
+                return $this->redirectToRoute('client_devis_signature_step_three', ['token' => $token, 'order' => $orderDigital->getId()]);
             } catch(Exception $ex){
                 $error = $ex->getMessage();
                 $this->addFlash('danger', $error);
@@ -207,18 +214,18 @@ class ClientDevisController extends AbstractController
     }
 
     /**
-     * @Route("/{dd}/devis/{devis}/signature/step/three", name="client_devis_signature_step_three")
+     * @Route("/{order}/signature/step/three", name="client_devis_signature_step_three")
      */
-    public function client_devis_signature_step_three($token, DemandeDevis $dd, Devis $devis, StripeService $stripeService, Request $request, FormFactoryInterface $formFactory): Response
+    public function client_devis_signature_step_three($token, OrderDigital $order, StripeService $stripeService, Request $request, FormFactoryInterface $formFactory): Response
     {
+        $dd = $order->getDevis()->getDemandeDevis();
+        $devis = $order->getDevis();
         /** @var User $client */
         $client = $this->getUser();
         $agent = $this->userRepository->findAgentByToken($token);
 
-        // $devisPrice = $devis->getPrice();
-        // $stripeIntentSecret = $stripeService->intentSecret($devisPrice);
+        
         $stripePublishableKey = $_ENV['STRIPE_PUBLIC_KEY'];
-        $orderDigital = new OrderDigital();
         
         $form = $formFactory
             ->createNamedBuilder("payment-form")
@@ -230,29 +237,14 @@ class ClientDevisController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $stripeToken =  $form->get('token')->getData();
-            
-            $orderDigital->setAmount($devis->getPrice());
-            $orderDigital->setAgent($agent);
-            $orderDigital->setAgentEmail($agent->getEmail());
-            $orderDigital->setClient($client);
-            $orderDigital->setClientEmail($client->getEmail());
-            $orderDigital->setDevis($devis);
-
-            $chargeId = $stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    $devis->getPrice(), ['description' => 'Paiement signature devis']
-            );
-            $orderDigital->setStripeChargeId($chargeId);
-
-            $devis->setStatus(Devis::DEVIS_STATUS['PAID']);
-            $devis->setStatusInt(Devis::DEVIS_STATUS_INT['PAID']);
-            $this->entityManager->persist($orderDigital);
-            $this->entityManager->flush();
+            $this->orderDigitalService->payOrder($order);
             $this->addFlash('success', 'Devis payé');
             return $this->redirectToRoute('client_agent_devis_fiche', ['token' => $token, 'dd' => $dd->getId(), 'devis' => $devis->getId()]);
         }
+
+        $stripeIntentSecret = $stripeService->intentSecretByPaymentIntentId($order->getStripeChargeId());
         return $this->render('user_category/client/dd/devis/signature-step/signature_devis_step_three.html.twig',[
+            'stripeIntentSecret' => $stripeIntentSecret,
             'dd' => $dd,
             'devis' => $devis,
             'agent' => $agent,

@@ -27,20 +27,20 @@
                         <h6 class="mb-0"><a href="/client/product/{{basketItem.produit.id}}" class="text-body">{{basketItem.produit.nom}}</a></h6>
                     
                     </div>
-                    <span class="text-success mb-1">En stock</span>
+                    {# <span class="text-success mb-1">En stock</span> #}
                     <div class="item-quantity">
                         <span class="quantity-title">Quantité:</span>
                         <div class="input-group quantity-counter-wrapper bootstrap-touchspin">
                             <span class="input-group-btn input-group-prepend bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-down" type="button" onclick="decreaseQuantity({{basketItem.produit.id}})">-</button></span><input type="text" class="quantity-counter form-control" id="quantity-for-product-{{basketItem.produit.id}}" value="{{basketItem.quantity}}"><span class="input-group-btn input-group-append bootstrap-touchspin-injected"><button class="btn btn-primary bootstrap-touchspin-up" type="button" onclick="increaseQuantity({{basketItem.produit.id}})">+</button></span>
                         </div>
                     </div>
-                    <span class="text-success">Remise de 20%</span>
+                    {# <span class="text-success">Remise de 20%</span> #}
                     <span class="delivery-date text-muted"><i><b>Description :</b></i> {{basketItem.produit.description|raw}}</span>
                 </div>
                 <div class="item-options text-center">
                     <div class="item-wrapper">
                         <div class="item-cost">
-                            <h4 class="item-price mb-2" id="item-price-for-product-{{basketItem.produit.id}}" data-unit-price="{{basketItem.produit.prix}}">{{basketItem.cost}}€</h4>
+                            <h4 class="item-price mb-2" id="item-price-for-product-{{basketItem.produit.id}}" data-unit-price="{{basketItem.produit.prix}}">{{basketItem.cost| number_format(2, ',', ' ')}} €</h4>
                             {# <p class="card-text shipping">
                                 <span class="badge rounded-pill badge-light-success">Free Shipping</span>
                             </p> #}
@@ -69,19 +69,20 @@
                     <div class="price-details">
                         <ul class="list-unstyled"  style="height: calc(100vh - 470px);">
                             <li class="price-detail">
-                                <div class="detail-title">Prix de livraison</div>
-                                <div class="detail-amt discount-amt text-success">Gratuit</div>
+                                <div class="detail-title">Prix net (sans TVA)</div>
+                                <div class="detail-amt discount-amt" id="cart-total-ht">{{(totalCost / (1.0 + configTva/100))|number_format(2, ',', ' ')}} €</div>
                             </li>
                             <li class="price-detail">
-                                <div class="detail-title">Délai de livraison</div>
-                                <div class="detail-amt discount-amt">15 à 20 minute(s)</div>
+                                <div class="detail-title">TVA ({{configTva | number_format(0, ',', ' ')}} %)</div>
+                                <div class="detail-amt discount-amt" id="cart-tva">{{(totalCost * configTva / (100 + configTva))|number_format(2, ',', ' ')}} €</div>
                             </li>
+                            
                         </ul>
                         <hr />
                         <ul class="list-unstyled">
                             <li class="price-detail">
-                                <div class="detail-title detail-total">Prix total  :</div>
-                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{totalCost}}">{{totalCost}}€</div>
+                                <div class="detail-title detail-total">Prix total (TVA incluse) :</div>
+                                <div class="detail-amt fw-bolder" id="total-cost" data-total-cost="{{totalCost}}">{{totalCost | number_format(2, ',', ' ')}} €</div>
                             </li>
                         </ul>
                         <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_order_address', {'token': token})}}">Commander</a>
@@ -101,6 +102,12 @@
 {{ parent() }}
 <script type="text/javascript">  
     let token = '{{token}}';
+    let tva = {{configTva}};
+    function formatPrix(prix){
+        let text = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(prix);
+        return text;
+    }
+
     function addToBasket(productId, quantity = 1){
         console.log(productId);
         let request = $.ajax({  
@@ -127,14 +134,18 @@
         let quantityCounter = document.getElementById(`quantity-for-product-${productId}`);
         let costDOM = document.getElementById(`item-price-for-product-${productId}`);
         let totalCostDOM = document.getElementById(`total-cost`);
+        let tvaDOM = document.getElementById(`cart-tva`);
+        let totalHtDOM = document.getElementById(`cart-total-ht`);
         let unitPrice = parseFloat(costDOM.dataset.unitPrice);
         let totalCost = parseFloat(totalCostDOM.dataset.totalCost)- unitPrice;
         
         let qty = parseInt(quantityCounter.value) - 1;
         if(qty>=0){
             quantityCounter.value = qty;
-            costDOM.innerHTML = `${qty* unitPrice}€`;
-            totalCostDOM.innerHTML = `${totalCost}€`;
+            costDOM.innerHTML = formatPrix(qty* unitPrice);
+            totalCostDOM.innerHTML = formatPrix(totalCost);
+            tvaDOM.innerHTML = formatPrix(totalCost * tva / (100 + tva));
+            totalHtDOM.innerHTML = formatPrix(totalCost / (1.0 + tva/100));
             totalCostDOM.dataset.totalCost = totalCost;
         } 
     }
@@ -142,14 +153,18 @@
         let quantityCounter = document.getElementById(`quantity-for-product-${productId}`);
         let costDOM = document.getElementById(`item-price-for-product-${productId}`);
         let totalCostDOM = document.getElementById(`total-cost`);
+        let tvaDOM = document.getElementById(`cart-tva`);
+        let totalHtDOM = document.getElementById(`cart-total-ht`);
         let unitPrice = parseFloat(costDOM.dataset.unitPrice);
         let totalCost = parseFloat(totalCostDOM.dataset.totalCost)+ unitPrice;
 
 
         let qty = parseInt(quantityCounter.value) + 1;
         quantityCounter.value = qty;
-        costDOM.innerHTML = `${qty* unitPrice}€`;
-        totalCostDOM.innerHTML = `${totalCost}€`;
+        costDOM.innerHTML = formatPrix(qty* unitPrice);
+        totalCostDOM.innerHTML = formatPrix(totalCost);
+        tvaDOM.innerHTML = formatPrix(totalCost * tva / (100 + tva));
+        totalHtDOM.innerHTML = formatPrix(totalCost / (1.0 + tva/100));
         totalCostDOM.dataset.totalCost = totalCost;
     }
     function updateBasketItem(productId){

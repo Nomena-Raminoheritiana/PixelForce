@@ -15,20 +15,23 @@ use JsonSerializable;
  */
 class OrderSecu implements JsonSerializable
 {
-    public const CREATED = 1;
+    public const CREATED = 100;
+    public const PAIED = 1;
     public const VALIDATED = 2;
     public const REJECTED = -1;
 
     public const STATUS = [
-        OrderSecu::CREATED => "Créée", 
-        OrderSecu::VALIDATED => "Validée",
-        OrderSecu::REJECTED => "Rejetée"
+        self::CREATED => "Créée", 
+        self::PAIED => "Payée",
+        self::VALIDATED => "Livrée",
+        self::REJECTED => "Rejetée"
     ];
 
     public const STATUS_DATA_FORM = [
-        "Créée" => OrderSecu::CREATED, 
-        "Acceptée" => OrderSecu::VALIDATED,
-        "Rejetée" => OrderSecu::REJECTED
+        "Créée" => self::CREATED, 
+        "Payée" => self::PAIED,
+        "Livrée" => self::VALIDATED,
+        "Rejetée" => self::REJECTED
     ];
 
 

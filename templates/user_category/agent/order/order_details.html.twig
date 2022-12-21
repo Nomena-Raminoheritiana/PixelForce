@@ -1,3 +1,4 @@
+{% set ORDER_STATUS_PAIED = constant('App\\Entity\\Order::PAIED') %}
 {% extends 'base.html.twig' %}
 
 {% block title %}
@@ -112,7 +113,61 @@
                             <div class="checkout-options">
                                 <div class="card">
                                     <div class="card-body">
-                                        <label class="section-label form-label mb-1">Détails</label>
+                                        <label class="section-label form-label mb-1">Informations sur le client</label>
+                                        <hr />
+                                        <div class="price-details" style="margin-bottom: 30px;">
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Nom et prénom(s)</div>
+                                                    <div class="detail-amt">{{order.address.nom}} {{order.address.prenom}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Téléphone</div>
+                                                    <div class="detail-amt discount-amt">{{order.address.telephone}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Email</div>
+                                                    <div class="detail-amt discount-amt">{{order.address.email}}</div>
+                                                </li>
+                                                
+                                            </ul>
+                                            
+                                        </div>
+                                        <label class="section-label form-label mb-1">Informations sur la livraison</label>
+                                        <hr />
+                                        <div class="price-details" style="margin-bottom: 30px;">
+                                            <ul class="list-unstyled">
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Pays/région</div>
+                                                    <div class="detail-amt">{{order.address.paysRegion}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Numéro et nom de rue</div>
+                                                    <div class="detail-amt discount-amt">{{order.address.rue}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Adresse</div>
+                                                    <div class="detail-amt discount-amt">{{order.address.address}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Ville </div>
+                                                    <div class="detail-amt discount-amt">{{order.address.city}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Code postal </div>
+                                                    <div class="detail-amt discount-amt">{{order.address.postalCode}}</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">Province/département </div>
+                                                    <div class="detail-amt discount-amt">{{order.address.provinceDepartement}}</div>
+                                                </li>
+                                                
+                                                
+                                                
+                                            </ul>
+                                            <p>{{order.address.notes}}</p>
+                                        </div>
+                                        <label class="section-label form-label mb-1">Détails de la commande</label>
                                         <hr />
                                         <div class="price-details">
                                             <ul class="list-unstyled">
@@ -121,44 +176,34 @@
                                                     <div class="detail-amt">{{order.orderDate | date("d/m/Y H:i")}}</div>
                                                 </li>
                                                 <li class="price-detail">
-                                                    <div class="detail-title">Client</div>
-                                                    <div class="detail-amt">{{order.user.prenom}} {{order.user.nom}}</div>
-                                                </li>
-                                                <li class="price-detail">
                                                     <div class="detail-title">Statut</div>
                                                     <div class="detail-amt discount-amt text-primary">{{order.statusStr}}</div>
                                                 </li>
-                                                {% if order.address %}
-                                                <li class="price-detail">
-                                                    <div class="detail-title">Adresse</div>
-                                                    <div class="detail-amt">{{order.address.address}}</div>
-                                                </li>
-
-                                                {% if order.address.city %}
-                                                <li class="price-detail">
-                                                    <div class="detail-title">Ville</div>
-                                                    <div class="detail-amt">{{order.address.city}}</div>
-                                                </li>
-                                                {% endif %}
-                                                {% if order.address.postalCode %}
-                                                <li class="price-detail">
-                                                    <div class="detail-title">Code postal</div>
-                                                    <div class="detail-amt">{{order.address.postalCode}}</div>
-                                                </li>
-                                                {% endif %}
-                                                {% endif %}
+                                                
                                             </ul>
                                             <hr />
                                             <ul class="list-unstyled">
                                                 <li class="price-detail">
-                                                    <div class="detail-title detail-total">Prix total  :</div>
+                                                    <div class="detail-title">Prix net (sans TVA)</div>
+                                                    <div class="detail-amt discount-amt" id="cart-total-ht">{{order.montantHt|number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title">TVA ({{order.tva | number_format(0, ',', ' ')}} %)</div>
+                                                    <div class="detail-amt discount-amt" id="cart-tva">{{order.montantTva|number_format(2, ',', ' ')}} €</div>
+                                                </li>
+                                                <li class="price-detail">
+                                                    <div class="detail-title detail-total">Prix total (TVA incluse) :</div>
                                                     <div class="detail-amt fw-bolder" id="total-cost" >{{order.amount | number_format(2, ',', ' ')}} €</div>
                                                 </li>
                                             </ul>
-                                            {% if order.status == 1 %}
-                                            <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('admin_order_validate', {'id': order.id})}}">Accepter</a>
+                                            {% if order.invoicePath %}
+                                            <a role="button" class="btn btn-primary w-100 btn-next place-order mb-2" href="{{path('common_order_download_contrat', {id: order.id})}}"><i class="fa fa-file" aria-hidden="true"></i>&nbsp;Télécharger la facture</a>
+                                            {% endif %}
+                                            {% if order.status == ORDER_STATUS_PAIED %}
+                                            <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{path('admin_order_validate', {'id': order.id})}}">Livrer</a>
                                             {% endif %}
                                         </div>
+                                            
                                     </div>
                                 </div>
                                 <!-- Checkout Place Order Right ends -->

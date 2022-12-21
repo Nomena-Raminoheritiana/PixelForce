@@ -58,14 +58,14 @@ class OrderSecuService
         }
     }
 
-    public function saveOrder(string $stripeToken, OrderSecu $orderSecu): ?OrderSecu{
+    public function saveOrder(OrderSecu $orderSecu): ?OrderSecu{
         try{
             $this->entityManager->beginTransaction();
 
             $orderSecu->refresh($this->entityManager);
             $orderSecu->getKitbase()->checkValid();
             $orderSecu->setDateCommande(new DateTime());
-            $orderSecu->setStatut(OrderSecu::VALIDATED);
+            $orderSecu->setStatut(OrderSecu::CREATED);
             $orderSecu->setAccompMontant(0);
             $orderSecu->setTvaPourcentage($orderSecu->getTva()->getValeur());
             //$orderSecu->setInstallationFrais($orderSecu->getFraisInstallation());
@@ -85,14 +85,9 @@ class OrderSecuService
             }
             $orderSecu->setAccompMontant($montantAccomp); 
             
-            $chargeId = $this->stripeService
-                ->createCharge(
-                    $stripeToken, 
-                    $orderSecu->getTotalTtc(), [
-                        'description' => 'Paiement commande'
-                    ]);
+            $paymentIntent = $this->stripeService->paymentIntent($orderSecu->getTotalTtc());
+            $orderSecu->setChargeId($paymentIntent->id);   
 
-            $orderSecu->setChargeId($chargeId);  
             $this->entityManager->flush();
             $this->entityManager->commit();
             return $orderSecu;
@@ -105,6 +100,16 @@ class OrderSecuService
             $this->entityManager->clear();
         }
     }
+
+    public function payOrder(OrderSecu $order){
+        $paymentIntent = $this->stripeService->getPaymentIntent($order->getChargeId());
+        if($paymentIntent->status != "succeeded") throw new Exception("Erreur rencontrée lors du paiement");
+        $order->setStatut(OrderSecu::PAIED);
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+        try{} catch(Exception $ex){}
+    }
+
 
     public function changeStatus(int $orderId, int $status)
     {

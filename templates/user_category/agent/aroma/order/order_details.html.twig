@@ -215,9 +215,8 @@
                                                     <div class="detail-amt fw-bolder" id="total-cost" >{{order.montantTtc | number_format(2, ',', ' ')}} €</div>
                                                 </li>
                                             </ul>
-                                            {% if order.status == constant('App\\Entity\\OrderAroma::CREATED') %}
-                                            <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{path('admin_aroma_order_validate', {'id': order.id})}}">Accepter</a>
-                                            <a role="button" class="btn btn-danger w-100 btn-next place-order mt-1" href="{{path('admin_aroma_order_refuse', {'id': order.id})}}">Refuser</a>
+                                            {% if order.status == constant('App\\Entity\\OrderAroma::PAIED') %}
+                                            <a role="button" class="btn btn-success w-100 btn-next place-order" href="{{path('admin_aroma_order_validate', {'id': order.id})}}">Livrer</a>
                                             {% endif %}
                                         </div>
                                     </div>

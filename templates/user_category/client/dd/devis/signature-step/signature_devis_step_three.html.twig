@@ -143,6 +143,7 @@
     <script src="https://js.stripe.com/v3/"></script> 
     <script>
         $(function() {
+            var clientSecret = '{{ stripeIntentSecret }}';
             var form = document.getElementById('{{ form.vars.id }}');
             var errors = document.getElementById('card-errors');
             var cardElement = document.getElementById('card-element');
@@ -165,15 +166,18 @@
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
             
-                stripe.createToken(card).then(function(result) {
-                if (result.error) {
-                    errors.textContent = result.error.message;
-                    form.classList.add('has-error');
-                } else {
-                    document.getElementById('{{ form.children.token.vars.id }}').setAttribute('value', result.token.id);
-                    form.submit();
-                }
-                });
+                stripe.handleCardPayment(
+                    clientSecret,
+                    card
+                ).then((result) => {
+                    if (result.error) {
+                        errors.textContent = result.error.message;
+                        form.classList.add('has-error');
+                    }else if('paymentIntent' in result){
+                        document.getElementById('{{form.children.token.vars.id}}').setAttribute('value', result.paymentIntent.id);
+                        form.submit();
+                    }
+                }); 
             });
         })
     </script>                       

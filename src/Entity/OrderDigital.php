@@ -10,6 +10,22 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class OrderDigital
 {
+    public const CREATED = 100;
+    public const PAIED = 1;
+    public const VALIDATED = 2;
+
+    public const STATUS = [
+        self::CREATED => "Créée", 
+        self::PAIED => "Payée",
+        self::VALIDATED => "Livrée"
+    ];
+
+    public const STATUS_DATA_FORM = [
+        "Créée" => self::CREATED, 
+        "Payée" => self::PAIED,
+        "Livrée" => self::VALIDATED
+    ];
+    
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -63,6 +79,11 @@ class OrderDigital
      * @ORM\Column(type="string", length=255)
      */
     private $stripeChargeId;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $statut;
 
     public function __construct()
     {
@@ -179,6 +200,18 @@ class OrderDigital
     public function setStripeChargeId(string $stripeChargeId): self
     {
         $this->stripeChargeId = $stripeChargeId;
+
+        return $this;
+    }
+
+    public function getStatut(): ?int
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?int $statut): self
+    {
+        $this->statut = $statut;
 
         return $this;
     }

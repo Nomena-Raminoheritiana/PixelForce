@@ -12,20 +12,23 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class OrderAroma
 {
-    public const CREATED = 1;
+    public const CREATED = 100;
+    public const PAIED = 1;
     public const VALIDATED = 2;
     public const REFUSED = 0;
 
     public const STATUS = [
-        OrderAroma::CREATED => "Créée", 
-        OrderAroma::VALIDATED => "Validée",
-        OrderAroma::REFUSED => "Refusée"
+        self::CREATED => "Créée", 
+        self::PAIED => "Payée",
+        self::VALIDATED => "Livrée",
+        self::REFUSED => "Refusée"
     ];
 
     public const STATUS_DATA_FORM = [
-        "Créée" => OrderAroma::CREATED, 
-        "Validée" => OrderAroma::VALIDATED,
-        "Refusée" => OrderAroma::REFUSED
+        "Créée" => self::CREATED, 
+        "Payée" => self::PAIED,
+        "Livrée" => self::VALIDATED,
+        "Refusée" => self::REFUSED
     ];
 
     /**
