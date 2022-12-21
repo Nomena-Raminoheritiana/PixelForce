@@ -8,7 +8,6 @@ use App\Entity\ContactInformation;
 use App\Entity\SearchEntity\UserSearch;
 use App\Entity\User;
 use App\Form\ContactInformationType;
-use App\Form\ContactType;
 use App\Form\UserSearchType;
 use App\Manager\ContactManager;
 use App\Manager\EntityManager;
@@ -19,19 +18,13 @@ use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Services\ContactService;
 use App\Services\ExcelService;
-use App\Services\Google\PeopleService;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Exception;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Component\Pager\PaginatorInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
-use PHPStan\PhpDocParser\Ast\Type\ThisTypeNode;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -60,7 +53,7 @@ class AgentContactController extends AbstractController
     }
 
     /**
-     * @Route("/agent/contact/liste", name="agent_contact_list")
+     * @Route("/agent/contact/liste", name="agent_contact_list", options={"expose"=true})
      */
     public function agent_contact_list(Request $request, PaginatorInterface $paginator)
     {
@@ -120,7 +113,7 @@ class AgentContactController extends AbstractController
 
         }
 
-        $tags = $contact->getTags()->toArray();
+        $tags = $contact->getTags() ? $contact->getTags() : [];
 
         return $this->render('user_category/agent/contact/view_contact.html.twig', [
             'contact' => $contact,
@@ -167,16 +160,16 @@ class AgentContactController extends AbstractController
     }
 
     /**
-     * @Route("/agent/mobile/contacts/exportPdf", name="agent_mobile_contact_export_pdf")
+     * @Route("/agent/mobile/contacts/exportPdf", name="agent_mobile_contact_export_pdf", options={"expose"=true})
      */
-    public function agent_mobile_contact_export_pdf(DompdfWrapperInterface $wrapper, ContactService $contactService)
+    public function agent_mobile_contact_export_pdf(DompdfWrapperInterface $wrapper, ContactService $contactService, ExcelService $excelService)
     {
         $agent = $this->getUser();
         $secteurId = $this->session->get('secteurId');
         $secteur = $this->repoSecteur->find($secteurId);
 
         $contacts = [];
-        if ($_POST['contacts']) {
+        if (isset($_POST['contacts'])) {
             $contactsApi = $_POST['contacts'];
 
             foreach ($contactsApi as $contactApi) {
@@ -191,20 +184,26 @@ class AgentContactController extends AbstractController
             }
 
         }else{
-            return $this->redirectToRoute('agent_contact_list');
+            return $this->json(['contacts' => 'empty']);
         }
 
-        $html = $this->renderView('pdf/contacts.html.twig', [
-            'title' => "Liste des contacts",
-            'contacts' => $contacts
-        ]);
+        $fields = [
+            "information.lastname", "information.email", "information.phone", "information.address", 
+            "information.typeLogement.nom", "information.rue", "information.numero", "information.codePostal", 
+            "information.ville", "information.compositionFoyer", "information.nbrPersonne"
+        ];
+       
+        $rows = $excelService->getrowsInTable($contacts, $fields);
 
-        $date = (new \DateTime())->format('Y-m-d m:s');
-        return $wrapper->getStreamResponse($html, "contact-$date.pdf", ['isRemoteEnabled' => true]);
+        return $this->json([
+            'contacts' => 'successfully',
+            'datas' => $rows
+
+        ]);
     }
 
     /**
-     * @Route("/agent/mobile/contacts/exportExcel", name="agent_mobile_contact_export_excel")
+     * @Route("/agent/mobile/contacts/exportExcel", name="agent_mobile_contact_export_excel", options={"expose"=true})
      */
     public function agent_mobile_contact_export_excel(ExcelService $excelService, ContactService $contactService)
     {
@@ -238,10 +237,11 @@ class AgentContactController extends AbstractController
         $fields = [
             "information.lastname", "information.email", "information.phone", "information.address", 
             "information.typeLogement.nom", "information.rue", "information.numero", "information.codePostal", 
-            "information.ville", "information.compositionFoyer", "information.nbrPersonne", "information.commentaire"
+            "information.ville", "information.compositionFoyer", "information.nbrPersonne"
         ];
        
         $rows = $excelService->getrowsInTable($contacts, $fields);
+
         return $this->json([
             'contacts' => 'successfully',
             'datas' => $rows

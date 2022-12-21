@@ -39,7 +39,7 @@
 		
 		
 		<!-- block list contact -->
-		<div id="spinner_loader"></div>
+		<div id="spinner_loader" class="my-4"></div>
 		<form id="contact_form" action="" class="d-none">
 			<div class="row mt-3">
 				<div class="col">
@@ -69,5 +69,7 @@
 	{{ parent() }}
 	<script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" integrity="sha512-03CCNkeosDFN2zCCu4vLpu3pJfZcrL48F3yB8k87ejT+OVMwco7IH3FW02vtbGhdncS6gyYZ/duYaC/K62xQPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	{{ encore_entry_script_tags('ImportExportContact')}}
 {% endblock %}

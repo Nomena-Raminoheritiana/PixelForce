@@ -1,3 +1,9 @@
+const url_agent_mobile_contact_export_excel = Routing.generate('agent_mobile_contact_export_excel');
+const url_agent_mobile_contact_export_pdf = Routing.generate('agent_mobile_contact_export_pdf');
+const url_agent_contact_list = Routing.generate('agent_contact_list');
+
+window.jsPDF = window.jspdf.jsPDF;
+var doc = new jsPDF();
 
 /* exported gapiLoaded */
 /* exported gisLoaded */
@@ -119,7 +125,7 @@ async function listConnectionNames() {
         // Fetch first 10 files
         response = await gapi.client.people.people.connections.list({
             'resourceName': 'people/me',
-            'pageSize': 100,
+            'pageSize': 200,
             'personFields': 'names,phoneNumbers,emailAddresses,addresses',
             'sortOrder': 'FIRST_NAME_ASCENDING'
         });
@@ -159,24 +165,49 @@ async function listConnectionNames() {
 /**
  * Permet d'exporter des tableau en fichier csv 
  */
-function exportToCsv(rows) {
-    var CsvString = "";
+function exportContact(rows, type) {
+    var string = "";
 
     rows.forEach(function(RowItem, RowIndex) {
         RowItem.forEach(function(ColItem, ColIndex) {
-            CsvString += ColItem + ';';
+            string += ColItem + ';';
         });
-        CsvString += "\r\n";
+        string += "\r\n";
     });
 
-    CsvString = "data:application/csv;charset=utf-8,%EF%BB%BF" + encodeURI(CsvString);
+    string = `data:application/${type};charset=utf-8,%EF%BB%BF` + encodeURI(string);
     var x = document.createElement("A");
-    x.setAttribute("href", CsvString );
+    x.setAttribute("href", string );
 
-    x.setAttribute("download",`contact.csv`);
+    x.setAttribute("download",'contact.csv');
     document.body.appendChild(x);
     x.click();
 }
+
+
+function exportPDF(row) {
+    let header_r = row.shift()
+ 
+    var doc = new jsPDF('landscape');
+    
+    doc.setTextColor(80, 20, 220);
+    doc.setFontSize(30);                    
+    doc.text(100, 20, 'LISTE DES CONTACTS');
+
+    doc.autoTable({
+        theme: 'striped',
+        startY: 40,
+        margin: { top: 10 },
+        head: [header_r],
+        showHead: 'everyPage',
+        headStyles :{cellWidth: 'wrap', lineWidth: 1,fillColor: [80, 20, 220],textColor: [255,255,255], fontSize: 6, halign: 'center'},
+        body: row,
+        bodyStyles :{cellWidth: 'wrap', fontSize: 6}
+    });
+
+    doc.save('Contact.pdf');  
+}
+
 
 
 $('#authorize_button').on('click', function(){
@@ -203,9 +234,9 @@ $('#btn_export_mobile_excel').on('click', function(e){
         'contacts' : contactsChecked,
     }
 
-    const urlExportMobile =  '/agent/mobile/contacts/exportExcel';
+
     $.ajax({
-        url: urlExportMobile,
+        url: url_agent_mobile_contact_export_excel,
         type: "POST",
         data: datas,
         beforeSend : function(){
@@ -215,14 +246,14 @@ $('#btn_export_mobile_excel').on('click', function(e){
             $('#spinner_loader').html('');
             that.attr('disabled', false)
             if(responseAjax.contacts === 'empty'){
-                $('#spinner_loader').html('<span class="text-waring"> Veuillez cocher au moin, un contat </span>');
+                $('#spinner_loader').html('<span class="alert alert-danger"> Veuillez cocher au moins, un contact </span>');
             }
             if (responseAjax.contacts === 'successfully') { 
-                exportToCsv(responseAjax.datas);
+                exportContact(responseAjax.datas, 'csv');
             }
         },
         error : function(){
-            that.html('Erreur');
+            that.html('<span class="alert alert-danger"> Une erreur s\'est produite  </span>');
         }
     })
 
@@ -230,8 +261,8 @@ $('#btn_export_mobile_excel').on('click', function(e){
 
 // Exportation contact en fichier PDF
 $('#btn_export_mobile_pdf').on('click', function(e){
-    // let that = $(this);
-    // that.attr('disabled', true);
+    let that = $(this);
+    that.attr('disabled', true);
 
     var indexConnexions = [];
     var contactsChecked = [];
@@ -248,9 +279,8 @@ $('#btn_export_mobile_pdf').on('click', function(e){
         'contacts' : contactsChecked,
     }
 
-    const urlExportMobile =  '/agent/mobile/contacts/exportPdf';
     $.ajax({
-        url: urlExportMobile,
+        url: url_agent_mobile_contact_export_pdf,
         type: "POST",
         data: datas,
         beforeSend : function(){
@@ -258,10 +288,17 @@ $('#btn_export_mobile_pdf').on('click', function(e){
         },
         success: function(responseAjax){
             $('#spinner_loader').html('');
-            // that.attr('disabled', false)
+            that.attr('disabled', false)
+            if(responseAjax.contacts === 'empty'){
+                $('#spinner_loader').html('<span class="alert alert-danger"> Veuillez cocher au moins, un contact </span>');
+            }
+            if (responseAjax.contacts === 'successfully') { 
+                exportPDF(responseAjax.datas);
+                // exportContact(responseAjax.datas, 'pdf');
+            }
         },
         error : function(){
-            $('#spinner_loader').html('');
+            that.html('<span class="alert alert-danger"> Une erreur s\'est produite  </span>');
         }
     })
 
@@ -300,23 +337,23 @@ $('#contact_form').on('submit', function(e){
         success: function(responseAjax){
             $('#spinner_loader').html('');
             if (responseAjax.contact === 'added' ) {
-                window.location.href = '/agent/contact/liste?contactMobile=added';
+                window.location.href = `${url_agent_contact_list}?contactMobile=added`;
             }
         },
         error : function(){
-            $('#spinner_loader').html('Erreur');
+            $('#spinner_loader').html('<span class="alert alert-danger"> Une erreur s\'est produite  </span>');
         }
     })
 })
 
 
 // TOUT COCHER
-$(":radio#cocher").click(function(){
+$(":radio#cocher").on('click', function(){
     $(':checkbox.checkClass').prop('checked', true);
     $(":radio#decocher").prop('checked', false);
 });
 // TOUT DE-COCHER
-$(":radio#decocher").click(function(){
+$(":radio#decocher").on('click', function(){
     $(':checkbox.checkClass').prop('checked', false);
     $(":radio#cocher").prop('checked', false);
 });
