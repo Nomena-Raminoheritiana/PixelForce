@@ -22,6 +22,14 @@ $(document).ready(function() {
         info: false,
         searching : false
     });
+
+    $('.sortable-sortDefault-Desc').DataTable({
+        paging: false,
+        ordering: true,
+        order: [[0, 'desc']],
+        info: false,
+        searching : false
+    })
     // dropdown bootstrap fix
     let dropdown = false;
     $(this).on('click', '[data-bs-toggle="dropdown"]', function(e) {

@@ -114,7 +114,9 @@ class MeetingRepository extends ServiceEntityRepository
                 ->setParameter('status', $search->getStatus());
         }
 
-        return $query->getQuery()
+        return $query
+            ->orderBy('m.id', 'DESC')
+            ->getQuery()
             ->getResult()
         ;
     }
