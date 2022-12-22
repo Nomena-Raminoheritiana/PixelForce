@@ -139,7 +139,7 @@ $(function() {
         const urlDetectionAppel = JSON.parse(elementUrl.textContent);
         const eventDetectionAppelSource = new EventSourcePolyfill(urlDetectionAppel, {
             headers : {
-                'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET}` ,
+                'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET_LONG}` ,
             },
             withCredentials: true
         });
@@ -177,7 +177,7 @@ $(function() {
         const urlRefus = JSON.parse(elementUrlRefus.textContent);
         const evenRefusSource = new EventSourcePolyfill(urlRefus, {
             headers : {
-                'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET}` ,
+                'Authorization': `Bearer ${process.env.MERCURE_JWT_SECRET_LONG}` ,
             },
             withCredentials: true
         });
