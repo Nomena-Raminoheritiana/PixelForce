@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Entity\Media;
+use App\Entity\User;
 use App\Repository\FormationAgentRepository;
 use App\Repository\SecteurRepository;
 use App\Services\DirectoryManagement;
@@ -46,7 +47,7 @@ class MediaController extends AbstractController
         $secteur = $this->secteurRepository->findOneBy(['id' => $secteur_id]);
         // Changement de la condition de téléchargement dû au fichier CoachFormationController->coach_formation_add() ligne 221
 //        if($formation->getFormationAgents()->contains($formationAgentRelation)) {
-        if($formation->getSecteur()->getNom() === $secteur->getNom()){
+        if(($secteur && $formation->getSecteur()->getNom() === $secteur->getNom()) || in_array(User::ROLE_ADMINISTRATEUR,$this->getUser()->getRoles())){
             $filePath = $media->getType() === 'document' ?
                 $this->directoryManagement->getMediaFolder_formation_document() :
                 $this->directoryManagement->getMediaFolder_formation_audio();
