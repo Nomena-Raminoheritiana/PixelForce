@@ -137,7 +137,6 @@
                             </div>
                             <!-- Checkout Place Order Left ends -->
 
-                            <!-- Checkout Place Order Right starts -->
                             <div class="checkout-options">
                                 <div class="card">
                                     <div class="card-body">
@@ -201,7 +200,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Checkout Place Order Right ends -->
+
+
+                                <div class="card signature">
+                                    <div class="card-body">
+                                        <label class="section-label form-label mb-1">Signature</label>
+                                        <hr />
+                                        <div class="price-details">
+                                            <a role="button" class="btn btn-primary w-100 btn-next place-order" href="{{path('client_download_contrat', {token: token, id: order.id})}}"><i class="fa fa-file me-2" aria-hidden="true"></i> Télécharger le contrat</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

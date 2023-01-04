@@ -13,8 +13,10 @@ use App\Util\Search\MyCriteriaParam;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -110,4 +112,19 @@ class OrderSecuControllerClient extends AbstractController
 
     }
 
+        /**
+     * @Route("/{id}/download-contrat", name="client_download_contrat")
+     */
+    public function client_download_contrat($token, OrderSecu $order): Response
+    {
+        $filename = $order->getContratSigned();
+        $response = new BinaryFileResponse(
+            $this->getParameter('files_directory_relative')."/".$filename
+        );
+        $response->headers->set('Content-Type', 'appication/pdf');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT
+        );
+        return $response;
+    }
 }
