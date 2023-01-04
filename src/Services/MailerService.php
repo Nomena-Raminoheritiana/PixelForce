@@ -9,6 +9,7 @@ use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
 use App\Entity\Order;
 use App\Entity\OrderAroma;
+use App\Entity\OrderDigital;
 use App\Entity\OrderSecu;
 use App\Entity\User;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
@@ -331,6 +332,34 @@ class MailerService
             'body' => $bodyMailToAdmin,
             'subject' => "Devis n°{$devisCompany->getId()}",
             'to' => $devisCompany->getAgent()->getEmail()
+        ];
+
+        $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);
+
+    }
+
+    public function sendFactureOrderDigital(OrderDigital $order){
+        
+        $body = $this->renderTwig('emails/commande_digital.html.twig', [
+            'prenomClient' => $order->getDevis()->getDemandeDevis()->getPrenom(),
+            'order' => $order
+        ]);
+
+        $attachmentsPath = [$order->getInvoicePath(), $order->getDevis()->getContratFileName()];
+        $embeddedImages = ['logo' => 'assets/img/logo/pixelforce/logo-pixelforce-min.png'];
+        $this->mySendMail([
+            'subject' => 'Confirmation de la commande '.$order->getId(),
+            'to' => $order->getDevis()->getDemandeDevis()->getEmail(),
+            'body' => $body
+        ], $attachmentsPath, null, $embeddedImages);
+
+        $bodyMailToAdmin = $this->renderTwig('emails/commande_details_digital.html.twig', [
+            'order' => $order
+        ]);
+        $MailToAdmin = [
+            'body' => $bodyMailToAdmin,
+            'subject' => "Commande n°{$order->getId()}",
+            'to' => $order->getAgent()->getEmail()
         ];
 
         $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);

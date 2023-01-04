@@ -11,6 +11,7 @@ use App\Manager\EntityManager;
 use App\Repository\UserRepository;
 use App\Services\DemandeDevisService;
 use App\Services\FileHandler;
+use App\Services\MailerService;
 use App\Services\OrderDigitalService;
 use App\Services\StripeService;
 use App\Util\GenericUtil;
@@ -54,8 +55,10 @@ class ClientDevisController extends AbstractController
     /**
      * @Route("/{dd}/devis/{devis}/fiche", name="client_agent_devis_fiche")
      */
-    public function client_agent_devis_fiche($token, DemandeDevis $dd, Devis $devis, Request $request)
+    public function client_agent_devis_fiche($token, DemandeDevis $dd, Devis $devis, Request $request, OrderDigitalService $orderDigitalService, MailerService $mailerService)
     {
+        $orderDigitalService->saveInvoice($devis->getOrderDigital());
+        $mailerService->sendFactureOrderDigital($devis->getOrderDigital());
         $agent = $this->userRepository->findAgentByToken($token);
         $formDevis = $this->createForm(DevisType::class, $devis)
             ->remove('title')

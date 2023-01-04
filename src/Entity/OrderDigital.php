@@ -85,6 +85,11 @@ class OrderDigital
      */
     private $statut;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $invoicePath;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
@@ -212,6 +217,29 @@ class OrderDigital
     public function setStatut(?int $statut): self
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getTva(){
+        return 20.;
+    }
+    public function getAmountHt(){
+        return $this->getAmount() * (1. - $this->getTva()/100);
+    }
+
+    public function getTvaAmount(){
+        return $this->getAmount() * $this->getTva()/100;
+    }
+
+    public function getInvoicePath(): ?string
+    {
+        return $this->invoicePath;
+    }
+
+    public function setInvoicePath(?string $invoicePath): self
+    {
+        $this->invoicePath = $invoicePath;
 
         return $this;
     }

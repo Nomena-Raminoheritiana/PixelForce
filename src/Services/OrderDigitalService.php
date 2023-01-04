@@ -6,17 +6,24 @@ use App\Entity\OrderDigital;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 
 class OrderDigitalService
 {
     private $entityManager;
     private $stripeService;
+    private $mailerService;
+    private $wrapper;
+    private $fileHandler;
     
 
-    public function __construct(EntityManagerInterface $entityManager, StripeService $stripeService)
+    public function __construct(EntityManagerInterface $entityManager, StripeService $stripeService, MailerService $mailerService, DompdfWrapperInterface $wrapper, FileHandler $fileHandler)
     {
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
+        $this->mailerService = $mailerService;
+        $this->wrapper = $wrapper;
+        $this->fileHandler = $fileHandler;
     }
 
     
@@ -68,6 +75,8 @@ class OrderDigitalService
             $this->entityManager->flush();
             $this->entityManager->commit();
             try{
+                $this->saveInvoice($order);
+                $this->mailerService->sendFactureOrderDigital($order);
             } catch(Exception $ex){}
         } 
         catch(\Exception $ex){
@@ -79,6 +88,17 @@ class OrderDigitalService
         finally {
             $this->entityManager->clear();
         }
+    }
+
+    public function saveInvoice(OrderDigital $order){
+        $facturePdf = $this->mailerService->renderTwig('pdf/facture_devis_digital.html.twig', [
+            'order' => $order
+        ]);
+        $binary = $this->wrapper->getPdf($facturePdf, ['isRemoteEnabled' => true, 'isHtml5ParserEnabled'=>true, 'defaultFont'=> 'Arial']);
+        $directory = "factures/dd";
+        $pj_filepath = $this->fileHandler->saveBinary($binary, "Facture Pixelforce-Commande n°".$order->getId()." du ".date('Y-m-d-H-i-s').'.pdf', $directory);
+        $order->setInvoicePath($pj_filepath);
+        $this->entityManager->flush();
     }
     
 }
