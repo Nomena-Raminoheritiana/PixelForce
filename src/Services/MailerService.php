@@ -7,6 +7,7 @@ use Twig\Environment as Twig_Environment;
 use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
 use App\Entity\Order;
+use App\Entity\OrderAroma;
 use App\Entity\OrderSecu;
 use App\Entity\User;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
@@ -266,6 +267,35 @@ class MailerService
         ], $attachmentsPath, null, $embeddedImages);
 
         $bodyMailToAdmin = $this->renderTwig('emails/commande_details_secu.html.twig', [
+            'order' => $order
+        ]);
+        $MailToAdmin = [
+            'body' => $bodyMailToAdmin,
+            'subject' => "Commande n°{$order->getId()}",
+            'to' => $order->getAgent()->getEmail()
+        ];
+
+        $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);
+
+    }
+
+    public function sendFactureAroma(OrderAroma $order){
+        
+        $body = $this->renderTwig('emails/commande_aroma.html.twig', [
+            'nomClient' => $order->getUser()->getNom(),
+            'prenomClient' => $order->getUser()->getPrenom(),
+            'order' => $order
+        ]);
+
+        $attachmentsPath = [$order->getInvoicePath()];
+        $embeddedImages = ['logo' => 'assets/img/logo/pixelforce/logo-pixelforce-min.png'];
+        $this->mySendMail([
+            'subject' => 'Confirmation de commande '.$order->getId(),
+            'to' => $order->getUser()->getEmail(),
+            'body' => $body
+        ], $attachmentsPath, null, $embeddedImages);
+
+        $bodyMailToAdmin = $this->renderTwig('emails/commande_details_aroma.html.twig', [
             'order' => $order
         ]);
         $MailToAdmin = [

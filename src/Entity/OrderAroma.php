@@ -102,6 +102,11 @@ class OrderAroma
      */
     private $montantTtc;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $invoicePath;
+
     public function __construct()
     {
         $this->orderImplantations = new ArrayCollection();
@@ -281,5 +286,17 @@ class OrderAroma
 
     public function getMontantTva(){
         return $this->getMontantTtc() / (1.0 + 100/$this->getTva());
+    }
+
+    public function getInvoicePath(): ?string
+    {
+        return $this->invoicePath;
+    }
+
+    public function setInvoicePath(?string $invoicePath): self
+    {
+        $this->invoicePath = $invoicePath;
+
+        return $this;
     }
 }

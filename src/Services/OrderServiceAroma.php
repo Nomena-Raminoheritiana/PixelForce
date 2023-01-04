@@ -12,6 +12,7 @@ use App\Repository\OrderImplantationAromaRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 
 class OrderServiceAroma
 {
@@ -20,14 +21,20 @@ class OrderServiceAroma
     private $stripeService;
     private $orderImplantationAromaRepository;
     private $configSecteurService;
+    private $mailerService;
+    private $fileHandler;
+    private $wrapper;
 
-    public function __construct(BasketServiceAroma $basketService, EntityManagerInterface $entityManager, StripeService $stripeService, OrderImplantationAromaRepository $orderImplantationAromaRepository, ConfigSecteurService $configSecteurService)
+    public function __construct(BasketServiceAroma $basketService, EntityManagerInterface $entityManager, StripeService $stripeService, OrderImplantationAromaRepository $orderImplantationAromaRepository, ConfigSecteurService $configSecteurService, DompdfWrapperInterface $wrapper, FileHandler $fileHandler, MailerService $mailerService)
     {
         $this->basketService = $basketService;
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
         $this->orderImplantationAromaRepository = $orderImplantationAromaRepository;
         $this->configSecteurService = $configSecteurService;
+        $this->mailerService = $mailerService;
+        $this->fileHandler = $fileHandler;
+        $this->wrapper = $wrapper;
     }
 
     public function saveOrder(OrderAroma $order): ?OrderAroma{
@@ -109,6 +116,8 @@ class OrderServiceAroma
         $this->entityManager->persist($order);
         $this->entityManager->flush();
         try{
+            $this->saveInvoice($order);
+            $this->mailerService->sendFactureAroma($order);
         } catch(Exception $ex){}
     }
 
@@ -123,5 +132,16 @@ class OrderServiceAroma
     {
         $orderImplantationElmts = $this->orderImplantationAromaRepository->findSameParent($user->getId(), $implantation->getMere()->getId());
         return count($orderImplantationElmts) > 0;
+    }
+
+    public function saveInvoice(OrderAroma $order){
+        $facturePdf = $this->mailerService->renderTwig('pdf/facture_aroma.html.twig', [
+            'order' => $order
+        ]);
+        $binary = $this->wrapper->getPdf($facturePdf, ['isRemoteEnabled' => true, 'isHtml5ParserEnabled'=>true, 'defaultFont'=> 'Arial']);
+        $directory = "factures/aroma";
+        $pj_filepath = $this->fileHandler->saveBinary($binary, "Facture Pixelforce-Commande n°".$order->getId()." du ".date('Y-m-d-H-i-s').'.pdf', $directory);
+        $order->setInvoicePath($pj_filepath);
+        $this->entityManager->flush();
     }
 }
