@@ -13,6 +13,7 @@ use App\Form\DevisType;
 use App\Manager\DevisManager;
 use App\Manager\EntityManager;
 use App\Repository\DevisCompanyRepository;
+use App\Repository\SecteurRepository;
 use App\Services\FileHandler;
 use App\Services\MailerService;
 use App\Services\SearchService;
@@ -147,8 +148,11 @@ class AgentDevisController extends AbstractController
     /**
      * @Route("/company/devis/liste", name="agent_company_devis_liste")
      */
-    public function agent_company_devis_liste(Request $request, PaginatorInterface $paginator, SearchService $searchService): Response
+    public function agent_company_devis_liste(Request $request, PaginatorInterface $paginator, SearchService $searchService, SecteurRepository $secteurRepository): Response
     {
+        $secteurId = $request->getSession()->get('secteurId');
+        $secteur = $secteurRepository->find($secteurId);
+
         $agent = $this->getUser();
         $page = $request->query->get('page', 1);
         $limit = 5;
@@ -174,8 +178,9 @@ class AgentDevisController extends AbstractController
         ;  
 
         $where =  $searchService->getWhere($filter, new MyCriteriaParam($criteria, 'd'));   
-        $query->where($where["where"]." and d.agent = :agent ");
+        $query->where($where["where"]." and d.agent = :agent and d.secteur = :secteur ");
         $where["params"]["agent"] = $agent;
+        $where["params"]["secteur"] = $secteur;
         $searchService->setAllParameters($query, $where["params"]);
         $searchService->addOrderBy($query, $filter, ['sort' => 'd.created_at', 'direction' => 'desc']);
 
@@ -195,8 +200,11 @@ class AgentDevisController extends AbstractController
     /**
      * @Route("/company/devis/creation", name="agent_company_devis_create")
      */
-    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper): Response
+    public function agent_company_devis_create(Request $request, DompdfWrapperInterface $wrapper, SecteurRepository $secteurRepository): Response
     {
+        $secteurId = $request->getSession()->get('secteurId');
+        $secteur = $secteurRepository->find($secteurId);
+
         /** @var User $agent */
         $agent = $this->getUser();
         $devisCompany = new DevisCompany();
@@ -208,6 +216,7 @@ class AgentDevisController extends AbstractController
             $logo = $formDevisComp->get('company_logo')->getData();
             $logoPopup = $request->get('my_logo_societe_input_hidden');
             $filesDirAbsolute = $this->parameterBag->get('kernel.project_dir').'/public/files/';
+            $devisCompany->setSecteur($secteur);
             $devisCompany = $this->devisManager->persistDevisCompany($logo, $directory, $devisCompany, $agent, $logoPopup, $filesDirAbsolute);
             // Pour visualiser :
             // return $this->render('pdf/fiche_devis_entrepise.html.twig', [

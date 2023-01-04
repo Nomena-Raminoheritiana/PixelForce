@@ -124,12 +124,12 @@ class CoachFormationController extends AbstractController
        );
         
 
-       $agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
-       $agent = $agent && in_array($secteur->getId(), $agent->getSecteursIdsByAgent()) ? $agent : null;
+       //$agent = $this->userRepository->findOneBy(['id' => $request->query->get('agent')]);
+       //$agent = $agent && in_array($secteur->getId(), $agent->getSecteursIdsByAgent()) ? $agent : null;
        return $this->render('formation/video/coach_formation_list.html.twig', [
            'formations' => $formations,
            'criteres' => $criteres,
-           'agent' => $agent,
+           //'agent' => $agent,
            'secteur' => $secteur,
            'categories' => $this->repoCatFormation->findBy(['statut' => 1]),
        ]);
@@ -180,6 +180,7 @@ class CoachFormationController extends AbstractController
            if($request->request->get('video_id') && !is_null($request->request->get('video_id')) && !empty($request->request->get('video_id'))) {
                $formation->setVideoId($request->request->get('video_id'));
            }
+           $formation->testStatut();
            $this->entityManager->save($formation);
            $this->addMedia($request, $formation);
            $this->addFlash('success', 'Formation ajouté avec succès');
@@ -204,8 +205,10 @@ class CoachFormationController extends AbstractController
         $form = $this->createForm(FormationType::class, $formation);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
+            $formation->testStatut();
             $formation->setSecteur($this->getUser()->getSecteurByCoach());
             $formation->setCoach($this->getUser());
+            
             $formation->setVideoId($request->request->get('video_id'));
             $this->entityManager->save($formation);
             
@@ -216,10 +219,10 @@ class CoachFormationController extends AbstractController
             $this->entityManager->save($relationFormationCategorie);
             
             $this->addMedia($request, $formation);
-            $coachSecteurRelation = $this->getUser()->getCoachSecteurs();
+            /*$coachSecteurRelation = $this->getUser()->getCoachSecteurs();
             if($coachSecteurRelation->count() > 0) {
-                //$this->formationService->affecterToutAgent($formation, $coachSecteurRelation->toArray()[0]->getSecteur());
-            }
+                $this->formationService->affecterToutAgent($formation, $coachSecteurRelation->toArray()[0]->getSecteur());
+            }*/
 
             $this->addFlash('success', 'Formation ajouté avec succès');
         }
@@ -358,5 +361,21 @@ class CoachFormationController extends AbstractController
             }
             $this->entityManager->flush();
         }
+    }
+
+    /**
+     * @Route("/coach/formation/delete/{id}", name="coach_formation_delete", options={"expose"=true})
+     * @IsGranted("ROLE_COACH")
+     */
+    public function coach_formation_delete(Formation $formation)
+    {
+        try{
+            $formation->setStatut(Formation::STATUS_DELETED);
+            $this->entityManager->save($formation);
+            $this->addFlash('success', 'Formation supprimée');
+        }catch(Exception $ex){
+            $this->addFlash('danger', $ex->getMessage());
+        }
+        return $this->redirectToRoute('coach_formation_list');
     }
 }

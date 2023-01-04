@@ -146,6 +146,11 @@ class DevisCompany
      */
     private $iteration_payment;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Secteur::class)
+     */
+    private $secteur;
+
     public function __construct()
     {
         $this->created_at = new DateTime();
@@ -500,6 +505,18 @@ class DevisCompany
     public function setIterationPayment(int $iteration_payment): self
     {
         $this->iteration_payment = $iteration_payment;
+
+        return $this;
+    }
+
+    public function getSecteur(): ?Secteur
+    {
+        return $this->secteur;
+    }
+
+    public function setSecteur(?Secteur $secteur): self
+    {
+        $this->secteur = $secteur;
 
         return $this;
     }

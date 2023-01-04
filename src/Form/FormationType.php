@@ -34,9 +34,9 @@ class FormationType extends AbstractType
                 ],
                 'required' => true,
             ])
-            ->add('debloqueAgent', null, [
-                'label' => 'Disponible pour tous les agents'
-            ])
+            // ->add('debloqueAgent', null, [
+            //     'label' => 'Disponible pour tous les agents'
+            // ])
             ->add('brouillon')
             ->add('categorieFormation', EntityType::class, [
                 'placeholder' => 'CATEGORIE',

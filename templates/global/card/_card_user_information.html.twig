@@ -63,15 +63,15 @@
                 </li>
             </ul>
             <div class="d-flex justify-content-center pt-2">
-                {% if is_granted('ROLE_ADMINISTRATEUR') and user.roles[0] == 'ROLE_AGENT' %}
+                {# {% if is_granted('ROLE_ADMINISTRATEUR') and user.roles[0] == 'ROLE_AGENT' %}
                     <a class="btn btn-outline-primary me-1" href="{{ path('admin_agent_attribuerFormation', {id: user.id}) }}" >
                         Attribuer formation
                     </a>
-                {% endif %}
+                {% endif %} #}
                 {% if is_granted('ROLE_COACH') and user.roles[0] == 'ROLE_AGENT' %}
-                    <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >
+                    {# <a class="btn btn-outline-primary me-1" href="{{ path('coach_formation_list', {agent: user.id}) }}" >
                         Attribuer formation
-                    </a>
+                    </a> #}
                     {% set chatCanal =  render(controller(
                         'App\\Controller\\ChatController::getSingleCanalBy_idUser',
                         {
