@@ -13,6 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class KitBaseSecuType extends AbstractType
 {
@@ -46,7 +47,8 @@ class KitBaseSecuType extends AbstractType
                 "trim" => true,
                 "required" => false,
                 "constraints" => [
-                    new NotBlank(["message" => "Prix obligatoire"])
+                    new NotBlank(["message" => "Prix obligatoire"]),
+                    new Regex(["pattern"=>'/^[0-9]*([\.])?[0-9]*$/',"match"=>true,"message" => "Le prix n'est pas valide"])
                 ]
             ])
             ->add('imageFile', FileType::class, [

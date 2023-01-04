@@ -93,12 +93,12 @@ class Produit implements JsonSerializable
         return $this;
     }
 
-    public function getPrix(): ?string
+    public function getPrix()
     {
         return $this->prix;
     }
 
-    public function setPrix(string $prix): self
+    public function setPrix($prix): self
     {
         $this->prix = $prix;
 

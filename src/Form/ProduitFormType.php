@@ -18,6 +18,8 @@ use App\Repository\CategorieRepository;
 use Symfony\Component\Validator\Constraints\File;
 
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Validator\Constraints\Regex;
+
 class ProduitFormType extends AbstractType
 {
     private $categorieRepository;
@@ -48,7 +50,8 @@ class ProduitFormType extends AbstractType
                 "trim" => true,
                 "required" => false,
                 "constraints" => [
-                    new NotBlank(["message" => "Prix obligatoire"])
+                    new NotBlank(["message" => "Prix obligatoire"]),
+                    new Regex(["pattern"=>'/^[0-9]*([\.])?[0-9]*$/',"match"=>true,"message" => "Le prix n'est pas valide"])
                 ]
             ])
             ->add('categorie', EntityType::class, [

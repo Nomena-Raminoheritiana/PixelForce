@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class ProduitAromaFormType extends AbstractType
 {
@@ -38,7 +39,8 @@ class ProduitAromaFormType extends AbstractType
                 "trim" => true,
                 "required" => false,
                 "constraints" => [
-                    new NotBlank(["message" => "Prix obligatoire"])
+                    new NotBlank(["message" => "Prix obligatoire"]),
+                    new Regex(["pattern"=>'/^[0-9]*([\.])?[0-9]*$/',"match"=>true,"message" => "Le prix n'est pas valide"]),
                 ]
             ])
             

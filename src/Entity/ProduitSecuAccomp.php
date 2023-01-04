@@ -125,12 +125,12 @@ class ProduitSecuAccomp implements JsonSerializable
         return $this;
     }
 
-    public function getPrix(): ?float
+    public function getPrix()
     {
         return $this->prix;
     }
 
-    public function setPrix(float $prix): self
+    public function setPrix($prix): self
     {
         $this->prix = $prix;
 
