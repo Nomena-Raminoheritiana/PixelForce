@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\Entity\DevisCompany;
 use Twig\Environment as Twig_Environment;
 use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
@@ -302,6 +303,34 @@ class MailerService
             'body' => $bodyMailToAdmin,
             'subject' => "Commande n°{$order->getId()}",
             'to' => $order->getAgent()->getEmail()
+        ];
+
+        $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);
+
+    }
+
+    public function sendFactureDevisCompanyDigital(DevisCompany $devisCompany){
+        
+        $body = $this->renderTwig('emails/commande_devis_company_digital.html.twig', [
+            'prenomClient' => $devisCompany->getClientLastname(),
+            'devisCompany' => $devisCompany
+        ]);
+
+        $attachmentsPath = [$devisCompany->getPjFilename()];
+        $embeddedImages = ['logo' => 'assets/img/logo/pixelforce/logo-pixelforce-min.png'];
+        $this->mySendMail([
+            'subject' => 'Confirmation du devis '.$devisCompany->getId(),
+            'to' => $devisCompany->getClientMail(),
+            'body' => $body
+        ], $attachmentsPath, null, $embeddedImages);
+
+        $bodyMailToAdmin = $this->renderTwig('emails/commande_details_devis_company_digital.html.twig', [
+            'devisCompany' => $devisCompany
+        ]);
+        $MailToAdmin = [
+            'body' => $bodyMailToAdmin,
+            'subject' => "Devis n°{$devisCompany->getId()}",
+            'to' => $devisCompany->getAgent()->getEmail()
         ];
 
         $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);

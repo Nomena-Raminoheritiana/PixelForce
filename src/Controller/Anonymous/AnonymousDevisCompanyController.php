@@ -9,7 +9,9 @@ use App\Entity\OrderDigitalDevisCompany;
 use App\Manager\EntityManager;
 use App\Services\DemandeDevisService;
 use App\Services\FileHandler;
+use App\Services\MailerService;
 use App\Services\StripeService;
+use Exception;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -177,7 +179,7 @@ class AnonymousDevisCompanyController extends AbstractController
      /**
      * @Route("/devis/{id}/signature/checkout", name="anonymous_devis_signature_checkout")
      */
-    public function anonymous_devis_signature_checkout(DevisCompany $devisCompany, StripeService $stripeService, Request $request, FormFactoryInterface $formFactory)
+    public function anonymous_devis_signature_checkout(DevisCompany $devisCompany, StripeService $stripeService, Request $request, FormFactoryInterface $formFactory, MailerService $mailerService)
     {
         $stripePublishableKey = $_ENV['STRIPE_PUBLIC_KEY'];
         $orderDevisCompany = new OrderDigitalDevisCompany();
@@ -236,6 +238,9 @@ class AnonymousDevisCompanyController extends AbstractController
             $devisCompany->setStatus(DevisCompany::DEVIS_STATUS_INT['SIGNED']);
             $this->entityManager->persist($orderDevisCompany);
             $this->entityManager->flush();
+            try{
+                $mailerService->sendFactureDevisCompanyDigital($devisCompany);
+            } catch(Exception $ex){}
             $this->addFlash('success', 'Devis payé');
             return $this->redirectToRoute('anonymous_devis_company_fiche', ['id' => $devisCompany->getId()]);
         }
