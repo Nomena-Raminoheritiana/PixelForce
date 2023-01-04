@@ -116,11 +116,14 @@
             {{ encore_entry_script_tags('vuexyJS') }}
             {{ encore_entry_script_tags('chatJS')}}
 
+            <script src="{{ asset('assets/bootstrap/js/bootstrap.js')}}" defer></script>
             <script src="{{ asset('assets/vuexy/vendors/js/calendar/fullcalendar.min.js') }}"></script>
             <script src="{{ asset('assets/vuexy/vendors/js/extensions/moment.min.js') }}"></script>
             <script src="{{ asset('assets/vuexy/vendors/js/forms/select/select2.full.min.js') }}" defer></script>
             <script src="{{ asset('assets/vuexy/vendors/js/forms/validation/jquery.validate.min.js') }}" defer></script>
             <script src="{{ asset('assets/vuexy/vendors/js/pickers/flatpickr/flatpickr.min.js') }}" defer></script>
+        
+        
         {% endblock %}
     </body>
 </html>

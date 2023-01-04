@@ -1,6 +1,28 @@
 {% extends 'base.html.twig' %}
 {% block title %}Coach - Fiche formation{% endblock %}
 {% block body %}
+    <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Voulez-vous vraiment supprimer la formation ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <a role="button" href="{{path('coach_formation_delete', {'id': formation.id})}}" class="btn btn-danger text-white mx-2" >
+            Valider
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
     <div class="p-5 pb-5 mb-5 bg-white border position-relative" id="form-formation">
         <h3 class="mb-3"><i class="fa fa-book-open"></i> Fiche formation</h3>
         {{ form_start(form,{attr:{id:'formation-fiche', action: path('coach_formation_fiche', {id:formation.id})}}) }}
@@ -21,14 +43,16 @@
                     </div>
                     <div class="row mt-4">
                         <div class="col-12 col-md-6">
-                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'valide' }} <br>
+                            <strong>Etat</strong> : {{ formation.brouillon ? 'Brouillon' : 'Créée' }} <br>
                             <strong>Catégorie</strong> : {{ formation.categorieFormation.nom  }}
+                            <hr>
+                            {{ form_row(form.brouillon) }}
                         </div>
                         <div class="col-12 col-md-6">
-                            <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}
-                            <hr>
-                            {{ form_row(form.debloqueAgent) }}
-                            {{ form_row(form.brouillon) }}
+                            {# <strong>Disponibilité</strong> : {{ formation.debloqueAgent ? 'Disponible pour tous les agents' : 'Bloquer pour tous les agents' }}
+                            
+                            {{ form_row(form.debloqueAgent) }} #}
+                            
                         </div>
                     </div>
                 </div>
@@ -117,16 +141,23 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-4 d-flex align-items-center justify-content-start">
             <button type="submit" id="edit-formation" class="btn bg-princ text-white">Enregistrer</button>
+            
+            <button type="button" class="btn btn-danger text-white mx-2" data-toggle="modal" data-target="#deleteModal">
+                Supprimer
+            </button>
         </div>
 
 
         {{ form_end(form) }}
     </div>
+
+
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    
     {{ encore_entry_script_tags('formationForm')}}
     {{ encore_entry_script_tags('ckeditorForm')}}
     <script>

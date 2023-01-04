@@ -101,17 +101,17 @@ class FormationRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('f.description LIKE :description')
                 ->setParameter('description', '%'.$criteres['description'].'%');
         }
-        if(isset($criteres['etat']) && !empty($criteres['etat'])) {
-            switch ($criteres['etat']) {
-                case 'disponible' :   $queryBuilder->andWhere('f.debloqueAgent = :etat')
-                    ->setParameter('etat', true );
-                    break;
-                case 'brouillon' : $queryBuilder->andWhere('f.brouillon = :etat')
-                    ->setParameter('etat', true );
-                break;
+        if(isset($criteres['etat'])) {
+            $etat = trim($criteres['etat']);
+            if($etat != ""){
+                $etat = $criteres['etat'];
+                $queryBuilder->andWhere('f.statut = :etat')
+                    ->setParameter('etat', $etat);
             }
-
         }
+        $queryBuilder->andWhere('f.statut != :statusDeleted')
+            ->setParameter('statusDeleted', Formation::STATUS_DELETED);
+
         if(isset($criteres['auteur']) && !empty($criteres['auteur'])) {
             $queryBuilder->innerJoin('App\Entity\User', 'u', 'ON')
                 ->andWhere('u.nom LIKE :nom')
@@ -194,17 +194,9 @@ class FormationRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('f.description LIKE :description')
                 ->setParameter('description', '%'.$criteres['description'].'%');
         }
-        if(!empty($criteres['etat'])) {
-            switch ($criteres['etat']) {
-                case 'bloquee' :
-                    $queryBuilder->andWhere('f.debloqueAgent = :etat')
-                        ->setParameter('etat', false ); break;
-                case 'disponible' :   $queryBuilder->andWhere('f.debloqueAgent = :etat')
-                    ->setParameter('etat', true );
-                    break;
-            }
+        $queryBuilder->andWhere('f.statut = :statusCreated')
+            ->setParameter('statusCreated', Formation::STATUS_CREATED);
 
-        }
         if(!empty($criteres['auteur'])) {
             $queryBuilder->innerJoin('App\Entity\User', 'u', 'ON')
                 ->andWhere('u.nom LIKE :nom')
@@ -290,11 +282,12 @@ class FormationRepository extends ServiceEntityRepository
         $qb->join('f.CategorieFormation', 'cf')
             ->leftJoin('f.formationAgents', 'fa', Join::WITH, $qb->expr()->eq('fa.agent', ':agent'))
             ->andWhere('f.secteur=:secteur')
-            ->andWhere('f.brouillon=false')
+            ->andWhere('f.statut=:statusCreated')
             ->andWhere('fa.agent is NULL OR fa.statut != :finishedStatus')
             ->setParameter('secteur',$secteur->getId())
             ->setParameter('agent', $agent->getId())
             ->setParameter('finishedStatus', Formation::STATUT_TERMINER)
+            ->setParameter('statusCreated', Formation::STATUS_CREATED)
             ->addOrderBy('cf.ordreCatFormation')
             ->addOrderBy('f.id');
         return $qb->getQuery()->getResult();    

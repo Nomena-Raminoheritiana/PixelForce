@@ -38,12 +38,11 @@
     <p>{{ formation.contenu|raw }}</p>
     <div class="text-center mt-5">
         {% set formationAgentRelation = formationAgentRepository.findOneBy({formation:formation, agent:app.user}) %}
-        {% if formationAgentRelation %}
-            {% if formationAgentRelation.statut == constant('App\\Entity\\Formation::STATUT_TERMINER') %}
-                <a href="#" class="btn btn-success"><i class="fa fa-check"></i> Vous avez déjà terminé cette formation</a>
-            {% else %}
-                <a href="{{ path('agent_formation_terminer', {id:formation.id}) }}" class="btn btn-success"><i class="fa fa-check"></i> J'ai terminé cette formation</a>    
-            {% endif %}
+        {% set statut = formationAgentRelation ? formationAgentRelation.statut : constant('App\\Entity\\Formation::STATUT_DISPONIBLE') %}
+        {% if statut == constant('App\\Entity\\Formation::STATUT_TERMINER') %}
+            <a href="#" class="btn btn-success"><i class="fa fa-check"></i> Vous avez déjà terminé cette formation</a>
+        {% else %}
+            <a href="{{ path('agent_formation_terminer', {id:formation.id}) }}" class="btn btn-success"><i class="fa fa-check"></i> J'ai terminé cette formation</a>    
         {% endif %}
     </div>
 </div>

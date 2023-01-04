@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Formation
 {
+    const STATUS_CREATED = 0;
+    const STATUS_DRAFT = -1;
+    const STATUS_DELETED = -2;
+
     const STATUT_BLOQUEE = 'bloquee';
     const STATUT_DISPONIBLE = 'disponible';
     const STATUT_TERMINER = 'terminer';
@@ -86,6 +90,11 @@ class Formation
      * @ORM\OneToOne(targetEntity=RFormationCategorie::class, mappedBy="formation", cascade={"persist", "remove"})
      */
     private $rFormationCategorie;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $statut;
 
     public function __construct()
     {
@@ -238,6 +247,11 @@ class Formation
 
     public function getBrouillon(): ?bool
     {
+        return $this->getStatut() == self::STATUS_DRAFT;
+    }
+
+    public function getBrouillonVal(): ?bool
+    {
         return $this->brouillon;
     }
 
@@ -300,5 +314,22 @@ class Formation
         $this->rFormationCategorie = $rFormationCategorie;
 
         return $this;
+    }
+
+    public function getStatut(): ?int
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?int $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+
+    public function testStatut(){
+        $this->setStatut($this->getBrouillonVal() ? self::STATUS_DRAFT : self::STATUS_CREATED);
     }
 }
