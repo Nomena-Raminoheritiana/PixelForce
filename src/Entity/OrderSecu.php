@@ -152,6 +152,11 @@ class OrderSecu implements JsonSerializable
      */
     private $tvaPourcentage;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $invoicePath;
+
     
 
     public function __construct()
@@ -578,6 +583,18 @@ class OrderSecu implements JsonSerializable
     public function setTvaPourcentage(?string $tvaPourcentage): self
     {
         $this->tvaPourcentage = $tvaPourcentage;
+
+        return $this;
+    }
+
+    public function getInvoicePath(): ?string
+    {
+        return $this->invoicePath;
+    }
+
+    public function setInvoicePath(?string $invoicePath): self
+    {
+        $this->invoicePath = $invoicePath;
 
         return $this;
     }

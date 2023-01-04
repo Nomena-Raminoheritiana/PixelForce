@@ -7,6 +7,7 @@ use Twig\Environment as Twig_Environment;
 use App\Entity\DocumentRecipient;
 use App\Entity\Formation;
 use App\Entity\Order;
+use App\Entity\OrderSecu;
 use App\Entity\User;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -241,6 +242,35 @@ class MailerService
         $MailToAdmin = [
             'body' => $bodyMailToAdmin,
             'subject' => "Commande coffret  n°{$order->getId()}",
+            'to' => $order->getAgent()->getEmail()
+        ];
+
+        $this->mySendMail($MailToAdmin, $attachmentsPath, null, $embeddedImages);
+
+    }
+
+    public function sendFactureSecu(OrderSecu $order){
+        
+        $body = $this->renderTwig('emails/commande_secu.html.twig', [
+            'nomClient' => $order->getClient()->getNom(),
+            'prenomClient' => $order->getClient()->getPrenom(),
+            'order' => $order
+        ]);
+
+        $attachmentsPath = [$order->getInvoicePath(), $order->getContratSigned()];
+        $embeddedImages = ['logo' => 'assets/img/logo/pixelforce/logo-pixelforce-min.png'];
+        $this->mySendMail([
+            'subject' => 'Confirmation de commande '.$order->getId(),
+            'to' => $order->getClient()->getEmail(),
+            'body' => $body
+        ], $attachmentsPath, null, $embeddedImages);
+
+        $bodyMailToAdmin = $this->renderTwig('emails/commande_details_secu.html.twig', [
+            'order' => $order
+        ]);
+        $MailToAdmin = [
+            'body' => $bodyMailToAdmin,
+            'subject' => "Commande n°{$order->getId()}",
             'to' => $order->getAgent()->getEmail()
         ];
 

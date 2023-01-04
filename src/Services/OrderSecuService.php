@@ -11,6 +11,7 @@ use App\Repository\TypeAbonnementSecuRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class OrderSecuService
 {
@@ -20,14 +21,20 @@ class OrderSecuService
     private $entityManager;
     private $stripeService;
     const PREFIX = 'order-secu-';
+    private $mailerService;
+    private $wrapper;
+    private $fileHandler;
 
-    public function __construct(SessionInterface $session, CodePromoSecuRepository $codePromoSecuRepository, EntityManagerInterface $entityManager, StripeService $stripeService, OrderSecuRepository $orderSecuRepository)
+    public function __construct(SessionInterface $session, CodePromoSecuRepository $codePromoSecuRepository, EntityManagerInterface $entityManager, StripeService $stripeService, OrderSecuRepository $orderSecuRepository, MailerService $mailerService, DompdfWrapperInterface $wrapper, FileHandler $fileHandler)
     {
         $this->session = $session;
         $this->codePromoSecuRepository = $codePromoSecuRepository;
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
         $this->orderSecuRepository = $orderSecuRepository;
+        $this->mailerService = $mailerService;
+        $this->wrapper = $wrapper;
+        $this->fileHandler = $fileHandler;
     }
 
     public function setOrderSecu(OrderSecu $order){
@@ -107,7 +114,10 @@ class OrderSecuService
         $order->setStatut(OrderSecu::PAIED);
         $this->entityManager->persist($order);
         $this->entityManager->flush();
-        try{} catch(Exception $ex){}
+        try{
+            $this->saveInvoice($order);
+            $this->mailerService->sendFactureSecu($order);
+        } catch(Exception $ex){}
     }
 
 
@@ -118,6 +128,17 @@ class OrderSecuService
             throw new Exception("La commande n°".$orderId." n'existe pas");
         }
         $order->setStatut($status);
+        $this->entityManager->flush();
+    }
+
+    public function saveInvoice(OrderSecu $order){
+        $facturePdf = $this->mailerService->renderTwig('pdf/facture_secu.html.twig', [
+            'order' => $order
+        ]);
+        $binary = $this->wrapper->getPdf($facturePdf, ['isRemoteEnabled' => true, 'isHtml5ParserEnabled'=>true, 'defaultFont'=> 'Arial']);
+        $directory = "factures/secu";
+        $pj_filepath = $this->fileHandler->saveBinary($binary, "Facture Pixelforce-Commande n°".$order->getId()." du ".date('Y-m-d-H-i-s').'.pdf', $directory);
+        $order->setInvoicePath($pj_filepath);
         $this->entityManager->flush();
     }
 }
