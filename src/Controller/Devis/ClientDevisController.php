@@ -57,8 +57,6 @@ class ClientDevisController extends AbstractController
      */
     public function client_agent_devis_fiche($token, DemandeDevis $dd, Devis $devis, Request $request, OrderDigitalService $orderDigitalService, MailerService $mailerService)
     {
-        $orderDigitalService->saveInvoice($devis->getOrderDigital());
-        $mailerService->sendFactureOrderDigital($devis->getOrderDigital());
         $agent = $this->userRepository->findAgentByToken($token);
         $formDevis = $this->createForm(DevisType::class, $devis)
             ->remove('title')
